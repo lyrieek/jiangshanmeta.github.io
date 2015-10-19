@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>悬停产生提示信息</title>
+  <style>
+  	*{margin:0;padding:0;}
+  	ul{width:150px;margin:100px auto;list-style: none;line-height:30px;}
+  	ul a{display:inline-block;width:150px;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;}
+  	.hover{background:rgba(0,0,0,0.5);position:absolute;color:#fff;}
+  </style>
+</head>
+<body>
+	<ul>
+		<li><a title='战斗民族玩真人CS “装备”堪比正规军' href=''>战斗民族玩真人CS “装备”堪比正规军</a></li>
+		<li><a title='战斗民族玩真人CS “装备”堪比正规军' href=''>战斗民族玩真人CS “装备”堪比正规军</a></li>
+		<li><a title='战斗民族玩真人CS “装备”堪比正规军' href=''>战斗民族玩真人CS “装备”堪比正规军</a></li>
+	</ul>
+  <script>
+  	var links=document.getElementsByTagName('a');
+  	for(var i=0;i<links.length;i++){
+  		var div=null;
+  		links[i].onmouseover=function(event){
+  			event=event||window.event;
+  		    div=document.createElement('div');
+  			div.className='hover';
+  			div.innerHTML=this.title;
+  			this.title='';
+  			div.style.left=event.clientX+20+'px';
+  			div.style.top=event.clientY+20+'px';
+  			document.body.appendChild(div);
+  		}
+  		links[i].onmousemove=function(event){
+  			event=event||window.event;
+  			div.style.left=event.clientX+20+'px';
+  			div.style.top=event.clientY+20+'px';
+
+
+
+  		}
+  		links[i].onmouseout=function(){
+  			this.title=div.innerHTML;
+  			document.body.removeChild(div);
+  			
+  		}
+  	}
+  </script>
+</body>
+</html>

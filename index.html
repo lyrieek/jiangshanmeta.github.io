@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>jsmeta前端作品</title>
+  <style>
+    *{margin:0;padding:0;font-size:22px;font-family:'microsoft yahei';line-height:60px;}
+    h2,.sectionItem a{
+    	-webkit-transition:all 0.7s ease;
+        -moz-transition:all 0.7s ease;
+        -ms-transition:all 0.7s ease;
+        -o-transition:all 0.7s ease;
+        transition:all 0.7s ease;
+   }
+    .main{width:540px;box-sizing:border-box;padding:80px;margin:20px auto;border-radius:5px;border:1px solid #ccc;box-shadow:0 0 4px #ccc;}
+    .sectionWrap{border-bottom:1px solid #ccc;}
+    h2,.sectionItem a{color:#0a8cd2;text-indent:20px;border-radius:5px;cursor:pointer;display:block;
+      text-decoration :none;}
+    h2:hover,.sectionItem a:hover{color:#fff;background:#56ad56;text-indent:40px;}
+    .sectionItem{padding-left:30px;display:none;}
+    
+  </style>
+</head>
+<body>
+  <div class='main'>
+  	<section class='sectionWrap'>
+        <h2 class='sectionTitle'>第一章 &nbsp;&nbsp;图片轮播效果</h2>
+        <div class='sectionItem'>
+        	<a href='myWork/lunbo/lunbo0/lunbo0.html' target='_blank'>网易天谕图片轮播</a>
+        	<a href='myWork/lunbo/lunbo1/lunbo1.html' target='_blank'>水平滑动轮播</a>
+        	<a href='myWork/lunbo/lunbo2/lunbo2.html' target='_blank'>平滑滚动轮播</a>
+        	<a href='myWork/lunbo/lunbo3/lunbo3.html' target='_blank'>淡入淡出轮播</a>
+        	<a href='myWork/lunbo/lunbo4/lunbo4.html' target='_blank'>整个翻页轮播</a>
+        </div>
+  	</section>
+  	<section class='sectionWrap'>
+        <h2 class='sectionTitle'>第二章 &nbsp;&nbsp;canvas绘图</h2>
+        <div class='sectionItem'>
+        	<a href='myWork/canvas/curveTo/bezierCurveTo.html' target='_blank'>贝塞尔曲线绘制演示</a>
+        	<a href='myWork/canvas/curveTo/quadraticCurveTo.html' target='_blank'>二次曲线绘制演示</a>
+        	<a href='myWork/canvas/brickBreaker.html' target='_blank'>桌上弹球</a>
+        	<a href='myWork/canvas/canvasWatch.html' target='_blank'>canvas时钟</a>
+        	
+        </div>
+  	</section>
+  	<section class='sectionWrap'>
+        <h2 class='sectionTitle'>第三章 &nbsp;&nbsp;图片展示效果</h2>
+        <div class='sectionItem'>
+        	<a href='myWork/pic/fangda/fangda.html' target='_blank'>点击放大缩小</a>
+        	<a href='myWork/pic/fadeOut/fadeOut.html' target='_blank'>鼠标悬浮淡出效果</a>
+          <a href='myWork/pic/magnifier/magnifier.html' target='_blank'>放大镜特效</a>
+        	<a href='myWork/pic/lenove/lenovo.html' target='_blank'>图片墙</a>
+          <a href='myWork/pic/slidedoor/slidedoor.html' target='_blank'>滑动门</a>
+        </div>
+  	</section>
+    <section class='sectionWrap'>
+        <h2 class='sectionTitle'>第四章 &nbsp;&nbsp;表单相关</h2>
+        <div class='sectionItem'>
+          <a href='myWork/form/tabForward.html' target='_blank'>自动切换焦点</a>
+          <a href='myWork/form/preventAutoCheck.html' target='_blank'>阻止某个表单控件验证</a>
+          <a href='myWork/form/setCustomeValidate.html' target='_blank'>自定义错误信息</a>
+
+        </div>
+    </section>
+    <section class='sectionWrap'>
+        <h2 class='sectionTitle'>第五章 &nbsp;&nbsp;内容展示</h2>
+        <div class='sectionItem'>
+          <a href='myWork/content/hoverTip.html' target='_blank'>悬停产生提示信息</a>
+ 
+
+        </div>
+    </section>
+  	<section class='sectionWrap'>
+        <h2 class='sectionTitle'>第六章 &nbsp;&nbsp;模仿的网站</h2>
+        <div class='sectionItem'>
+        	<a href='myWork/model/imooc/imooc.html' target='_blank'>慕课网主页</a>
+        	<a href='myWork/model/yili/yili.html' target='_blank'>伊利主页</a>
+
+        </div>
+  	</section>
+  <script>
+    (function(){
+    	var titles=document.getElementsByClassName('sectionTitle');
+    	var items=document.getElementsByClassName('sectionItem');
+        for(var i=0,len=titles.length;i<len;i++){
+        	titles[i].index=i;
+        	titles[i].onclick=function(){
+        		for(var j=0,itemLen=items.length;j<itemLen;j++){
+        			if(j==this.index){continue;}
+        			items[j].style.display='none';
+        		}
+        		var nextElement=this.nextElementSibling;
+        		console.log(getStyle(nextElement,'display'));
+        		if(getStyle(nextElement,'display')=='none'){
+        			nextElement.style.display='block';
+        		}else{
+        			nextElement.style.display='none';
+        		}
+        		
+        	}
+
+
+        }
+        function getStyle(elem,cssname){
+        	if(window.getComputedStyle){
+        		return window.getComputedStyle(elem)[cssname];
+        	}else{
+        		return elem.currentStyle[cssname];
+        	}
+        }
+
+
+    })();
+
+
+  </script>
+  </div>
+</body>
+</html>
