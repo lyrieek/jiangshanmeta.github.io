@@ -30,6 +30,9 @@ var brick;
 var mouseX;
 var mouseY;
 var data;
+var playcount=0;
+//一开始显示点击开始，点击后游戏进行，如果失败（点错色块或者漏点），则显示分数，
+//这时再次点击，重新开始游戏
 function game(){
 	init();
 	gameloop();
@@ -43,20 +46,27 @@ function init(){
 	deltaTime=0;
 	cHeight=canvas.height;
 	cWidth=canvas.width;
-	brick=new brick();
+	brick=new brickObj();
 	brick.init();
 	canvas.addEventListener('click',clickFunction,false);
-	data=new data();
+	data=new dataObj();
 	data.init();
 	brick.draw();
 	context.textAlign='center';
 	context.textBaseline='middle';
 	context.font='30px Verdana';
-	data.drawText('点击开始');
+
 }
 function clickFunction(event){
-	if(data.failure===true){return;}
+	//if(data.failure===true){return;}
 	if(data.gameover){
+		//初始状态下gameover为true，设定为false，并返回，如果不返回会执行下面的程序。我希望的是点击任何位置开始，但这个开始不是点击到任何一个格子中
+
+		if(playcount>0){
+			init();
+		}
+		playcount++;
+
 		data.gameover=false;
 		return;
 	}
@@ -64,15 +74,23 @@ function clickFunction(event){
 	mouseX=event.clientX-canvas.getBoundingClientRect().left;
 	mouseY=event.clientY-canvas.getBoundingClientRect().top;
 	for(var i=0;i<brick.length;i++){
-		if(mouseX>brick.x[i] && mouseX<brick.x[i]+brick.width && mouseY>brick.y[i] && mouseY<brick.y[i]+brick.height){
-				if(brick.type[i]=='black'){
+		if(mouseX>brick.x[i] && mouseX<brick.x[i]+brick.width && mouseY>brick.y[i] && mouseY<brick.y[i]+brick.height){		
+				//鼠标点击事件时，如果鼠标的位置在某个色块中，进行判断
+				//如果色块是黑色，颜色变为666，并且加一分
+				if(brick.type[i]=='black' || brick.type[i]=='#666'){
 					brick.type[i]='#666';
 					data.score++;
+					if(data.score>100){
+						//制造一个逐渐加速的效果，以每一百分为界限
+						brick.speed+=0.05;
+						data.score%=100;
+					}
 				}else{
+					//如果不是黑色的，说明点错了，游戏结束
 					brick.type[i]='red';
-					brick.speed=0;
-					data.gameover=true;
-					data.failure=true;
+					//brick.speed=0;
+					data.showScore=true;
+					//如果在这里设定data.gameover的话，就不会显示红色了
 				}
 		    }
 	}
@@ -83,71 +101,88 @@ function gameloop(){
 	deltaTime=now-lastTime;
 	lastTime=now;
 	if(!data.gameover){
+		//如果游戏没有结束，清屏绘制图像
 		context.clearRect(0,0,cWidth,cHeight);
     		brick.draw();
-	}else if(brick.speed==0){
-    		brick.draw();
+    		if(data.showScore){
+    			data.gameover=true;
+    		}
+	}else if(playcount==0){
+			data.drawText('点击开始');
+	}else{
 		data.drawText('score:'+data.score);
-	}
-
+}
 
 }
-function brick(){
+function brickObj(){
 	this.x=[];
 	this.y=[];
 	this.type=[];
 	this.speed;
 	this.width=80;
 	this.height=110;
-	this.alive=[];
+
 }
-brick.prototype.length=24;
-brick.prototype.init=function(){
+brickObj.prototype.length=24;
+brickObj.prototype.init=function(){
 	for(var i=0;i<this.length;i++){
 		this.x[i]=this.width*(i%4);
 		this.y[i]=cHeight-(Math.floor(i/4)+1)*this.height;
 		this.type[i]='white';
-		this.alive[i]=true;
-		this.speed=0.1;
+
+		this.speed=0.2;
 	}
 	for(var i=4;i<this.length;i=i+4){
 		var random=Math.floor(Math.random()*4);
 		this.type[i+random]='black';
 	}
 }
-brick.prototype.draw=function(){
-
+brickObj.prototype.draw=function(){
 	context.save();
 	context.lineWidth=2;
 	context.strokeStyle='black';
+	//如果有漏点的，其对应序号为failNum，该值的默认值为-1
+	if(data.failNum>-1){
+		console.log(this.y[data.failNum]);
+		if(this.y[data.failNum]<cHeight-this.height+70){
+			data.showScore=true;
+		}
+	}
 
-
+	for(var i=0;i<this.length;i++){
+					this.y[i]+=this.speed*deltaTime;
+	}
 
 
 
 	for(var i=0;i<this.length;i++){
+
 			context.beginPath();
 			context.fillStyle=this.type[i];
 			context.rect(this.x[i],this.y[i],this.width,this.height);
 			context.fill();
 			context.stroke();
-
-			this.y[i]+=this.speed*deltaTime;
-
-
+	
+			if(this.y[i]>cHeight && i%4==0){	
 
 
-			if(this.y[i]>cHeight){	
-				if(this.type[i]=='black'){
-					this.type[i]='red';
-					this.speed=0;
 
-					data.gameover=true;
-					data.failure=true;
-				}		
-				if(i%4==0){
-				  this.reborn(i);
-			    }
+			    var check=true;
+				for(var j=i;j<i+4;j++){
+					if(this.type[j]=='black' ||this.type[j]=='red'){
+						check=false;
+						this.type[j]='red';
+						this.speed=-0.5;
+						data.failNum=j;
+					}
+				}
+				if(check){
+					this.reborn(i);
+				}
+
+
+
+
 			}
 
 
@@ -155,7 +190,7 @@ brick.prototype.draw=function(){
 
 	context.restore();
 }
-brick.prototype.reborn=function(i){
+brickObj.prototype.reborn=function(i){
 	for(var j=i;j<i+4;j++){
 		this.y[j]-=this.height*6;
 		this.type[j]='white';
@@ -163,17 +198,19 @@ brick.prototype.reborn=function(i){
 	var random=Math.floor(Math.random()*4);
 	this.type[i+random]='black';
 }
-function data(){
+function dataObj(){
 	this.score;
 	this.gameover;
 	this.failNum;
+	this.showScore;
 }
-data.prototype.init=function(){
+dataObj.prototype.init=function(){
 	this.score=0;
 	this.gameover=true;
-	this.failure;
+	this.failNum=-1;
+	this.showScore=false;
 }
-data.prototype.drawText=function(str){
+dataObj.prototype.drawText=function(str){
 	context.beginPath();
 	context.fillStyle='blue';
 	context.fillText(str,cWidth/2,cHeight/2);
