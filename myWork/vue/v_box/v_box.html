@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>v-box</title>
+		<script src="../vue.js"></script>
+		<style>
+			.clearfix:after{
+				clear:both;
+				content:" ";
+				display:block;
+				height:0;
+				overflow:hidden;
+				visibility: hidden;
+			}
+			.pull-left{float:left;}
+			.pull-right{float:right;}
+			.container{
+				width:1024px;
+			}
+			.center-block{
+				margin-left:auto;
+				margin-right:auto;
+			}
+			.half{
+				width:50%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="v_box" class="clearfix">
+			<div class="pull-left half" >
+					<div v-bind:style="totalStyle">
+					</div>
+			</div>
+			<div class="pull-right half">
+				<div>
+					width:<input type="range" min="0" max="500" v-model="width">
+					background:<input type="color" v-model="color">
+				</div>
+				<div>
+					top<input type="range" min="0" max="150" v-model="borderTop.width">
+					top<input type="color"  v-model="borderTop.color">
+				</div>
+				<div>
+					right<input type="range" min="0" max="150" v-model="borderRight.width">
+					right<input type="color"  v-model="borderRight.color">
+				</div>
+				<div>
+					bottom<input type="range" min="0" max="150" v-model="borderBottom.width">
+					bottom<input type="color"  v-model="borderBottom.color">
+				</div>
+				<div>
+					left<input type="range" min="0" max="150" v-model="borderLeft.width">
+					left<input type="color"  v-model="borderLeft.color">
+				</div>
+			</div>
+		</div>
+		<script>
+			var v_boxVM = new Vue({
+				el:"#v_box",
+				data:{
+					width:200,
+					color:"#ffffff",
+					borderTop:{
+						width:10,
+						color:"#ff8c05",
+						style:"solid"
+					},
+					borderRight:{
+						width:10,
+						color:"#43a102",
+						style:"solid"
+					},
+					borderBottom:{
+						width:10,
+						color:"#c5da01",
+						style:"solid"
+					},
+					borderLeft:{
+						width:10,
+						color:"#4499ee",
+						style:"solid"
+					}
+				},
+				computed:{
+					borderTopStyle:function(){
+						return this.borderTop.width+"px "+this.borderTop.color+" "+this.borderTop.style;
+					},
+					borderRightStyle:function(){
+						return this.borderRight.width+"px "+this.borderRight.color+" "+this.borderRight.style;
+					},
+					borderBottomStyle:function(){
+						return this.borderBottom.width+"px "+this.borderBottom.color+" "+this.borderBottom.style;
+					},
+					borderLeftStyle:function(){
+						return this.borderLeft.width+"px "+this.borderLeft.color+" "+this.borderLeft.style;
+					},
+					totalStyle:function(){
+						return {
+							width: this.width+"px",
+							height: this.width+"px",
+							background: this.color,
+							borderTop:this.borderTopStyle,
+							borderRight:this.borderRightStyle,
+							borderBottom:this.borderBottomStyle,
+							borderLeft:this.borderLeftStyle,
+						}
+					}
+				}
+			})
+
+		</script>
+	</body>
+</html>
