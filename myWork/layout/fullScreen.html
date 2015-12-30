@@ -6,32 +6,35 @@
 	<link rel="stylesheet" href="../org/org/css/bootstrap.min.css">
 	<style>
 	  body{padding-top:15px;padding-bottom:15px;}
+	  .p-indent{text-indent:2em;}
 	</style>
 </head>
 <body>
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-12">
-				<p>全屏布局指的是只有一屏内容，html没有滚动条，滚动条只出现在内容区。实现全屏布局的方式并不多。</p>
+				<h2 class="text-center"><b>全屏布局</b></h2>
+				<hr>
+				<p class="p-indent">全屏布局指的是只有一屏内容，html没有滚动条，滚动条只出现在内容区。实现全屏布局的方式并不多。</p>
 
-				<p>①绝对定位法</p>
-				<p>CSS</p>
+				<h3><b>①绝对定位法</b></h3>
+				<p class="p-indent">CSS</p>
 				<img src='fullScreenImg/absoluteStyle.jpg'>
-				<p>HTML</p>
+				<p class="p-indent">HTML</p>
 				<img src='fullScreenImg/absoluteHTML.jpg'>
-				<p>对于利用绝对定位全屏布局实现，其实没有什么难以理解的。其中宽度高度的设置既可以是数值，也可以是百分比。其中要注意想要设置滚动条的那一块要设置overflow：auto</p>
+				<p class="p-indent">对于利用绝对定位全屏布局实现，其实没有什么难以理解的。其中宽度高度的设置既可以是数值，也可以是百分比。其中要注意想要设置滚动条的那一块要设置overflow：auto</p>
 
-				<p>②flex</p>
-				<p>CSS</p>
+				<h3><b>②flex</b></h3>
+				<p class="p-indent">CSS</p>
 				<img src='fullScreenImg/flexStyle.jpg'>
-				<p>HTML</p>
+				<p class="p-indent">HTML</p>
 				<img src='fullScreenImg/flexHTML.jpg'>
-				<p>flex布局对于IE9及以下不支持。但是确实是很强大，可用绝对数值，可用百分比，而且如果想实现top left bottom自适应的话，绝对定位没有什么办法，只能用flex</p>	
+				<p class="p-indent">flex布局对于IE9及以下不支持。但是确实是很强大，可用绝对数值，可用百分比，而且如果想实现top left bottom自适应的话，绝对定位没有什么办法，只能用flex</p>	
 
-				<p>最后截个图说明结果图吧</p>
+				<p class="p-indent">最后截个图说明结果图吧</p>
 			    <img src='fullScreenImg/end.jpg'>
 
-			    <p>最近接触了一个jq插件fullscreen，那里说的全屏布局指的是html没有滚动条，有多屏内容，但是屏幕上只展示一屏内容。这样的效果最近的新网页出现的比较多。尤其是和CSS3结合通常能做出比较炫的效果。</p>
+			    <p class="p-indent">最近接触了一个jq插件fullscreen，那里说的全屏布局指的是html没有滚动条，有多屏内容，但是屏幕上只展示一屏内容。这样的效果最近的新网页出现的比较多。尤其是和CSS3结合通常能做出比较炫的效果。</p>
     		</div>
     	</div>
     </div>
