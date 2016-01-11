@@ -62,7 +62,7 @@ if (!String.prototype.str_supplant) {
 			console.log(self.touchstartY);
 		});
 		$(document).on("touchend",function(event){
-			self.touchendY = event.originalEvent.touches[0].clientY;
+			self.touchendY = event.originalEvent.changedTouches[0].clientY;
 			console.log(self.touchendY);
 			//touchend 的时候 如果纵坐标更小，说明应该向下走
 			if(self.touchendY<self.touchstartY){
