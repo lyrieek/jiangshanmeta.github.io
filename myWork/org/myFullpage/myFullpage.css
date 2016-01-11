@@ -1,4 +1,25 @@
 *{margin:0;padding:0;}
 html,body{width:100%;height:100%;overflow:hidden;}
+.nav{
+	transition:all 0.5s ease;
+	-moz-transition:all 0.5s ease;
+	-webkit-transition:all 0.5s ease;
+	-o-transition:all 0.5s ease;
+	-ms-transition:all 0.5s ease;
+}
 .sectionWrap{display:block;width:100%;height:100%;position:absolute;top:0;}
 .section{display:block;width:100%;height:100%;}
+.navigationWrap{
+	position:fixed;top:50%;
+	transform:translateY(-50%);
+	-webkit-transform:translateY(-50%);
+	-moz-transform:translateY(-50%);
+	-o-transform:translateY(-50%);
+	-ms-transform:translateY(-50%);
+}
+.right-nav{right:10px;}
+.left-nav{left:10px;}
+/* 导航的样式略难看  */
+.nav{display:block;width:10px;height:10px;border-radius:50%;margin-bottom:15px;cursor:pointer;background-color:#666;margin-left:auto;margin-right:auto;}
+.nav.active{display:block;width:20px;height:20px;border-radius:50%;margin-bottom:10px;}
+.nav:last-child{margin-bottom:0;}

@@ -1,3 +1,15 @@
+if (!String.prototype.str_supplant) {
+    String.prototype.str_supplant = function (o) {
+        return this.replace(/{([^{}]*)}/g,
+            function (a, b) {
+                var r = o[b];
+                return typeof r === 'string' || typeof r === 'number' ? r : a;
+            }
+        );
+    };
+}
+
+
 (function($){
 	var Fullpage = function(id,options){
 		var self = this;
@@ -18,51 +30,89 @@
 		this.index = 0;
 		this.moving = false;
 		this.height = $("body").height();
+
+		if(this.opt.navigation){
+			this.setNavbar();
+		}
+		//监听事件 
+
+		//支持滚轮事件 //兼容firefox
 		$(document).on("mousewheel DOMMouseScroll",function(event){
 			if(self.moving){return;}
 			self.direction = event.originalEvent.wheelDelta? -event.originalEvent.wheelDelta : event.originalEvent.detail;
-			console.log(self.direction)
-			//direction>0表示向下滚动
-			if(self.direction>0){
-				console.log(self.index+1);
-				self.goto(self.index + 1);
-				
+			self.goByDirection();
+			//direction >0 表示向下
+		});
+
+		//支持键盘上下键切换
+		$(document).on("keyup",function(event){
+			if(self.moving){return;}
+			if(event.which != 38 && event.which != 40){return;}
+			if(event.which==38){
+				self.direction = -1;
 			}else{
-				console.log(self.index-1);
-				self.goto(self.index - 1);
-				
+				self.direction = 1;
 			}
+			self.goByDirection();
 		})
-
-
-
+		//todo 手机的滑动事件
+		//touch事件
+		$(document).on("touchstart",function(event){
+			self.touchstartY = event.originalEvent.touches[0].clientY;
+			console.log(self.touchstartY);
+		});
+		$(document).on("touchend",function(event){
+			self.touchendY = event.originalEvent.touches[0].clientY;
+			console.log(self.touchendY);
+			//touchend 的时候 如果纵坐标更小，说明应该向下走
+			if(self.touchendY<self.touchstartY){
+				self.direction = 1;
+			}else{
+				self.direction =-1;
+			}
+			self.goByDirection();
+		})
 
 
 	}
 	Fullpage.prototype={
+		//根据方向判断向进入哪一页
+		goByDirection:function(){
+			if(this.direction>0){
+				this.goto(this.index + 1);
+			}else{
+				this.goto(this.index - 1);
+			}			
+		},
+		//goto 用来对传入的页数进行处理
 		goto:function(num){
 
 			if(num<0){
 				if(this.opt.continuousVertical){
 					//this.wrap.
-					console.log("a");
+					
 					this.moveTo(this.size-1);
 				}
-				return;
+			//	return;
 			}
 			if(num<this.size ){
 				this.moveTo(num);
-				return;
+			//	return;
 			}
 			if(num==this.size){
 				if(this.opt.continuousVertical){
 					this.moveTo(0);
 				}
 			}
+			//callback&&callback();
 		},
+		//moveto用来真正的移动，同时 onLeave 和 afterLoad回调都在这里
 		moveTo:function(num){
 
 			var self = this;
+			if(this.opt.navigation){
+				this.activeNav(num);
+			}
 			this.moving = true;
 			if(self.opt.onLeave){
 				self.opt.onLeave(this.index)
@@ -74,7 +124,42 @@
 					self.opt.afterLoad(self.index);
 				}
 			})
+		},
+		//生成导航栏的代码
+		setNavbar:function(){
+			this.navigationWrap = $("<div class='navigationWrap'></div>");
+			if(this.opt.navigationPosition=="right"){
+				this.navigationWrap.addClass("right-nav");
+			}else{
+				this.navigationWrap.addClass("left-nav");
+			}
+			var navHTML = "";
+			var template = "<div class='nav {isActive}' data-index='{i}'></div>";
+			for(var i =0;i<this.size;i++){
+
+				
+				navHTML += template.str_supplant({isActive:(i==0)?"active":"",i:i});
+			}
+			this.navigationWrap.html(navHTML);
+			$("body").append(this.navigationWrap);
+			this.navbar_nav();
+			//todo 悬浮时的文字显示
+		},
+		//导航栏绑定点击导航
+		navbar_nav:function(){
+			var self = this;
+			this.navigationWrap.delegate(".nav","click",function(){
+				var index = $(this).data("index");
+				self.goto(index);
+			});
+
+
+		},
+		//导航栏按钮active状态切换
+		activeNav:function(num){
+			$(".nav").eq(num).addClass("active").siblings().removeClass("active");
 		}
+
 	}
 
 	window['Fullpage'] = Fullpage;

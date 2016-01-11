@@ -17,11 +17,18 @@
 		</div>
 		<script>
 			$(document).ready(function(){
-				var fullpage = new Fullpage("fullpage",{continuousVertical:true,onLeave:function(index){
-					alert(index);
-				},afterLoad:function(index){
-					alert(index);
-				}});
+				var fullpage = new Fullpage("fullpage",{
+					continuousVertical:true,
+					navigation:true,
+					navigationPosition:"right",
+					onLeave:function(index){
+						//alert(index);
+					},
+					afterLoad:function(index){
+						//alert(index);
+					},
+
+				});
 				//console.log(fullpage);
 			})
 
