@@ -59,11 +59,14 @@ if (!String.prototype.str_supplant) {
 		//touch事件
 		$(document).on("touchstart",function(event){
 			self.touchstartY = event.originalEvent.touches[0].clientY;
-			console.log(self.touchstartY);
+			//console.log(self.touchstartY);
 		});
+		$(document).on("touchmove",function(event){
+			event.preventDefault();
+		})
 		$(document).on("touchend",function(event){
 			self.touchendY = event.originalEvent.changedTouches[0].clientY;
-			console.log(self.touchendY);
+			//console.log(self.touchendY);
 			//touchend 的时候 如果纵坐标更小，说明应该向下走
 			if(self.touchendY<self.touchstartY){
 				self.direction = 1;
