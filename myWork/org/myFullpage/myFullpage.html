@@ -6,6 +6,8 @@
 		<title>我的fullpage插件</title>
 		<link rel="stylesheet" href="myFullpage.css">
 		<script src="../org/js/jquery-1.11.3.js"></script>
+		<script src="../org/js/lib.js"></script>
+		<script src="myTouch.js"></script>
 		<script src="myFullpage.js"></script>
 	</head>
 	<body>
@@ -17,19 +19,23 @@
 		</div>
 		<script>
 			$(document).ready(function(){
-				var fullpage = new Fullpage("fullpage",{
-					continuousVertical:true,
-					navigation:true,
-					navigationPosition:"right",
-					onLeave:function(index){
-						//alert(index);
-					},
-					afterLoad:function(index){
-						//alert(index);
-					},
+				// var fullpage = new Fullpage("fullpage",{
+				// 	continuousVertical:true,
+				// 	navigation:true,
+				// 	navigationPosition:"right",
+				// 	onLeave:function(index){
+				// 		//alert(index);
+				// 	},
+				// 	afterLoad:function(index){
+				// 		//alert(index);
+				// 	},
 
-				});
+				// });
 				//console.log(fullpage);
+				//console.log($.fn.fullpage)
+		//		$("#fullpage").fullpage();
+				$("#fullpage").fullpage();
+
 			})
 
 		</script>
