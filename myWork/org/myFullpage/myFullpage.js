@@ -23,6 +23,8 @@
 			var touchendY;
 			var navigationWrap;
 			var moving = false;
+			var navigationTooltipWrap;
+			var pageW = $("body").width();
 			var setNavbar = function(){
 			    navigationWrap = $("<div class='navigationWrap'></div>");
 				if(opts.navigationPosition){
@@ -41,6 +43,28 @@
 					var index = $(this).data("index");
 					goto(index);
 				});	
+				if($.type(opts.navigationTooltips).toLowerCase() == "array"){
+					navigationTooltipWrap = $("<div class='navigationTooltipWrap'></div>");
+					$('body').append(navigationTooltipWrap);
+
+					navigationWrap.delegate(".nav","mouseover mouseenter",function(event){
+						var index = $(this).data("index");
+						var text = opts.navigationTooltips[index];
+						navigationTooltipWrap.text(text);
+						if(navigationWrap.hasClass("right-nav")){
+							navigationTooltipWrap.css({right:(pageW-event.clientX+10),top:event.clientY-5})
+						}else if(navigationWrap.hasClass("right-nav")){
+							navigationTooltipWrap.css({left:(event.clientX+5),top:event.clientY})
+						}
+						navigationTooltipWrap.fadeIn("200");
+					});
+					navigationWrap.delegate(".nav","mouseout mouseleave",function(event){
+						navigationTooltipWrap.fadeOut("200");
+					})
+
+
+
+				}
 			}
 			var goto = function(num){
 				if(num<0){
