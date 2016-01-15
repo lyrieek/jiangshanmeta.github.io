@@ -26,8 +26,8 @@
 			var navigationTooltipWrap;
 			var pageW = $("body").width();
 			var setNavbar = function(){
-			    navigationWrap = $("<div class='navigationWrap'></div>");
-				if(opts.navigationPosition){
+			    navigationWrap = $("<div class='navigationWrap '></div>");
+				if(opts.navigationPosition=="right"){
 					navigationWrap.addClass("right-nav");
 				}else{
 					navigationWrap.addClass("left-nav");
@@ -44,17 +44,26 @@
 					goto(index);
 				});	
 				if($.type(opts.navigationTooltips).toLowerCase() == "array"){
-					navigationTooltipWrap = $("<div class='navigationTooltipWrap'></div>");
+					navigationTooltipWrap = $("<div class='navigationTooltipWrap translataY50'></div>");
 					$('body').append(navigationTooltipWrap);
 
 					navigationWrap.delegate(".nav","mouseover mouseenter",function(event){
 						var index = $(this).data("index");
+						var y = $(this).offset().top;
+						var x = $(this).offset().left;
+						var w = $(this).width();
+						//计算求得导航点中心位置
+						var centerX = x+w/2;
+						var centerY = y+w/2;
 						var text = opts.navigationTooltips[index];
 						navigationTooltipWrap.text(text);
 						if(navigationWrap.hasClass("right-nav")){
-							navigationTooltipWrap.css({right:(pageW-event.clientX+10),top:event.clientY-5})
-						}else if(navigationWrap.hasClass("right-nav")){
-							navigationTooltipWrap.css({left:(event.clientX+5),top:event.clientY})
+							navigationTooltipWrap.css({right:(pageW-centerX+15),top:(centerY)})
+						}else if(navigationWrap.hasClass("left-nav")){
+							navigationTooltipWrap.css({left:(centerX+15),top:(centerY)})
+						}
+						if(navigationTooltipWrap.is(":animated")){
+							navigationTooltipWrap.stop(true,true);
 						}
 						navigationTooltipWrap.fadeIn("200");
 					});
@@ -132,7 +141,8 @@
 			}
 			var touchendHandler = function(event){
 				touchendY = event.originalEvent.changedTouches[0].clientY;
-				if(touchendY < touchstartY){
+				if(Math.abs(touchstartY-touchendY)<50){return;}
+				if(touchendY < touchstartY ){
 					direction = 1;
 				}else{
 					direction =-1;
