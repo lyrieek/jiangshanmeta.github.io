@@ -11,17 +11,11 @@
 			method : "swing",				//jQuery动画切换效果，然而默认的只有linear 和swing
 			horizontal : false		
 		}
-		//todu 导航条的文字显示
 		//手机事件的封装
 		var opts = $.extend({},defaults,opts || {});
-	//	console.log(this)
 		return this.each(function(){
-			//var opts = $.extend({},defaults,opts);
-			
 			var selector = $(this);
-			
 			var dataset = {};
-		//	selector.data("speed")? dataset.speed = selector.data("speed"):"";
 
 			if(selector.data("speed")){
 				dataset.speed = selector.data("speed");
@@ -33,10 +27,7 @@
 				dataset.method = selector.data("method");
 			}
 
-		
-			console.log(dataset)
 			var opt = $.extend({},opts,dataset);
-			console.log(opt)
 			var size = selector.find(".section").size();
 			var pageH = $("body").height();
 			var pageW = $("body").width();
