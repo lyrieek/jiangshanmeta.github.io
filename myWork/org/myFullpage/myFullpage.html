@@ -9,21 +9,30 @@
 		<script src="../org/js/lib.js"></script>
 		<script src="myTouch.js"></script>
 		<script src="myFullpage.js"></script>
+		<style>
+			*{font-family: Helvetica, Tahoma, Arial, STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", Heiti, "黑体", sans-serif;font-size:16px;}
+			.section-bg{background-position:center center;background-repeat:no-repeat;}
+			.section-bg1{background-image:url(images/1.jpg);}
+			.section-bg2{background-image:url(images/2.jpg);}
+			.section-bg3{background-image:url(images/3.jpg);}
+			.section-bg4{background-image:url(images/4.jpg);}
+
+		</style>
 	</head>
 	<body>
-		<div id="fullpage">
-			<section class="section" style="background:red;"></section>
-			<section class="section" style="background:green;"></section>
-			<section class="section" style="background:blue;"></section>
-			<section class="section" style="background:yellow;"></section>
+		<div id="fullpage" data-speed="1000"  data-navpos="right">
+			<section class="section section-bg section-bg1" ></section>
+			<section class="section section-bg section-bg2" ></section>
+			<section class="section section-bg section-bg3" ></section>
+			<section class="section section-bg section-bg4" ></section>
 		</div>
 		<script>
 			$(document).ready(function(){
 				$("#fullpage").fullpage({
 					navigationTooltips:["page1","page2","page3","page4"],
-					scrollingSpeed:1000,
-					horizontal:false,
-					navigationPosition:"bottom",
+					speed:1000,
+					horizontal:true,
+					navpos:"bottom",
 					continuousVertical:true
 				});
 

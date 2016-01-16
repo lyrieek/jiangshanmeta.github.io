@@ -1,9 +1,9 @@
 (function($){
 	$.fn.fullpage = function(opts){
 		var defaults = {
-			scrollingSpeed:800,   //滚动速度
+			speed:800,   //滚动速度
 			navigation:true,	  //是否有导航
-			navigationPosition:"right",	//导航的位置
+			navpos:"right",	//导航的位置
 		//	navigationTooltips:["section1"],//导航的内容
 			continuousVertical:false,		//是否在垂直方向上连续
 			keyboard : true,				//是否支持键盘上下键切换
@@ -13,9 +13,30 @@
 		}
 		//todu 导航条的文字显示
 		//手机事件的封装
-		var opts = $.extend({},defaults,opts);
+		var opts = $.extend({},defaults,opts || {});
+	//	console.log(this)
 		return this.each(function(){
+			//var opts = $.extend({},defaults,opts);
+			
 			var selector = $(this);
+			
+			var dataset = {};
+		//	selector.data("speed")? dataset.speed = selector.data("speed"):"";
+
+			if(selector.data("speed")){
+				dataset.speed = selector.data("speed");
+			}
+			if(selector.data("navpos")){
+				dataset.navpos = selector.data("navpos");
+			}
+			if(selector.data("method")){
+				dataset.method = selector.data("method");
+			}
+
+		
+			console.log(dataset)
+			var opt = $.extend({},opts,dataset);
+			console.log(opt)
 			var size = selector.find(".section").size();
 			var pageH = $("body").height();
 			var pageW = $("body").width();
@@ -30,7 +51,7 @@
 			var setNavbar = function(){
 			    navigationWrap = $("<div class='navigationWrap '></div>");
 			    var navClass = "";
-				switch(opts.navigationPosition){
+				switch(opt.navpos){
 					case "right":
 						navClass = "right-nav vertical-nav";
 						break;
@@ -56,9 +77,9 @@
 					goto(index);
 				});	
 				//导航条tooltip设置
-				if($.type(opts.navigationTooltips).toLowerCase() == "array"){
+				if($.type(opt.navigationTooltips).toLowerCase() == "array"){
 					navigationTooltipWrap = $("<div class='navigationTooltipWrap translataY50'></div>");
-					if(opts.navigationPosition =="right" || opts.navigationPosition =="left"){
+					if(opt.navpos =="right" || opt.navpos =="left"){
 						navigationTooltipWrap.addClass("translataY50");
 					}else{
 						navigationTooltipWrap.addClass("translataX50");
@@ -73,10 +94,10 @@
 						//计算求得导航点中心位置
 						var centerX = x+w/2;
 						var centerY = y+w/2;
-						var text = opts.navigationTooltips[index];
+						var text = opt.navigationTooltips[index];
 						navigationTooltipWrap.text(text);
 		
-						switch(opts.navigationPosition){
+						switch(opt.navpos){
 							case "right":
 								navigationTooltipWrap.css({right:(pageW-centerX+15),top:(centerY)})
 								break;
@@ -103,7 +124,7 @@
 			//goto函数负责对要进行的页码进行预处理
 			var goto = function(num){
 				if(num<0){
-					if(opts.continuousVertical){
+					if(opt.continuousVertical){
 						moveTo(size-1);
 					}
 					return;
@@ -113,33 +134,33 @@
 					return;
 				}
 				if(num==size){
-					if(opts.continuousVertical){
+					if(opt.continuousVertical){
 						moveTo(0);
 					}
 				}					
 			}
 			//moveTo函数负责真正的运动
 			var moveTo = function(num){
-				if(opts.navigation){
+				if(opt.navigation){
 					activeNav(num);
 				}
 				moving = true;
 				//onLeave的执行
-				if(opts.onLeave){
-					opts.onLeave(index)
+				if(opt.onLeave){
+					opt.onLeave(index)
 				}
 				var moveCallback = function(){
 					moving = false;
 					index = num;
 					//afterLoad的执行
-					if(opts.afterLoad){
-						opts.afterLoad(index);
+					if(opt.afterLoad){
+						opt.afterLoad(index);
 					}					
 				}
-				if(!opts.horizontal){
-					selector.animate({top:-num*pageH},opts.scrollingSpeed,opts.method,moveCallback);		
+				if(!opt.horizontal){
+					selector.animate({top:-num*pageH},opt.speed,opt.method,moveCallback);		
 				}else{
-					selector.animate({left:-num*pageW},opts.scrollingSpeed,opts.method,moveCallback);
+					selector.animate({left:-num*pageW},opt.speed,opt.method,moveCallback);
 				}				
 			}
 			var mousewheelHandler = function(event){
@@ -190,21 +211,31 @@
 				selector.find(".section").addClass("pull-left").css({width:(100/size).toFixed(2)+"%"});
 			}
 			selector.addClass("sectionWrap");
-			if(opts.horizontal){
+			if(opt.horizontal){
 				initHorizontal();
 			}
-			if(opts.navigation){
+			if(opt.navigation){
 				setNavbar();
 			}
 			$(document).on("mousewheel DOMMouseScroll",mousewheelHandler);
-			if(opts.keyboard){
+			if(opt.keyboard){
 				$(document).on("keyup",keyboardHandler);
 			}
-			if(opts.mobile){
+			if(opt.mobile){
 				$(document).on("touchstart",touchstartHandler);
 				$(document).on("touchmove",touchmoveHandler);
 				$(document).on("touchend",touchendHandler);
 			}
+			var resize;
+			$(window).on("resize",function(){
+				if(resize){clearTimeout(resize);}
+				resize = setTimeout(function(){
+					 pageH = $("body").height();
+					 pageW = $("body").width();
+					 goto(index);
+				},500)
+
+			})
 
 		})
 	}
