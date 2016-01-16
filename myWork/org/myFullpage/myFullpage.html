@@ -19,23 +19,12 @@
 		</div>
 		<script>
 			$(document).ready(function(){
-				// var fullpage = new Fullpage("fullpage",{
-				// 	continuousVertical:true,
-				// 	navigation:true,
-				// 	navigationPosition:"right",
-				// 	onLeave:function(index){
-				// 		//alert(index);
-				// 	},
-				// 	afterLoad:function(index){
-				// 		//alert(index);
-				// 	},
-
-				// });
-				//console.log(fullpage);
-				//console.log($.fn.fullpage)
-		//		$("#fullpage").fullpage();
 				$("#fullpage").fullpage({
-					navigationTooltips:["page1","page2","page3","page4"]
+					navigationTooltips:["page1","page2","page3","page4"],
+					scrollingSpeed:1000,
+					horizontal:false,
+					navigationPosition:"bottom",
+					continuousVertical:true
 				});
 
 			})

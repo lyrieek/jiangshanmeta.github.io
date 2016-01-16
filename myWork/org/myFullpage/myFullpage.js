@@ -8,7 +8,8 @@
 			continuousVertical:false,		//是否在垂直方向上连续
 			keyboard : true,				//是否支持键盘上下键切换
 			mobile : true,					//是否支持移动端的touch事件 //如果设定为false，则在手机上无法正常使用
-			method : "swing"		
+			method : "swing",				//jQuery动画切换效果，然而默认的只有linear 和swing
+			horizontal : false		
 		}
 		//todu 导航条的文字显示
 		//手机事件的封装
@@ -16,7 +17,8 @@
 		return this.each(function(){
 			var selector = $(this);
 			var size = selector.find(".section").size();
-			var height = $("body").height();
+			var pageH = $("body").height();
+			var pageW = $("body").width();
 			var index = 0;
 			var direction ;
 			var touchstartY;
@@ -24,14 +26,24 @@
 			var navigationWrap;
 			var moving = false;
 			var navigationTooltipWrap;
-			var pageW = $("body").width();
+			//导航条有关设置
 			var setNavbar = function(){
 			    navigationWrap = $("<div class='navigationWrap '></div>");
-				if(opts.navigationPosition=="right"){
-					navigationWrap.addClass("right-nav");
-				}else{
-					navigationWrap.addClass("left-nav");
+			    var navClass = "";
+				switch(opts.navigationPosition){
+					case "right":
+						navClass = "right-nav vertical-nav";
+						break;
+					case "left":
+						navClass = "left-nav vertical-nav";
+						break;
+					case "bottom":
+						navClass = "bottom-nav horizontal-nav";	
+						break;
+					default:
+						navClass = "right-nav vertical-nav";										
 				}
+				navigationWrap.addClass(navClass);
 				var navHTML = "";
 				var template = "<div class='nav {isActive}' data-index='{i}'></div>";
 				for(var i =0;i<size;i++){
@@ -43,8 +55,14 @@
 					var index = $(this).data("index");
 					goto(index);
 				});	
+				//导航条tooltip设置
 				if($.type(opts.navigationTooltips).toLowerCase() == "array"){
 					navigationTooltipWrap = $("<div class='navigationTooltipWrap translataY50'></div>");
+					if(opts.navigationPosition =="right" || opts.navigationPosition =="left"){
+						navigationTooltipWrap.addClass("translataY50");
+					}else{
+						navigationTooltipWrap.addClass("translataX50");
+					}
 					$('body').append(navigationTooltipWrap);
 
 					navigationWrap.delegate(".nav","mouseover mouseenter",function(event){
@@ -57,11 +75,21 @@
 						var centerY = y+w/2;
 						var text = opts.navigationTooltips[index];
 						navigationTooltipWrap.text(text);
-						if(navigationWrap.hasClass("right-nav")){
-							navigationTooltipWrap.css({right:(pageW-centerX+15),top:(centerY)})
-						}else if(navigationWrap.hasClass("left-nav")){
-							navigationTooltipWrap.css({left:(centerX+15),top:(centerY)})
+		
+						switch(opts.navigationPosition){
+							case "right":
+								navigationTooltipWrap.css({right:(pageW-centerX+15),top:(centerY)})
+								break;
+							case "left":
+								navigationTooltipWrap.css({left:(centerX+15),top:(centerY)})
+								break;
+							case "bottom":
+								navigationTooltipWrap.css({bottom:(pageH-centerY+15),left:(centerX)})
+								break;
+							default:
+								navigationTooltipWrap.css({right:(pageW-centerX+15),top:(centerY)})								
 						}
+
 						if(navigationTooltipWrap.is(":animated")){
 							navigationTooltipWrap.stop(true,true);
 						}
@@ -70,11 +98,9 @@
 					navigationWrap.delegate(".nav","mouseout mouseleave",function(event){
 						navigationTooltipWrap.fadeOut("200");
 					})
-
-
-
 				}
 			}
+			//goto函数负责对要进行的页码进行预处理
 			var goto = function(num){
 				if(num<0){
 					if(opts.continuousVertical){
@@ -92,21 +118,29 @@
 					}
 				}					
 			}
+			//moveTo函数负责真正的运动
 			var moveTo = function(num){
 				if(opts.navigation){
 					activeNav(num);
 				}
 				moving = true;
+				//onLeave的执行
 				if(opts.onLeave){
 					opts.onLeave(index)
 				}
-				selector.animate({top:-num*height},opts.scrollingSpeed,opts.method,function(){
+				var moveCallback = function(){
 					moving = false;
 					index = num;
+					//afterLoad的执行
 					if(opts.afterLoad){
 						opts.afterLoad(index);
-					}
-				})						
+					}					
+				}
+				if(!opts.horizontal){
+					selector.animate({top:-num*pageH},opts.scrollingSpeed,opts.method,moveCallback);		
+				}else{
+					selector.animate({left:-num*pageW},opts.scrollingSpeed,opts.method,moveCallback);
+				}				
 			}
 			var mousewheelHandler = function(event){
 				if(moving){return;}
@@ -115,8 +149,10 @@
 			}
 			var keyboardHandler = function(event){
 				if(moving){return;}
-				if(event.which != 38 && event.which != 40){return;}
-				if(event.which == 38){
+				//in_array
+				var which = event.which;
+				if(!in_array(which,[37,38,39,40])){return;}
+				if(in_array(which,[37,38])){
 					direction = -1;
 				}else{
 					direction = 1;
@@ -149,7 +185,14 @@
 				}
 				 goByDirection();
 			}
+			var initHorizontal = function(){
+				selector.css({width:size*100+"%"});
+				selector.find(".section").addClass("pull-left").css({width:(100/size).toFixed(2)+"%"});
+			}
 			selector.addClass("sectionWrap");
+			if(opts.horizontal){
+				initHorizontal();
+			}
 			if(opts.navigation){
 				setNavbar();
 			}

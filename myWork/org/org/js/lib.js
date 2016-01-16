@@ -13,3 +13,24 @@ if (!String.prototype.trim) {
         return this.replace(/^\s*(\S*(?:\s+\S+)*)\s*$/, "$1");
     };
 }
+//http://phpjs.org/functions/in_array/
+function in_array(needle, haystack, argStrict) {
+
+  var key = '',
+    strict = !! argStrict;
+  if (strict) {
+    for (key in haystack) {
+      if (haystack[key] === needle) {
+        return true;
+      }
+    }
+  } else {
+    for (key in haystack) {
+      if (haystack[key] == needle) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
