@@ -5,7 +5,7 @@
 			navigation:true,	  //是否有导航
 			navpos:"right",	//导航的位置
 		//	navigationTooltips:["section1"],//导航的内容
-			continuousVertical:false,		//是否在垂直方向上连续
+			continuous:false,		//是否在垂直方向上连续
 			keyboard : true,				//是否支持键盘上下键切换
 			mobile : true,					//是否支持移动端的touch事件 //如果设定为false，则在手机上无法正常使用
 			method : "swing",				//jQuery动画切换效果，然而默认的只有linear 和swing
@@ -115,7 +115,7 @@
 			//goto函数负责对要进行的页码进行预处理
 			var goto = function(num){
 				if(num<0){
-					if(opt.continuousVertical){
+					if(opt.continuous){
 						moveTo(size-1);
 					}
 					return;
@@ -125,7 +125,7 @@
 					return;
 				}
 				if(num==size){
-					if(opt.continuousVertical){
+					if(opt.continuous){
 						moveTo(0);
 					}
 				}					
