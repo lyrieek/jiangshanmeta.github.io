@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1.0">
 		<title>我的fullpage插件</title>
 		<link rel="stylesheet" href="myFullpage.css">
+		<link rel="stylesheet" href="animate.css">
 		<script src="../org/js/jquery-1.11.3.js"></script>
 		<script src="../org/js/lib.js"></script>
 		<script src="myTouch.js"></script>
@@ -28,10 +29,11 @@
 	</head>
 	<body>
 		<div id="fullpage" data-speed="1000"  data-navpos="right">
-			<section class="section section-bg section-bg1 relative" >
+			<section class="section section-bg section-bg1 relative active" >
 				<div class="center-xy">
 					<h1 class="text-center text-white head">Fullpage</h1>
 					<h2 class="text-center text-white para">Do you want a boyfriend?</h2>
+
 				</div>
 			</section>
 			<section class="section section-bg section-bg2 relative" >
@@ -71,12 +73,13 @@
 
 					},
 					afterLoad :function(index){
-
+						
 					}
 				});
 
 			})
 			console.log("contact 540118044@qq.com");
+
 		</script>
 	</body>
 </html>
