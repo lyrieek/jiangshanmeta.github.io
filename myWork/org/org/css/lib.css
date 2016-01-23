@@ -40,19 +40,86 @@
 .text-center {
   text-align: center;
 }
-
 .center-y-table {
   display: table-cell;
   vertical-align: middle;
 }
-
 /* 基本布局  */
-.inline-block {display: inline-block;}
-.ab{position:absolute;}
-.relative{position:relative;}
-.fixed{position:fixed;}
-.block{display:block;}
-.pull-left{float:left;}
-.pull-right{float:right;}
-.dis-table{display:table;}
-.vis-hidden{visibility:hidden;}
+.inline-block {
+  display: inline-block;
+}
+.ab {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+.fixed {
+  position: fixed;
+}
+.block {
+  display: block;
+}
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+.dis-table {
+  display: table;
+}
+.vis-hidden {
+  visibility: hidden;
+}
+/* 我写的公司代码里的 web app的 蓝色标题的条  */
+.leftbar:before {
+  content: " ";
+  width: 4px;
+  height: 14px;
+  display: inline-block;
+  background: #039be5;
+  position: relative;
+  margin-right: 10px;
+}
+/*  公司代码里的sidenav  */
+.sidenav-wrap {
+  margin-bottom: 30px;
+  border-width: 1px 1px 0 1px;
+  border-style: solid;
+  border-color: #eeeeee;
+}
+.sidenav-wrap a {
+  color: #333;
+}
+.sidenav-wrap a:hover,
+.sidenav-wrap a.active {
+  text-decoration: none;
+  color: #03A9F4;
+}
+.sidenav-wrap .sidenav-title {
+  font-size: 16px;
+  line-height: 40px;
+  height: 40px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f5f5f5;
+  padding-left: 25px;
+  padding-right: 15px;
+}
+.sidenav-wrap .sidenav-title.sidenav-head {
+  padding-left: 15px;
+}
+.sidenav-wrap .sidenav-folder {
+  border-bottom: 1px solid #f5f5f5;
+}
+.sidenav-wrap .sidenav-folder .title {
+  height: 30px;
+  line-height: 30px;
+  padding-left: 30px;
+}
+/* 单行文字超出变成点 */
+.one-line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
