@@ -11,7 +11,7 @@
 			method : "swing",				//jQuery动画切换效果，然而默认的只有linear 和swing
 			horizontal : false		
 		}
-		//手机事件的封装
+
 		var opts = $.extend({},defaults,opts || {});
 		return this.each(function(){
 			var selector = $(this);
@@ -33,8 +33,7 @@
 			var pageW = $("body").width();
 			var index = 0;
 			var direction ;
-			var touchstartY;
-			var touchendY;
+	
 			var navigationWrap;
 			var moving = false;
 			var navigationTooltipWrap;
@@ -181,22 +180,7 @@
 					goto(index - 1);
 				}	
 			}
-			var touchstartHandler = function(event){
-				touchstartY = event.originalEvent.touches[0].clientY;
-			}
-			var touchmoveHandler = function(event){
-				event.preventDefault();
-			}
-			var touchendHandler = function(event){
-				touchendY = event.originalEvent.changedTouches[0].clientY;
-				if(Math.abs(touchstartY-touchendY)<50){return;}
-				if(touchendY < touchstartY ){
-					direction = 1;
-				}else{
-					direction =-1;
-				}
-				 goByDirection();
-			}
+
 			var initHorizontal = function(){
 				selector.css({width:size*100+"%"});
 				selector.find(".section").addClass("pull-left").css({width:(100/size).toFixed(2)+"%"});
@@ -213,9 +197,6 @@
 				$(document).on("keyup",keyboardHandler);
 			}
 			if(opt.mobile){
-		//		$(document).on("touchstart",touchstartHandler);
-			//	$(document).on("touchmove",touchmoveHandler);
-			//	$(document).on("touchend",touchendHandler);
 				$(document).on("swipeDown swipeRight",function(event){
 					direction = -1;
 					goByDirection();
