@@ -1,16 +1,11 @@
 (function($){
-event.originalEvent.touches[0].clientY;
-
-
-
-event.originalEvent.changedTouches[0].clientY;
 var startTouchX;
 var startTouchY;
 var endTouchX;
 var endTouchY;
 function touchstartHandler(event){
 	startTouchX = event.originalEvent.touches[0].clientX;
-	startTouchX = event.originalEvent.touches[0].clientY;
+	startTouchY = event.originalEvent.touches[0].clientY;
 }
 function touchmoveHandler(event){
 	event.preventDefault();
@@ -21,25 +16,25 @@ function touchendhandler(event){
 	var deltaY = endTouchY - startTouchY;
 	var deltaX = endTouchX -startTouchX;
 	var absY = Math.abs(deltaY);
-	var absX = Math.abs(delatX);
+	var absX = Math.abs(deltaX);
 	if(absX>50 || absY>50){
-		event.target.trigger("swipe");
-	}
-	if(absX>absY){
+		if(absX>absY){
 		//水平
 		if(deltaX == absX){
-				event.target.trigger("swipeRight");
+				$(event.target).trigger("swipeRight");
 		}else{
-			event.target.trigger("swipeLeft");
+			$(event.target).trigger("swipeLeft");
 		}
 	}else{
 		//垂直
 		if(deltaY==absY){
-			event.target.trigger("swipeDown");
+			$(event.target).trigger("swipeDown");
 		}else{
-			event.target.trigger("swipeUp");
+			$(event.target).trigger("swipeUp");
 		}
 	}
+	}
+
 }
 $(window).on("touchstart",touchstartHandler);
 $(window).on("touchmove",touchmoveHandler);

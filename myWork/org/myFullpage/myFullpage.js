@@ -216,11 +216,11 @@
 		//		$(document).on("touchstart",touchstartHandler);
 			//	$(document).on("touchmove",touchmoveHandler);
 			//	$(document).on("touchend",touchendHandler);
-				$(document).on("swipeDown",function(event){
+				$(document).on("swipeDown swipeRight",function(event){
 					direction = -1;
 					goByDirection();
 				})
-				$(document).on("swipeUp",function(event){
+				$(document).on("swipeUp  swipeLeft",function(event){
 					direction = 1;
 					goByDirection();
 				})			
