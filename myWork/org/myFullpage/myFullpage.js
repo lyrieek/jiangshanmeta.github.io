@@ -213,9 +213,17 @@
 				$(document).on("keyup",keyboardHandler);
 			}
 			if(opt.mobile){
-				$(document).on("touchstart",touchstartHandler);
-				$(document).on("touchmove",touchmoveHandler);
-				$(document).on("touchend",touchendHandler);
+		//		$(document).on("touchstart",touchstartHandler);
+			//	$(document).on("touchmove",touchmoveHandler);
+			//	$(document).on("touchend",touchendHandler);
+				$(document).on("swipeDown",function(event){
+					direction = -1;
+					goByDirection();
+				})
+				$(document).on("swipeUp",function(event){
+					direction = 1;
+					goByDirection();
+				})			
 			}
 			var resize;
 			$(window).on("resize",function(){
