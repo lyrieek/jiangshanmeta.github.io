@@ -197,14 +197,22 @@
 				$(document).on("keyup",keyboardHandler);
 			}
 			if(opt.mobile){
-				$(document).on("swipeDown swipeRight",function(event){
+				// $(document).on("swipeDown swipeRight",function(event){
+				// 	direction = -1;
+				// 	goByDirection();
+				// })
+				// $(document).on("swipeUp  swipeLeft",function(event){
+				// 	direction = 1;
+				// 	goByDirection();
+				// })		
+				$(document).hammer().on("swipedown swiperight",function(){
 					direction = -1;
 					goByDirection();
 				})
-				$(document).on("swipeUp  swipeLeft",function(event){
+				$(document).hammer().on("swipeup swipeleft",function(){
 					direction = 1;
 					goByDirection();
-				})			
+				})
 			}
 			var resize;
 			$(window).on("resize",function(){
