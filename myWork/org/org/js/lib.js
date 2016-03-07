@@ -15,7 +15,6 @@ if (!String.prototype.trim) {
 }
 //http://phpjs.org/functions/in_array/
 function in_array(needle, haystack, argStrict) {
-
   var key = '',
     strict = !! argStrict;
   if (strict) {
@@ -31,6 +30,228 @@ function in_array(needle, haystack, argStrict) {
       }
     }
   }
-
   return false;
+}
+//require jquery and jquery-blockui
+function ajax_post(opts){
+    var dft_opt = {
+        m: 'index',
+        a: 'index',
+        plus: '',
+        data: {},
+        callback: function(json){
+           console.log(json);
+        }
+    };
+    opts = $.extend({},dft_opt,opts);
+    $.blockUI();
+    var url = req_url_template.str_supplant({ctrller:opts.m,action:opts.a})+'/'+opts.plus;
+    $.ajax(
+        {type: "POST",
+        url: url,
+        dataType:"json",
+        data: opts.data}
+    ).done(function(json) {
+        opts.callback(json);
+    }).fail(function() {
+        alert( "error" );
+    }).always(function() {
+        $.unblockUI();
+    });
+}
+
+function ajax_get(opts){
+    var dft_opt = {
+        m: 'index',
+        a: 'index',
+        id: '',
+        data: {},
+        callback: function(json){
+            console.log(json);
+        }
+    };
+    opts = $.extend({},dft_opt,opts);
+    $.blockUI();
+    var url = req_url_template.str_supplant({ctrller:opts.m,action:opts.a});
+    url = url + '/'+opts.id;
+    $.each(opts.data,function(k,v){
+        url = url + '&'+k+'='+v;
+    });
+    $.ajax(
+        {type: "GET",
+        url: url,
+        dataType:"json"}
+    ).done(function(json) {
+        opts.callback(json);
+    }).fail(function() {
+        alert( "error" );
+    }).always(function() {
+        $.unblockUI();
+    });
+}
+
+function typeOf(value) {
+    var s = typeof value;
+    if (s === 'object') {
+        if (value) {
+            if (Object.prototype.toString.call(value) == '[object Array]') {
+                s = 'array';
+            }
+        } else {
+            s = 'null';
+        }
+    }
+    return s;
+}
+
+
+//form 序列化 https://github.com/macek/jquery-serialize-object
+(function(root, factory) {
+
+  // AMD
+  if (typeof define === "function" && define.amd) {
+    define(["exports", "jquery"], function(exports, $) {
+      return factory(exports, $);
+    });
+  }
+
+  // CommonJS
+  else if (typeof exports !== "undefined") {
+    var $ = require("jquery");
+    factory(exports, $);
+  }
+
+  // Browser
+  else {
+    factory(root, (root.jQuery || root.Zepto || root.ender || root.$));
+  }
+
+}(this, function(exports, $) {
+
+  var patterns = {
+    validate: /^[a-z_][a-z0-9_]*(?:\[(?:\d*|[a-z0-9_]+)\])*$/i,
+    key:      /[a-z0-9_]+|(?=\[\])/gi,
+    push:     /^$/,
+    fixed:    /^\d+$/,
+    named:    /^[a-z0-9_]+$/i
+  };
+
+  function FormSerializer(helper, $form) {
+
+    // private variables
+    var data     = {},
+        pushes   = {};
+
+    // private API
+    function build(base, key, value) {
+      base[key] = value;
+      return base;
+    }
+
+    function makeObject(root, value) {
+
+      var keys = root.match(patterns.key), k;
+
+      // nest, nest, ..., nest
+      while ((k = keys.pop()) !== undefined) {
+        // foo[]
+        if (patterns.push.test(k)) {
+          var idx = incrementPush(root.replace(/\[\]$/, ''));
+          value = build([], idx, value);
+        }
+
+        // foo[n]
+        else if (patterns.fixed.test(k)) {
+          value = build([], k, value);
+        }
+
+        // foo; foo[bar]
+        else if (patterns.named.test(k)) {
+          value = build({}, k, value);
+        }
+      }
+
+      return value;
+    }
+
+    function incrementPush(key) {
+      if (pushes[key] === undefined) {
+        pushes[key] = 0;
+      }
+      return pushes[key]++;
+    }
+
+    function encode(pair) {
+      switch ($('[name="' + pair.name + '"]', $form).attr("type")) {
+        case "checkbox":
+          return pair.value === "on" ? true : pair.value;
+        default:
+          return pair.value;
+      }
+    }
+
+    function addPair(pair) {
+      if (!patterns.validate.test(pair.name)) return this;
+      var obj = makeObject(pair.name, encode(pair));
+      data = helper.extend(true, data, obj);
+      return this;
+    }
+
+    function addPairs(pairs) {
+      if (!helper.isArray(pairs)) {
+        throw new Error("formSerializer.addPairs expects an Array");
+      }
+      for (var i=0, len=pairs.length; i<len; i++) {
+        this.addPair(pairs[i]);
+      }
+      return this;
+    }
+
+    function serialize() {
+      return data;
+    }
+
+    function serializeJSON() {
+      return JSON.stringify(serialize());
+    }
+
+    // public API
+    this.addPair = addPair;
+    this.addPairs = addPairs;
+    this.serialize = serialize;
+    this.serializeJSON = serializeJSON;
+  }
+
+  FormSerializer.patterns = patterns;
+
+  FormSerializer.serializeObject = function serializeObject() {
+    return new FormSerializer($, this).
+      addPairs(this.serializeArray()).
+      serialize();
+  };
+
+  FormSerializer.serializeJSON = function serializeJSON() {
+    return new FormSerializer($, this).
+      addPairs(this.serializeArray()).
+      serializeJSON();
+  };
+
+  if (typeof $.fn !== "undefined") {
+    $.fn.serializeObject = FormSerializer.serializeObject;
+    $.fn.serializeJSON   = FormSerializer.serializeJSON;
+  }
+
+  exports.FormSerializer = FormSerializer;
+
+  return FormSerializer;
+}));
+
+function refresh(){
+    window.location.reload(true);
+}
+function gotoUrl(url){
+    window.location.href = url;
+}
+function gotoPage(m,a){
+    window.location.href = req_url_template.str_supplant({ctrller:m,action:a});;
 }
