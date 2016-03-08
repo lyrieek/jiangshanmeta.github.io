@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>test</title>
+		<script src="jquery-1.11.3.js"></script>
+		<script src="jquery.blockUI.min.js"></script>
+		<script src="lib.js"></script>
+		<link rel="stylesheet" href="../css/lib.css">
+	</head>
+	<body >
+
+		<button type="button" onclick="testBlockUI()">dianji</button>
+		<script>
+			function testBlockUI(event){
+				$.blockUI({overlayCSS:{backgroundColor:'#f00'}});
+				setTimeout(function(){
+					$.unblockUI();
+				},2000)
+
+			}
+			function unblock(){
+				
+			}
+
+		</script>
+		<br>
+		tab切换示例
+		<div style ="width:500px;">
+			<ul class="nav nav-underline nav-justified " id="nav-book">
+				<li id="nav-book-page1" class="active">
+					<a onclick="tab_load('book','page1')">page1</a>
+				</li>
+				<li id="nav-book-page2" >
+					<a onclick="tab_load('book','page2')">page2</a>
+				</li>
+			</ul>
+			<div class="info-book" id="info-book-page1">
+				page1
+			</div>
+			<div class="info-book hidden" id="info-book-page2">
+				page2333
+			</div>
+		</div>
+	</body>
+</html>

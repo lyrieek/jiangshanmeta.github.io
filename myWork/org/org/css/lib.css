@@ -72,6 +72,20 @@
 .vis-hidden {
   visibility: hidden;
 }
+.clearfix:before,
+.clearfix:after,
+.nav:before,
+.nav:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after,
+.nav:after {
+  clear: both;
+}
+.hidden {
+  display: none !important;
+}
 /* 我写的公司代码里的 web app的 蓝色标题的条  */
 .leftbar:before {
   content: " ";
@@ -122,4 +136,77 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.nav {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.nav > li {
+  position: relative;
+  display: block;
+}
+.nav > li > a {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+  text-decoration: none;
+  background-color: #eeeeee;
+}
+.nav > li.disabled > a {
+  color: #777777;
+}
+.nav > li.disabled > a:hover,
+.nav > li.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
+}
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+  background-color: #eeeeee;
+  border-color: #337ab7;
+}
+.nav > li > a > img {
+  max-width: none;
+}
+.nav-justified {
+  width: 100%;
+}
+.nav-justified > li {
+  float: none;
+}
+.nav-justified > li > a {
+  text-align: center;
+  margin-bottom: 5px;
+}
+.nav-justified > .dropdown .dropdown-menu {
+  top: auto;
+  left: auto;
+}
+.nav-justified > li {
+  display: table-cell;
+  width: 1%;
+}
+.nav-justified > li > a {
+  margin-bottom: 0;
+}
+.nav-underline > li {
+  border-bottom: 2px solid #CCC;
+}
+.nav-underline > li > a {
+  color: #999;
+  font-size: 16px;
+}
+.nav-underline > li + li {
+  margin-left: 2px;
+}
+.nav-underline > li.active {
+  border-bottom: 2px solid #03A9F4;
+  color: #03A9F4;
 }
