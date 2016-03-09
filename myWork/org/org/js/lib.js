@@ -255,147 +255,67 @@ function gotoUrl(url){
 function gotoPage(m,a){
     window.location.href = req_url_template.str_supplant({ctrller:m,action:a});;
 }
-// var alertPlug = {
-//     modal : function(opts){
-//         var dft_opt = {
-//             m: 'index',
-//             a: 'index',
-//             id: '',
-//             data: {},
-//         };
-//         opts = $.extend({},dft_opt,opts);
-//         $.blockUI({ css: {
-//                 border: 'none',
-//                 padding: '15px',
-//                 backgroundColor: '#000',
-//                 'border-radius': '5px',
-//                 opacity: .7,
-//                 color: '#fff'
-//             },
-//             message:  '<h3>请稍候</h3>'  });
-//         var url = req_url_template.str_supplant({ctrller:opts.m,action:opts.a});
-//         url = url + '/'+opts.id;
-//         $.each(opts.data,function(k,v){
-//             url = url + '&'+k+'='+v;
-//         });
-//         $("#common_modal").html('').load(url,function(){
-//             $.unblockUI();
-//             $(this).modal('show').css({
-//                 'top': function () { //vertical centering
-//                     return (($(this).height() - $('#common_modal .modal-dialog').height())/ 2);
-//                 }
-//             });
-//         });
-//     },
-//     confirmCon : function(domId){
+var alertPlug = {
+  //modal 先留着吧
+    modal : function(opts){
+        var dft_opt = {
+            m: 'index',
+            a: 'index',
+            id: '',
+            data: {},
+        };
+        opts = $.extend({},dft_opt,opts);
+        $.blockUI({ css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#000',
+                'border-radius': '5px',
+                opacity: .7,
+                color: '#fff'
+            },
+            message:  '<h3>请稍候</h3>'  });
+        var url = req_url_template.str_supplant({ctrller:opts.m,action:opts.a});
+        url = url + '/'+opts.id;
+        $.each(opts.data,function(k,v){
+            url = url + '&'+k+'='+v;
+        });
+        $("#common_modal").html('').load(url,function(){
+            $.unblockUI();
+            $(this).modal('show').css({
+                'top': function () { //vertical centering
+                    return (($(this).height() - $('#common_modal .modal-dialog').height())/ 2);
+                }
+            });
+        });
+    },
 
-//             $("#"+domId).modal('show').css({
-//                 'top': function () { //vertical centering
-//                     return (($(this).height() - $('#'+domId+' .modal-dialog').height())/ 2);
-//                 }
-//             });
-//         // }
-//     },
-//     showPic : function(picHolderDom,imgDom){
-//         var imgWidth = $(imgDom).width();
-//         var imgHeight = $(imgDom).height();
-//         var realHeight = $(window).width()/imgWidth*imgHeight;
-
-//         $.blockUI({
-//             message: $(imgDom),
-//             css: {
-//                 border: 'none',
-//                 left: 0,
-//                 top: ($(window).height() -realHeight)/2 + 'px',
-//                 height:realHeight + 'px',
-//                 width: '100%' ,
-//                 fadeIn:0
-
-//             }
-//         });
-//         $(".blockUI "+imgDom).one('click',function(){
-//             $.unblockUI();
-//         })
-
-//     },
-//     alert: function(msg,type){
-
-//         var _bt_html = '';
-//         var title = '';
-//         var pop_title_style = '';
-//         if(type == 'c'){
-//             //confirm TODO
-//         }else if(type == 's'){
-//             //成功
-//             title = "成功了";
-//             pop_title_style = 'pop_title_blue';
-//             _bt_html = '<button type="button" onclick="alertPlug.close();" class="btn btn-success">确　定</button>';
-//         } else {
-//             //error
-//             title = "出错了";
-//             pop_title_style = 'pop_title_red';
-//             _bt_html = '<button type="button" onclick="alertPlug.close();" class="btn btn-danger">确　定</button>';
-//         }
-
-//             var _html = '<div class="modal" id="popAlertbox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
-//   '<div class="modal-dialog"><div class="modal-content"><div class="modal-header">'+
-//         '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-//         '<h4 class="modal-title" id="myModalLabel">{title}</h4>'+
-//       '</div><div class="modal-body">{msg}</div>'+
-//       '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button></div>'+
-//     '</div></div></div>';
-//             _html = _html.str_supplant({pop_title_style:pop_title_style,title:title,msg:msg,_bt_html:_bt_html});
-
-//         $("#popAlertbox").remove();
-//         $('.page').append(_html);
-
-//             $('#popAlertbox').modal('show').css({
-//                 'top': function () { //vertical centering
-//                     return (($(this).height() - $('#popAlertbox .modal-dialog').height())/ 2);
-//                 }
-//             });
-
-//     },
-//     inputs: function(msg,type){
-
-//         var _bt_html = '';
-//         var title = '';
-//         var pop_title_style = '';
-//         if(type == 'c'){
-//             //confirm TODO
-//         }else if(type == 's'){
-//             //成功
-//             title = "成功了";
-//             pop_title_style = 'pop_title_blue';
-//             _bt_html = '<button type="button" onclick="alertPlug.close();" class="btn btn-success">确　定</button>';
-//         } else {
-
-//             title = "出错了";
-//             pop_title_style = 'pop_title_red';
-//             _bt_html = '<button type="button" onclick="alertPlug.close();" class="btn btn-danger">确　定</button>';
-//         }
-//             var _html = '<div class="modal" id="popAlertbox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
-//   '<div class="modal-dialog"><div class="modal-content"><div class="modal-header">'+
-//         '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-//         '<h4 class="modal-title" id="myModalLabel">{title}</h4>'+
-//       '</div><div class="modal-body">{msg}</div>'+
-//       '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button></div>'+
-//     '</div></div></div>';
-//             _html = _html.str_supplant({pop_title_style:pop_title_style,title:title,msg:msg,_bt_html:_bt_html});
-//         // }
-
-//         $("#popAlertbox").remove();
-//         $('.page').append(_html);
-//             $('#popAlertbox').modal('show').css({
-//                 'top': function () { //vertical centering
-//                     return (($(this).height() - $('#popAlertbox .modal-dialog').height())/ 2);
-//                 }
-//             });
-//     },
-//     close:function(){
-//         $.unblockUI();
-//     }
-// }
+    alert: function(msg,type){
+        if(type == 's'){
+            title = "成功了";
+        } else {
+            title = "出错了";
+        }
+        var _html = '<div class="modal" id="popAlertbox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+  '<div class="modal-dialog"><div class="modal-content"><div class="modal-header">'+
+        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+        '<h4 class="modal-title" id="myModalLabel">{title}</h4>'+
+      '</div><div class="modal-body">{msg}</div>'+
+      '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button></div>'+
+    '</div></div></div>';
+        _html = _html.str_supplant({title:title,msg:msg});
+        $("#popAlertbox").remove();
+        $('.page').append(_html);
+        //based on bootstrap modal.js
+        $('#popAlertbox').modal('show').css({
+            'top': function () { //vertical centering
+                return (($(this).height() - $('#popAlertbox .modal-dialog').outerHeight(true))/ 2);
+            }
+        });
+    },
+    close:function(){
+        $.unblockUI();
+    }
+}
 function tab_load(module,menu){
     $("#nav-"+module+" li").removeClass("active");
     $("#nav-"+module+"-"+menu).addClass("active");

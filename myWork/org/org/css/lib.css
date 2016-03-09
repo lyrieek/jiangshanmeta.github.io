@@ -1,3 +1,40 @@
+/*
+
+To get this list of colors inject jQuery at http://www.google.com/design/spec/style/color.html#color-color-palette
+
+Then, run this script to get the list.
+
+
+(function() {
+  var colors = {}, main = {};
+  $(".color-group").each(function() {
+    var color = $(this).find(".name").text().trim().toLowerCase().replace(" ", "-");
+    colors[color] = {};
+
+    $(this).find(".color").not(".main-color").each(function() {
+      var shade = $(this).find(".shade").text().trim(),
+          hex   = $(this).find(".hex").text().trim();
+
+      colors[color][shade] = hex;
+    });
+    main[color] = color + "-" + $(this).find(".main-color .shade").text().trim();
+
+  });
+  var LESS = "";
+  $.each(colors, function(name, shades) {
+    LESS += "\n\n";
+    $.each(shades, function(shade, hex) {
+      LESS += "@" + name + "-" + shade + ": " + hex + ";\n";
+    });
+    if (main[name]) {
+      LESS += "@" + name + ": " + main[name] + ";\n";
+    }
+  });
+  console.log(LESS);
+})();
+
+
+*/
 /*  居中  */
 .center-x-ab {
   position: absolute;
@@ -72,20 +109,6 @@
 .vis-hidden {
   visibility: hidden;
 }
-.clearfix:before,
-.clearfix:after,
-.nav:before,
-.nav:after {
-  content: " ";
-  display: table;
-}
-.clearfix:after,
-.nav:after {
-  clear: both;
-}
-.hidden {
-  display: none !important;
-}
 /* 我写的公司代码里的 web app的 蓝色标题的条  */
 .leftbar:before {
   content: " ";
@@ -137,65 +160,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.nav {
-  margin-bottom: 0;
-  padding-left: 0;
-  list-style: none;
-}
-.nav > li {
-  position: relative;
-  display: block;
-}
-.nav > li > a {
-  position: relative;
-  display: block;
-  padding: 10px 15px;
-}
-.nav > li > a:hover,
-.nav > li > a:focus {
-  text-decoration: none;
-  background-color: #eeeeee;
-}
-.nav > li.disabled > a {
-  color: #777777;
-}
-.nav > li.disabled > a:hover,
-.nav > li.disabled > a:focus {
-  color: #777777;
-  text-decoration: none;
-  background-color: transparent;
-  cursor: not-allowed;
-}
-.nav .open > a,
-.nav .open > a:hover,
-.nav .open > a:focus {
-  background-color: #eeeeee;
-  border-color: #337ab7;
-}
-.nav > li > a > img {
-  max-width: none;
-}
-.nav-justified {
-  width: 100%;
-}
-.nav-justified > li {
-  float: none;
-}
-.nav-justified > li > a {
-  text-align: center;
-  margin-bottom: 5px;
-}
-.nav-justified > .dropdown .dropdown-menu {
-  top: auto;
-  left: auto;
-}
-.nav-justified > li {
-  display: table-cell;
-  width: 1%;
-}
-.nav-justified > li > a {
-  margin-bottom: 0;
-}
 .nav-underline > li {
   border-bottom: 2px solid #CCC;
 }
@@ -209,4 +173,10 @@
 .nav-underline > li.active {
   border-bottom: 2px solid #03A9F4;
   color: #03A9F4;
+}
+#popAlertbox {
+  z-index: 5000;
+}
+#popAlertbox .modal-content {
+  border: 1px solid #bdbdbd;
 }

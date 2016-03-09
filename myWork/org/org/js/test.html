@@ -5,10 +5,13 @@
 		<title>test</title>
 		<script src="jquery-1.11.3.js"></script>
 		<script src="jquery.blockUI.min.js"></script>
+		<script src="bootstrap.min.js"></script>
 		<script src="lib.js"></script>
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/font-awesome.min.css">
 		<link rel="stylesheet" href="../css/lib.css">
 	</head>
-	<body >
+	<body class="page">
 
 		<button type="button" onclick="testBlockUI()">dianji</button>
 		<script>
@@ -25,11 +28,11 @@
 
 		</script>
 		<br>
-		tab切换示例
+		tab切换示例<i class="fa fa-camera-retro fa-lg"></i>
 		<div style ="width:500px;">
-			<ul class="nav nav-underline nav-justified " id="nav-book">
+			<ul class="nav nav-underline nav-justified " id="nav-book" >
 				<li id="nav-book-page1" class="active">
-					<a onclick="tab_load('book','page1')">page1</a>
+					<a onclick="tab_load('book','page1')">page111111111111111</a>
 				</li>
 				<li id="nav-book-page2" >
 					<a onclick="tab_load('book','page2')">page2</a>
@@ -42,5 +45,38 @@
 				page2333
 			</div>
 		</div>
+		<button type="button" onclick="alertPlug.alert('aaa')">alert plugin</button>
+		<button type="button" onclick="alertPlug.confirmCon('exampleModal')">alert plugin222</button>
+		<div id="modal-confirm">
+			sss
+
+		</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="control-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Send message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 	</body>
 </html>
