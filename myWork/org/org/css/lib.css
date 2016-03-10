@@ -40,18 +40,14 @@ Then, run this script to get the list.
   position: absolute;
   left: 50%;
   -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
   -ms-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
   transform: translateX(-50%);
 }
 .center-y-ab {
   position: absolute;
   top: 50%;
   -webkit-transform: translateY(-50%);
-  -moz-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
-  -o-transform: translateY(-50%);
   transform: translateY(-50%);
 }
 .center-xy-ab {
@@ -59,9 +55,7 @@ Then, run this script to get the list.
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
 .center-x-block {
@@ -179,4 +173,57 @@ Then, run this script to get the list.
 }
 #popAlertbox .modal-content {
   border: 1px solid #bdbdbd;
+}
+input[type="radio"] ~ .fa-square-o {
+  display: inline-block;
+}
+input[type="radio"] ~ .fa-check-square-o {
+  display: none;
+}
+input[type="radio"]:checked ~ .fa-square-o {
+  display: none;
+}
+input[type="radio"]:checked ~ .fa-check-square-o {
+  display: inline-block;
+}
+input[type="checkbox"] ~ .fa-square-o {
+  display: inline-block;
+}
+input[type="checkbox"] ~ .fa-check-square-o {
+  display: none;
+}
+input[type="checkbox"]:checked ~ .fa-square-o {
+  display: none;
+}
+input[type="checkbox"]:checked ~ .fa-check-square-o {
+  display: inline-block;
+}
+.btn-half-block-holder {
+  display: block;
+}
+.btn-half-block-holder .btn-half-block {
+  float: left;
+  margin: 10px 4%;
+  width: 42%;
+  display: inline-block;
+}
+.btn-half-block-holder:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+body {
+  font-family: Helvetica, Tahoma, Arial, STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", Heiti, "黑体", sans-serif;
+}
+.separator {
+  height: 10px;
+  background-color: #bdbdbd;
+  border-top: 1px solid #9e9e9e;
+  border-bottom: 1px solid #eeeeee;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.separator.no-margin {
+  margin-left: -15px;
+  margin-right: -15px;
 }

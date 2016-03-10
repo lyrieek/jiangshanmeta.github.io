@@ -322,3 +322,14 @@ function tab_load(module,menu){
     $(".info-"+module).addClass("hidden");
     $("#info-"+module+"-"+menu).removeClass("hidden");  
 }
+
+//baseon pageswipe
+function openPhotoSwipe(id,allPic){
+    var gallery = new PhotoSwipe(
+        $(".pswp")[0],
+        PhotoSwipeUI_Default,
+        allPic,
+         {index:id-1,bgOpacity:0.9,shareEl:false,fullscreenEl:false}
+        );
+    gallery.init();
+}

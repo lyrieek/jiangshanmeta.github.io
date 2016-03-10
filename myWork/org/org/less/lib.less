@@ -133,10 +133,51 @@
     }
   }
 }
-
+//用在alertPlug上的，似乎这个样式没什么用
 #popAlertbox{
   z-index: 5000;
   .modal-content{
     border: 1px solid @grey-400;
+  }
+}
+//使用fontawesome美化表单，html结构<label><input><span class="fa fa-square-o"></span><span class="fa fa-check-square-o"></span></label>
+input[type="radio"]~ .fa-square-o {display:inline-block;}
+input[type="radio"]~ .fa-check-square-o  {display:none;}
+input[type="radio"]:checked ~ .fa-square-o{display:none;}
+input[type="radio"]:checked ~ .fa-check-square-o{display:inline-block;}
+input[type="checkbox"]~ .fa-square-o {display:inline-block;}
+input[type="checkbox"]~ .fa-check-square-o  {display:none;}
+input[type="checkbox"]:checked ~ .fa-square-o{display:none;}
+input[type="checkbox"]:checked ~ .fa-check-square-o{display:inline-block;}
+
+.btn-half-block-holder{
+  display: block;
+  .btn-half-block{
+      float:left;
+      margin: 10px 4%;
+      width:42%;
+      display: inline-block;
+  }
+  &:after{
+    content:'';
+    display:block;
+    clear:both;
+  }
+
+}
+body{
+  //中文字体设置
+  font-family: Helvetica, Tahoma, Arial, STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑",  Heiti, "黑体", sans-serif;
+}
+.separator{
+  height:10px;
+  background-color: @grey-400;
+  border-top: 1px solid @grey-500;
+  border-bottom: 1px solid @grey-200;
+  margin-top:10px;
+  margin-bottom:10px;
+  &.no-margin{
+      margin-left: -15px;
+      margin-right: -15px;
   }
 }
