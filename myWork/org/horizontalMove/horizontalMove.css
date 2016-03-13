@@ -1,7 +1,9 @@
 .table-horizontal table{
 	border:1px solid #f3f3f3;
 	border-collapse: collapse;
-	border-spacing: 0;	
+	border-spacing: 0;
+	word-break:keep-all;
+	white-space:nowrap;	
 }
 .table-horizontal th,td{
 	height:48px;
