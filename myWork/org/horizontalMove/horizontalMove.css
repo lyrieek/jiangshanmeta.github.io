@@ -1,0 +1,25 @@
+.table-horizontal table{
+	border:1px solid #f3f3f3;
+	border-collapse: collapse;
+	border-spacing: 0;	
+}
+.table-horizontal th,td{
+	height:48px;
+	border:1px solid #f3f3f3;
+	padding:0 8px;
+}
+/*利用浮动和BFC做两列布局*/
+.table-horizontal-title{
+	float:left;
+}
+.table-horizontal-items{
+	overflow:hidden;
+}
+.table-horizontal-title th,td{
+	text-align:left;
+	font-weight: bold;
+}
+.table-horizontal-items th,td{
+	text-align:center;
+	font-weight: normal;
+}
