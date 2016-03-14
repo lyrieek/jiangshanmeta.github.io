@@ -17,7 +17,7 @@
 			var minX =$(window).width() - selector.width() - selector.offset().left ;
 			var trans_templete = 'all {transDuration} {transTimeFunc} {transDelay}';
 			function touchStartHandler(event){
-				touchStartX = event.originalEvent.touches[0].clientX;
+					touchStartX = event.originalEvent.touches[0].clientX;
 			}
 			function touchMoveHandler(event){
 				touchMoveX = event.originalEvent.changedTouches[0].clientX;
@@ -33,6 +33,8 @@
 						'transform':'translateX(0)',
 						'transition':(trans_templete.str_supplant({'transDuration':opt.transDuration,'transTimeFunc':opt.transTimeFunc,'transDelay':opt.transDelay}))
 					})
+					selector[0].style.transform = 'translateX(0px)';
+					selector.css("transform","translateX(0)")
 					selector.on("transitionend",function(){
 						lastX = 0;
 						selector.css("transition","");
@@ -46,14 +48,15 @@
 						lastX = minX;
 						selector.css("transition","");
 					});
+
 				}else{
 					selector.css('transform','translateX('+ (finalX) +'px)');
-					lastX = finalX;					
+					lastX = finalX;				
 				}
 			}
-			selector.on("touchstart",touchStartHandler);
-			selector.on("touchmove",touchMoveHandler);
-			selector.on("touchend",touchEndHandler);
+			selector.on("touchstart ",touchStartHandler);
+			selector.on("touchmove ",touchMoveHandler);
+			selector.on("touchend ",touchEndHandler);
 		})
 	}
 })(jQuery)
