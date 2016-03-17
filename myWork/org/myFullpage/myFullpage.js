@@ -207,6 +207,9 @@
 				// 	direction = 1;
 				// 	
 				// })		
+				$(document).hammer().on("pinch",function(event){
+					event.preventDefault();
+				})
 				$(document).hammer().on("swipeup",function(event){
 					direction = 1;
 					event.preventDefault();
