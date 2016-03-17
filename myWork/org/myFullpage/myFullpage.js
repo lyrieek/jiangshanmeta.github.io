@@ -207,11 +207,15 @@
 				// 	direction = 1;
 				// 	
 				// })		
-				$(document).hammer().on("pinch",function(event){
-					event.preventDefault();
+				$(document).hammer().on("pan",function(event){
+					console.log("a");
+				//	console.log(event);
+				//	event.preventDefault();
+				//	console.log(event)
 				})
-				$(document).hammer().on("swipeup",function(event){
+				$(document).hammer().on("swipe",function(event){
 					direction = 1;
+					console.log("abc");
 					event.preventDefault();
 					goByDirection();
 				})
