@@ -197,43 +197,21 @@
 				$(document).on("keyup",keyboardHandler);
 			}
 			if(opt.mobile){
-				// $(document).on("swipeDown swipeRight",function(event){
-				// 	direction = -1;
-				// 	goByDirection();
-				// })
-
-
-				// $(document).on("swipeUp  swipeLeft",function(event){
-				// 	direction = 1;
-				// 	
-				// })		
-				$(document).hammer().on("pan",function(event){
-					console.log("a");
-				//	console.log(event);
-				//	event.preventDefault();
-				//	console.log(event)
-				})
-				$(document).hammer().on("swipe",function(event){
+				$(document).hammer({
+					recognizers:[
+						[Hammer.Swipe,{direction:Hammer.DIRECTION_ALL}],
+					]
+				});
+				$(document).on("swipeup",function(event){
+					console.log("aaaa");
 					direction = 1;
-					console.log("abc");
-					event.preventDefault();
 					goByDirection();
 				})
-				$(document).hammer().on("swipedown",function(event){
+				$(document).on("swipedown",function(event){
 					direction = -1;
-					event.preventDefault();
 					goByDirection();
 				})
 
-				// $(document).hammer().on("swipedown swiperight",function(){
-				// 	direction = -1;
-				// 	console.log("1");
-				// 	goByDirection();
-				// })
-				// $(document).hammer().on("swipeup swipeleft",function(){
-				// 	direction = 1;
-				// 	goByDirection();
-				// })
 			}
 			var resize;
 			$(window).on("resize",function(){
