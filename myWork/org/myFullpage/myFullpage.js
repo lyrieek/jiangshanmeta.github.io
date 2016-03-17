@@ -211,6 +211,7 @@
 				// })
 				$(document).on("swipeup",function(event){
 					console.log("aaaa");
+					alert("a");
 					direction = 1;
 					goByDirection();
 				})
