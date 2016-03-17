@@ -200,12 +200,15 @@
 				$(document).hammer({
 					recognizers:[
 						[Hammer.Swipe,{direction:Hammer.DIRECTION_ALL}],
-						[Hammer.Pan,{direction:Hammer.DIRECTION_ALL}],
+						[Hammer.Pan],
 					]
 				});
-				$(document).on("pan",function(event){
+				$(document).on("touchmove",function(event){
 					event.preventDefault();
 				})
+				// $(document).on("pan",function(event){
+				// 	event.preventDefault();
+				// })
 				$(document).on("swipeup",function(event){
 					console.log("aaaa");
 					direction = 1;
