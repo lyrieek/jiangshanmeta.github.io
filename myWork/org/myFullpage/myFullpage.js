@@ -197,29 +197,23 @@
 				$(document).on("keyup",keyboardHandler);
 			}
 			if(opt.mobile){
-				$(document).hammer({
-					recognizers:[
-						[Hammer.Swipe,{direction:Hammer.DIRECTION_ALL}],
-						[Hammer.Pan],
-					]
-				});
-				$(document).on("touchmove",function(event){
-					event.preventDefault();
-				})
-				// $(document).on("pan",function(event){
-				// 	event.preventDefault();
-				// })
-				$(document).on("swipeup",function(event){
-					console.log("aaaa");
-					alert("a");
-					direction = 1;
-					goByDirection();
-				})
-				$(document).on("swipedown",function(event){
+				$(document).on("swipeDown swipeRight",function(event){
 					direction = -1;
 					goByDirection();
 				})
-
+				$(document).on("swipeUp  swipeLeft",function(event){
+					direction = 1;
+					goByDirection();
+				})		
+				// $(document).hammer().on("swipedown swiperight",function(){
+				// 	direction = -1;
+				// 	console.log("1");
+				// 	goByDirection();
+				// })
+				// $(document).hammer().on("swipeup swipeleft",function(){
+				// 	direction = 1;
+				// 	goByDirection();
+				// })
 			}
 			var resize;
 			$(window).on("resize",function(){
@@ -238,21 +232,3 @@
 
 
 })(jQuery)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
