@@ -1,0 +1,21 @@
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+	width:100%;
+	height:100%;
+	font-size:14px;
+}
+.h5page{
+	position:fixed;
+	width:100%;
+	height:100%;
+	transition:transform 0.8s ease-in-out;
+}
+.h5page-showing{
+	transform:translate3d(0,0,0);
+}
+.h5page-hasShown{
+	transform:translate3d(0,-100%,0);
+}
+.h5page-notShow{
+	trabsform:translate3d(0,100%,0);
+}
