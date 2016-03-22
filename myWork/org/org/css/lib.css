@@ -113,6 +113,34 @@ Then, run this script to get the list.
   position: relative;
   margin-right: 10px;
 }
+.sub-title {
+  border-bottom: 2px solid #bdbdbd;
+  padding-bottom: 10px;
+  text-align: left;
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: #424242;
+  font-weight: 600;
+  line-height: 18px;
+}
+.sub-title:before {
+  content: " ";
+  width: 4px;
+  height: 14px;
+  display: inline-block;
+  background: #039be5;
+  position: relative;
+  margin-right: 10px;
+}
+.sub-title.no-margin {
+  margin-left: -15px;
+  margin-right: -15px;
+  padding-left: 15px;
+}
+.sub-title .btn.pull-right {
+  margin: 0px;
+}
 /*  公司代码里的sidenav  */
 .sidenav-wrap {
   margin-bottom: 30px;
@@ -251,4 +279,40 @@ body {
 }
 .divider-dashed {
   border-top: 1px dashed #ccc;
+}
+.two-column-list .list-item {
+  float: left;
+  width: 50%;
+  border-right: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  min-height: 100px;
+}
+.two-column-list .list-item img {
+  display: block;
+  border: 0;
+  vertical-align: middle;
+}
+.media-list .list-item {
+  display: block;
+  border-bottom: 1px solid #d9d9d9;
+  padding: 15px;
+}
+.media-list .list-item:after {
+  content: ' ';
+  display: table;
+  clear: both;
+}
+.media-list .list-item .media-left {
+  float: left;
+  width: 30%;
+}
+.media-list .list-item .media-left img {
+  display: block;
+  max-width: 100%;
+  margin-left: auto;
+}
+.media-list .list-item .media-body {
+  float: left;
+  width: 70%;
+  padding-left: 15px;
 }

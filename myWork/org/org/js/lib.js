@@ -13,6 +13,38 @@ if (!String.prototype.trim) {
         return this.replace(/^\s*(\S*(?:\s+\S+)*)\s*$/, "$1");
     };
 }
+function isset() {
+
+  var a = arguments,
+    l = a.length,
+    i = 0,
+    undef;
+
+  if (l === 0) {
+    throw new Error('Empty isset');
+  }
+
+  while (i !== l) {
+    if (a[i] === undef || a[i] === null) {
+      return false;
+    }
+    i++;
+  }
+  return true;
+}
+function typeOf(value) {
+    var s = typeof value;
+    if (s === 'object') {
+        if (value) {
+            if (Object.prototype.toString.call(value) == '[object Array]') {
+                s = 'array';
+            }
+        } else {
+            s = 'null';
+        }
+    }
+    return s;
+}
 //http://phpjs.org/functions/in_array/
 function in_array(needle, haystack, argStrict) {
   var key = '',
@@ -254,6 +286,9 @@ function gotoUrl(url){
 }
 function gotoPage(m,a){
     window.location.href = req_url_template.str_supplant({ctrller:m,action:a});;
+}
+function gotoPrev(){
+  window.history.go(-1);
 }
 var alertPlug = {
   //modal 先留着吧

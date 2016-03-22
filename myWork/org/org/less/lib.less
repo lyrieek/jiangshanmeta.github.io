@@ -71,7 +71,40 @@
       margin-right:10px;
     }
 }
+.sub-title{
+    border-bottom: 2px solid @grey-400;
+    padding-bottom:10px;
 
+    text-align:left;
+    font-size:16px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: @grey-800;
+    font-weight: 600;
+    line-height: 18px;
+
+    &:before{
+      content:" ";
+      width:4px;
+      height:14px;
+      display: inline-block;
+      background:@blue-600;
+      position:relative;
+    //   top:-2px;
+      margin-right:10px;
+     // margin-left:15px;
+    }
+    &.no-margin{
+      margin-left:-15px;
+      margin-right:-15px;
+      padding-left:15px;
+    }
+    .btn{
+        &.pull-right{
+            margin:0px;
+        }
+    }
+}
 /*  公司代码里的sidenav  */
 .sidenav-wrap{
   a{
@@ -206,4 +239,47 @@ body{
 }
 .divider-dashed {
   border-top: 1px dashed #ccc;
+}
+//做的两个列表
+.two-column-list{
+  .list-item{
+    float:left;
+    width:50%;
+    border-right:1px solid #d9d9d9;
+    border-bottom:1px solid #d9d9d9;
+    min-height:100px;
+    img{
+      display:block;
+      border:0;
+      vertical-align: middle;
+      
+    }
+  }
+}
+//仿照bootstrap的media
+.media-list{
+  .list-item{
+    display:block;
+    &:after{
+      content:' ';
+      display:table;
+      clear:both;
+    }
+    border-bottom:1px solid #d9d9d9;
+    padding:15px;
+    .media-left{
+      float:left;
+      width:30%;
+      img{
+        display:block;
+        max-width:100%;
+        margin-left:auto;
+      }
+    }
+    .media-body{
+      float:left;
+      width:70%;
+      padding-left:15px;
+    }   
+  }
 }
