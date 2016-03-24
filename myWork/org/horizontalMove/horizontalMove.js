@@ -35,7 +35,7 @@
 					})
 					selector[0].style.transform = 'translateX(0px)';
 					selector.css("transform","translateX(0)")
-					selector.on("transitionend",function(){
+					selector.on("transitionend webkitTransitionEnd",function(){
 						lastX = 0;
 						selector.css("transition","");
 					});
@@ -44,7 +44,7 @@
 						'transform':'translateX('+ minX + 'px)',
 						'transition':(trans_templete.str_supplant({'transDuration':opt.transDuration,'transTimeFunc':opt.transTimeFunc,'transDelay':opt.transDelay}))
 					})
-					selector.on("transitionend",function(){
+					selector.on("transitionend webkitTransitionEnd",function(){
 						lastX = minX;
 						selector.css("transition","");
 					});

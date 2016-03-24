@@ -368,3 +368,38 @@ function openPhotoSwipe(id,allPic){
         );
     gallery.init();
 }
+//由于万恶的浏览器兼容性，在监听transitionend的时候需要判断那个transitionend，这还不是重点，重点是trigger的时候只能如果trigger了多个transitionend，都会执行。。要保证只能trigger一个
+//以后监听transitionend和animationend就不用做兼容了，直接根据返回的结果绑定时间就好了
+function whichTransitionEvent(){  
+    var t;  
+    var el = document.createElement('p');  
+    var transitions = {  
+      'transition':'transitionend',  
+      'OTransition':'oTransitionEnd',  
+      'MozTransition':'mozTransitionEnd',  
+      'WebkitTransition':'webkitTransitionEnd',  
+      'MsTransition':'msTransitionEnd'  
+    }  
+    for(t in transitions){  
+        if( el.style[t] !== undefined ){  
+            return transitions[t];  
+        }  
+    }  
+}
+//顺便还有animationend的监听
+function whichAnimationEvent(){  
+    var t;  
+    var el = document.createElement('p');  
+    var animations = {  
+      'animation':'animationend',  
+      'OAnimation':'oAnimationEnd',  
+      'MozAnimation':'mozAnimationEnd',  
+      'WebkitAnimation':'webkitAnimationEnd',  
+      'MsAnimation':'msAnimationEnd'  
+    }  
+    for(t in animations){  
+        if( el.style[t] !== undefined ){  
+            return animations[t];  
+        }  
+    }  
+}
