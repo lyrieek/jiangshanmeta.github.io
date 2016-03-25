@@ -240,11 +240,10 @@ input[type="checkbox"]:checked ~ .fa-check-square-o {
   float: left;
   margin: 10px 4%;
   width: 42%;
-  display: inline-block;
 }
 .btn-half-block-holder:after {
   content: '';
-  display: block;
+  display: table;
   clear: both;
 }
 body {

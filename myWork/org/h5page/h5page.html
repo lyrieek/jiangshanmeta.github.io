@@ -27,6 +27,9 @@
 			.ab{
 				position:absolute;
 			}
+			.vis-hidden{
+				
+			}
 /*			.center-block{
 				display:block;
 				margin-left:auto;
@@ -37,8 +40,8 @@
 	<body>
 		<section class="h5page h5page-showing "  data-index="1" >
 			<div class="bg bg1"></div>
-			<img src="img/pic1.png" style="width:96vw;top:25vh;left:2vw;" class="ab ">
-			<img src="img/pic2.png" style="width:50vw;top:54vh;left:25vw;" class="ab center-block">
+			<img src="img/pic1.png" style="width:96vw;top:25vh;left:2vw;" class="ab " >
+			<img src="img/pic2.png" style="width:50vw;top:54vh;left:25vw;" class="ab" data-role="animation" data-method="zoomHalf">
 			
 		</section>
 		<section class="h5page h5page-notShow "  data-index="2" >
@@ -55,6 +58,6 @@
 			<div class="progress-bar" style="width:0%;"></div>
 		</div>
 		<script src="h5page.js"></script>
-		
+
 	</body>
 </html>

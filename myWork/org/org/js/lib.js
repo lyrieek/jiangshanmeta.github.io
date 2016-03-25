@@ -122,20 +122,6 @@ function ajax_get(opts){
     });
 }
 
-function typeOf(value) {
-    var s = typeof value;
-    if (s === 'object') {
-        if (value) {
-            if (Object.prototype.toString.call(value) == '[object Array]') {
-                s = 'array';
-            }
-        } else {
-            s = 'null';
-        }
-    }
-    return s;
-}
-
 
 //form 序列化 https://github.com/macek/jquery-serialize-object
 (function(root, factory) {
@@ -368,8 +354,11 @@ function openPhotoSwipe(id,allPic){
         );
     gallery.init();
 }
+
+
 //由于万恶的浏览器兼容性，在监听transitionend的时候需要判断那个transitionend，这还不是重点，重点是trigger的时候只能如果trigger了多个transitionend，都会执行。。要保证只能trigger一个
 //以后监听transitionend和animationend就不用做兼容了，直接根据返回的结果绑定时间就好了
+//主要用于h5页面
 function whichTransitionEvent(){  
     var t;  
     var el = document.createElement('p');  
@@ -379,6 +368,22 @@ function whichTransitionEvent(){
       'MozTransition':'mozTransitionEnd',  
       'WebkitTransition':'webkitTransitionEnd',  
       'MsTransition':'msTransitionEnd'  
+    }  
+    for(t in transitions){  
+        if( el.style[t] !== undefined ){  
+            return transitions[t];  
+        }  
+    }  
+}
+function whichTransition(){  
+    var t;  
+    var el = document.createElement('p');  
+    var transitions = {  
+      'transition':'transition',  
+      'OTransition':'OTransition',  
+      'MozTransition':'MozTransition',  
+      'WebkitTransition':'WebkitTransition',  
+      'MsTransition':'MsTransition'  
     }  
     for(t in transitions){  
         if( el.style[t] !== undefined ){  
@@ -396,6 +401,22 @@ function whichAnimationEvent(){
       'MozAnimation':'mozAnimationEnd',  
       'WebkitAnimation':'webkitAnimationEnd',  
       'MsAnimation':'msAnimationEnd'  
+    }  
+    for(t in animations){  
+        if( el.style[t] !== undefined ){  
+            return animations[t];  
+        }  
+    }  
+}
+function whichAnimation(){  
+    var t;  
+    var el = document.createElement('p');  
+    var animations = {  
+      'animation':'animation',  
+      'OAnimation':'OAnimation',  
+      'MozAnimation':'MozAnimation',  
+      'WebkitAnimation':'WebkitAnimation',  
+      'MsAnimation':'MsAnimation'  
     }  
     for(t in animations){  
         if( el.style[t] !== undefined ){  
