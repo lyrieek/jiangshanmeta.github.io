@@ -13,19 +13,20 @@ html,body{
 	-webkit-transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);
 	transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);
 }
-.h5page-showing{
+/* 为了以后写多个页面切换效果，将h5page-showing h5page-hasShown h5page-notShow 作为开关使用，具体的转换效果由其他的类处理 */
+.h5page-slideup .h5page-showing{
 	-webkit-transform:translate3d(0,0%,0);
 	transform:translate3d(0,0%,0);
-	/*//z-index:9999;*/
 }
-.h5page-hasShown{
+.h5page-slideup .h5page-hasShown{
 	-webkit-transform:translate3d(0,-100%,0);
-	transform:translate3d(0,-100%,0);
+	transform:translate3d(0,-100%,0);	
 }
-.h5page-notShow{
+.h5page-slideup .h5page-notShow{
 	-webkit-transform:translate3d(0,100%,0);
-	transform:translate3d(0,100%,0);
+	transform:translate3d(0,100%,0);	
 }
+
 .progress{
 	position:fixed;
 	width:100%;

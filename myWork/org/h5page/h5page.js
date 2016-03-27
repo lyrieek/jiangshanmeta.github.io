@@ -3,11 +3,14 @@
 	var nextPage,typ;
 	var pageNum = $(".h5page").size();
 	var progressBar = $(".progress-bar");
+	var transition = whichTransition();
 	var transitionendEvent = whichTransitionEvent();
 	var animation = whichAnimation();
+	var duration = $(".h5page-wrap").data("duration") || '0.8s';
+	$(".h5page").css(transition+'Duration',duration);
 	$(document).on("swipeUp",function(){
 		typ = "swipeup";
-		nextPage = curPage+1;
+		nextPage = curPage + 1;
 		if(nextPage>pageNum){
 			nextPage = curPage;
 			return;
@@ -36,12 +39,9 @@
 		}
 		curPage = $(this).data("index");
 		$(this).find("[data-role='animation']").each(function(){
-			// console.log($(this))
-			// console.log($(this).css('animationName'))
 			if($(this).css(animation+'Name')=='none'){
 				$(this).css(animation,$(this).data("method"))
 			}
-			
 		})
 		progressBar.css("width",(curPage/pageNum)*100 +"%");
 	})
@@ -52,14 +52,10 @@
 			nextPage = 1;
 			return;
 		}
-
 		$(".h5page").removeClass("top")
 		$(".h5page[data-index='"+nextPage +"']").addClass("h5page-showing top").removeClass("h5page-hasShown").find("[data-role='animation']").each(function(){
-			//$(this).addClass("animated "+$(this).data("method"));
 			$(this).css(animation,$(this).data("method"))
 		});
-		
 	});
-	
 	$(".h5page[data-index='1']").trigger(transitionendEvent);
 })(jQuery)
