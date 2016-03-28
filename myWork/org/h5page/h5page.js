@@ -8,6 +8,14 @@
 	var animation = whichAnimation();
 	var duration = $(".h5page-wrap").data("duration") || '0.8s';
 	$(".h5page").css(transition+'Duration',duration);
+	var arrow = $("#arrow");
+	function toggleArrow(){
+		if(nextPage == pageNum){
+			arrow.css("display",'none');
+		}else{
+			arrow.css('display','block');
+		}
+	}
 	$(document).on("swipeUp",function(){
 		typ = "swipeup";
 		nextPage = curPage + 1;
@@ -15,6 +23,7 @@
 			nextPage = curPage;
 			return;
 		}
+		toggleArrow();
 		$(".h5page[data-index='"+nextPage +"']").removeClass("h5page-notShow").addClass("h5page-showing top").find("[data-role='animation']").each(function(){
 			$(this).css(animation,$(this).data("method"))
 		});
@@ -56,6 +65,7 @@
 		$(".h5page[data-index='"+nextPage +"']").addClass("h5page-showing top").removeClass("h5page-hasShown").find("[data-role='animation']").each(function(){
 			$(this).css(animation,$(this).data("method"))
 		});
+		toggleArrow();
 	});
 	$(".h5page[data-index='1']").trigger(transitionendEvent);
 })(jQuery)

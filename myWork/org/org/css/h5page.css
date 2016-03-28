@@ -42,5 +42,12 @@ html,body{
 	transition:width 0.8s cubic-bezier(.260,.860,.440,.985);
 }
 .top{
+	z-index:9998;
+}
+.arrow{
+	position:fixed;
 	z-index:9999;
+	width:10vw;
+	top:95vh;
+	left:45vw;
 }
