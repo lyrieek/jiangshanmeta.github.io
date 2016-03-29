@@ -172,6 +172,36 @@
     }
   }
 }
+.nav-underline2 {
+  > li {
+    border-bottom: 2px solid #CCC;
+    // Links rendered as pills
+    > a {
+      color:#999;
+      font-size: 16px;
+    }
+    + li {
+      margin-left: 2px;
+    }
+    // Active state
+    &.active {
+        //抄自途虎养车，使用after伪类做border
+        position:relative;
+        &:after{
+          display:block;
+          position:absolute;
+          bottom:-2px;
+          left:0;
+          content:' ';
+          width:100%;
+          height:4px;
+          border-radius:4px;
+          background-color:#e36a21; 
+        }
+
+    }
+  }
+}
 //用在alertPlug上的，似乎这个样式没什么用
 #popAlertbox{
   z-index: 5000;
@@ -252,8 +282,14 @@ body{
       border:0;
       vertical-align: middle;
       
-    }
+    }  
   }
+  //还是把清浮动写上吧
+  &:after{
+    content:' ';
+    display:table;
+    clear:both;
+  }  
 }
 //仿照bootstrap的media
 .media-list{
