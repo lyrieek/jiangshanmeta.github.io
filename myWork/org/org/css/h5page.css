@@ -2,10 +2,30 @@
 html,body{
 	width:100%;
 	height:100%;
+	overflow:hidden;
 	font-size:14px;
 }
-.h5page{
-	position:fixed;
+.h5page-wrap{
+	width:100%;
+	height:100%;
+
+}
+
+.h5page-unite{
+	-webkit-transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);
+	transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);	
+}
+
+
+.h5page-unite .h5page{
+	display:block;
+	width:100%;
+	height:100%;
+	position:relative;
+}
+
+.h5page-seperate .h5page{
+	position:absolute;
 	width:100%;
 	height:100%;
 	top:0;
@@ -13,20 +33,27 @@ html,body{
 	-webkit-transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);
 	transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);
 }
-/* 为了以后写多个页面切换效果，将h5page-showing h5page-hasShown h5page-notShow 作为开关使用，具体的转换效果由其他的类处理 */
-.h5page-slideup .h5page-showing{
+.h5page-seperate .h5page-showing{
 	-webkit-transform:translate3d(0,0%,0);
 	transform:translate3d(0,0%,0);
 }
-.h5page-slideup .h5page-hasShown{
+.h5page-seperate .h5page-hasShown{
 	-webkit-transform:translate3d(0,-100%,0);
 	transform:translate3d(0,-100%,0);	
 }
-.h5page-slideup .h5page-notShow{
+.h5page-seperate .h5page-notShow{
 	-webkit-transform:translate3d(0,100%,0);
 	transform:translate3d(0,100%,0);	
 }
 
+
+/* 为了以后写多个页面切换效果，将h5page-showing h5page-hasShown h5page-notShow 作为开关使用，具体的转换效果由其他的类处理 */
+
+
+.top{
+	z-index:9998;
+}
+/* 进度条样式  */
 .progress{
 	position:fixed;
 	width:100%;
@@ -41,9 +68,9 @@ html,body{
 	-webkit-transition:width 0.8s cubic-bezier(.260,.860,.440,.985);
 	transition:width 0.8s cubic-bezier(.260,.860,.440,.985);
 }
-.top{
-	z-index:9998;
-}
+
+
+/* 翻页提示箭头  */
 .arrow{
 	position:fixed;
 	z-index:9999;
