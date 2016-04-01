@@ -5,17 +5,16 @@ html,body{
 	overflow:hidden;
 	font-size:14px;
 }
+/*  h5page-wrap h5page-unite h5page-seperate 加在同一个div上，后面两个类控制切换方式   */
 .h5page-wrap{
 	width:100%;
 	height:100%;
-
 }
 
 .h5page-unite{
 	-webkit-transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);
 	transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);	
 }
-
 
 .h5page-unite .h5page{
 	display:block;

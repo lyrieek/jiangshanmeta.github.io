@@ -13,16 +13,13 @@
 	}else{
 		var mode = 'seperate';
 	}
-
-
-	var duration = h5pageWrap.data("duration") || '0.8s';
-	if(mode == 'unite'){
-		h5pageWrap.css(transition+'Duration',duration);
-	}else{
-		$(".h5page-wrap .h5page").css(transition+'Duration',duration);
-	}
-	
 	var arrow = $("#arrow");
+
+	function addAnimation(pageNum){
+		$(".h5page[data-index='"+pageNum +"']").find("[data-role='animation']").each(function(){
+			$(this).css(animation,$(this).data("method"))
+		});	
+	}
 	function toggleArrow(){
 		if(nextPage == pageNum){
 			arrow.css("display",'none');
@@ -30,54 +27,59 @@
 			arrow.css('display','block');
 		}
 	}
-	$(document).on("swipeUp",function(){
-		typ = "swipeup";
-		nextPage = curPage + 1;
-		if(nextPage>pageNum){
-			nextPage = curPage;
-			return;
-		}
-		toggleArrow();
 
-		if(mode == 'unite'){
-			h5pageWrap.css('transform', 'translateY(' + (-(nextPage-1)*100 +'%') +')' ).find("[data-role='animation']").each(function(){
-				$(this).css(animation,$(this).data("method"))
-			});			
-			$(".h5page[data-index='"+nextPage +"']")
-		}else{
-			$(".h5page[data-index='"+nextPage +"']").removeClass("h5page-notShow").addClass("h5page-showing top").find("[data-role='animation']").each(function(){
-				$(this).css(animation,$(this).data("method"))
-			});			
-		}
-
-
-		
-	});
+	var duration = h5pageWrap.data("duration") || '0.8s';
 
 	if(mode == 'unite'){
+		h5pageWrap.css(transition+'Duration',duration);
+		$(document).on("swipeUp",function(){
+			nextPage = curPage + 1;
+			if(nextPage>pageNum){
+				nextPage = curPage;
+				return;
+			}
+			toggleArrow();
+			h5pageWrap.css('transform', 'translateY(' + (-(nextPage-1)*100 +'%') +')' );
+			addAnimation(nextPage);			
+		});
 		h5pageWrap.on(transitionendEvent,function(event){
 			if(!$(event.target).hasClass("h5page-wrap")){
 				return;
 			}			
 			$(".h5page").each(function(){
 				var index = $(this).data("index");
-				console.log(index)
 				if(index!=nextPage){
 					$(this).find("[data-role='animation']").css(animation,'')
-				}
-			})
-			$(".h5page[data-index='" + nextPage + "']").find("[data-role='animation']").each(function(){
-				var cssName = $(this).css(animation+'Name');
-				console.log(cssName)
-				if(cssName=='none'){
-					$(this).css(animation,$(this).data("method"))
 				}
 			})
 			curPage = nextPage;
 			progressBar.css("width",(curPage/pageNum)*100 +"%");
 		});
-	}else{
+		$(document).on("swipeDown",function(){
+			nextPage = curPage-1;
+			if(nextPage<1){
+				nextPage = 1;
+				return;
+			}
+			h5pageWrap.css('transform', 'translateY(' + (-(nextPage-1)*100 +'%') +')' );
+			addAnimation(nextPage);		
+			toggleArrow();
+		});
+	}
 
+	if(mode == 'seperate'){
+		$(".h5page-wrap .h5page").css(transition+'Duration',duration);
+		$(document).on("swipeUp",function(){
+			typ = "swipeup";
+			nextPage = curPage + 1;
+			if(nextPage>pageNum){
+				nextPage = curPage;
+				return;
+			}
+			toggleArrow();
+			$(".h5page[data-index='"+nextPage +"']").removeClass("h5page-notShow").addClass("h5page-showing top");
+			addAnimation(nextPage);
+		});
 		$(".h5page").on(transitionendEvent,function(event){
 			//冒泡上来的直接略过去
 			if(!$(event.target).hasClass("h5page")){
@@ -88,55 +90,30 @@
 				$(this).find("[data-role='animation']").css(animation,'');
 				return;
 			}
-
-
 			//展示中的h5页面
 			if(typ == 'swipeup'){
 				$(".h5page[data-index='" + curPage +"']").removeClass("h5page-showing").addClass("h5page-hasShown");
 			}else if(typ == 'swipedown'){
 				$(".h5page[data-index='" + curPage +"']").removeClass("h5page-showing").addClass("h5page-notShow");
 			}
-			curPage = $(this).data("index");
-			$(this).find("[data-role='animation']").each(function(){
-				if($(this).css(animation+'Name')=='none'){
-					$(this).css(animation,$(this).data("method"))
-				}
-			})
+			curPage = nextPage;
 			progressBar.css("width",(curPage/pageNum)*100 +"%");
 		})
-
-
-
-
+		$(document).on("swipeDown",function(){
+			typ = "swipedown";
+			nextPage = curPage-1;
+			if(nextPage<1){
+				nextPage = 1;
+				return;
+			}
+			$(".h5page").removeClass("top");
+			$(".h5page[data-index='"+nextPage +"']").addClass("h5page-showing top").removeClass("h5page-hasShown");
+			addAnimation(nextPage);
+			toggleArrow();
+		});
 	}
-	$(document).on("swipeDown",function(){
-		typ = "swipedown";
-		nextPage = curPage-1;
-		if(nextPage<1){
-			nextPage = 1;
-			return;
-		}
 
-		if( mode == 'unite'){
-			h5pageWrap.css('transform', 'translateY(' + (-(nextPage-1)*100 +'%') +')' ).find("[data-role='animation']").each(function(){
-				$(this).css(animation,$(this).data("method"))
-			});			;
-		}else{
-			$(".h5page").removeClass("top")
-				$(".h5page[data-index='"+nextPage +"']").addClass("h5page-showing top").removeClass("h5page-hasShown").find("[data-role='animation']").each(function(){
-					$(this).css(animation,$(this).data("method"))
-			});			
-		}
+	//加载时第一页的动画效果
+	addAnimation(1);
 
-
-
-
-		toggleArrow();
-	});
-	
-	if(mode=='unite'){
-		h5pageWrap.trigger(transitionendEvent)
-	}else{
-		$(".h5page[data-index='1']").trigger(transitionendEvent);
-	}
 })(jQuery)
