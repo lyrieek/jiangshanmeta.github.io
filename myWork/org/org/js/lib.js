@@ -32,6 +32,8 @@ function isset() {
   }
   return true;
 }
+
+//记不清有没有用过了，放在noJquery命名空间下了
 function typeOf(value) {
     var s = typeof value;
     if (s === 'object') {
@@ -63,6 +65,12 @@ function in_array(needle, haystack, argStrict) {
     }
   }
   return false;
+}
+  //  discuss at: http://phpjs.org/functions/ucfirst/
+function ucfirst (str) {
+  str += '';
+  var f = str.charAt(0).toUpperCase();
+  return f + str.substr(1);
 }
 //require jquery and jquery-blockui
 function ajax_post(opts){
@@ -375,6 +383,8 @@ function whichTransitionEvent(){
         }  
     }  
 }
+
+//这个函数可以被扔掉了，因为有一个更通用的函数，然而还不能删因为有地方在用。。。。
 function whichTransition(){  
     var t;  
     var el = document.createElement('p');  
@@ -391,6 +401,24 @@ function whichTransition(){
         }  
     }  
 }
+//这个函数也可以被删了，确实可以被删了，绝对没有地方再用这个函数，以后也不要用
+function whichAnimation(){  
+    var t;  
+    var el = document.createElement('p');  
+    var animations = {  
+      'animation':'animation',  
+      'OAnimation':'OAnimation',  
+      'MozAnimation':'MozAnimation',  
+      'WebkitAnimation':'WebkitAnimation',  
+      'MsAnimation':'MsAnimation'  
+    }  
+    for(t in animations){  
+        if( el.style[t] !== undefined ){  
+            return animations[t];  
+        }  
+    }  
+}
+
 //顺便还有animationend的监听
 function whichAnimationEvent(){  
     var t;  
@@ -408,19 +436,198 @@ function whichAnimationEvent(){
         }  
     }  
 }
-function whichAnimation(){  
-    var t;  
-    var el = document.createElement('p');  
-    var animations = {  
-      'animation':'animation',  
-      'OAnimation':'OAnimation',  
-      'MozAnimation':'MozAnimation',  
-      'WebkitAnimation':'WebkitAnimation',  
-      'MsAnimation':'MsAnimation'  
-    }  
-    for(t in animations){  
-        if( el.style[t] !== undefined ){  
-            return animations[t];  
-        }  
-    }  
-}
+
+
+
+
+
+
+
+
+//自定义事件
+var triggerEvent = function (el, eventName, detail) {
+    var event = document.createEvent("CustomEvent");
+    event.initCustomEvent(eventName, true, true, detail);
+    el.dispatchEvent(event);
+};
+
+
+var noJquery = (function(document,window){
+    //import from https://github.com/impress/impress.js
+    //利用闭包存储前缀化的结果，判断要加哪个前缀使用的方法 和上面的差不多，只是属性名是传入的，而不是写死在代码里
+    //然而基本上就css3的几个属性需要加前缀了
+
+    var pfxMemory = {};
+    var dummyEl  = document.createElement('dummy');
+    var pfxStyle = dummyEl.style;
+    var prefixes = 'Webkit Moz O ms Khtml'.split(' ');
+
+
+    var pfx = function ( prop ) {
+            if ( typeof pfxMemory[ prop ] === "undefined" ) {
+                //实现一个ucfirst
+                var ucProp  = ucfirst(prop),
+                    props   = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
+                
+                pfxMemory[ prop ] = null;
+                for ( var i in props ) {
+                    if ( style[ props[i] ] !== undefined ) {
+                        pfxMemory[ prop ] = props[i];
+                        break;
+                    }
+                }
+            
+            }
+            
+            return pfxMemory[ prop ];
+    };
+
+
+    //因为选择元素所得到的结果是一个类数组而不是数组
+    var arrayify = function ( a ) {
+        return [].slice.call( a );
+    };
+
+    var toNumber = function(numeric,fallback){
+        return isNaN(numeric)? (fallback|| 0) : Number(numeric);
+    };
+    var toPercentage = function(numeric){
+      return toNumber(numeric) +'%';
+    };
+    var toPixel = function(numeric){
+        return toNumber(numeric) + 'px';
+    };
+    var translate = function ( t,mode ) {
+        if(mode == 'pix'){
+          var x = toPixel(t.x);
+          var y = toPixel(t.y);
+          var z = toPixel(t.z);
+        }else{
+          var x = toPercentage(t.x);
+          var y = toPercentage(t.y);
+          var z = toPercentage(t.z);
+        }
+        return " translate3d(" + x + "," + y + "," + z + ") ";
+    };    
+    var rotate = function ( r) {
+        var rX = " rotateX(" + toNumber(r.x) + "deg) ",
+            rY = " rotateY(" + toNumber(r.y) + "deg) ",
+            rZ = " rotateZ(" + toNumber(r.z) + "deg) ";
+        
+        return rX+rY+rZ;
+    };
+    var scale = function ( s ) {
+        return " scale(" + toNumber(s) + ") ";
+    };    
+
+    return {
+          css:function(){
+            var key, pkey;
+            for ( key in props ) {
+                if ( props.hasOwnProperty(key) ) {
+                    pkey = pfx(key);
+                    if ( pkey !== null ) {
+                        el.style[pkey] = props[key];
+                    }
+                }
+            }
+            return el;          
+          },
+          getCSS:function(el,prop){
+              if(prop){
+                return window.getComputedStyle(el)[pfx(prop)];
+              }
+              return window.getComputedStyle(el);
+          },
+          byId:function(id){
+              return document.getElementById(id);
+          },
+          getOne:function(selector,context){
+              context = context || document;
+              return context.querySelector(selector);            
+          },
+          getAll:function(selector,context){
+              context = context || document;
+              return arrayify(context.querySelectorAll(selector));            
+          },
+          getData:function(el,dataName){
+              if(dataName){
+                return el.dataset[dataName];
+              }
+              return el.dataset;
+          },  
+          addClass:function(el,className){
+              el.classList.add(className);
+          },
+          removeClass:function(el,className){
+              el.classList.remove(className);
+          },
+          hasClass:function(el,className){
+              return el.classList.contains(className);
+          },
+          toggleClass:function(el,className){
+              el.classList.toggle(className);
+          },
+          typeOf:function(value){
+              var s = typeof value;
+              if (s === 'object') {
+                  if (value) {
+                      if (Object.prototype.toString.call(value) == '[object Array]') {
+                          s = 'array';
+                      }
+                  } else {
+                      s = 'null';
+                  }
+              }
+              return s;              
+          },
+          pfxTransitionEvent:function(){
+              if(!pfxMemory['transitionend']){
+                  var transitions = {  
+                    'transition':'transitionend',  
+                    'OTransition':'oTransitionEnd',  
+                    'MozTransition':'mozTransitionEnd',  
+                    'WebkitTransition':'webkitTransitionEnd',  
+                    'MsTransition':'msTransitionEnd'  
+                  }
+                  for(t in transitions){  
+                    if( pfxStyle[t] !== undefined ){  
+                        pfxMemory['transitionend'] = transitions[t];
+                        break;  
+                    }  
+                  }                                      
+              }
+              return pfxMemory['transitionend'];
+          },
+          pfxAnimationEvent:function(){
+              if(!pfxMemory['animationend']){
+                  var animations = {  
+                   'animation':'animationend',  
+                    'OAnimation':'oAnimationEnd',  
+                    'MozAnimation':'mozAnimationEnd',  
+                    'WebkitAnimation':'webkitAnimationEnd',  
+                    'MsAnimation':'msAnimationEnd'  
+                  }
+                  for(t in animations){  
+                    if( pfxStyle[t] !== undefined ){  
+                        pfxMemory['animationend'] = animations[t];
+                        break;  
+                    }  
+                  }                                      
+              }
+              return pfxMemory['animationend'];
+          },
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+})(document,window);
