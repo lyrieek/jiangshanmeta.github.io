@@ -521,7 +521,7 @@ var noJquery = (function(document,window){
     };    
 
     return {
-          css:function(){
+          css:function(el,props){
             var key, pkey;
             for ( key in props ) {
                 if ( props.hasOwnProperty(key) ) {

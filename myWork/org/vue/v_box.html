@@ -33,27 +33,33 @@
 					<div v-bind:style="totalStyle">
 					</div>
 			</div>
-			<div class="pull-right half">
+			<div  class="pull-right half">
 				<div>
-					width:<input type="range" min="0" max="500" v-model="width">
-					background:<input type="color" v-model="color">
+					width:<input type="range" min="0" max="500" v-model="width">{{width+'px'}}<br>
+					height:<input type="range" min="0" max="500" v-model="height">{{height+'px'}}<br>
+					background:<input type="color" v-model="color">{{color}}
 				</div>
 				<div>
-					top<input type="range" min="0" max="150" v-model="borderTop.width">
-					top<input type="color"  v-model="borderTop.color">
+					top<input type="range" min="0" max="150" v-model="borderTop.width">{{borderTop.width +'px'}}
+					<input type="color"  v-model="borderTop.color">{{borderTop.color}}
 				</div>
 				<div>
-					right<input type="range" min="0" max="150" v-model="borderRight.width">
-					right<input type="color"  v-model="borderRight.color">
+					right<input type="range" min="0" max="150" v-model="borderRight.width">{{borderRight.width +'px'}}
+					<input type="color"  v-model="borderRight.color">{{borderRight.color}}
 				</div>
 				<div>
-					bottom<input type="range" min="0" max="150" v-model="borderBottom.width">
-					bottom<input type="color"  v-model="borderBottom.color">
+					bottom<input type="range" min="0" max="150" v-model="borderBottom.width">{{borderBottom.width +'px'}}
+					<input type="color"  v-model="borderBottom.color">{{borderBottom.color}}
 				</div>
 				<div>
-					left<input type="range" min="0" max="150" v-model="borderLeft.width">
-					left<input type="color"  v-model="borderLeft.color">
+					left<input type="range" min="0" max="150" v-model="borderLeft.width">{{borderLeft.width +'px'}}
+					<input type="color"  v-model="borderLeft.color">{{borderLeft.color}}
 				</div>
+				<button v-on:click="useDefaultData('triangleBottomRight')">triangle bottom right</button>
+				<button v-on:click="useDefaultData('triangleBottomLeft')">triangle bottom left</button>
+				<button v-on:click="useDefaultData('triangleTopRight')">triangle top right</button>
+				<button v-on:click="useDefaultData('triangleTopLeft')">triangle top left</button>
+				<button v-on:click="useDefaultData('trapezoid')">trapezoid</button>
 			</div>
 		</div>
 		<script>
@@ -61,6 +67,7 @@
 				el:"#v_box",
 				data:{
 					width:200,
+					height:200,
 					color:"#ffffff",
 					borderTop:{
 						width:10,
@@ -81,7 +88,99 @@
 						width:10,
 						color:"#4499ee",
 						style:"solid"
+					},
+					triangleBottomRight:{
+						width:0,
+						height:0,
+						borderBottom:{
+							width:100,
+							style:'solid'
+						},
+						borderLeft:{
+							width:100,
+							color:"transparent",
+						},
+						borderTop:{
+							width:0,
+						},
+						borderRight:{
+							width:0,
+						},						
+					},
+					triangleBottomLeft:{
+						width:0,
+						height:0,
+						borderBottom:{
+							width:100,
+							style:'solid'
+						},
+						borderRight:{
+							width:100,
+							color:"transparent",
+						},
+						borderTop:{
+							width:0,
+						},
+						borderLeft:{
+							width:0,
+						},
+					},
+					triangleTopRight:{
+						width:0,
+						height:0,
+						borderTop:{
+							width:100,
+							style:'solid'
+						},
+						borderLeft:{
+							width:100,
+							color:"transparent",
+						},
+						borderBottom:{
+							width:0,
+						},
+						borderRight:{
+							width:0,
+						},						
+					},
+					triangleTopLeft:{
+						width:0,
+						height:0,
+						borderTop:{
+							width:100,
+							style:'solid'
+						},
+						borderRight:{
+							width:100,
+							color:"transparent",
+						},
+						borderBottom:{
+							width:0,
+						},
+						borderLeft:{
+							width:0,
+						},						
+					},
+					trapezoid:{
+						width:100,
+						height:0,
+						borderBottom:{
+							width:100,
+						},
+						borderLeft:{
+							width:50,
+							color:'transparent'
+						},
+						borderRight:{
+							width:50,
+							color:'transparent'
+						},
+						borderTop:{
+							width:0
+						}
 					}
+
+
 				},
 				computed:{
 					borderTopStyle:function(){
@@ -99,12 +198,26 @@
 					totalStyle:function(){
 						return {
 							width: this.width+"px",
-							height: this.width+"px",
+							height: this.height+"px",
 							background: this.color,
 							borderTop:this.borderTopStyle,
 							borderRight:this.borderRightStyle,
 							borderBottom:this.borderBottomStyle,
 							borderLeft:this.borderLeftStyle,
+						}
+					}
+				},
+				methods:{
+					useDefaultData:function(dataTyp){
+						var data = this[dataTyp];
+						for(key in data){
+							if(typeof data[key] == 'object'){
+								for( k in data[key]){
+									this[key][k] = data[key][k];
+								}
+							}else{
+								this[key] = data[key];
+							}
 						}
 					}
 				}
