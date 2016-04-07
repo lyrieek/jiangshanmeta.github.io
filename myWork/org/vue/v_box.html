@@ -38,6 +38,7 @@
 					width:<input type="range" min="0" max="500" v-model="width">{{width+'px'}}<br>
 					height:<input type="range" min="0" max="500" v-model="height">{{height+'px'}}<br>
 					border-radius:<input type="range" min="0" max="100" v-model="borderRadius">{{borderRadius+'%'}}<br>
+					rotate<input type="range" min="-360" max="360" v-model="rotate">{{rotate +'deg'}}<br>
 					background:<input type="color" v-model="color">{{color}}
 				</div>
 				<div>
@@ -70,6 +71,7 @@
 					width:200,
 					height:200,
 					borderRadius:50,
+					rotate:0,
 					color:"#ffffff",
 					borderTop:{
 						width:10,
@@ -208,6 +210,7 @@
 							height: this.height+"px",
 							background: this.color,
 							borderRadius:this.borderRadius+'%',
+							transform:'rotate('+this.rotate+'deg)',
 							borderTop:this.borderTopStyle,
 							borderRight:this.borderRightStyle,
 							borderBottom:this.borderBottomStyle,
