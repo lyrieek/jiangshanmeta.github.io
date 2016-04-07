@@ -37,6 +37,7 @@
 				<div>
 					width:<input type="range" min="0" max="500" v-model="width">{{width+'px'}}<br>
 					height:<input type="range" min="0" max="500" v-model="height">{{height+'px'}}<br>
+					border-radius:<input type="range" min="0" max="100" v-model="borderRadius">{{borderRadius+'%'}}<br>
 					background:<input type="color" v-model="color">{{color}}
 				</div>
 				<div>
@@ -68,6 +69,7 @@
 				data:{
 					width:200,
 					height:200,
+					borderRadius:50,
 					color:"#ffffff",
 					borderTop:{
 						width:10,
@@ -92,6 +94,7 @@
 					triangleBottomRight:{
 						width:0,
 						height:0,
+						borderRadius:0,
 						borderBottom:{
 							width:100,
 							style:'solid'
@@ -110,6 +113,7 @@
 					triangleBottomLeft:{
 						width:0,
 						height:0,
+						borderRadius:0,
 						borderBottom:{
 							width:100,
 							style:'solid'
@@ -128,6 +132,7 @@
 					triangleTopRight:{
 						width:0,
 						height:0,
+						borderRadius:0,
 						borderTop:{
 							width:100,
 							style:'solid'
@@ -146,6 +151,7 @@
 					triangleTopLeft:{
 						width:0,
 						height:0,
+						borderRadius:0,
 						borderTop:{
 							width:100,
 							style:'solid'
@@ -164,6 +170,7 @@
 					trapezoid:{
 						width:100,
 						height:0,
+						borderRadius:0,
 						borderBottom:{
 							width:100,
 						},
@@ -200,6 +207,7 @@
 							width: this.width+"px",
 							height: this.height+"px",
 							background: this.color,
+							borderRadius:this.borderRadius+'%',
 							borderTop:this.borderTopStyle,
 							borderRight:this.borderRightStyle,
 							borderBottom:this.borderBottomStyle,
