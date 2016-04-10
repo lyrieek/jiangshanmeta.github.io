@@ -5,44 +5,7 @@ function ucfirst (str) {
     .toUpperCase()
   return f + str.substr(1)
 }
-function array_search (needle, haystack, argStrict) {
-  var strict = !!argStrict,
-    key = ''
 
-  if (haystack && typeof haystack === 'object' && haystack.change_key_case) {
-    // Duck-type check for our own array()-created PHPJS_Array
-    return haystack.search(needle, argStrict)
-  }
-  if (typeof needle === 'object' && needle.exec) {
-    // Duck-type for RegExp
-    if (!strict) {
-      // Let's consider case sensitive searches as strict
-      var flags = 'i' + (needle.global ? 'g' : '') +
-        (needle.multiline ? 'm' : '') +
-        // sticky is FF only
-        (needle.sticky ? 'y' : '')
-      needle = new RegExp(needle.source, flags)
-    }
-    for (key in haystack) {
-      if (haystack.hasOwnProperty(key)) {
-        if (needle.test(haystack[key])) {
-          return key
-        }
-      }
-    }
-    return false
-  }
-
-  for (key in haystack) {
-    if (haystack.hasOwnProperty(key)) {
-      if ((strict && haystack[key] === needle) || (!strict && haystack[key] == needle)) {
-        return key
-      }
-    }
-  }
-
-  return false
-}
 //impress.js
 var pfx = (function () {
     var style = document.createElement('dummy').style,
@@ -213,7 +176,7 @@ var arrayify = function ( a ) {
 					return;
 				}
 				if(!event.target.classList.contains("h5page-showing")){
-					removeAnimation(array_search(event.target,pages));
+					removeAnimation(pages.indexOf(event.target));
 					return;
 				}
 				var needTransEle = pages[curPage-1];
