@@ -45,7 +45,7 @@ function whichTransitionEvent(){
             return transitions[t];  
         }  
     }  
-}
+}                                                                                
 
 (function($){
 	var curPage = 1;

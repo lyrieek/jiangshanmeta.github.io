@@ -129,7 +129,34 @@ function ajax_get(opts){
         $.unblockUI();
     });
 }
+function lightbox(opts) {
+    var default_opts = {
+        size:'m',
+        url:''
+    };
 
+    var width = 720;
+    var height = 500;
+    var windowWidth = $(window).width();
+    var windowHeight = $(window).height();
+
+    if (opts.size=="xl"){
+        width = windowWidth - 300;
+        height = windowHeight - 100;
+    } else if (opts.size=="l"){
+        width = 960;
+        height = 700;
+
+    } else if (opts.size=="s"){
+        width=600;
+        height = 400;
+    }
+
+
+    opts = $.extend(default_opts,opts);
+    $.fancybox.open({href : opts.url,type:'ajax',autoSize:false,autoHeight:false,autoWidth:false,width:width,height:height});
+    return;
+}
 
 //form 序列化 https://github.com/macek/jquery-serialize-object
 (function(root, factory) {
