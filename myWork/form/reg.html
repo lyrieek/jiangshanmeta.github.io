@@ -32,8 +32,13 @@
 			var str = '';
 
 			patternEle.addEventListener("input",function(){
-				var reg = new RegExp('(' + this.value + ')');
-				subjectEle.innerHTML = str.replace(reg,"<span class='bg-yellow'>$1</span>");
+				try{
+					var reg = new RegExp('(' + this.value + ')');
+					subjectEle.innerHTML = str.replace(reg,"<span class='bg-yellow'>$1</span>");					
+				}catch(e){
+
+				}
+
 			},false);
 			subjectEle.addEventListener("input",function(){
 				str = this.innerHTML;
