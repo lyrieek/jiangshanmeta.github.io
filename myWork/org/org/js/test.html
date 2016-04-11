@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<script src="jquery-1.11.3.js"></script>
 		<script src="jquery.blockUI.min.js"></script>
 		<script src="bootstrap.min.js"></script>
@@ -10,6 +11,7 @@
 		<script src="photoswipe-ui-default.min.js"></script>
     <script src="jquery.fancybox.js"></script>
 		<script src="lib.js"></script>
+    <script src="touch-0.2.14.min.js"></script>
     <link rel="stylesheet" href="../css/jquery.fancybox.css">
 		<link rel="stylesheet" href="../css/bootstrap.min.css">
 		<link rel="stylesheet" href="../css/font-awesome.min.css">
@@ -17,7 +19,7 @@
 		<link rel="stylesheet" href="../css/photoswipe.css">
 		<link rel="stylesheet" href="../css/default-skin.css">
 	</head>
-	<body class="page">
+	<body class="page" style="overflow-x:hidden;">
 
 		<button type="button" onclick="testBlockUI()">dianji</button>
 		<script>
@@ -254,6 +256,48 @@
       var player = animationEle.animate([]);
       console.log(player);
 
+    </script>
+    <div style="width:0;height:0;border-width:100px;border-top-color:red;border-right-color:green;border-bottom-color:blue;border-left-color:yellow;border-style:solid;border-radius:50%;background-color:red;margin:0 auto;" id="target"></div>
+    <br>
+    <br>
+    <script>
+        touch.on(document,"swipeleft swiperight",function(event){
+          console.log(event.type);
+        })
+        var angle = 0;
+        // touch.on("#target","touchstart",function(event){
+        //     event.startRotate();
+        //     event.preventDefault();
+        // });
+        // touch.on("#target","rotate",function(){
+        //   console.log(event.rotation);
+        //   var totalAngle = angle + event.rotation;
+        //   if(event.fingerStatus == 'end'){
+        //     console.log("end");
+        //       angle = angle + event.rotation;
+        //   }
+        //   this.style.webkitTransform = 'rotate('+ totalAngle + 'deg)';
+        // })
+        var dx,dy;
+        touch.on("#target","touchstart",function(event){
+            event.preventDefault();
+        })
+        touch.on("#target","drag",function(event){
+          // console.log(event.direction);
+          // console.log(event.x,event.y);
+      //    console.log(event.duration,'moving');
+          dx = dx|| 0;
+          dy = dy||0;
+          var offx = dx+event.x+'px';
+          var offy = dy+event.y+'px';
+          this.style.webkitTransform = "translate3d("+offx+","+offy+",0)";
+        })
+        touch.on("#target","dragend",function(event){
+          console.log(event.duration,'end');
+          dx += event.x;
+          dy += event.y;
+          console.log(event.x,event.y);
+        })
     </script>
 	</body>
 </html>
