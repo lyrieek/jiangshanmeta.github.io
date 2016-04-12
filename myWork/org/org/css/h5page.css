@@ -44,8 +44,40 @@ html,body{
 	-webkit-transform:translate3d(0,100%,0);
 	transform:translate3d(0,100%,0);	
 }
-
-
+.h5page-threeD{
+	-webkit-transform-style:preserve-3d;
+	transform-style:preserve-3d;
+    -webkit-perspective: 900px;
+    perspective: 900px;
+}
+.h5page-threeD .h5page{
+	position:absolute;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0;
+	-webkit-transform-origin: top center;
+	transform-origin: top center;
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	-webkit-transition:all 0.8s cubic-bezier(.260,.860,.440,.985);
+	transition:all 0.8s cubic-bezier(.260,.860,.440,.985);
+}
+.h5page-threeD .h5page-notShow{
+  opacity: 1;
+  -webkit-transform: translate3d(0, 480px, 0) rotate3d(1, 0, 0, -90deg);
+  transform: translate3d(0, 480px, 0) rotate3d(1, 0, 0, -90deg);
+}
+.h5page-threeD .h5page-showing{
+  opacity:1;
+  -webkit-transform: rotate3d(1, 0, 0, 0deg);
+  transform: rotate3d(1, 0, 0, 0deg);
+}
+.h5page-threeD .h5page-hasShown{
+  opacity:0;
+  -webkit-transform: translate3d(0, 0, -220px) rotate3d(1, 0, 0, 90deg);
+  transform: translate3d(0, 0, -220px) rotate3d(1, 0, 0, 90deg);
+}
 /* 为了以后写多个页面切换效果，将h5page-showing h5page-hasShown h5page-notShow 作为开关使用，具体的转换效果由其他的类处理 */
 
 

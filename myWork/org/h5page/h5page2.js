@@ -36,6 +36,12 @@ var triggerEvent = function (el, eventName, detail) {
     event.initCustomEvent(eventName, true, true, detail);
     el.dispatchEvent(event);
 };
+function getCSS(el,prop){
+	  if(prop){
+	    return window.getComputedStyle(el)[pfx(prop)];
+	  }
+	  return window.getComputedStyle(el);
+}
 (function(document,window){
 	var startTouchX,startTouchY,endTouchX,endTouchY;
 	function toucherstartHandler(event){
@@ -103,6 +109,7 @@ var arrayify = function ( a ) {
 	h5pageWrap.classList.add('h5page-' + h5method);
 	var arrow = document.getElementById("arrow");
 	var pageSwitch = false;
+	
 	var cfgMethod = {
 		'unite':{
 			swipeUpEvent:function(event){
@@ -151,6 +158,7 @@ var arrayify = function ( a ) {
 				needTransEle.classList.add("h5page-showing");		
 				needTransEle.classList.add("top");
 				pages[curPage-1].classList.remove("top");
+				pageSwitch = true;
 				addAnimation(nextPage-1);
 			},
 			swipeDownEvent:function(event){
@@ -169,6 +177,7 @@ var arrayify = function ( a ) {
 				needTransEle.classList.remove("h5page-hasShown");	
 				needTransEle.classList.add("h5page-showing");		
 				needTransEle.classList.add("top");
+				pageSwitch = true;
 				addAnimation(nextPage-1);				
 			},
 			pageTransitionEndEvent:function(event){
@@ -190,6 +199,66 @@ var arrayify = function ( a ) {
 				pageSwitch = false;
 				updateProgressBar();				
 
+			}
+		},
+		'threeD':{
+			init:function(){
+				var winH = getCSS(document.documentElement,"height");
+				var styleEle = document.createElement("style");
+				//是一个很笨的方法，这里的前缀也不能用上面的pfx，浏览器不认
+				styleEle.innerHTML = ".h5page-threeD .h5page-notShow{ -webkit-transform: translate3d(0," + winH + ", 0) rotate3d(1, 0, 0, -90deg); transform: translate3d(0, " + winH +", 0) rotate3d(1, 0, 0, -90deg);";
+				document.head.appendChild(styleEle);
+			},
+			swipeUpEvent:function(event){
+				if(pageSwitch){
+					return;
+				}
+				typ = "swipeup";
+				nextPage = curPage + 1;
+				if(nextPage>pageNum){
+					nextPage = curPage;
+					return;
+				}
+				toggleArrow();
+				var curPageEle = pages[curPage-1];
+				var needTransEle = pages[nextPage-1];
+				curPageEle.classList.remove("h5page-showing");
+				curPageEle.classList.add("h5page-hasShown");	
+				needTransEle.classList.remove("h5page-notShow");	
+				needTransEle.classList.add("h5page-showing");		
+				addAnimation(nextPage-1);
+			},
+			swipeDownEvent:function(event){
+				if(pageSwitch){
+					return;
+				}				
+				typ = "swipedown";
+				nextPage = curPage-1;
+				if(nextPage<1){
+					nextPage = 1;
+					return;
+				}
+				toggleArrow();
+				var curPageEle = pages[curPage-1];
+				var needTransEle = pages[nextPage-1];
+				curPageEle.classList.remove("h5page-showing");
+				curPageEle.classList.add("h5page-notShow");
+				needTransEle.classList.remove("h5page-hasShown");	
+				needTransEle.classList.add("h5page-showing");		
+				pageSwitch = true;
+				addAnimation(nextPage-1);	
+			},
+			pageTransitionEndEvent:function(event){
+				if(!event.target.classList.contains("h5page")){
+					return;
+				}
+				if(!event.target.classList.contains("h5page-showing")){
+					removeAnimation(pages.indexOf(event.target));
+					return;
+				}
+				curPage = nextPage;
+				pageSwitch = false;
+				updateProgressBar();
 			}
 		}
 	};
@@ -214,6 +283,8 @@ var arrayify = function ( a ) {
 	function updateProgressBar(){
 		progressBar.style.width = (curPage/pageNum)*100 +"%";
 	}
+
+	mode['init']&&mode['init']();
 	if(mode['swipeUpEvent']){
 		document.addEventListener("swipeUp",mode['swipeUpEvent'],false);
 	}
