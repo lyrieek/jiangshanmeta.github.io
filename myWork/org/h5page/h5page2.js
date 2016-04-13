@@ -285,15 +285,10 @@ var arrayify = function ( a ) {
 	}
 
 	mode['init']&&mode['init']();
-	if(mode['swipeUpEvent']){
-		document.addEventListener("swipeUp",mode['swipeUpEvent'],false);
-	}
-	if(mode['swipeDownEvent']){
-		document.addEventListener("swipeDown",mode['swipeDownEvent'],false);
-	}
-	if(mode['pageTransitionEndEvent']){
-		h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
-	}
+	mode['swipeUpEvent']&&document.addEventListener("swipeUp",mode['swipeUpEvent'],false);
+	mode['swipeDownEvent']&&document.addEventListener("swipeDown",mode['swipeDownEvent'],false);
+	mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
+	
 	addAnimation(0);
 	updateProgressBar();
 
