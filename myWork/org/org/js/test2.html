@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>test lib2 which has no jq </title>
+		<link rel="stylesheet" href="../css/font-awesome.min.css">
+		<script src="lib2.js"></script>
+		<script src="scoreControl.js"></script>
+	</head>
+	<body>
+		<div class="a b d" id="pp"></div>
+		<div class="a b e" id="h" data-width="www"></div>
+		<div class="a c f" id="i"></div>
+		<div class="a c g"></div>
+		<div id="score"></div>
+		<input id="score_input">
+				<div id="score2"></div>
+		<input id="score2_input">
+		<script>
+			// var a = {a:1};
+			// var b = {b:2};
+			// var c= extend({},a,b);
+			// console.log(c);
+			// console.log(a);
+			// console.log(b);
+			// var d = deepExtend({},a,b);
+			// console.log(d);
+			toggleClass([].slice.call(document.getElementsByClassName("a")),"b c")
+			toggleClass(document.getElementById("h"),"ee");
+			setCSS(document.getElementById("h"),{"width":"200px","height":"200px","backgroundColor":"red"});
+
+			console.log(getData(document.getElementById("h"),"width"));
+			console.log(getCSS(document.getElementById("h"),"width"))
+			var stylestr = ".a{"+pfxInStyleSheet("transform") +":translate(10px,0)}";
+			insertRule(stylestr) 
+		//	console.log(index(document.getElementById("pp")))
+			scoreControl.initScore(5,["score","score2"]);
+		</script>
+	</body>
+</html>
