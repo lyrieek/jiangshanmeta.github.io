@@ -7,9 +7,10 @@
 		<style>
 			*{margin:0;padding:0;box-sizing:border-box;}
 			.cateList{
-				position:absolute;
+				position:relative;
 				width:100%;
 				list-style:none;
+				padding-left:0;/* 这里之所以加上一个padding-left：0是因为要清除浏览器的默认ul的padding，虽然一开始有*清除了，但是实际项目reset或者nomalrize处理的可能没有清除*/
 			}
 			.cateList .cateItem{
 				width:45%;
@@ -24,6 +25,7 @@
 				display:block;
 				position:relative;
 				padding:15px 0 15px 15px;
+				margin:0;
 			}
 			.cateList input[type='radio']:checked ~ .cateTitle{
 				color:#03a9f4;
@@ -51,6 +53,7 @@
 				width:55%;
 				min-height:100%;
 				overflow-y:scroll;
+				padding-left:0;				
 			}
 			.cateList .list-item{
 				display:block;
