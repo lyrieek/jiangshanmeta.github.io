@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>dictionary</title>
+		<script src="dictionary.js"></script>
+	</head>
+	<body>
+		<script>
+			var dicInstance = new Dictionary();
+			dicInstance.add("Gandalf","gandalf@a.com")
+			dicInstance.add("John","john@a.com")
+			dicInstance.add("Camila","camila@a.com");
+			dicInstance.print();
+			dicInstance.remove("John");
+			dicInstance.print();
+			dicInstance.clear();
+			dicInstance.print();			
+		</script>
+	</body>
+</html>
