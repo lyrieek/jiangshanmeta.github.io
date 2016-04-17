@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>linkedlist</title>
+		<script src="linkedlist.js"></script>
+	</head>
+	<body>
+		<script>
+			var linkedlistInstance = new LinkedList();
+			linkedlistInstance.append("a");
+			console.log(linkedlistInstance.getHead())
+			linkedlistInstance.insert(0,"b");
+			console.log(linkedlistInstance.getHead())
+			linkedlistInstance.insert(1,"c");
+			console.log(linkedlistInstance.getHead())
+			linkedlistInstance.removeAt(1);
+			console.log(linkedlistInstance.getHead())
+			console.log(linkedlistInstance.size())
+		</script>
+	</body>
+</html>
