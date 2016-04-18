@@ -70,7 +70,18 @@
 					return val;
 				},
 				write:function(val,oldval,min,max){
-					return isNaN(val)? 0: (val>=min && val<=max)?val:(val>max)?max:min;
+					var checkmin = min!==null;
+					var checkmax = max!==null;
+					if(isNaN(val)){
+						return 0;
+					}
+					if(checkmax){
+						val = val>max?max:val;
+					}
+					if(checkmin){
+						val = val<min?min:val;
+					}
+					return val;
 				}
 			})
 			var v_boxVM = new Vue({
