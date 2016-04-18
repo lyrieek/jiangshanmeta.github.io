@@ -55,8 +55,7 @@ function whichTransitionEvent(){
 		//这里的dx是指水平方向和原来的偏移量
 		var dx;
 		var elem = document.querySelector(selector);
-
-		var elemW = parseInt(getCSS(elem,"width"));
+		var elemW = parseInt(getCSS(elem,"width"));//关于要进行horizontalMove的元素的宽度，要将其display设置为table才能求得正确的宽度
 		var winW = parseInt(getCSS(document.documentElement,'width'));
 		var offsetLeft = elem.getBoundingClientRect().left + document.body.scrollLeft;
 		var minX = winW - offsetLeft - elemW;
@@ -68,9 +67,6 @@ function whichTransitionEvent(){
 			elem.style[pfx("transition")] = transitionStr;
 		}
 		var init = function(){
-			touch.on(selector,'touchstart',function(event){
-				event.preventDefault();
-			});
 			touch.on(selector,'drag',function(event){
 				dx = dx || 0;
 				var offx = dx + event.x + 'px';

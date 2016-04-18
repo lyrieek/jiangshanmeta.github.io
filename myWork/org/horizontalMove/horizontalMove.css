@@ -2,7 +2,6 @@
 	border:1px solid #f3f3f3;
 	border-collapse: collapse;
 	border-spacing: 0;
-	word-break:keep-all;
 	white-space:nowrap;	
 }
 .table-horizontal th,.table-horizontal td{
