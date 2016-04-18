@@ -35,8 +35,8 @@
 			</div>
 			<div  class="pull-right half">
 				<div>
-					width:<input type="range" min="0" max="500" v-model="width">{{width+'px'}}<br>
-					height:<input type="range" min="0" max="500" v-model="height">{{height+'px'}}<br>
+					width:<input type="number" v-model="width | limitNum 0 500">{{width+'px'}}<br>
+					height:<input type="number" v-model="height | limitNum 0 500">{{height+'px'}}<br>
 					border-radius:<input type="range" min="0" max="100" v-model="borderRadius">{{borderRadius+'%'}}<br>
 					rotate<input type="range" min="-360" max="360" v-model="rotate">{{rotate +'deg'}}<br>
 					background:<input type="color" v-model="color">{{color}}
@@ -65,6 +65,14 @@
 			</div>
 		</div>
 		<script>
+			Vue.filter('limitNum',{
+				read:function(val){
+					return val;
+				},
+				write:function(val,oldval,min,max){
+					return isNaN(val)? 0: (val>=min && val<=max)?val:(val>max)?max:min;
+				}
+			})
 			var v_boxVM = new Vue({
 				el:"#v_box",
 				data:{
