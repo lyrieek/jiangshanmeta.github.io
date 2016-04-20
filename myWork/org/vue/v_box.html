@@ -72,7 +72,8 @@
 				write:function(val,oldval,min,max){
 					var checkmin = min!==null;
 					var checkmax = max!==null;
-					if(isNaN(val)){
+					//用isNaN判断是否是个正常数字是不正确的，因为有可能是Infinity，虽然正常情况下不会这个么东西
+					if(!isFinite(val)){
 						return 0;
 					}
 					if(checkmax){
