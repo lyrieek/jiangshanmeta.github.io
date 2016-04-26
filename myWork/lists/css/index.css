@@ -58,3 +58,41 @@ body {
   font-size: 12px;
   line-height: 18px;
 }
+.media-list2 {
+  font-familt: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.media-list2 .list-item {
+  display: block;
+}
+.media-list2 .list-item:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.media-list2 .media-left {
+  float: left;
+  width: 38px;
+  margin-right: 10px;
+}
+.media-list2 .media-left img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+.media-list2 .media-body {
+  overflow: hidden;
+}
+.media-list2 .list-item {
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+.media-list2 .media-body .headline {
+  color: #259;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 24px;
+}
+.media-list2 .media-body .caption-text {
+  font-size: 13px;
+  line-height: 22px;
+}

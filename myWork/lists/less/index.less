@@ -31,6 +31,10 @@ html,body{
 	padding:0;
 	list-style:none;
 }
+
+//media-list 其实是在问如何实现两列布局
+
+//双浮动制造两栏布局，结果是两列都是自适应的
 .media-list(@picW:20%,@bodyW:80%){
 	.list-item{
 		display:block;
@@ -47,11 +51,31 @@ html,body{
 	.media-body{
 		float:left;
 		width:@bodyW;
-	}
-		
+	}	
 }
+//一个浮动，一个overflowhidden制造两栏布局，一个定宽，一个自适应
+.media-list0(@mediaW:38px,@margin_right:10px){
+	.list-item{
+		display:block;
+		.clearfix();		
+	}
+	.media-left{
+		float:left;
+		width:@mediaW;
+		margin-right:@margin_right;
+		img{
+			.img-responsive();
+		}
+	}
+	.media-body{
+		overflow:hidden;
+	}
+}
+
+
+//www.coursera.org
 .media-list1{
-	.media-list();
+	.media-list(@picW:20%,@bodyW:80%);
 	.list-item{
 		padding:18px;
 		margin-bottom:16px;
@@ -72,6 +96,26 @@ html,body{
 			line-height:18px;
 		}
 	}
+}
 
-
+//www.zhihu.com
+.media-list2{
+	.media-list0(@mediaW:38px,@margin_right:10px);
+	font-familt:'Helvetica Neue',Helvetica,Arial,sans-serif;
+	.list-item{
+		border-top:1px solid #ddd;
+		padding-top:10px;
+	}
+	.media-body{
+		.headline{
+			color:#259;
+			font-size:14px;
+			font-weight: bold;
+			line-height:24px;
+		}
+		.caption-text{
+			font-size:13px;
+			line-height:22px;
+		}
+	}
 }
