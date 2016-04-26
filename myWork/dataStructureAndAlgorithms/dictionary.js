@@ -31,6 +31,7 @@ function Dictionary(){
 		return values;
 	}
 	this.print = function(){
-		console.log(this.values(),this.size())
+	//	console.log(this.values(),this.size());
+		console.log(items);
 	}
 }
