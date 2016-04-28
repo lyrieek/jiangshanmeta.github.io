@@ -119,6 +119,8 @@ html,body{
 		}
 	}
 }
+
+//tmall
 .card-list1{
 	.list-item{
 		width:235px;
@@ -128,6 +130,7 @@ html,body{
 		&:hover{
 			outline:1px solid #dd2727;
 		}
+		
 		&:nth-child(5n){
 			margin-right:0;
 		}
@@ -137,7 +140,7 @@ html,body{
 			.img-responsive();
 			.center-block();
 			&:hover{
-				opacity:0.7;
+				opacity:0.8;
 			}
 			transition:all 0.5s ease;			
 		}
@@ -149,6 +152,43 @@ html,body{
 		font-size:13px;
 		line-height:18px;
 		padding:3px 5px;
+	}
+	.clearfix();
+}
+
+
+//imooc,负数margin使用不错，避免使用复杂选择器（其实也不复杂），但考虑响应式可能简单点
+.card-list2{
+	margin-left:-60px;
+	margin-right:-20px;
+	.list-item{
+		float:left;
+		width:280px;
+		padding:20px 20px 0 20px;
+		&:hover{
+			box-shadow:0 4px 8px rgba(0,0,0,0.2);
+		}
+		margin-left:40px;
+		transition:all 0.5s ease-in-out;
+	}
+	.media-pic{
+		img{
+			.img-responsive();
+			.center-block();
+		}
+	}
+	.media-body{
+		.headline{
+			font-size:14px;
+			line-height:18px;
+			font-weight:bold;
+		}
+		.caption-text{
+			margin:8px 0;
+			font-size:12px;
+			color:#b4bbbf;
+			line-height:18px;
+		}
 	}
 	.clearfix();
 }
