@@ -44,7 +44,6 @@ function Graph(){
 	}
 	this.bfsShortWay = function(v){
 		var status = iniBFSstatus();
-		console.log(status)
 		var queue = new Queue();
 		var d = [];
 		var pred = [];
@@ -74,6 +73,27 @@ function Graph(){
 		return {
 			distance:d,
 			predecessor:pred
+		}
+	}
+	var dfsVisit = function(u,status,callback){
+		status[u] = 1;
+		callback&&callback(u);
+		var neighbors = adjList.get(u);
+		for(var i =0;i<neighbors.length;i++){
+			var w = neighbors[i];
+			if(status[w]==0){
+				dfsVisit(w,status,callback);
+			}
+		}
+		status[u] = 2;
+		document.write(u+"done<br>")
+	}
+	this.dfs = function(callback){
+		var status = iniBFSstatus();
+		for(var i=0;i<vertices.length;i++){
+			if(status[vertices[i]] == 0){
+				dfsVisit(vertices[i],status,callback);
+			}
 		}
 	}
 	this.print = function(){

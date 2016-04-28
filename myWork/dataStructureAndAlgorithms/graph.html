@@ -25,8 +25,10 @@
 			graphIns.addEdge('B','F');
 			graphIns.addEdge('E','I');
 			graphIns.print();
-			graphIns.bfs('A',function(v){document.write(v)});
+			graphIns.bfs('A',function(v){document.write(v+"<br>")});
 			console.log(graphIns.bfsShortWay('A'));
+
+			graphIns.dfs(function(u){document.write(u+"<br>")})
 		</script>
 	</body>
 </html>
