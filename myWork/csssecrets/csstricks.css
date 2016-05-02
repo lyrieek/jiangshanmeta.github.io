@@ -1,4 +1,4 @@
-body{color:#cc0;}
+body{color:#cc0;background-color:#234567;}
 button{
 	padding:6px 16px;
 	border:1px solid #446d88;
@@ -19,4 +19,9 @@ button.ok{
 hr{
 	/* currentColor可以理解为继承下来的color值，这样就可以尽量少的改动了 */
 	background-color:currentColor;
+}
+.border{
+	border:10px solid rgba(0,0,0,0.5);
+	background:white;
+	/*background-clip:padding-box;*/
 }
