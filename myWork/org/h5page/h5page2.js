@@ -42,37 +42,40 @@ function getCSS(el,prop){
 	  }
 	  return window.getComputedStyle(el);
 }
-(function(document,window){
+(function(document){
 	var startTouchX,startTouchY,endTouchX,endTouchY;
-	function toucherstartHandler(event){
-		startTouchX = event.touches[0].clientX;
-		startTouchY = event.touches[0].clientY;
-	}
-	function touchmoveHandler(event){
-		event.preventDefault();
-		var curTouchX = event.changedTouches[0].clientX;
-		var curTouchY = event.changedTouches[0].clientY;
-		event.deltaX = curTouchX - startTouchX;
-		event.deltaY = curTouchY - startTouchY;
-	}
-	function touchendHandler(event){
-		endTouchX = event.changedTouches[0].clientX;
-		endTouchY = event.changedTouches[0].clientY;
-		var deltaX = endTouchX - startTouchX;
-		var deltaY = endTouchY - startTouchY;
-		event.deltaX = deltaX;
-		event.deltaY = deltaY;
-		var absY = Math.abs(deltaY);
-		var absX = Math.abs(deltaX);
-		if(absX>50 || absY>50){
-			var eventName = absX>absY? (deltaX == absX? 'swipeRight':'swipeLeft'):(deltaY==absY? 'swipeDown':'swipeUp');
-			triggerEvent(event.target,eventName);
+	var touchHnadler = {
+		toucherstartHandler:function(event){
+			startTouchX = event.touches[0].clientX;
+			startTouchY = event.touches[0].clientY;			
+		},
+		touchmoveHandler:function(event){
+			event.preventDefault();
+			var curTouchX = event.changedTouches[0].clientX;
+			var curTouchY = event.changedTouches[0].clientY;
+			event.deltaX = curTouchX - startTouchX;
+			event.deltaY = curTouchY - startTouchY;			
+		},
+		touchendHandler:function(event){
+			endTouchX = event.changedTouches[0].clientX;
+			endTouchY = event.changedTouches[0].clientY;
+			var deltaX = endTouchX - startTouchX;
+			var deltaY = endTouchY - startTouchY;
+			event.deltaX = deltaX;
+			event.deltaY = deltaY;
+			var absY = Math.abs(deltaY);
+			var absX = Math.abs(deltaX);
+			if(absX>50 || absY>50){
+				var eventName = absX>absY? (deltaX == absX? 'swipeRight':'swipeLeft'):(deltaY==absY? 'swipeDown':'swipeUp');
+				triggerEvent(event.target,eventName);
+			}			
 		}
 	}
-	document.addEventListener("touchstart",toucherstartHandler,false);
-	document.addEventListener("touchmove",touchmoveHandler,false);
-	document.addEventListener("touchend",touchendHandler,false);
-})(document,window);
+
+	document.addEventListener("touchstart",touchHnadler.toucherstartHandler,false);
+	document.addEventListener("touchmove",touchHnadler.touchmoveHandler,false);
+	document.addEventListener("touchend",touchHnadler.touchendHandler,false);
+})(document);
 
 //deal with pfx of transitionent event
 function whichTransitionEvent(){  
@@ -94,7 +97,8 @@ function whichTransitionEvent(){
 var arrayify = function ( a ) {
     return [].slice.call( a );
 };
-(function(){
+
+function H5page(){
 	var curPage = 1;
 	var nextPage = 1;
 	var typ;
@@ -116,7 +120,7 @@ var arrayify = function ( a ) {
 	//如果不动，则对应notMove
 	var cfgMethod = {
 		'unite':{
-			swipeUpEvent:function(event){
+			swipeUpEvent:function(){
 				nextPage = curPage + 1;
 				if(nextPage>pageNum){
 					nextPage = curPage;
@@ -126,7 +130,7 @@ var arrayify = function ( a ) {
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				addAnimation(nextPage-1);	
 			},
-			swipeDownEvent:function(event){
+			swipeDownEvent:function(){
 				nextPage = curPage-1;
 				if(nextPage<1){
 					nextPage = 1;
@@ -146,7 +150,7 @@ var arrayify = function ( a ) {
 			}
 		},
 		'seperate':{
-			swipeUpEvent:function(event){
+			swipeUpEvent:function(){
 				if(pageSwitch){
 					return;
 				}
@@ -165,7 +169,7 @@ var arrayify = function ( a ) {
 				pageSwitch = true;
 				addAnimation(nextPage-1);
 			},
-			swipeDownEvent:function(event){
+			swipeDownEvent:function(){
 				if(pageSwitch){
 					return;
 				}				
@@ -206,8 +210,7 @@ var arrayify = function ( a ) {
 			}
 		},
 		'threeD':{
-
-			swipeUpEvent:function(event){
+			swipeUpEvent:function(){
 				if(pageSwitch){
 					return;
 				}
@@ -226,7 +229,7 @@ var arrayify = function ( a ) {
 				needTransEle.classList.add("h5page-showing");		
 				addAnimation(nextPage-1);
 			},
-			swipeDownEvent:function(event){
+			swipeDownEvent:function(){
 				if(pageSwitch){
 					return;
 				}				
@@ -260,7 +263,7 @@ var arrayify = function ( a ) {
 			}
 		},
 		'notMove':{
-			swipeUpEvent:function(event){
+			swipeUpEvent:function(){
 				if(pageSwitch){
 					return;
 				}
@@ -277,7 +280,7 @@ var arrayify = function ( a ) {
 				pageSwitch = true;
 				addAnimation(nextPage-1);
 			},
-			swipeDownEvent:function(event){
+			swipeDownEvent:function(){
 				if(pageSwitch){
 					return;
 				}				
@@ -353,12 +356,27 @@ var arrayify = function ( a ) {
 		progressBar.style.width = (curPage/pageNum)*100 +"%";
 	}
 
-	cfgInit[h5method]&&cfgInit[h5method]();
-	mode['swipeUpEvent']&&document.addEventListener("swipeUp",mode['swipeUpEvent'],false);
-	mode['swipeDownEvent']&&document.addEventListener("swipeDown",mode['swipeDownEvent'],false);
-	mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
-	
-	addAnimation(0);
-	updateProgressBar();
 
-})();
+	return {
+		init:function(){
+			cfgInit[h5method]&&cfgInit[h5method]();
+			mode['swipeUpEvent']&&document.addEventListener("swipeUp",mode['swipeUpEvent'],false);
+			mode['swipeDownEvent']&&document.addEventListener("swipeDown",mode['swipeDownEvent'],false);
+			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
+			
+			addAnimation(0);
+			updateProgressBar();
+		},
+		prev:function(){
+			mode['swipeDownEvent']();
+		},
+		next:function(){
+			mode['swipeUpEvent']();
+		}
+	}
+}
+// var h5page = {};
+// h5page.create = function(){
+
+// }
+// h5page.
