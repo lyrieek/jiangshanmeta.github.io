@@ -356,7 +356,6 @@ function H5page(){
 		progressBar.style.width = (curPage/pageNum)*100 +"%";
 	}
 
-
 	return {
 		init:function(){
 			cfgInit[h5method]&&cfgInit[h5method]();
@@ -375,8 +374,3 @@ function H5page(){
 		}
 	}
 }
-// var h5page = {};
-// h5page.create = function(){
-
-// }
-// h5page.
