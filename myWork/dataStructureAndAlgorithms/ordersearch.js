@@ -38,8 +38,39 @@ function ArrayList(){
 			}
 		}
 	}
+	var partition = function(array,left,right){
+		var pivot = array[Math.floor((left+right)/2)];
+		var i = left;
+		var j = right;
+		while(i<=j){
+			while(array[i]<pivot){
+				i++
+			}
+			while(array[j]>pivot){
+				j--;
+			}
+			if(i<=j){
+				swapQuickSort(array,i,j);
+				i++;
+				j--;
+			}
+		}
+		return i;
+	}
+	var quick = function(array,left,right){
+		var index;
+		if(array.length>1){
+			index = partition(array,left,right);
+			if(left<index-1){
+				quick(array,left,index-1);
+			}
+			if(index<right){
+				quick(array,index,right);
+			}
+		}
+	}
 	this.quickSort = function(){
-
+		quick(array,0,array.length-1);
 	}
 	//顺序搜索
 	this.sequentialSearch = function(item){
