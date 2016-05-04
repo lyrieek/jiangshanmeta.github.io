@@ -128,27 +128,24 @@ function H5page(option){
 	//如果下一个页面动的时候上一个页面不动，问题是下一个页面动完，上一个页面去哪里，如果动，则对应step
 	//如果不动，则对应oneonly
 
+
+
+
 	var cfgMethod = {
 		'alltogether':{
-			swipeUpEvent:function(){
-				nextPage = curPage + 1;
-				if(nextPage>pageNum){
-					nextPage = curPage;
+			goto:function(num){
+				if(num == curPage){
 					return;
 				}
-		//		toggleArrow();
-				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
-				addAnimation(nextPage-1);	
-			},
-			swipeDownEvent:function(){
-				nextPage = curPage-1;
+				nextPage = num;
 				if(nextPage<1){
 					nextPage = 1;
-					return;
+				}
+				if(nextPage>pageNum){
+					nextPage = pageNum;
 				}
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
-				addAnimation(nextPage-1);		
-		//		toggleArrow();
+				addAnimation(nextPage-1);
 			},
 			pageTransitionEndEvent:function(event){
 				if(!event.target.classList.contains("h5page-wrap")){
@@ -160,7 +157,7 @@ function H5page(option){
 			}
 		},
 		'step':{
-			swipeUpEvent:function(){
+			next:function(){
 				if(pageSwitch){
 					return;
 				}
@@ -179,7 +176,7 @@ function H5page(option){
 				pageSwitch = true;
 				addAnimation(nextPage-1);
 			},
-			swipeDownEvent:function(){
+			prev:function(){
 				if(pageSwitch){
 					return;
 				}				
@@ -220,7 +217,7 @@ function H5page(option){
 			}
 		},
 		'twotogether':{
-			swipeUpEvent:function(){
+			next:function(){
 				if(pageSwitch){
 					return;
 				}
@@ -239,7 +236,7 @@ function H5page(option){
 				needTransEle.classList.add("h5page-showing");		
 				addAnimation(nextPage-1);
 			},
-			swipeDownEvent:function(){
+			prev:function(){
 				if(pageSwitch){
 					return;
 				}				
@@ -273,45 +270,104 @@ function H5page(option){
 			}
 		},
 		'oneonly':{
-			swipeUpEvent:function(){
-				if(pageSwitch){
-					return;
-				}
-				typ = "swipeup";
-				nextPage = curPage + 1;
+			goto:function(num){
+				nextPage = num;
 				if(nextPage>pageNum){
-					nextPage = curPage;
-					return;
+					nextPage = pageNum;
 				}
-	//			toggleArrow();
-				var needTransEle = pages[nextPage-1];
-				needTransEle.classList.remove("h5page-notShow");	
-				needTransEle.classList.add("h5page-showing");		
-				pageSwitch = true;
-				addAnimation(nextPage-1);
-			},
-			swipeDownEvent:function(){
-				if(pageSwitch){
-					return;
-				}				
-				typ = "swipedown";
-				nextPage = curPage-1;
 				if(nextPage<1){
 					nextPage = 1;
-					return;
 				}
-		//		toggleArrow();
-				var needTransEle = pages[curPage-1];
-				needTransEle.classList.remove("h5page-showing");	
-				needTransEle.classList.add("h5page-notShow");		
+				if(pageSwitch || nextPage == curPage){
+					console.log(pageSwitch,nextPage,curPage)
+					return;
+				}				
+				//如果nextPage>curPage只需要nextPage对应的页面在中间显示即可,nextPage之前的都要标记为已显示
+				//如果nextPage<curPage nextPage之后的页面都要标记为为显示状态
+				//此时已经不可能两者相等了
+				// if(nextPage>curPage){
+				// 	var start = curPage+1;
+				// 	var end = nextPage;
+				// }else{
+				// 	var start = nextPage+1;
+				// 	var end = curPage;
+				// }
+				// for(var i=start;i<=end;i++){
+				// 	var needTransEle = pages[i-1];
+				// 	needTransEle.classList.remove("h5page-notShow");
+				// 	needTransEle.classList.add("h5page-showing");						
+				// }
+				// pageSwitch = true;
+				// addAnimation(nextPage-1);	
+				if(nextPage>curPage){
+					for(var i = curPage+1;i<=nextPage;i++){
+						var needTransEle = pages[i-1];
+						needTransEle.classList.remove("h5page-notShow");
+						needTransEle.classList.add("h5page-showing");						
+					}
+				}else{
+					for(var i = nextPage+1;i<=curPage;i++){
+						var needTransEle = pages[i-1];
+						needTransEle.classList.remove("h5page-showing");	
+						needTransEle.classList.add("h5page-notShow");						
+					}
+					pageSwitch = true;
+					addAnimation(nextPage-1);						
+				}
 				pageSwitch = true;
 				addAnimation(nextPage-1);				
+
 			},
+	// 		next:function(){
+	// 			if(pageSwitch){
+	// 				return;
+	// 			}
+	// 			typ = "swipeup";
+	// 			nextPage = curPage + 1;
+	// 			if(nextPage>pageNum){
+	// 				nextPage = curPage;
+	// 				return;
+	// 			}
+	// //			toggleArrow();
+	// 			var needTransEle = pages[nextPage-1];
+	// 			needTransEle.classList.remove("h5page-notShow");	
+	// 			needTransEle.classList.add("h5page-showing");		
+	// 			pageSwitch = true;
+	// 			addAnimation(nextPage-1);
+	// 		},
+	// 		prev:function(){
+	// 			if(pageSwitch){
+	// 				return;
+	// 			}				
+	// 			typ = "swipedown";
+	// 			nextPage = curPage-1;
+	// 			if(nextPage<1){
+	// 				nextPage = 1;
+	// 				return;
+	// 			}
+	// 	//		toggleArrow();
+	// 			var needTransEle = pages[curPage-1];
+	// 			needTransEle.classList.remove("h5page-showing");	
+	// 			needTransEle.classList.add("h5page-notShow");		
+	// 			pageSwitch = true;
+	// 			addAnimation(nextPage-1);				
+	// 		},
 			pageTransitionEndEvent:function(event){
 				if(!event.target.classList.contains("h5page")){
 					return;
 				}
-				removeAnimation(curPage-1);
+				var index = pages.indexOf(event.target);
+				console.log(index);
+				if(index != nextPage-1){
+					removeAnimation(index-1);
+				}
+
+				// if(nextPage>curPage){
+				// 	removeAnimation(curPage-1);
+				// }else{
+				// 	removeAnimation(pages.indexOf(event.target));
+				// }
+				
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();
@@ -346,6 +402,12 @@ function H5page(option){
 	}
 
 	var mode = cfgMethod[jsMethod];
+	mode.prev = function(){
+		mode.goto(curPage-1);
+	}
+	mode.next = function(){
+		mode.goto(curPage+1);
+	}
 	function addAnimation(pageNum){
 		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
 		for(var i = 0;i<curPageAnimationEle.length;i++){
@@ -354,6 +416,7 @@ function H5page(option){
 		}
 	}
 	function removeAnimation(pageNum){
+		if(pageNum<0){return;}
 		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
 		for(var i = 0;i<curPageAnimationEle.length;i++){
 			var thisEle = curPageAnimationEle[i];
@@ -370,18 +433,27 @@ function H5page(option){
 	return {
 		init:function(){
 			cfgInit[h5method]&&cfgInit[h5method]();
-			mode['swipeUpEvent']&&document.addEventListener("swipeUp",mode['swipeUpEvent'],false);
-			mode['swipeDownEvent']&&document.addEventListener("swipeDown",mode['swipeDownEvent'],false);
+			mode['next']&&document.addEventListener("swipeUp",mode['next'],false);
+			mode['prev']&&document.addEventListener("swipeDown",mode['prev'],false);
 			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
 			
 			addAnimation(0);
 		//	updateProgressBar();
 		},
 		prev:function(){
-			mode['swipeDownEvent']();
+			mode['prev']();
 		},
 		next:function(){
-			mode['swipeUpEvent']();
+			mode['next']();
+		},
+		goto:function(num){
+			mode['goto'](num);
+		},
+		getCurPage:function(){
+			return curPage;
+		},
+		getSwitch:function(){
+			return pageSwitch;
 		}
 	}
 }
