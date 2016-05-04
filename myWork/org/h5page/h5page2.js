@@ -97,36 +97,46 @@ function whichTransitionEvent(){
 var arrayify = function ( a ) {
     return [].slice.call( a );
 };
+//option wrapSelector wrap选择器 
+function H5page(option){
 
-function H5page(){
-	var curPage = 1;
-	var nextPage = 1;
-	var typ;
-	var pages = arrayify(document.querySelectorAll(".h5page"));
+	var defaults = {
+		wrapSelector:'.h5page-wrap',
+
+	}
+	option = Object.assign(defaults,option || {});
+	var h5pageWrap = document.querySelector(option.wrapSelector);
+	var pages = arrayify(h5pageWrap.children);
 	var pageNum = pages.length;
-	var progressBar = document.querySelector('.progress-bar');
-	var transition =pfx('transition');
+	var h5method = option.role || h5pageWrap.dataset.role;
+	h5pageWrap.classList.add('h5page-' + h5method);
+	var transition = pfx('transition');
 	var transitionendEvent = whichTransitionEvent();
 	var animation = pfx('animation');
-	var h5pageWrap = document.querySelector(".h5page-wrap");
-	var h5method = h5pageWrap.dataset.role;
-	h5pageWrap.classList.add('h5page-' + h5method);
-	var arrow = document.getElementById("arrow");
+	var curPage = 1;
+	var nextPage = 1;
 	var pageSwitch = false;
-	var jsMethod;
+	var typ,jsMethod;
+	
+	// var progressBar = document.querySelector('.progress-bar');
+	//var arrow = document.getElementById("arrow");
+	
 	//这里本来只有一种页面切换方式，而且也不是这种组织形式，后来看得多了想实现的也多了，就写成了这种cfg的形式，想来想去页面的切换方式也就那么多
-	//下一个页面一定要展示上来，这是毫无疑问的，问题是上一个页面要不要动，如果动的话实现了两种，一种是把所有的页面看成一个整体，对应unite，
-	//一种是把各个页面分离开，对应threeD,如果下一个页面动的时候上一个页面不动，问题是下一个页面动完，上一个页面去哪里，如果动，则对应seperate
-	//如果不动，则对应notMove
+	//下一个页面一定要展示上来，这是毫无疑问的，问题是上一个页面要不要动，
+	//如果动的话实现了两种，一种是把所有的页面看成一个整体，对应alltogether，
+	//一种是把各个页面分离开，对应twotogether,
+	//如果下一个页面动的时候上一个页面不动，问题是下一个页面动完，上一个页面去哪里，如果动，则对应step
+	//如果不动，则对应oneonly
+
 	var cfgMethod = {
-		'unite':{
+		'alltogether':{
 			swipeUpEvent:function(){
 				nextPage = curPage + 1;
 				if(nextPage>pageNum){
 					nextPage = curPage;
 					return;
 				}
-				toggleArrow();
+		//		toggleArrow();
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				addAnimation(nextPage-1);	
 			},
@@ -138,7 +148,7 @@ function H5page(){
 				}
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				addAnimation(nextPage-1);		
-				toggleArrow();
+		//		toggleArrow();
 			},
 			pageTransitionEndEvent:function(event){
 				if(!event.target.classList.contains("h5page-wrap")){
@@ -146,10 +156,10 @@ function H5page(){
 				}
 				removeAnimation(curPage-1);
 				curPage = nextPage;
-				updateProgressBar();				
+			//	updateProgressBar();				
 			}
 		},
-		'seperate':{
+		'step':{
 			swipeUpEvent:function(){
 				if(pageSwitch){
 					return;
@@ -160,7 +170,7 @@ function H5page(){
 					nextPage = curPage;
 					return;
 				}
-				toggleArrow();
+		//		toggleArrow();
 				var needTransEle = pages[nextPage-1];
 				needTransEle.classList.remove("h5page-notShow");	
 				needTransEle.classList.add("h5page-showing");		
@@ -179,7 +189,7 @@ function H5page(){
 					nextPage = 1;
 					return;
 				}
-				toggleArrow();
+		//		toggleArrow();
 				pages[curPage-1].classList.remove("top");
 				var needTransEle = pages[nextPage-1];
 				needTransEle.classList.remove("h5page-hasShown");	
@@ -205,11 +215,11 @@ function H5page(){
 				}
 				curPage = nextPage;
 				pageSwitch = false;
-				updateProgressBar();				
+			//	updateProgressBar();				
 
 			}
 		},
-		'threeD':{
+		'twotogether':{
 			swipeUpEvent:function(){
 				if(pageSwitch){
 					return;
@@ -220,7 +230,7 @@ function H5page(){
 					nextPage = curPage;
 					return;
 				}
-				toggleArrow();
+	//			toggleArrow();
 				var curPageEle = pages[curPage-1];
 				var needTransEle = pages[nextPage-1];
 				curPageEle.classList.remove("h5page-showing");
@@ -239,7 +249,7 @@ function H5page(){
 					nextPage = 1;
 					return;
 				}
-				toggleArrow();
+		//		toggleArrow();
 				var curPageEle = pages[curPage-1];
 				var needTransEle = pages[nextPage-1];
 				curPageEle.classList.remove("h5page-showing");
@@ -259,10 +269,10 @@ function H5page(){
 				}
 				curPage = nextPage;
 				pageSwitch = false;
-				updateProgressBar();
+			//	updateProgressBar();
 			}
 		},
-		'notMove':{
+		'oneonly':{
 			swipeUpEvent:function(){
 				if(pageSwitch){
 					return;
@@ -273,7 +283,7 @@ function H5page(){
 					nextPage = curPage;
 					return;
 				}
-				toggleArrow();
+	//			toggleArrow();
 				var needTransEle = pages[nextPage-1];
 				needTransEle.classList.remove("h5page-notShow");	
 				needTransEle.classList.add("h5page-showing");		
@@ -290,7 +300,7 @@ function H5page(){
 					nextPage = 1;
 					return;
 				}
-				toggleArrow();
+		//		toggleArrow();
 				var needTransEle = pages[curPage-1];
 				needTransEle.classList.remove("h5page-showing");	
 				needTransEle.classList.add("h5page-notShow");		
@@ -304,7 +314,7 @@ function H5page(){
 				removeAnimation(curPage-1);
 				curPage = nextPage;
 				pageSwitch = false;
-				updateProgressBar();
+			//	updateProgressBar();
 			}			
 		}
 	};
@@ -317,12 +327,12 @@ function H5page(){
 			document.head.appendChild(styleEle);					
 		},
 	}; 
-	//整体思路是css控制页面切换效果，但是对应的js就那么几个
+	//整体思路是css控制页面切换效果，但是对应的js就那么几个,气候css控制的页面切换多了，就在这里添加cfg
 	var cfgPageRole = {
-		unite:["unite"],//整体动
-		seperate:["seperate"],//下一页先动，动完上一页再动
-		threeD:["threeD",'unite2'],//上下两页一起动
-		notMove:["notMove"]//仅仅动下一页
+		alltogether:["unite"],//整体动
+		step:["seperate"],//下一页先动，动完上一页再动
+		twotogether:["threeD",'unite2'],//上下两页一起动
+		oneonly:["notMove"]//仅仅动下一页
 	}
 
 	for(k in cfgPageRole){
@@ -334,6 +344,7 @@ function H5page(){
 			}
 		}
 	}
+
 	var mode = cfgMethod[jsMethod];
 	function addAnimation(pageNum){
 		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
@@ -349,12 +360,12 @@ function H5page(){
 			thisEle.style[animation] = '';
 		}		
 	}
-	function toggleArrow(){
-		arrow.style.display = (nextPage == pageNum? 'none':'block');
-	}
-	function updateProgressBar(){
-		progressBar.style.width = (curPage/pageNum)*100 +"%";
-	}
+	// function toggleArrow(){
+	// 	arrow.style.display = (nextPage == pageNum? 'none':'block');
+	// }
+	// function updateProgressBar(){
+	// 	progressBar.style.width = (curPage/pageNum)*100 +"%";
+	// }
 
 	return {
 		init:function(){
@@ -364,7 +375,7 @@ function H5page(){
 			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
 			
 			addAnimation(0);
-			updateProgressBar();
+		//	updateProgressBar();
 		},
 		prev:function(){
 			mode['swipeDownEvent']();
