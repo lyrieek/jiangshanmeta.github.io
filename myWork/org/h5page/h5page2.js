@@ -149,6 +149,7 @@ function H5page(option){
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				pageSwitch = true;
 				addAnimation(nextPage-1);
+				toggleArrow()
 			},
 			pageTransitionEndEvent:function(event){
 				if(event.target != h5pageWrap){
@@ -161,6 +162,22 @@ function H5page(option){
 			}
 		},
 		'step':{
+			goto:function(num){
+				if(pageSwitch){
+					return;
+				}
+				nextPage = num;
+				if(nextPage<1){
+					nextPage = 1;
+				}else if(nextPage>pageNum){
+					nextPage = pageNum;
+				}
+				if(nextPage == curPage){
+					return;
+				}
+
+						
+			},
 			next:function(){
 				if(pageSwitch){
 					return;
@@ -221,51 +238,53 @@ function H5page(option){
 			}
 		},
 		'twotogether':{
-			next:function(){
+			goto:function(num){
 				if(pageSwitch){
 					return;
 				}
-				typ = "swipeup";
-				nextPage = curPage + 1;
-				if(nextPage>pageNum){
-					nextPage = curPage;
-					return;
-				}
-	//			toggleArrow();
-				var curPageEle = pages[curPage-1];
-				var needTransEle = pages[nextPage-1];
-				curPageEle.classList.remove("h5page-showing");
-				curPageEle.classList.add("h5page-hasShown");	
-				needTransEle.classList.remove("h5page-notShow");	
-				needTransEle.classList.add("h5page-showing");		
-				addAnimation(nextPage-1);
-			},
-			prev:function(){
-				if(pageSwitch){
-					return;
-				}				
-				typ = "swipedown";
-				nextPage = curPage-1;
+				nextPage = num;
 				if(nextPage<1){
 					nextPage = 1;
+				}else if(nextPage>pageNum){
+					nextPage = pageNum;
+				}
+				if(nextPage == curPage){
 					return;
 				}
-		//		toggleArrow();
-				var curPageEle = pages[curPage-1];
-				var needTransEle = pages[nextPage-1];
-				curPageEle.classList.remove("h5page-showing");
-				curPageEle.classList.add("h5page-notShow");
-				needTransEle.classList.remove("h5page-hasShown");	
-				needTransEle.classList.add("h5page-showing");		
-				pageSwitch = true;
-				addAnimation(nextPage-1);	
+				//如果nextPage>curPage nextPage显示，curPage 含 ~ nextPage 不含 之间的都要标记为已显示,此时可能是notShow showing
+				//如果curPage>nextPage， nextPage show nextPage 不含 curPage 含 之间的标记为未显示 此时可能是hasShown showing
+				if(nextPage>curPage){
+					var start = curPage;
+					var end = nextPage;
+					var cls = "h5page-hasShown";
+				}else{
+					var start = nextPage+1;
+					var end = curPage+1;
+					var cls = "h5page-notShow";
+				}
+				for(var i=start;i<end;i++){
+					var needTransEle = pages[i-1];
+					needTransEle.classList.remove("h5page-showing");
+					needTransEle.classList.remove("h5page-notShow");
+					needTransEle.classList.remove("h5page-hasShown");
+					needTransEle.classList.add(cls);
+				}
+			 	var needTransEle = pages[nextPage-1];
+			 	needTransEle.classList.remove("h5page-notShow");
+			 	needTransEle.classList.remove("h5page-hasShown");
+			 	needTransEle.classList.add("h5page-showing");
+			 	addAnimation(nextPage-1);
+			 	toggleArrow();
 			},
+			
+
 			pageTransitionEndEvent:function(event){
-				if(!event.target.classList.contains("h5page")){
+				var index = pages.indexOf(event.target);
+				if(index == -1){
 					return;
-				}
+				} 
 				if(!event.target.classList.contains("h5page-showing")){
-					removeAnimation(pages.indexOf(event.target));
+					removeAnimation(index);
 					return;
 				}
 				curPage = nextPage;
@@ -305,7 +324,7 @@ function H5page(option){
 				}
 				pageSwitch = true;
 				addAnimation(nextPage-1);				
-		//		toggleArrow();
+				toggleArrow();
 			},
 
 			pageTransitionEndEvent:function(event){
@@ -380,9 +399,9 @@ function H5page(option){
 			thisEle.style[animation] = '';
 		}		
 	}
-	// function toggleArrow(){
-	// 	arrow.style.display = (nextPage == pageNum? 'none':'block');
-	// }
+	function toggleArrow(){
+		arrow.style.display = (nextPage == pageNum? 'none':'block');
+	}
 	// function updateProgressBar(){
 	// 	progressBar.style.width = (curPage/pageNum)*100 +"%";
 	// }
