@@ -104,6 +104,7 @@ function H5page(option){
 		wrapSelector:'.h5page-wrap',
 
 	}
+	//todo callback defaults
 	option = Object.assign(defaults,option || {});
 	var h5pageWrap = document.querySelector(option.wrapSelector);
 	var pages = arrayify(h5pageWrap.children);
@@ -175,61 +176,48 @@ function H5page(option){
 				if(nextPage == curPage){
 					return;
 				}
+				//if nextPage>curPage nextPage+showing top -notShow  curPage移除top
+				//过度结束后curPage含 到 nextPage 不含之间的全部标记为 已读
 
-						
-			},
-			next:function(){
-				if(pageSwitch){
-					return;
-				}
-				typ = "swipeup";
-				nextPage = curPage + 1;
-				if(nextPage>pageNum){
-					nextPage = curPage;
-					return;
-				}
-		//		toggleArrow();
-				var needTransEle = pages[nextPage-1];
-				needTransEle.classList.remove("h5page-notShow");	
-				needTransEle.classList.add("h5page-showing");		
-				needTransEle.classList.add("top");
+				//if nextPage<curPage nextPage -hasShown + top curPage - top
+				//过度结束后nextPage 不含 和 curPage含之间的全部标记为未读
 				pages[curPage-1].classList.remove("top");
+
+				var needTransEle = pages[nextPage-1];
+				needTransEle.classList.remove("h5page-notShow");
+				needTransEle.classList.remove("h5page-hasShown");
+				needTransEle.classList.add("h5page-showing");
+				needTransEle.classList.add("top");
 				pageSwitch = true;
 				addAnimation(nextPage-1);
-			},
-			prev:function(){
-				if(pageSwitch){
-					return;
-				}				
-				typ = "swipedown";
-				nextPage = curPage-1;
-				if(nextPage<1){
-					nextPage = 1;
-					return;
-				}
-		//		toggleArrow();
-				pages[curPage-1].classList.remove("top");
-				var needTransEle = pages[nextPage-1];
-				needTransEle.classList.remove("h5page-hasShown");	
-				needTransEle.classList.add("h5page-showing");		
-				needTransEle.classList.add("top");
-				pageSwitch = true;
-				addAnimation(nextPage-1);				
+				toggleArrow();		
 			},
 			pageTransitionEndEvent:function(event){
-				if(!event.target.classList.contains("h5page")){
+				var index = pages.indexOf(event.target);
+				if(index==-1){
 					return;
 				}
-				if(!event.target.classList.contains("h5page-showing")){
-					removeAnimation(pages.indexOf(event.target));
+
+				if(index != nextPage-1){
+					removeAnimation(index);
 					return;
+				} 
+
+				if(nextPage>curPage){
+					var start = curPage;
+					var end = nextPage;
+					var cls = 'h5page-hasShown';
+				}else{
+					var start = nextPage+1;
+					var end = curPage+1;
+					var cls = 'h5page-notShow';
 				}
-				var needTransEle = pages[curPage-1];
-				needTransEle.classList.remove("h5page-showing");
-				if(typ == 'swipeup'){
-					needTransEle.classList.add("h5page-hasShown");
-				}else if(typ == 'swipedown'){
-					needTransEle.classList.add("h5page-notShow");
+				for(var i=start;i<end;i++){
+					var needTransEle = pages[i-1];
+					needTransEle.classList.remove("h5page-showing");
+					needTransEle.classList.remove("h5page-notShow");
+					needTransEle.classList.remove("h5page-hasShown");
+					needTransEle.classList.add(cls);
 				}
 				curPage = nextPage;
 				pageSwitch = false;
@@ -282,11 +270,15 @@ function H5page(option){
 				var index = pages.indexOf(event.target);
 				if(index == -1){
 					return;
-				} 
-				if(!event.target.classList.contains("h5page-showing")){
+				}
+				if(index != nextPage-1){
 					removeAnimation(index);
 					return;
-				}
+				} 
+				// if(!event.target.classList.contains("h5page-showing")){
+					
+				// 	return;
+				// }
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();
