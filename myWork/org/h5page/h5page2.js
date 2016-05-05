@@ -30,7 +30,31 @@ var pfx = (function () {
         return memory[ prop ];
     };
 })();
-
+//https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+if (!Object.assign) {
+  Object.defineProperty(Object, "assign", {
+    enumerable: false,
+    configurable: true,
+    writable: true,
+    value: function(target, firstSource) {
+      "use strict";
+      if (target === undefined || target === null)
+        throw new TypeError("Cannot convert first argument to object");
+      var to = Object(target);
+      for (var i = 1; i < arguments.length; i++) {
+        var nextSource = arguments[i];
+        if (nextSource === undefined || nextSource === null) continue;
+        var keysArray = Object.keys(Object(nextSource));
+        for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+          var nextKey = keysArray[nextIndex];
+          var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+          if (desc !== undefined && desc.enumerable) to[nextKey] = nextSource[nextKey];
+        }
+      }
+      return to;
+    }
+  });
+}
 var triggerEvent = function (el, eventName, detail) {
     var event = document.createEvent("CustomEvent");
     event.initCustomEvent(eventName, true, true, detail);
@@ -102,6 +126,16 @@ function H5page(option){
 
 	var defaults = {
 		wrapSelector:'.h5page-wrap',
+		mode:'',
+		beforeLeave:function(curPage,nextPage){
+
+		},
+		afterLoad:function(nextPage,curPage){
+
+		},
+		init:function(){
+
+		}
 
 	}
 	//todo callback defaults
@@ -117,21 +151,10 @@ function H5page(option){
 	var curPage = 1;
 	var nextPage = 1;
 	var pageSwitch = false;
-	var typ,jsMethod;
-	
+	var jsMethod;
 	// var progressBar = document.querySelector('.progress-bar');
-	//var arrow = document.getElementById("arrow");
+	var arrow = document.getElementById("arrow");
 	
-	//这里本来只有一种页面切换方式，而且也不是这种组织形式，后来看得多了想实现的也多了，就写成了这种cfg的形式，想来想去页面的切换方式也就那么多
-	//下一个页面一定要展示上来，这是毫无疑问的，问题是上一个页面要不要动，
-	//如果动的话实现了两种，一种是把所有的页面看成一个整体，对应alltogether，
-	//一种是把各个页面分离开，对应twotogether,
-	//如果下一个页面动的时候上一个页面不动，问题是下一个页面动完，上一个页面去哪里，如果动，则对应step
-	//如果不动，则对应oneonly
-
-
-
-
 	var cfgMethod = {
 		'alltogether':{
 			goto:function(num){
@@ -149,6 +172,7 @@ function H5page(option){
 				}
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				pageSwitch = true;
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage);
 				addAnimation(nextPage-1);
 				toggleArrow()
 			},
@@ -157,6 +181,7 @@ function H5page(option){
 					return;
 				}
 				removeAnimation(curPage-1);
+				option.afterLoad&&option.afterLoad(nextPage,curPage);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -176,11 +201,6 @@ function H5page(option){
 				if(nextPage == curPage){
 					return;
 				}
-				//if nextPage>curPage nextPage+showing top -notShow  curPage移除top
-				//过度结束后curPage含 到 nextPage 不含之间的全部标记为 已读
-
-				//if nextPage<curPage nextPage -hasShown + top curPage - top
-				//过度结束后nextPage 不含 和 curPage含之间的全部标记为未读
 				pages[curPage-1].classList.remove("top");
 
 				var needTransEle = pages[nextPage-1];
@@ -189,6 +209,7 @@ function H5page(option){
 				needTransEle.classList.add("h5page-showing");
 				needTransEle.classList.add("top");
 				pageSwitch = true;
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage);
 				addAnimation(nextPage-1);
 				toggleArrow();		
 			},
@@ -197,12 +218,10 @@ function H5page(option){
 				if(index==-1){
 					return;
 				}
-
 				if(index != nextPage-1){
 					removeAnimation(index);
 					return;
 				} 
-
 				if(nextPage>curPage){
 					var start = curPage;
 					var end = nextPage;
@@ -219,6 +238,7 @@ function H5page(option){
 					needTransEle.classList.remove("h5page-hasShown");
 					needTransEle.classList.add(cls);
 				}
+				option.afterLoad&&option.afterLoad(nextPage,curPage);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -239,8 +259,6 @@ function H5page(option){
 				if(nextPage == curPage){
 					return;
 				}
-				//如果nextPage>curPage nextPage显示，curPage 含 ~ nextPage 不含 之间的都要标记为已显示,此时可能是notShow showing
-				//如果curPage>nextPage， nextPage show nextPage 不含 curPage 含 之间的标记为未显示 此时可能是hasShown showing
 				if(nextPage>curPage){
 					var start = curPage;
 					var end = nextPage;
@@ -261,11 +279,11 @@ function H5page(option){
 			 	needTransEle.classList.remove("h5page-notShow");
 			 	needTransEle.classList.remove("h5page-hasShown");
 			 	needTransEle.classList.add("h5page-showing");
+			 	pageSwitch = true;
+			 	option.beforeLeave&&option.beforeLeave(curPage,nextPage);
 			 	addAnimation(nextPage-1);
 			 	toggleArrow();
 			},
-			
-
 			pageTransitionEndEvent:function(event){
 				var index = pages.indexOf(event.target);
 				if(index == -1){
@@ -275,10 +293,7 @@ function H5page(option){
 					removeAnimation(index);
 					return;
 				} 
-				// if(!event.target.classList.contains("h5page-showing")){
-					
-				// 	return;
-				// }
+				option.afterLoad&&option.afterLoad(nextPage,curPage);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();
@@ -298,9 +313,6 @@ function H5page(option){
 				if(nextPage == curPage){
 					return;
 				}				
-				//如果nextPage>curPage只需要nextPage对应的页面在中间显示即可,nextPage之前的都要标记为已显示
-				//如果nextPage<curPage nextPage之后的页面都要标记为为显示状态
-				//此时已经不可能两者相等了
 				if(nextPage>curPage){
 					for(var i = curPage+1;i<=nextPage;i++){
 						var needTransEle = pages[i-1];
@@ -315,6 +327,7 @@ function H5page(option){
 					}					
 				}
 				pageSwitch = true;
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage);
 				addAnimation(nextPage-1);				
 				toggleArrow();
 			},
@@ -324,14 +337,15 @@ function H5page(option){
 				if( index == -1 ){
 					return;
 				}
-				//如果nextPage>curPage,那么curPage han和nextPage buhan之间的都要移除动画
-				//如果nextPage<curPage,那么nextPage buhan和curPgae 含 移除动画
+
 				if(nextPage>curPage){
 					var start = curPage;
 					var end = nextPage;
+					index == nextPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage);
 				}else{
 					var start = nextPage+1;
 					var end = curPage+1;
+					index == curPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage);
 				}
 				for(var i = start;i<end;i++){
 					removeAnimation(i-1);
@@ -358,24 +372,22 @@ function H5page(option){
 		twotogether:["threeD",'unite2'],//上下两页一起动
 		oneonly:["notMove"]//仅仅动下一页
 	}
-
-	for(k in cfgPageRole){
-		if(cfgPageRole.hasOwnProperty(k)){
-			var arr = cfgPageRole[k];
-			if(arr.indexOf(h5method)>-1){
-				jsMethod = k;
-				break;
+	if(option.mode){
+		jsMethod = option.mode;
+	}else{
+		for(k in cfgPageRole){
+			if(cfgPageRole.hasOwnProperty(k)){
+				var arr = cfgPageRole[k];
+				if(arr.indexOf(h5method)>-1){
+					jsMethod = k;
+					break;
+				}
 			}
-		}
+		}		
 	}
 
 	var mode = cfgMethod[jsMethod];
-	mode.prev = function(){
-		mode.goto(curPage-1);
-	}
-	mode.next = function(){
-		mode.goto(curPage+1);
-	}
+
 	function addAnimation(pageNum){
 		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
 		for(var i = 0;i<curPageAnimationEle.length;i++){
@@ -400,20 +412,26 @@ function H5page(option){
 
 	return {
 		init:function(){
+			option.init&&option.init();
 			cfgInit[h5method]&&cfgInit[h5method]();
 			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
-			
 			addAnimation(0);
 		//	updateProgressBar();
 		},
 		prev:function(){
-			mode['prev']();
+			mode['goto'](curPage-1);
 		},
 		next:function(){
-			mode['next']();
+			mode['goto'](curPage+1);
 		},
 		goto:function(num){
 			mode['goto'](num);
 		},
+		top:function(){
+			mode['goto'](1);
+		},
+		bottom:function(){
+			mode['goto'](pageNum);
+		}
 	}
 }

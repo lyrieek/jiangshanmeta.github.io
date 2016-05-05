@@ -92,7 +92,18 @@
 
 		<script src="h5page2.js"></script>
 		<script>
-			var h5Ins = new H5page();
+			var h5Ins = new H5page({
+				beforeLeave:function(cur,next){
+					console.log(cur,next)
+				},
+				afterLoad:function(cur,prev){
+					console.log(cur,prev);
+				},
+			//	mode:'oneonly',
+				init:function(){
+					console.log("a")
+				}
+			});
 			h5Ins.init();
 			document.addEventListener("swipeUp",h5Ins.next,false);
 			document.addEventListener("swipeDown",h5Ins.prev,false);
