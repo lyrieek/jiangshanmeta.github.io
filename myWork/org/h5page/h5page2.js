@@ -134,25 +134,29 @@ function H5page(option){
 	var cfgMethod = {
 		'alltogether':{
 			goto:function(num){
-				if(num == curPage){
+				if(pageSwitch){
 					return;
 				}
 				nextPage = num;
 				if(nextPage<1){
 					nextPage = 1;
-				}
-				if(nextPage>pageNum){
+				}else if(nextPage>pageNum){
 					nextPage = pageNum;
 				}
+				if(nextPage == curPage){
+					return;
+				}
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
+				pageSwitch = true;
 				addAnimation(nextPage-1);
 			},
 			pageTransitionEndEvent:function(event){
-				if(!event.target.classList.contains("h5page-wrap")){
+				if(event.target != h5pageWrap){
 					return;
 				}
 				removeAnimation(curPage-1);
 				curPage = nextPage;
+				pageSwitch = false;
 			//	updateProgressBar();				
 			}
 		},
@@ -271,34 +275,21 @@ function H5page(option){
 		},
 		'oneonly':{
 			goto:function(num){
-				nextPage = num;
-				if(nextPage>pageNum){
-					nextPage = pageNum;
+				if(pageSwitch){
+					return;
 				}
+				nextPage = num;
 				if(nextPage<1){
 					nextPage = 1;
+				}else if(nextPage>pageNum){
+					nextPage = pageNum;
 				}
-				if(pageSwitch || nextPage == curPage){
-					console.log(pageSwitch,nextPage,curPage)
+				if(nextPage == curPage){
 					return;
 				}				
 				//如果nextPage>curPage只需要nextPage对应的页面在中间显示即可,nextPage之前的都要标记为已显示
 				//如果nextPage<curPage nextPage之后的页面都要标记为为显示状态
 				//此时已经不可能两者相等了
-				// if(nextPage>curPage){
-				// 	var start = curPage+1;
-				// 	var end = nextPage;
-				// }else{
-				// 	var start = nextPage+1;
-				// 	var end = curPage;
-				// }
-				// for(var i=start;i<=end;i++){
-				// 	var needTransEle = pages[i-1];
-				// 	needTransEle.classList.remove("h5page-notShow");
-				// 	needTransEle.classList.add("h5page-showing");						
-				// }
-				// pageSwitch = true;
-				// addAnimation(nextPage-1);	
 				if(nextPage>curPage){
 					for(var i = curPage+1;i<=nextPage;i++){
 						var needTransEle = pages[i-1];
@@ -310,64 +301,30 @@ function H5page(option){
 						var needTransEle = pages[i-1];
 						needTransEle.classList.remove("h5page-showing");	
 						needTransEle.classList.add("h5page-notShow");						
-					}
-					pageSwitch = true;
-					addAnimation(nextPage-1);						
+					}					
 				}
 				pageSwitch = true;
 				addAnimation(nextPage-1);				
-
+		//		toggleArrow();
 			},
-	// 		next:function(){
-	// 			if(pageSwitch){
-	// 				return;
-	// 			}
-	// 			typ = "swipeup";
-	// 			nextPage = curPage + 1;
-	// 			if(nextPage>pageNum){
-	// 				nextPage = curPage;
-	// 				return;
-	// 			}
-	// //			toggleArrow();
-	// 			var needTransEle = pages[nextPage-1];
-	// 			needTransEle.classList.remove("h5page-notShow");	
-	// 			needTransEle.classList.add("h5page-showing");		
-	// 			pageSwitch = true;
-	// 			addAnimation(nextPage-1);
-	// 		},
-	// 		prev:function(){
-	// 			if(pageSwitch){
-	// 				return;
-	// 			}				
-	// 			typ = "swipedown";
-	// 			nextPage = curPage-1;
-	// 			if(nextPage<1){
-	// 				nextPage = 1;
-	// 				return;
-	// 			}
-	// 	//		toggleArrow();
-	// 			var needTransEle = pages[curPage-1];
-	// 			needTransEle.classList.remove("h5page-showing");	
-	// 			needTransEle.classList.add("h5page-notShow");		
-	// 			pageSwitch = true;
-	// 			addAnimation(nextPage-1);				
-	// 		},
+
 			pageTransitionEndEvent:function(event){
-				if(!event.target.classList.contains("h5page")){
+				var index = pages.indexOf(event.target);
+				if( index == -1 ){
 					return;
 				}
-				var index = pages.indexOf(event.target);
-				console.log(index);
-				if(index != nextPage-1){
-					removeAnimation(index-1);
+				//如果nextPage>curPage,那么curPage han和nextPage buhan之间的都要移除动画
+				//如果nextPage<curPage,那么nextPage buhan和curPgae 含 移除动画
+				if(nextPage>curPage){
+					var start = curPage;
+					var end = nextPage;
+				}else{
+					var start = nextPage+1;
+					var end = curPage+1;
 				}
-
-				// if(nextPage>curPage){
-				// 	removeAnimation(curPage-1);
-				// }else{
-				// 	removeAnimation(pages.indexOf(event.target));
-				// }
-				
+				for(var i = start;i<end;i++){
+					removeAnimation(i-1);
+				}
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();
@@ -433,8 +390,6 @@ function H5page(option){
 	return {
 		init:function(){
 			cfgInit[h5method]&&cfgInit[h5method]();
-			mode['next']&&document.addEventListener("swipeUp",mode['next'],false);
-			mode['prev']&&document.addEventListener("swipeDown",mode['prev'],false);
 			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
 			
 			addAnimation(0);
@@ -449,11 +404,5 @@ function H5page(option){
 		goto:function(num){
 			mode['goto'](num);
 		},
-		getCurPage:function(){
-			return curPage;
-		},
-		getSwitch:function(){
-			return pageSwitch;
-		}
 	}
 }

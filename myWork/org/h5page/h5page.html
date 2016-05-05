@@ -42,7 +42,7 @@
 		</style>
 	</head>
 	<body class="">
-		<div class="h5page-wrap h5page-notMove"  data-role="notMove">
+		<div class="h5page-wrap h5page-unite"  data-role="unite">
 			<section class="h5page h5page-showing "  data-index="1" >
 				<div class="bg bg1"></div>
 				<img src="img/pic1.png" style="width:96vw;top:25vh;left:2vw;" class="ab " >
@@ -94,6 +94,8 @@
 		<script>
 			var h5Ins = new H5page();
 			h5Ins.init();
+			document.addEventListener("swipeUp",h5Ins.next,false);
+			document.addEventListener("swipeDown",h5Ins.prev,false);
 		</script>
 	</body>
 </html>
