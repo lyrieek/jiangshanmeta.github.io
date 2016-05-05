@@ -314,24 +314,27 @@ function H5page(option){
 					return;
 				}				
 				if(nextPage>curPage){
-					for(var i = curPage+1;i<=nextPage;i++){
-						var needTransEle = pages[i-1];
-						needTransEle.classList.remove("h5page-notShow");
-						needTransEle.classList.add("h5page-showing");						
-					}
+					var start = curPage+1;
+					var end = nextPage;
+					var removeCls = "h5page-notShow";
+					var addCls = "h5page-showing";
 				}else{
-					for(var i = nextPage+1;i<=curPage;i++){
-						var needTransEle = pages[i-1];
-						needTransEle.classList.remove("h5page-showing");	
-						needTransEle.classList.add("h5page-notShow");						
-					}					
+					var start = nextPage+1;
+					var end = curPage;
+					var removeCls = "h5page-showing";
+					var addCls = "h5page-notShow";
 				}
+				for(var i = start;i<=end;i++){
+					var needTransEle = pages[i-1];
+					needTransEle.classList.remove(removeCls);	
+					needTransEle.classList.add(addCls);						
+				}		
+
 				pageSwitch = true;
 				option.beforeLeave&&option.beforeLeave(curPage,nextPage);
 				addAnimation(nextPage-1);				
 				toggleArrow();
 			},
-
 			pageTransitionEndEvent:function(event){
 				var index = pages.indexOf(event.target);
 				if( index == -1 ){
