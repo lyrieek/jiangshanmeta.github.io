@@ -96,11 +96,15 @@ function getCSS(el,prop){
 		}
 	}
 	window.touchHandler = touchHandler;
-	document.addEventListener("touchstart",touchHandler.toucherstartHandler,false);
-	document.addEventListener("touchmove",touchHandler.touchmoveHandler,false);
-	document.addEventListener("touchend",touchHandler.touchendHandler,false);
-})(document);
 
+})(document);
+var myTouch = {
+	init:function(){
+		document.addEventListener("touchstart",touchHandler.toucherstartHandler,false);
+		document.addEventListener("touchmove",touchHandler.touchmoveHandler,false);
+		document.addEventListener("touchend",touchHandler.touchendHandler,false);		
+	}
+}
 //deal with pfx of transitionent event
 function whichTransitionEvent(){  
     var t;  
