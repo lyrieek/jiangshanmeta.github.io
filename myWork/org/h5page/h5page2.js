@@ -68,7 +68,7 @@ function getCSS(el,prop){
 }
 (function(document){
 	var startTouchX,startTouchY,endTouchX,endTouchY;
-	var touchHnadler = {
+	var touchHandler = {
 		toucherstartHandler:function(event){
 			startTouchX = event.touches[0].clientX;
 			startTouchY = event.touches[0].clientY;			
@@ -95,10 +95,10 @@ function getCSS(el,prop){
 			}			
 		}
 	}
-
-	document.addEventListener("touchstart",touchHnadler.toucherstartHandler,false);
-	document.addEventListener("touchmove",touchHnadler.touchmoveHandler,false);
-	document.addEventListener("touchend",touchHnadler.touchendHandler,false);
+	window.touchHandler = touchHandler;
+	document.addEventListener("touchstart",touchHandler.toucherstartHandler,false);
+	document.addEventListener("touchmove",touchHandler.touchmoveHandler,false);
+	document.addEventListener("touchend",touchHandler.touchendHandler,false);
 })(document);
 
 //deal with pfx of transitionent event

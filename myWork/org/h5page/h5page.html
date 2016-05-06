@@ -105,75 +105,40 @@
 		</div>
 		<img class="arrow animated fadeOutUp infinite" src="img/arrow.png" id="arrow">
 
-		<div id="longPage" class="notShow">
-			<code>
-		function zzz(){
-			console.log("zzz");
-		}	
-			var h5Ins = new H5page({
-				arrow:false,
-				beforeLeave:function(cur,next,total){
-					console.log(cur,next,total)
-				},
-				afterLoad:function(cur,prev,total){
-					console.log(cur,prev,total);
-					if(total == cur){
-						document.removeEventListener("swipeUp",h5Ins.next,false);
-						document.addEventListener("swipeUp",zzz,false);
-					}else{
-						document.addEventListener("swipeUp",h5Ins.next,false);
-						document.removeEventListener("swipeUp",zzz,false);
-					}
-
-				},
-			//	mode:'oneonly',
-				init:function(){
-					console.log("a")
-				}
-			});
-			h5Ins.init();
-			document.addEventListener("swipeUp",h5Ins.next,false);
-			document.addEventListener("swipeDown",h5Ins.prev,false);			
-
-		function zzz(){
-			console.log("zzz");
-		}	
-			var h5Ins = new H5page({
-				arrow:false,
-				beforeLeave:function(cur,next,total){
-					console.log(cur,next,total)
-				},
-				afterLoad:function(cur,prev,total){
-					console.log(cur,prev,total);
-					if(total == cur){
-						document.removeEventListener("swipeUp",h5Ins.next,false);
-						document.addEventListener("swipeUp",zzz,false);
-					}else{
-						document.addEventListener("swipeUp",h5Ins.next,false);
-						document.removeEventListener("swipeUp",zzz,false);
-					}
-
-				},
-			//	mode:'oneonly',
-				init:function(){
-					console.log("a")
-				}
-			});
-			h5Ins.init();
-			document.addEventListener("swipeUp",h5Ins.next,false);
-			document.addEventListener("swipeDown",h5Ins.prev,false);
-
-
-			啦啦啦啦啦啦啦啦
-			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
-			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦	
-			</code>
-			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
-			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
-			是是是是是是是是是是是是是是是是是是
-			还需{{expInfo.needExp}}点经验值即可享服务费<br>
-			还需{{expInfo.needExp}}点经验值即可享服务费<br>
-			如何获取？
+		<div id="longPage" class="notShow" style="padding:15px;">
+			头说，要加一个需求<br>
+			需求是什么呢?<br>
+			这些展示型的页面，有的会很长<br>
+			有很多说明<br>
+			一个页写不开<br>
+			前面的页面展示完，这个长页就让用户自己拖吧<br>
+			于是，我便念了两句诗
+			<blockquote>
+				苟利国家生死以，岂因祸福避趋之
+			</blockquote>
+			然后，我便默默地写完了<br>
+			其中<br>
+			有不少问题<br>
+			我按照编程基本法解决了<br>
+			然而，这个页面还不够长<br>
+			就让我开始膜吧<br>
+			据说，在非洲，每过去一分钟，就过去了59秒<br>
+			跑得比谁都快<br>
+			将来报道出了偏差<br>
+			你们说吼不吼啊<br>
+			你们说，21世纪是生物的世纪吗？<br>
+			你们说，php是最好的编程语言吗<br>
+			要不要去交大朝圣一下呢<br>
+			要不要去扬州溜达溜达呢<br>
+			要不要吃晚饭呢<br>
+			晚饭吃什么呢<br>
+			选择障碍中<br>
+			要不要追那个女孩子呢<br>
+			闷声发大财<br>
+			一个人的命运呐<br>
+			当然要靠<span style="display:inline-block" class="animated flash infinite">个人奋斗</span><br>
+			还要考虑
+			<div class="text-center text-lg animated text-primary tada infinite">历史的进程</div>
 		</div>
 
 		<script src="h5page2.js"></script>
@@ -189,15 +154,18 @@
 					body.style.height = 'auto';
 					html.style.overflow = 'auto';
 					body.style.overflow = 'auto';
+					document.removeEventListener("touchstart",touchHandler.toucherstartHandler,false);
+					document.removeEventListener("touchmove",touchHandler.touchmoveHandler,false);
+					document.removeEventListener("touchend",touchHandler.touchendHandler,false);					
 					document.removeEventListener("swipeDown",h5Ins.prev,false);
-					document.querySelector(".h5page-wrap").style.display='none';
+					longPageEle.addEventListener(whichTransitionEvent(),longPage.transitionEndEvent,false);
 				},
-
+				transitionEndEvent:function(){
+					document.querySelector(".h5page-wrap").style.display='none';
+				}
 			}
-			
-		function zzz(){
-			console.log("zzz");
-		}
+
+		
 			var h5Ins = new H5page({
 				arrow:false,
 				beforeLeave:function(cur,next,total){
