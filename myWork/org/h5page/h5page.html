@@ -187,9 +187,10 @@
 					longPageEle.classList.add("showing");
 					html.style.height = 'auto';
 					body.style.height = 'auto';
-					html.style.overflow = 'auto';
-					body.style.overflow = 'auto';
+					html.style.overflow = 'scroll';
+					body.style.overflow = 'scroll';
 					document.removeEventListener("swipeDown",h5Ins.prev,false);
+					document.querySelector(".h5page-wrap").style.display='none';
 				},
 
 			}
