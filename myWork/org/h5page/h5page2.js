@@ -126,11 +126,12 @@ function H5page(option){
 
 	var defaults = {
 		wrapSelector:'.h5page-wrap',
+		arrow:true,
 		mode:'',
-		beforeLeave:function(curPage,nextPage){
+		beforeLeave:function(curPage,nextPage,pageNum){
 
 		},
-		afterLoad:function(nextPage,curPage){
+		afterLoad:function(nextPage,curPage,pageNum){
 
 		},
 		init:function(){
@@ -151,9 +152,9 @@ function H5page(option){
 	var curPage = 1;
 	var nextPage = 1;
 	var pageSwitch = false;
-	var jsMethod;
+	var jsMethod,arrow;
 	// var progressBar = document.querySelector('.progress-bar');
-	var arrow = document.getElementById("arrow");
+	option.arrow &&  (arrow = document.getElementById("arrow"));
 	
 	var cfgMethod = {
 		'alltogether':{
@@ -172,7 +173,7 @@ function H5page(option){
 				}
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				pageSwitch = true;
-				option.beforeLeave&&option.beforeLeave(curPage,nextPage);
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
 				addAnimation(nextPage-1);
 				toggleArrow()
 			},
@@ -181,7 +182,7 @@ function H5page(option){
 					return;
 				}
 				removeAnimation(curPage-1);
-				option.afterLoad&&option.afterLoad(nextPage,curPage);
+				option.afterLoad&&option.afterLoad(nextPage,curPage,afterLoad);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -209,7 +210,7 @@ function H5page(option){
 				needTransEle.classList.add("h5page-showing");
 				needTransEle.classList.add("top");
 				pageSwitch = true;
-				option.beforeLeave&&option.beforeLeave(curPage,nextPage);
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
 				addAnimation(nextPage-1);
 				toggleArrow();		
 			},
@@ -238,7 +239,7 @@ function H5page(option){
 					needTransEle.classList.remove("h5page-hasShown");
 					needTransEle.classList.add(cls);
 				}
-				option.afterLoad&&option.afterLoad(nextPage,curPage);
+				option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -280,7 +281,7 @@ function H5page(option){
 			 	needTransEle.classList.remove("h5page-hasShown");
 			 	needTransEle.classList.add("h5page-showing");
 			 	pageSwitch = true;
-			 	option.beforeLeave&&option.beforeLeave(curPage,nextPage);
+			 	option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
 			 	addAnimation(nextPage-1);
 			 	toggleArrow();
 			},
@@ -293,7 +294,7 @@ function H5page(option){
 					removeAnimation(index);
 					return;
 				} 
-				option.afterLoad&&option.afterLoad(nextPage,curPage);
+				option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();
@@ -331,7 +332,7 @@ function H5page(option){
 				}		
 
 				pageSwitch = true;
-				option.beforeLeave&&option.beforeLeave(curPage,nextPage);
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
 				addAnimation(nextPage-1);				
 				toggleArrow();
 			},
@@ -344,11 +345,11 @@ function H5page(option){
 				if(nextPage>curPage){
 					var start = curPage;
 					var end = nextPage;
-					index == nextPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage);
+					index == nextPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				}else{
 					var start = nextPage+1;
 					var end = curPage+1;
-					index == curPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage);
+					index == curPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				}
 				for(var i = start;i<end;i++){
 					removeAnimation(i-1);
@@ -407,7 +408,7 @@ function H5page(option){
 		}		
 	}
 	function toggleArrow(){
-		arrow.style.display = (nextPage == pageNum? 'none':'block');
+		option.arrow && (arrow.style.display = (nextPage == pageNum? 'none':'block'));
 	}
 	// function updateProgressBar(){
 	// 	progressBar.style.width = (curPage/pageNum)*100 +"%";

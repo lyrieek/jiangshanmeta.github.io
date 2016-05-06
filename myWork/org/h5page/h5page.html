@@ -39,10 +39,26 @@
 			.transform-center{
 				transform-origin:center center;
 			}
+
+			#longPage.notShow{
+				-webkit-transform:translate3d(0,568px,0);
+				transform:translate3d(0,568px,0);
+			}
+			#longPage.showing{
+				-webkit-transform:translate3d(0,0,0);
+				transform:translate3d(0,0,0);
+			}
+			#longPage{
+				-webkit-transition:all 0.8s cubic-bezier(.260,.860,.440,.985);
+				transition:all 0.8s cubic-bezier(.260,.860,.440,.985);
+				z-index:9999999;
+				background:#fff;
+			}
+
 		</style>
 	</head>
 	<body class="">
-		<div class="h5page-wrap h5page-threeD"  data-role="threeD">
+		<div class="h5page-wrap h5page-unite2"  data-role="unite2">
 			<section class="h5page h5page-showing "  data-index="1" >
 				<div class="bg bg1"></div>
 				<img src="img/pic1.png" style="width:96vw;top:25vh;left:2vw;" class="ab " >
@@ -89,19 +105,119 @@
 		</div>
 		<img class="arrow animated fadeOutUp infinite" src="img/arrow.png" id="arrow">
 
-
-		<script src="h5page2.js"></script>
-		<script>
+		<div id="longPage" class="notShow">
+			<code>
+		function zzz(){
+			console.log("zzz");
+		}	
 			var h5Ins = new H5page({
-				beforeLeave:function(cur,next){
-					console.log(cur,next)
+				arrow:false,
+				beforeLeave:function(cur,next,total){
+					console.log(cur,next,total)
 				},
-				afterLoad:function(cur,prev){
-					console.log(cur,prev);
+				afterLoad:function(cur,prev,total){
+					console.log(cur,prev,total);
+					if(total == cur){
+						document.removeEventListener("swipeUp",h5Ins.next,false);
+						document.addEventListener("swipeUp",zzz,false);
+					}else{
+						document.addEventListener("swipeUp",h5Ins.next,false);
+						document.removeEventListener("swipeUp",zzz,false);
+					}
+
 				},
 			//	mode:'oneonly',
 				init:function(){
 					console.log("a")
+				}
+			});
+			h5Ins.init();
+			document.addEventListener("swipeUp",h5Ins.next,false);
+			document.addEventListener("swipeDown",h5Ins.prev,false);			
+
+		function zzz(){
+			console.log("zzz");
+		}	
+			var h5Ins = new H5page({
+				arrow:false,
+				beforeLeave:function(cur,next,total){
+					console.log(cur,next,total)
+				},
+				afterLoad:function(cur,prev,total){
+					console.log(cur,prev,total);
+					if(total == cur){
+						document.removeEventListener("swipeUp",h5Ins.next,false);
+						document.addEventListener("swipeUp",zzz,false);
+					}else{
+						document.addEventListener("swipeUp",h5Ins.next,false);
+						document.removeEventListener("swipeUp",zzz,false);
+					}
+
+				},
+			//	mode:'oneonly',
+				init:function(){
+					console.log("a")
+				}
+			});
+			h5Ins.init();
+			document.addEventListener("swipeUp",h5Ins.next,false);
+			document.addEventListener("swipeDown",h5Ins.prev,false);
+
+
+			啦啦啦啦啦啦啦啦
+			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
+			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦	
+			</code>
+			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
+			啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
+			是是是是是是是是是是是是是是是是是是
+			还需{{expInfo.needExp}}点经验值即可享服务费<br>
+			还需{{expInfo.needExp}}点经验值即可享服务费<br>
+			如何获取？
+		</div>
+
+		<script src="h5page2.js"></script>
+		<script>
+			var longPageEle = document.getElementById("longPage"); 
+			var html = document.getElementsByTagName("html")[0];
+			var body = document.getElementsByTagName("body")[0];
+			var longPage = {
+				show:function(){
+					longPageEle.classList.remove("notShow");
+					longPageEle.classList.add("showing");
+					html.style.height = 'auto';
+					body.style.height = 'auto';
+					html.style.overflow = 'auto';
+					body.style.overflow = 'auto';
+					document.removeEventListener("swipeDown",h5Ins.prev,false);
+				},
+
+			}
+			
+		function zzz(){
+			console.log("zzz");
+		}
+			var h5Ins = new H5page({
+				arrow:false,
+				beforeLeave:function(cur,next,total){
+					//console.log(cur,next,total)
+				},
+				afterLoad:function(cur,prev,total){
+					if(total == cur){
+						document.removeEventListener("swipeUp",h5Ins.next,false);
+						document.addEventListener("swipeUp",longPage.show,false);
+					}else{
+						document.removeEventListener("swipeUp",longPage.show,false);
+						document.addEventListener("swipeUp",h5Ins.next,false);
+					}
+				},
+			//	mode:'oneonly',
+				init:function(){
+					var winH = getCSS(document.documentElement,"height");
+					console.log(winH);
+					var styleEle = document.createElement("style");
+					styleEle.innerHTML = "#longPage.notShow{ -webkit-transform: translate3d(0," + winH + ", 0); transform: translate3d(0, " + winH +", 0) ";
+					document.head.appendChild(styleEle);	
 				}
 			});
 			h5Ins.init();
