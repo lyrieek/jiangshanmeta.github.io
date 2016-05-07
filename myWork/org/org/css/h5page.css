@@ -245,3 +245,10 @@ html,body{
 .text-white{
   color:#fff;
 }
+
+
+/*  过渡 动画相关 */
+.transform-center{
+	-webkit-transform-origin:center center;
+	transform-origin:center center;
+}

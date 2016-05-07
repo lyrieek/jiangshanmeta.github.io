@@ -2928,61 +2928,6 @@
 }
 
 
-
-
-
-
-
-
-
-@-webkit-keyframes zoomHalf {
-  from {
-    opacity: 0;
-    -webkit-transform: scale3d(2, 2, 2);
-    transform: scale3d(2, 2, 2);    
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes zoomHalf {
-  from {
-    opacity: 0;
-    -webkit-transform: scale3d(2, 2, 2);
-    transform: scale3d(2, 2, 2);    
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.zoomHalf {
-  -webkit-animation-name: zoomHalf;
-  animation-name: zoomHalf;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @-webkit-keyframes zoomOutDown {
   40% {
     opacity: 1;
@@ -3393,4 +3338,65 @@
 .slideOutUp {
   -webkit-animation-name: slideOutUp;
   animation-name: slideOutUp;
+}
+
+
+
+
+/* below add by js  */
+@-webkit-keyframes zoomHalf {
+  from {
+    opacity: 0;
+    -webkit-transform: scale3d(2, 2, 2);
+    transform: scale3d(2, 2, 2);    
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomHalf {
+  from {
+    opacity: 0;
+    -webkit-transform: scale3d(2, 2, 2);
+    transform: scale3d(2, 2, 2);    
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.zoomHalf {
+  -webkit-animation-name: zoomHalf;
+  animation-name: zoomHalf;
+}
+
+
+@-webkit-keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);    
+  }
+
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);  
+  }
+}
+@keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);    
+  }
+
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);  
+  }
+}
+.rotate{
+  -webkit-animation-name: rotate;
+  animation-name: rotate;
 }

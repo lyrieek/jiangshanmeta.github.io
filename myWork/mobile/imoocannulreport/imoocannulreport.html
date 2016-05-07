@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	<title>imooc annul report</title>
+	<link rel="stylesheet" href="../../org/org/css/h5page.css">
+	<link rel="stylesheet" href="../../org/org/css/animate.css">
+	<script src="../../org/h5page/h5page2.js"></script>
+</head>
+<body>
+	<div class="h5page-wrap h5page-threeD"  data-role="threeD">
+		<section class="h5page h5page-showing " style="background-color:#ffc665;">
+			<div style="background-image:url('img/halo.png');background-repeat:no-repeat;width:750px;height:750px;background-position:center 66%;position:absolute;margin-left:-375px;margin-top:-400px;left:50%;top:50%;-webkit-animation-duration:5s;animation-duration:5s;-webkit-animation-timing-function:linear;animation-timing-function:linear;" class=" animated infinite rotate transform-center"></div>
+			<!-- <img src="img/halo.png" class="animated rotate infinite" style="-webkit-animate"> -->
+			<img src="img/p1.png" style="position:absolute;width:100%;top:3%;">
+			<img src="img/p2.png" style="position:absolute;width:100%;bottom:0;">
+		</section>
+		<section class="h5page h5page-notShow " 2>
+			page2
+		</section>
+		<section class="h5page h5page-notShow " 3>
+			page3
+		</section>
+		<section class="h5page h5page-notShow " 4>
+			page4
+		</section>
+		<section class="h5page h5page-notShow " 5>
+page5
+		</section>
+		<section class="h5page h5page-notShow " 6>
+page6
+		</section>
+		<section class="h5page h5page-notShow " 7>
+page7
+		</section>
+		<section class="h5page h5page-notShow " 8>
+page8
+		</section>
+		<section class="h5page h5page-notShow " 9>
+page9
+		</section>
+		<section class="h5page h5page-notShow " 10>
+page10
+		</section>
+		<section class="h5page h5page-notShow " 11>
+page11
+		</section>					
+	</div>
+	
+<!-- 	右侧导航栏 -->
+	<style>
+		.page-menu{
+			position:fixed;
+			right:10px;
+			top:50%;
+			-webkit-transform:translateY(-50%);
+			transform:translateY(-50%);
+			list-style:none;
+		}
+		.page-menu li{
+			width:10px;
+			height:10px;
+			margin-bottom:10px;
+			border-radius:50%;
+			background-color:rgba(132,128,123,0.3);
+			cursor:pointer;
+		}
+		.page-menu li.active{
+			background-color:rgba(132,128,123,1);
+		}
+		
+	</style>
+	<ul class="page-menu" id="rightNav">
+		<li class="active"></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+	<script>
+		var rightNav = document.getElementById("rightNav");
+		var menus = arrayify(rightNav.children);
+		var h5Ins = new H5page({
+			arrow:false,
+			afterLoad:function(cur,prev,total){
+				menus[prev-1].classList.remove("active");
+				menus[cur-1].classList.add("active");
+			}
+		});
+		h5Ins.init();
+
+		//绑定swipe
+		myTouch.init();
+		document.addEventListener("swipeUp",h5Ins.next,false);
+		document.addEventListener("swipeDown",h5Ins.prev,false);
+
+		//利用事件代理绑定右侧导航栏
+		rightNav.addEventListener("click",function(event){
+			var index = menus.indexOf(event.target);
+			if(index == -1){
+				return;
+			}
+			h5Ins.goto(index+1);
+		},false);
+	</script>
+
+</body>
+</html>
