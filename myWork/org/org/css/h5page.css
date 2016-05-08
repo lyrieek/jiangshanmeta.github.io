@@ -167,7 +167,17 @@ html,body{
   display:table;
   clear:both;
 }
-
+.center-block{
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+}
+.block{
+	display:block;
+}
+.inline-block{
+	display:inline-block;
+}
 /* 注意 ，如果要加动画效果，下面两个类慎重使用，动画中会有各种transform  */
 .center-xy{
     position:absolute;
@@ -212,6 +222,9 @@ html,body{
 }
 .text-lg{
   font-size: 18px;
+}
+.text-lead{
+	font-size:21px;
 }
 /* 文本样式  */
 .text-bold{
