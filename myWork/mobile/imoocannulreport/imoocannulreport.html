@@ -170,6 +170,7 @@
 			-webkit-transform:translateY(-50%);
 			transform:translateY(-50%);
 			list-style:none;
+
 		}
 		.page-menu li{
 			width:10px;
@@ -210,6 +211,11 @@
 		h5Ins.init();
 
 		//绑定swipe
+		var swipePrevent = function(event){
+			event.preventDefault();
+		}
+		//这里之所以在touchmove阶段阻止默认事件而不是在touchstart是因为方便扩展，touchstart阻止了 一些事件如click就不会触发了
+		document.addEventListener("touchmove",swipePrevent,false);
 		myTouch.on(document,"swipeUp",h5Ins.next);
 		myTouch.on(document,"swipeDown",h5Ins.prev);
 

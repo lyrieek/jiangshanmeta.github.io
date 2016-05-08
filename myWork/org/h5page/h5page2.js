@@ -78,9 +78,9 @@ function getCSS(el,prop){
 				startTS = Date.now();		
 			},
 			touchmoveHandler:function(event){
-				if(_opts.swipe){
-					event.preventDefault();
-				}
+				// if(_opts.swipe){
+				// 	event.preventDefault();
+				// }
 				var curTouchX = event.changedTouches[0].clientX;
 				var curTouchY = event.changedTouches[0].clientY;
 				event.deltaX = curTouchX - startTouchX;
