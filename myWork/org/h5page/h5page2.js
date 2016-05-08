@@ -5,31 +5,6 @@ function ucfirst (str) {
     .toUpperCase()
   return f + str.substr(1)
 }
-
-//impress.js
-var pfx = (function () {
-    var style = document.createElement('dummy').style,
-        prefixes = 'Webkit Moz O ms Khtml'.split(' '),
-        memory = {};
-    return function ( prop ) {
-        if ( typeof memory[ prop ] === "undefined" ) {
-            //实现一个ucfirst
-            var ucProp  = ucfirst(prop),
-            //拿到前缀化的属性名
-                props   = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
-            
-            memory[ prop ] = null;
-            for ( var i in props ) {
-                if ( style[ props[i] ] !== undefined ) {
-                    memory[ prop ] = props[i];
-                    break;
-                }
-            }
-        }
-        
-        return memory[ prop ];
-    };
-})();
 //https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 if (!Object.assign) {
   Object.defineProperty(Object, "assign", {
@@ -55,6 +30,31 @@ if (!Object.assign) {
     }
   });
 }
+//impress.js
+var pfx = (function () {
+    var style = document.createElement('dummy').style,
+        prefixes = 'Webkit Moz O ms Khtml'.split(' '),
+        memory = {};
+    return function ( prop ) {
+        if ( typeof memory[ prop ] === "undefined" ) {
+            //实现一个ucfirst
+            var ucProp  = ucfirst(prop),
+            //拿到前缀化的属性名
+                props   = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
+            
+            memory[ prop ] = null;
+            for ( var i in props ) {
+                if ( style[ props[i] ] !== undefined ) {
+                    memory[ prop ] = props[i];
+                    break;
+                }
+            }
+        }
+        
+        return memory[ prop ];
+    };
+})();
+
 var triggerEvent = function (el, eventName, detail) {
     var event = document.createEvent("CustomEvent");
     event.initCustomEvent(eventName, true, true, detail);
@@ -66,45 +66,75 @@ function getCSS(el,prop){
 	  }
 	  return window.getComputedStyle(el);
 }
-(function(document){
-	var startTouchX,startTouchY,endTouchX,endTouchY;
-	var touchHandler = {
-		toucherstartHandler:function(event){
-			startTouchX = event.touches[0].clientX;
-			startTouchY = event.touches[0].clientY;			
-		},
-		touchmoveHandler:function(event){
-			event.preventDefault();
-			var curTouchX = event.changedTouches[0].clientX;
-			var curTouchY = event.changedTouches[0].clientY;
-			event.deltaX = curTouchX - startTouchX;
-			event.deltaY = curTouchY - startTouchY;			
-		},
-		touchendHandler:function(event){
-			endTouchX = event.changedTouches[0].clientX;
-			endTouchY = event.changedTouches[0].clientY;
-			var deltaX = endTouchX - startTouchX;
-			var deltaY = endTouchY - startTouchY;
-			event.deltaX = deltaX;
-			event.deltaY = deltaY;
-			var absY = Math.abs(deltaY);
-			var absX = Math.abs(deltaX);
-			if(absX>50 || absY>50){
-				var eventName = absX>absY? (deltaX == absX? 'swipeRight':'swipeLeft'):(deltaY==absY? 'swipeDown':'swipeUp');
-				triggerEvent(event.target,eventName);
-			}			
-		}
+(function(document,window){
+	var startTouchX,startTouchY,endTouchX,endTouchY,startTS,endTS;
+	var _opts = {
+		swipe:true,
 	}
-	window.touchHandler = touchHandler;
+	var _touchHandler = {
+			touchstartHandler:function(event){
+				startTouchX = event.touches[0].clientX;
+				startTouchY = event.touches[0].clientY;
+				startTS = Date.now();		
+			},
+			touchmoveHandler:function(event){
+				if(_opts.swipe){
+					event.preventDefault();
+				}
+				var curTouchX = event.changedTouches[0].clientX;
+				var curTouchY = event.changedTouches[0].clientY;
+				event.deltaX = curTouchX - startTouchX;
+				event.deltaY = curTouchY - startTouchY;			
+			},
+			touchendHandler:function(event){
+				endTouchX = event.changedTouches[0].clientX;
+				endTouchY = event.changedTouches[0].clientY;
+				endTS = Date.now();
+				var deltaX = endTouchX - startTouchX;
+				var deltaY = endTouchY - startTouchY;
+				event.deltaX = deltaX;
+				event.deltaY = deltaY;
+				var absY = Math.abs(deltaY);
+				var absX = Math.abs(deltaX);
+				if(_opts.swipe){
+					if(absX>50 || absY>50){
+						var eventName = absX>absY? (deltaX == absX? 'swipeRight':'swipeLeft'):(deltaY==absY? 'swipeDown':'swipeUp');
+						triggerEvent(event.target,eventName);
+						triggerEvent(event.target,"swipe");
+					}								
+				}
 
-})(document);
-var myTouch = {
-	init:function(){
-		document.addEventListener("touchstart",touchHandler.toucherstartHandler,false);
-		document.addEventListener("touchmove",touchHandler.touchmoveHandler,false);
-		document.addEventListener("touchend",touchHandler.touchendHandler,false);		
+			}
 	}
-}
+
+
+	var myTouch = {
+		config:function(obj){
+			_opts = Object.assign(_opts,obj || {});
+		},
+		on:function(selector,type,fn){
+			var ele = typeof selector == 'object'?selector:document.querySelector(selector);
+			ele.addEventListener('touchstart',_touchHandler.touchstartHandler,false);
+			ele.addEventListener('touchmove',_touchHandler.touchmoveHandler,false);
+			ele.addEventListener('touchend',_touchHandler.touchendHandler,false);
+			ele.addEventListener(type,fn,false);
+		},
+		off:function(selector,type,fn){
+			var ele = typeof selector == 'object'?selector:document.querySelector(selector);
+			ele.removeEventListener('touchstart',_touchHandler.touchstartHandler,false);
+			ele.removeEventListener('touchmove',_touchHandler.touchmoveHandler,false);
+			ele.removeEventListener('touchend',_touchHandler.touchendHandler,false);			
+			ele.removeEventListener(type,fn,false);			
+		},
+		trigger:function(selector,type){
+			var ele = typeof selector == 'object'?selector:document.querySelector(selector);
+			triggerEvent(ele,type);
+		}
+	};
+	window.myTouch = myTouch;
+})(document,window);
+
+
 //deal with pfx of transitionent event
 function whichTransitionEvent(){  
     var t;  

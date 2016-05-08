@@ -139,7 +139,9 @@
 			当然要靠<span style="display:inline-block" class="animated flash infinite">个人奋斗</span><br>
 			还要考虑
 			<div class="text-center text-lg animated text-primary tada infinite">历史的进程</div>
-			然后，当我写完了，头说，这有个设计你可以抄，不用写之前的方案了。。。。。
+			然后，当我写完了，头说，这有个设计你可以抄，不用写之前的方案了。。。。。<br>
+			好像在大屏手机下也不够长<br>
+			不要在乎这些细节了
 		</div>
 
 		<script src="h5page2.js"></script>
@@ -155,10 +157,7 @@
 					body.style.height = 'auto';
 					html.style.overflow = 'auto';
 					body.style.overflow = 'auto';
-					document.removeEventListener("touchstart",touchHandler.toucherstartHandler,false);
-					document.removeEventListener("touchmove",touchHandler.touchmoveHandler,false);
-					document.removeEventListener("touchend",touchHandler.touchendHandler,false);					
-					document.removeEventListener("swipeDown",h5Ins.prev,false);
+					myTouch.off(document,"swipeUp",longPage.show);
 					longPageEle.addEventListener(whichTransitionEvent(),longPage.transitionEndEvent,false);
 				},
 				transitionEndEvent:function(){
@@ -174,11 +173,11 @@
 				},
 				afterLoad:function(cur,prev,total){
 					if(total == cur){
-						document.removeEventListener("swipeUp",h5Ins.next,false);
-						document.addEventListener("swipeUp",longPage.show,false);
+						myTouch.off(document,'swipeUp',h5Ins.next);
+						myTouch.on(document,'swipeUp',longPage.show);
 					}else{
-						document.removeEventListener("swipeUp",longPage.show,false);
-						document.addEventListener("swipeUp",h5Ins.next,false);
+						myTouch.off(document,'swipeUp',longPage.show);
+						myTouch.on(document,'swipeUp',h5Ins.next);
 					}
 				},
 			//	mode:'oneonly',
@@ -190,9 +189,9 @@
 				}
 			});
 			h5Ins.init();
-			myTouch.init();
-			document.addEventListener("swipeUp",h5Ins.next,false);
-			document.addEventListener("swipeDown",h5Ins.prev,false);
+
+			myTouch.on(document,"swipeUp",h5Ins.next);
+			myTouch.on(document,"swipeDown",h5Ins.prev);
 		</script>
 	</body>
 </html>
