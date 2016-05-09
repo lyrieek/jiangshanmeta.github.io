@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="../../org/org/css/h5page.css">
 	<link rel="stylesheet" href="../../org/org/css/animate.css">
 	<script src="../../org/h5page/h5page2.js"></script>
+	<script src="../../org/org/js/echarts.min.js"></script>
 	<style>
 		.common_bg{
 			background-color:#f4e5de;
@@ -75,8 +76,36 @@
 			<p>
 				学了 <span class="text-bold text-danger "> 1778 </span>节课
 			</p>
-
-			<!-- canvas -->
+			<div id="classCount" style="width:100%;bottom:15%;height:60%;" class="ab "></div>
+			<script>
+				var classCountChart = echarts.init(document.getElementById("classCount"));
+				var classCountOpt = {
+				    tooltip : {
+				        trigger: 'item',
+				        formatter: "{a} <br/>{b} : {c} ({d}%)"
+				    },
+				    series : [
+				        {
+				            name: '课程结构',
+				            type: 'pie',
+				            radius : '55%',
+				            center: ['50%', '50%'],
+				            data:[
+				                {value:666, name:'视频'},
+				                {value:333, name:'练习'},
+				            ],
+				            itemStyle: {
+				                emphasis: {
+				                    shadowBlur: 10,
+				                    shadowOffsetX: 0,
+				                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+				                }
+				            }
+				        }
+				    ]					
+				}
+				classCountChart.setOption(classCountOpt);
+			</script>
 		</section>
 		<section class="h5page h5page-notShow text-lg text-center common_bg text-darkgrey" style="padding-top:20px;line-height:40px;">
 			<p style="margin-bottom:20px;">
@@ -93,7 +122,44 @@
 		</section>
 		<section class="h5page h5page-notShow text-lg text-center common_bg text-darkgrey" style="padding-top:20px;line-height:40px;">
 			<p>你的首选学习设备</p>
-
+			<div id="device" style="width:100%;bottom:15%;height:60%;" class="ab "></div>
+			<script>
+				var deviceChart = echarts.init(document.getElementById("device"));
+				var deviceOpt = {
+					    tooltip : {
+					        trigger: 'item',
+					        formatter: "{a} <br/>{b} : {c} ({d}%)"
+					    },
+					    legend: {
+					        orient: 'horizontal',
+					        left: 'center',
+					        top:'bottom',
+					        data: ['PC端','Android','iPad','iPhone']
+					    },
+					    series : [
+					        {
+					            name: '访问来源',
+					            type: 'pie',
+					            radius : '55%',
+					            center: ['50%', '50%'],
+					            data:[
+					                {value:92, name:'PC端'},
+					                {value:8, name:'Android'},
+					                {value:0, name:'iPad'},
+					                {value:0, name:'iPhone'},
+					            ],
+					            itemStyle: {
+					                emphasis: {
+					                    shadowBlur: 10,
+					                    shadowOffsetX: 0,
+					                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+					                }
+					            }
+					        }
+					    ]
+				}
+				deviceChart.setOption(deviceOpt);
+			</script>
 			<!-- canvas -->
 		</section>
 		<section class="h5page h5page-notShow text-lg text-center common_bg text-darkgrey" style="padding-top:25px;line-height:40px;">
