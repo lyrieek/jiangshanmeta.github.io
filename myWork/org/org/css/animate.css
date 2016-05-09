@@ -15,7 +15,7 @@
   animation-fill-mode: both;
 }
 
-.animated.infinite {
+.infinite {
   -webkit-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
 }
@@ -3400,3 +3400,5 @@
   -webkit-animation-name: rotate;
   animation-name: rotate;
 }
+
+
