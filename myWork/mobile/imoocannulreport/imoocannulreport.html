@@ -203,11 +203,20 @@
 		var menus = arrayify(rightNav.children);
 		var h5Ins = new H5page({
 			arrow:false,
+			init:function(){
+				h5pageDefaultCallbacks.twotogether.init();
+				h5pageDefaultInit.threeD();
+			},
+			beforeLeave:function(cur,next,total){
+				h5pageDefaultCallbacks.twotogether.beforeLeave(cur,next,total);
+			},
 			afterLoad:function(cur,prev,total){
 				menus[prev-1].classList.remove("active");
 				menus[cur-1].classList.add("active");
+				h5pageDefaultCallbacks.twotogether.afterLoad(cur,prev,total);
 			}
 		});
+		var pages = h5Ins.pages;
 		h5Ins.init();
 
 		//绑定swipe

@@ -155,7 +155,8 @@ function whichTransitionEvent(){
 var arrayify = function ( a ) {
     return [].slice.call( a );
 };
-//option wrapSelector wrap选择器 
+//option 
+//将添加动画效果和页面切换效果分离
 function H5page(option){
 
 	var defaults = {
@@ -173,7 +174,7 @@ function H5page(option){
 		}
 
 	}
-	//todo callback defaults
+
 	option = Object.assign(defaults,option || {});
 	var h5pageWrap = document.querySelector(option.wrapSelector);
 	var pages = arrayify(h5pageWrap.children);
@@ -208,15 +209,13 @@ function H5page(option){
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				pageSwitch = true;
 				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
-				addAnimation(nextPage-1);
 				toggleArrow()
 			},
 			pageTransitionEndEvent:function(event){
 				if(event.target != h5pageWrap){
 					return;
 				}
-				removeAnimation(curPage-1);
-				option.afterLoad&&option.afterLoad(nextPage,curPage,afterLoad);
+				option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -245,18 +244,13 @@ function H5page(option){
 				needTransEle.classList.add("top");
 				pageSwitch = true;
 				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
-				addAnimation(nextPage-1);
 				toggleArrow();		
 			},
 			pageTransitionEndEvent:function(event){
 				var index = pages.indexOf(event.target);
-				if(index==-1){
+				if(index != nextPage-1){
 					return;
 				}
-				if(index != nextPage-1){
-					removeAnimation(index);
-					return;
-				} 
 				if(nextPage>curPage){
 					var start = curPage;
 					var end = nextPage;
@@ -273,7 +267,7 @@ function H5page(option){
 					needTransEle.classList.remove("h5page-hasShown");
 					needTransEle.classList.add(cls);
 				}
-				option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+				curPage != nextPage && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -314,21 +308,18 @@ function H5page(option){
 			 	needTransEle.classList.remove("h5page-notShow");
 			 	needTransEle.classList.remove("h5page-hasShown");
 			 	needTransEle.classList.add("h5page-showing");
+
 			 	pageSwitch = true;
 			 	option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
-			 	addAnimation(nextPage-1);
 			 	toggleArrow();
 			},
 			pageTransitionEndEvent:function(event){
 				var index = pages.indexOf(event.target);
-				if(index == -1){
+				if(index != nextPage-1){
 					return;
 				}
-				if(index != nextPage-1){
-					removeAnimation(index);
-					return;
-				} 
-				option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+				//bug 并不是bug，如果过渡的时候有多个属性发生了改变，则会多次触发transitionend事件
+				curPage!=nextPage && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();
@@ -367,7 +358,7 @@ function H5page(option){
 
 				pageSwitch = true;
 				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
-				addAnimation(nextPage-1);				
+			//	addAnimation(nextPage-1);				
 				toggleArrow();
 			},
 			pageTransitionEndEvent:function(event){
@@ -377,16 +368,9 @@ function H5page(option){
 				}
 
 				if(nextPage>curPage){
-					var start = curPage;
-					var end = nextPage;
-					index == nextPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+					curPage != nextPage && index == nextPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				}else{
-					var start = nextPage+1;
-					var end = curPage+1;
-					index == curPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
-				}
-				for(var i = start;i<end;i++){
-					removeAnimation(i-1);
+					curPage != nextPage && index == curPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
 				}
 				curPage = nextPage;
 				pageSwitch = false;
@@ -394,15 +378,15 @@ function H5page(option){
 			}			
 		}
 	};
-	var cfgInit = {
-		threeD:function(){
-			var winH = getCSS(document.documentElement,"height");
-			var styleEle = document.createElement("style");
-			//是一个很笨的方法，这里的前缀也不能用上面的pfx，浏览器不认
-			styleEle.innerHTML = ".h5page-threeD .h5page-notShow{ -webkit-transform: translate3d(0," + winH + ", 0) rotate3d(1, 0, 0, -90deg); transform: translate3d(0, " + winH +", 0) rotate3d(1, 0, 0, -90deg);";
-			document.head.appendChild(styleEle);					
-		},
-	}; 
+	// var cfgInit = {
+	// 	threeD:function(){
+	// 		var winH = getCSS(document.documentElement,"height");
+	// 		var styleEle = document.createElement("style");
+	// 		//是一个很笨的方法，这里的前缀也不能用上面的pfx，浏览器不认
+	// 		styleEle.innerHTML = ".h5page-threeD .h5page-notShow{ -webkit-transform: translate3d(0," + winH + ", 0) rotate3d(1, 0, 0, -90deg); transform: translate3d(0, " + winH +", 0) rotate3d(1, 0, 0, -90deg);";
+	// 		document.head.appendChild(styleEle);					
+	// 	},
+	// }; 
 	//整体思路是css控制页面切换效果，但是对应的js就那么几个,气候css控制的页面切换多了，就在这里添加cfg
 	var cfgPageRole = {
 		alltogether:["unite"],//整体动
@@ -426,21 +410,20 @@ function H5page(option){
 
 	var mode = cfgMethod[jsMethod];
 
-	function addAnimation(pageNum){
-		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
-		for(var i = 0;i<curPageAnimationEle.length;i++){
-			var thisEle = curPageAnimationEle[i];
-			thisEle.style[animation] = thisEle.dataset.method;
-		}
-	}
-	function removeAnimation(pageNum){
-		if(pageNum<0){return;}
-		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
-		for(var i = 0;i<curPageAnimationEle.length;i++){
-			var thisEle = curPageAnimationEle[i];
-			thisEle.style[animation] = '';
-		}		
-	}
+	// function addAnimation(pageNum){
+	// 	var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
+	// 	for(var i = 0;i<curPageAnimationEle.length;i++){
+	// 		var thisEle = curPageAnimationEle[i];
+	// 		thisEle.style[animation] = thisEle.dataset.method;
+	// 	}
+	// }
+	// function removeAnimation(pageNum){
+	// 	var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
+	// 	for(var i = 0;i<curPageAnimationEle.length;i++){
+	// 		var thisEle = curPageAnimationEle[i];
+	// 		thisEle.style[animation] = '';
+	// 	}		
+	// }
 	function toggleArrow(){
 		option.arrow && (arrow.style.display = (nextPage == pageNum? 'none':'block'));
 	}
@@ -451,9 +434,9 @@ function H5page(option){
 	return {
 		init:function(){
 			option.init&&option.init();
-			cfgInit[h5method]&&cfgInit[h5method]();
+		//	cfgInit[h5method]&&cfgInit[h5method]();
 			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
-			addAnimation(0);
+		//	addAnimation(0);
 		//	updateProgressBar();
 		},
 		prev:function(){
@@ -470,6 +453,95 @@ function H5page(option){
 		},
 		bottom:function(){
 			mode['goto'](pageNum);
+		},
+		pages:pages
+	}
+}
+
+//各个页面的集合数组取名为pages,写死的
+var animationHandler = {
+	animation:pfx('animation'),
+	addAnimation:function(pageNum){
+		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
+		for(var i = 0;i<curPageAnimationEle.length;i++){
+			var thisEle = curPageAnimationEle[i];
+			thisEle.style[this.animation] = thisEle.dataset.method;
 		}
+	},
+	removeAnimation:function(cur){
+		//这样写略暴力，但是为了将动画效果和页面切换分离，先这样吧,然而既然我可以知道是从那个页面切过来的，把那一个页面的动画效果去掉就好了，所以有了下面的removeOne
+		var pageNum = pages.length;
+		for(var i = 0;i<pageNum;i++){
+			if(i == cur){
+				continue;
+			}
+			var curPageAnimationEle = pages[i].querySelectorAll("[data-role='animation']");
+			for(var j = 0;j<curPageAnimationEle.length;j++){
+				var thisEle = curPageAnimationEle[j];
+				thisEle.style[this.animation] = '';
+			}
+		}						
+	},
+	removeOne:function(num){
+		var curPageAnimationEle = pages[num].querySelectorAll("[data-role='animation']");
+		for(var j = 0;j<curPageAnimationEle.length;j++){
+			var thisEle = curPageAnimationEle[j];
+			thisEle.style[this.animation] = '';
+		}		
+	}
+}
+var h5pageDefaultCallbacks = {
+	alltogether:{
+		beforeLeave:function(cur,next,total){
+			animationHandler.addAnimation(next-1);
+		},
+		afterLoad:function(cur,prev,total){
+			animationHandler.removeOne(prev-1);
+		},
+		init:function(){
+			animationHandler.addAnimation(0);
+		},
+	},
+	step:{
+		beforeLeave:function(cur,next,total){
+			animationHandler.addAnimation(next-1);
+		},
+		afterLoad:function(cur,prev,total){
+			animationHandler.removeOne(prev-1);
+		},
+		init:function(){
+			animationHandler.addAnimation(0);
+		},		
+	},
+	twotogether:{
+		beforeLeave:function(cur,next,total){
+			animationHandler.addAnimation(next-1);
+		},
+		afterLoad:function(cur,prev,total){
+			animationHandler.removeOne(prev-1);
+		},
+		init:function(){
+			animationHandler.addAnimation(0);
+		},		
+	},
+	oneonly:{
+		beforeLeave:function(cur,next,total){
+			animationHandler.addAnimation(next-1);
+		},
+		afterLoad:function(cur,prev,total){
+			animationHandler.removeAnimation(cur-1);
+		},
+		init:function(){
+			animationHandler.addAnimation(0);
+		},		
+	}
+}
+var h5pageDefaultInit = {
+	threeD:function(){
+		var winH = getCSS(document.documentElement,"height");
+		var styleEle = document.createElement("style");
+		//是一个很笨的方法，这里的前缀也不能用上面的pfx，浏览器不认
+		styleEle.innerHTML = ".h5page-threeD .h5page-notShow{ -webkit-transform: translate3d(0," + winH + ", 0) rotate3d(1, 0, 0, -90deg); transform: translate3d(0, " + winH +", 0) rotate3d(1, 0, 0, -90deg);";
+		document.head.appendChild(styleEle);
 	}
 }

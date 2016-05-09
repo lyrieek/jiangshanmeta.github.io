@@ -166,11 +166,10 @@
 				}
 			}
 
-			
 			var h5Ins = new H5page({
 				arrow:false,
 				beforeLeave:function(cur,next,total){
-					//console.log(cur,next,total)
+					h5pageDefaultCallbacks.twotogether.beforeLeave(cur,next,total);
 				},
 				afterLoad:function(cur,prev,total){
 					if(total == cur){
@@ -180,19 +179,23 @@
 						myTouch.off(document,'swipeUp',longPage.show);
 						myTouch.on(document,'swipeUp',h5Ins.next);
 					}
+					h5pageDefaultCallbacks.twotogether.afterLoad(cur,prev,total);
 				},
-			//	mode:'oneonly',
+			//	mode:'step',
 				init:function(){
 					var winH = getCSS(document.documentElement,"height");
 					var styleEle = document.createElement("style");
 					styleEle.innerHTML = "#longPage.notShow{ -webkit-transform: translate3d(0," + winH + ", 0); transform: translate3d(0, " + winH +", 0) ";
-					document.head.appendChild(styleEle);	
+					document.head.appendChild(styleEle);
+					h5pageDefaultCallbacks.twotogether.init();
 				}
 			});
+			var pages = h5Ins.pages;
 			var swipePrevent = function(event){
 				event.preventDefault();
 			}
 			h5Ins.init();
+			
 			//这里在touchstart阶段就阻止了默认事件是因为需求中不需要再关联其他的事件如click tap之类的，所以为了性能考虑采用了touchstart
 			document.addEventListener("touchstart",swipePrevent,false);
 			myTouch.on(document,"swipeUp",h5Ins.next);
