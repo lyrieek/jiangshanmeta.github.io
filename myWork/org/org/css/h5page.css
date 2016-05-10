@@ -273,7 +273,8 @@ html,body{
 	/*弹幕动画*/
 @-webkit-keyframes barrage {
   from {
-    left:100%;  
+    left:100%;
+    transform:translate3d(0,0,0);  
   }
 
   to {
@@ -283,7 +284,8 @@ html,body{
 }
 @keyframes barrage {
   from {
-    left:100%;   
+    left:100%;
+    transform:translate3d(0,0,0);    
   }
 
   to {
