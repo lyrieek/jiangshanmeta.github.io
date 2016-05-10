@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>javascript design pattern</title>
+	<script src="common.js"></script>
+</head>
+<body>
+	<script>
+		var Composite = new Interface("Composite",['add','remove']);
+		var FormItem = new Interface("FormItem",["save"]);
+
+		var CompositeForm = function(){
+
+		}
+		CompositeForm.prototype.add = function(){
+
+		}
+		CompositeForm.prototype.remove = function(){
+
+		}
+		CompositeForm.prototype.save = function(){
+
+		}
+		var ins = new CompositeForm();
+		Interface.ensureImplements(ins,Composite,FormItem);
+	</script>
+</body>
+</html>
