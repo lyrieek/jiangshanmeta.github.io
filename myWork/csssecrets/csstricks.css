@@ -72,3 +72,32 @@ hr{
 	box-shadow:0 0 0 15px #655;
 	outline:20px solid #655;
 }
+
+.tuoyuan{
+	border-radius:50%;
+}
+
+.half-ellipse-top{
+	border-radius:50%/100% 100% 0 0;
+}
+.half-ellipse-bottom{
+	border-radius:50%/0 0 100% 100%;
+}
+.half-ellipse-left{
+	border-radius:100% 0 0 100%/50%;
+}
+.half-ellipse-right{
+	border-radius:0 100% 100% 0 / 50%;
+}
+.quarter-ellipse-topleft{
+	border-radius:100% 0 0 0;
+}
+.quarter-ellipse-topright{
+	border-radius:0 100% 0 0;
+}
+.quarter-ellipse-bottomright{
+	border-radius:0 0 100% 0;
+}
+.quarter-ellipse-bottomleft{
+	border-radius:0 0 0 100%;
+}

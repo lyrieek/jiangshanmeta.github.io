@@ -51,6 +51,91 @@
 				遇到圆角的时候，box-shadow会跟着圆角走，所以紧贴border，外边有圆角，outline不紧贴，所以会在outline和border的圆角之间留有空隙，但外侧是直角的。两者结合就可以形成边框内圆角。最简单粗暴的方案是套一层div。这个方案一个缺点是outline的width不能太小，否则box-shadow为了填补空缺所需要的扩散半径会显得过大以至于外侧是圆角而不是直角
 			</div>
 		</div>
+
+		<!-- 自适应椭圆 -->
+		<div>
+			<div class="tuoyuan" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;">
+
+			</div>
+
+			<div class="half-ellipse-top" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="half-ellipse-bottom" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="half-ellipse-left" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="half-ellipse-right" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-topleft" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-topright" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-bottomright" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-bottomleft" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>			
+		</div>
+
+
+		<!-- 平行四边形 -->
+		<div>
+			<div style="margin-left:auto;margin-right:auto;width:300px;height:200px;background-color:tan;transform:skewX(-45deg)">
+				<div style="transform:skewX(45deg)">
+				content
+				</div>
+			</div>
+			<style>
+				.skewEle{
+					position:relative;
+				}
+				.skewEle::before{
+					content:'';
+					position:absolute;
+					top:0;
+					left:0;
+					right:0;
+					bottom:0;
+					background-color:tan;
+					transform:skewX(45deg);
+					z-index:-1;
+				}
+			</style>
+			<div style="margin-left:auto;margin-right:auto;width:300px;height:200px;" class="skewEle">
+				
+				content
+				
+			</div>
+			<style>
+				.lingxing{
+					width:256px;
+					height:256px;
+					position:absolute;
+
+				}
+				.lingxing::before{
+					content:'';
+					background: url('2.jpg') center center no-repeat;
+					position:absolute;
+					top:0;
+					left:0;
+					right:0;
+					bottom:0;
+					z-index:-1;
+					transform:rotate(45deg);
+				}
+			</style>
+			<div class="lingxing">
+				
+			</div>
+	</div>
 		<script>
 			console.log(testProperty("transition"));
 			console.log(testValue("transition","1"));
