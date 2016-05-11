@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>设定自定义错误信息</title>
+</head>
+<body>
+	<form>
+       <input type='text' id='a' required>
+       <input type='submit'>
+	</form>
+  <script>
+    var a=document.getElementById('a');
+    a.addEventListener('invalid',function(event){
+    	if(event.target.validity.valueMissing){
+    		event.target.setCustomValidity('missingValue');
+    	}
+    })
+  </script>
+</body>
+</html>

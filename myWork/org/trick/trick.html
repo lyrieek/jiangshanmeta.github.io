@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+
+		</style>
+	</head>
+	<body>
+		<style>
+			.circleProgress_wrapper{
+			  width: 200px;
+			  height: 200px;
+			  margin: 50px auto;
+			  position: relative;
+			  border:1px solid #ddd;
+			}
+			.circleProgress_wrapper .wrapper{
+			  width: 100px;
+			  height: 200px;
+			  position: absolute;
+			  top:0;
+			  overflow: hidden;
+			}
+			.circleProgress_wrapper .right{
+			  right:0;
+			}
+			.circleProgress_wrapper .left{
+			  left:0;
+			}
+			.circleProgress_wrapper .circleProgress{
+			  width: 160px;
+			  height: 160px;
+			  border-width:20px;
+			  border-style:solid;
+			  border-radius: 50%;
+			  position: absolute;
+			  top:0;
+
+			}
+			.circleProgress_wrapper .rightcircle{
+			  border-top-color:green;
+			  border-right-color:green;
+			  right:0;
+			  animation:circleProgressLoad_right 5s linear infinite;
+			  -webkit-animation: circleProgressLoad_right 5s linear infinite;
+			}
+			.circleProgress_wrapper .leftcircle{
+			  border-bottom-color:green;
+			  border-left-color:green;
+			  left:0;
+			  animation:circleProgressLoad_left 5s linear infinite;
+			  -webkit-animation: circleProgressLoad_left 5s linear infinite;
+			}
+			@-webkit-keyframes circleProgressLoad_right{
+			  0%{
+			    -webkit-transform: rotate(45deg);
+			    border-left-color:yellow;
+			    border-bottom-color: yellow;
+			  }
+			  50%{
+			    -webkit-transform: rotate(225deg);
+			  }
+			  100%{
+			  	-webkit-transform: rotate(225deg);
+			  	border-left-color:red;
+			  	border-bottom-color:red;
+			  }
+			}
+			@keyframes circleProgressLoad_right{
+			  0%{
+			    -webkit-transform: rotate(45deg);
+			    border-left-color:yellow;
+			    border-bottom-color: yellow;
+			  }
+			  50%{
+			    -webkit-transform: rotate(225deg);
+			  }
+			  100%{
+			  	-webkit-transform: rotate(225deg);
+			  	border-left-color:red;
+			  	border-bottom-color:red;
+			  }
+			}
+
+			@-webkit-keyframes circleProgressLoad_left{
+			  0%{
+			    -webkit-transform: rotate(45deg);
+			    border-right-color:yellow;
+			    border-top-color:yellow;
+			  }
+			  50%{
+			  	-webkit-transform: rotate(45deg);
+			  }
+			  100%{
+			    -webkit-transform: rotate(225deg);
+			    border-right-color:red;
+			    border-top-color:red;
+			  }
+			}
+			@keyframes circleProgressLoad_left{
+			  0%{
+			    -webkit-transform: rotate(45deg);
+			    border-right-color:yellow;
+			    border-top-color:yellow;
+			  }
+			  50%{
+			  	-webkit-transform: rotate(45deg);
+			  }
+			  100%{
+			    -webkit-transform: rotate(225deg);
+			    border-right-color:red;
+			    border-top-color:red;
+
+			  }
+			}
+
+
+		</style>
+		<div class="circleProgress_wrapper">
+		        <div class="wrapper right">
+		            <div class="circleProgress rightcircle"></div>
+		        </div>
+		        <div class="wrapper left">
+		            <div class="circleProgress leftcircle"></div>
+		        </div>
+		 </div>
+
+	</body>
+</html>
+

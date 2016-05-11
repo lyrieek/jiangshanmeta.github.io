@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<title>居中</title>
+	<link rel="stylesheet" href="../org/org/css/bootstrap.min.css">
+	<style>
+	  body{padding-top:15px;padding-bottom:15px;}
+	  .p-indent{text-indent:2em;}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12">
+				<h2 class="text-center"><b>居中</b></h2>
+				<hr>
+
+				<section>
+					<h3><b>一、水平居中</b></h3>
+					<h4><b>①text-align:center + display:inline-block</b></h4>
+					<p class="p-indent">想要剧中的元素设定display:inline-block，其父元素设定text-align:center。是常见的居中方案，但是text-align:center会继承，所以会影响到子元素的文字对齐。</p>
+					<h4><b>②margin-left:auto margin-right:auto</b></h4>
+					<p class="p-indent">这是块元素常见的水平对齐方案，如果块元素有设定宽度大小，则直接设定左右margin为auto即可，如果是不定宽块元素，需要设定display:table，是元素宽度为内容宽度，再加上左右margin为auto。</p>
+					<h4><b>③绝对定位 + transform:translateX(-50%)</b></h4>
+					<p class="p-indent">需要居中的元素设定position:absolute;left:50%;transform:translateX(-50%);兼容性稍微差一点，但确实是一个居中的好方案，可以用在fullpage这样的页面中。</p>
+					<h4><b>④flex</b></h4>
+					<p class="p-indent">谁知道flex一年后会不会又出新方案？</p>
+				</section>
+
+				<section>
+					<h3><b>二、垂直居中</b></h3>
+					<h4><b>①单行文字垂直居中 line-height=height</b></h4>
+					<p class="p-indent">据张鑫旭大神说这个方案是伪居中，然而对于实际使用已经足够了。比如说用特殊字体做图标的时候。</p>
+					<h4><b>②display:table-cell + vertical-align:middle</b></h4>
+					<p class="p-indent">想要设定垂直居中的元素的父元素设定display:table-cell + vertical-align:middle即可。然而，table并不是好的布局方案。</p>
+					<h4><b>③绝对定位 + transform:translateY(-50%)</b></h4>
+					<p class="p-indent">需要居中的元素设定position:absolute;top:50%;transform:translateY(-50%);兼容性稍微差一点，但确实是一个居中的好方案，可以用在fullpage这样的页面中。</p>
+					<h4><b>④flex</b></h4>
+					<p class="p-indent">谁知道flex一年后会不会又出新方案？</p>
+				</section>
+
+				<section>
+					<h3><b>三、水平垂直居中</b></h3>
+					<h4><b>①父元素:text-align:center + display:table-cell + vertical-align:middle 子元素 display:inline-block</b></h4>
+					<h4><b>②绝对定位 + transform:translate(-50%,-50%)</b></h4>
+					<h4><b>③flex</b></h4>
+				</section>
+
+				<p><a href="center/center.less" target="_blank">相关less文件</a></p>
+				<p><a href="center/center.css" target="_blank">相关css文件</a></p>
+    		</div>
+    	</div>
+    </div>
+</body>
+</html>

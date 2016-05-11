@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>doubly linked list</title>
+		<script src="doublylinkedlist.js"></script>
+	</head>
+	<body>
+		<script>
+			var dll = new DoublyLinkedList();
+			dll.insert(0,"a");
+		//	console.log(dll.getHead());
+			dll.insert(0,"b");
+		//	console.log(dll.getHead());
+			dll.insert(1,'c');
+			dll.insert(3,'d');
+			var head = dll.getHead();
+		//	console.log(head.element);
+		//	console.log(head.next);
+			var tail = dll.getTail();
+		//	console.log(tail);
+
+			//b-c-a-d;
+			dll.removeAt(0);
+			console.log(dll.getHead());
+			dll.removeAt(2);
+			console.log(dll.getTail());
+			console.log(dll.size());
+		</script>
+	</body>
+</html>

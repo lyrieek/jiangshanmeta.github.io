@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>graph</title>
+		<script src="dictionary.js"></script>
+		<script src="queue.js"></script>
+		<script src="graph.js"></script>
+	</head>
+	<body>
+		<script>
+			var graphIns = new Graph();
+			var myVertices = ['A','B','C','D','E','F','G','H','I'];
+			myVertices.forEach(function(item){
+				graphIns.addVertex(item);
+			});
+			graphIns.addEdge('A','B');
+			graphIns.addEdge('A','C');
+			graphIns.addEdge('A','D');
+			graphIns.addEdge('C','D');
+			graphIns.addEdge('C','G');
+			graphIns.addEdge('D','G');
+			graphIns.addEdge('D','H');
+			graphIns.addEdge('B','E');
+			graphIns.addEdge('B','F');
+			graphIns.addEdge('E','I');
+			graphIns.print();
+			graphIns.bfs('A',function(v){document.write(v+"<br>")});
+			console.log(graphIns.bfsShortWay('A'));
+
+			graphIns.dfs(function(u){document.write(u+"<br>")})
+		</script>
+	</body>
+</html>
