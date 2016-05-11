@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>CSS SSecrets</title>
+		<link rel="stylesheet" href="csstricks.css">
+		<script src="index.js"></script>
+	</head>
+	<body>
+		<div style="color:#0cc;">
+			1
+			<button>YES!</button>
+			<hr>
+			<button class="ok">OK</button>
+			<button class="cancel">Cancel</button>
+		</div>
+
+		<!-- 透明边框 -->
+		透明边框 
+		<div style="color:#cc0;background-color:#234567;padding:20px;margin-bottom:50px;">
+			
+			<div class="border" style="">
+				透明边框，基本原理就是rgba也是一种颜色，知识点知道，但是以前边框的颜色基本上是使用非透明色
+			</div>
+		</div>
+
+		<!-- 多重边框 -->
+		<div>
+			多重边框
+			<div class="multi-border1" style="width:200px;height:100px;margin-bottom:50px;">
+				然而，用box-shadow模仿一个边框真的是很无聊的想法
+			</div>
+			<div class="multi-border2" style="width:200px;height:100px;margin-bottom:50px;margin-left:200px;">
+				用box-shadow模仿多个边框有实际意义，更常规的方法是加一层div，简单粗暴但不够优雅，当然，不要忘了box-shadow不影响布局
+			</div>
+			<div class="multi-border3" style="width:400px;height:200px;margin-bottom:50px;margin-left:200px;">
+				使用outline模拟边框也是一个多重边框的解决方案，相较于box-shadow，其优点是可以制造出dashed dotted 的边框，而且了可以通过outline-offset控制模拟边框的位置，要实现中间有间隙的边框，box-shadow需要多写一行来模拟这一间隙。
+				outline的缺点是只能有一个outline，所以只能增加一个边框，outline-offset也不够灵活，只能设定一个距离，而box-shadow可以通过调节x轴偏移和y轴偏移来实现不同的偏移。
+				box-shadow或者outline的一个共同的优点是不影响布局，比套div好多了
+			</div>
+		</div>
+
+		<!-- 背景定位 -->
+		<div >
+			<div class="bg-1"></div>
+		</div>
+
+		<!-- 边框内圆角 -->
+		<div>
+			<div class="inner-radius" style="width:200px;margin-left:200px;">
+				遇到圆角的时候，box-shadow会跟着圆角走，所以紧贴border，外边有圆角，outline不紧贴，所以会在outline和border的圆角之间留有空隙，但外侧是直角的。两者结合就可以形成边框内圆角。最简单粗暴的方案是套一层div。这个方案一个缺点是outline的width不能太小，否则box-shadow为了填补空缺所需要的扩散半径会显得过大以至于外侧是圆角而不是直角
+			</div>
+		</div>
+
+		<!-- 自适应椭圆 -->
+		<div>
+			<div class="tuoyuan" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;">
+
+			</div>
+
+			<div class="half-ellipse-top" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="half-ellipse-bottom" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="half-ellipse-left" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="half-ellipse-right" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-topleft" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-topright" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-bottomright" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>
+			<div class="quarter-ellipse-bottomleft" style="width:800px;height:200px;margin-left:auto;margin-right:auto;background-color:yellowgreen;margin-top:10px;">
+
+			</div>			
+		</div>
+
+
+		<!-- 平行四边形 -->
+		<div>
+			<div style="margin-left:auto;margin-right:auto;width:300px;height:200px;background-color:tan;transform:skewX(-45deg)">
+				<div style="transform:skewX(45deg)">
+				content
+				</div>
+			</div>
+			<style>
+				.skewEle{
+					position:relative;
+				}
+				.skewEle::before{
+					content:'';
+					position:absolute;
+					top:0;
+					left:0;
+					right:0;
+					bottom:0;
+					background-color:tan;
+					transform:skewX(45deg);
+					z-index:-1;
+				}
+			</style>
+			<div style="margin-left:auto;margin-right:auto;width:300px;height:200px;" class="skewEle">
+				
+				content
+				
+			</div>
+			<style>
+				.lingxing{
+					width:256px;
+					height:256px;
+					position:absolute;
+
+				}
+				.lingxing::before{
+					content:'';
+					background: url('2.jpg') center center no-repeat;
+					position:absolute;
+					top:0;
+					left:0;
+					right:0;
+					bottom:0;
+					z-index:-1;
+					transform:rotate(45deg);
+				}
+			</style>
+			<div class="lingxing">
+				
+			</div>
+	</div>
+
+
+	<!-- 菱形图片 -->
+	<div>
+		<div class="diamond" style="width:256px;height:256px;margin-left:auto;margin-right:auto;">
+			<img src="2.jpg">
+
+		</div>
+		<style>
+			.clip{
+				-webkit-clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+				clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+			}
+		</style>
+		<img src="2.jpg" class="clip">
+	</div>
+		<script>
+			console.log(testProperty("transition"));
+			console.log(testValue("transition","1"));
+		</script>
+	</body>
+</html>

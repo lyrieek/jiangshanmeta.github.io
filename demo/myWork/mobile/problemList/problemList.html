@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>problemList </title>
+		<link rel="stylesheet" href="../org/org/css/font-awesome.min.css">
+		<link rel="stylesheet" href="problemList.css">
+		<script src="../org/org/js/touch-0.2.14.min.js"></script>
+		<script src="../org/horizontalMove/horizontalMove2.js"></script>
+	</head>
+	<body>
+		<script>
+			function active(el,cls){
+				[].slice.call(document.getElementsByClassName(cls)).forEach(function(item){
+					item.classList.remove("active");
+				})
+				el.classList.add("active");
+			}
+		</script>
+		<div class="pbList">
+			<div class="pbList-titles" >
+				<div id="horizontalMoveWrap">
+					<label class="pbTitle active" for="pbTitle1" onclick="active(this,'pbTitle')">常见问题</label>
+					<label class="pbTitle" for="pbTitle2" onclick="active(this,'pbTitle')">车型疑问</label>
+					<label class="pbTitle" for="pbTitle3" onclick="active(this,'pbTitle')">商品选购</label>
+					<label class="pbTitle" for="pbTitle4" onclick="active(this,'pbTitle')">APP使用</label>
+					<label class="pbTitle" for="pbTitle5" onclick="active(this,'pbTitle')">售后&amp;其他</label>
+				</div>
+			</div>
+			<div class="pbList-body">
+				<div class="pbList-item">
+					<input type="radio" name="pbTitle" id="pbTitle1" checked >
+					<div class="pbList-cont">
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle1-Q1">
+							<label class="pb-question" for="pbTitle1-Q1"  >常见问题-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle1-Q2">
+							<label class="pb-question" for="pbTitle1-Q2"  >常见问题-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle1-Q3">
+							<label class="pb-question" for="pbTitle1-Q3"  >常见问题-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle1-Q4">
+							<label class="pb-question" for="pbTitle1-Q4"  >常见问题-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle1-Q5">
+							<label class="pb-question" for="pbTitle1-Q5"  >常见问题-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle1-Q6">
+							<label class="pb-question" for="pbTitle1-Q6"  >常见问题-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="pbList-item">
+					<input type="radio" name="pbTitle" id="pbTitle2"  >
+					<div class="pbList-cont">
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle2-Q1">
+							<label class="pb-question" for="pbTitle2-Q1"  >车型疑问-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle2-Q2">
+							<label class="pb-question" for="pbTitle2-Q2"  >车型疑问-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle2-Q3">
+							<label class="pb-question" for="pbTitle2-Q3"  >车型疑问-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle2-Q4">
+							<label class="pb-question" for="pbTitle2-Q4"  >车型疑问-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle2-Q5">
+							<label class="pb-question" for="pbTitle2-Q5"  >车型疑问-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle2-Q6">
+							<label class="pb-question" for="pbTitle2-Q6"  >车型疑问-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="pbList-item">
+					<input type="radio" name="pbTitle" id="pbTitle3"  >
+					<div class="pbList-cont">
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle3-Q1">
+							<label class="pb-question" for="pbTitle3-Q1"  >商品选购-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle3-Q2">
+							<label class="pb-question" for="pbTitle3-Q2"  >商品选购-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle3-Q3">
+							<label class="pb-question" for="pbTitle3-Q3"  >商品选购-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle3-Q4">
+							<label class="pb-question" for="pbTitle3-Q4"  >商品选购-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle3-Q5">
+							<label class="pb-question" for="pbTitle3-Q5"  >商品选购-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle3-Q6">
+							<label class="pb-question" for="pbTitle3-Q6"  >商品选购-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="pbList-item">
+					<input type="radio" name="pbTitle" id="pbTitle4"  >
+					<div class="pbList-cont">
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle4-Q1">
+							<label class="pb-question" for="pbTitle4-Q1"  >APP使用-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle4-Q2">
+							<label class="pb-question" for="pbTitle4-Q2"  >APP使用-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle4-Q3">
+							<label class="pb-question" for="pbTitle4-Q3"  >APP使用-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle4-Q4">
+							<label class="pb-question" for="pbTitle4-Q4"  >APP使用-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle4-Q5">
+							<label class="pb-question" for="pbTitle4-Q5"  >APP使用-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle4-Q6">
+							<label class="pb-question" for="pbTitle4-Q6"  >APP使用-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="pbList-item">
+					<input type="radio" name="pbTitle" id="pbTitle5"  >
+					<div class="pbList-cont">
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle5-Q1">
+							<label class="pb-question" for="pbTitle5-Q1"  >售后-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle5-Q2">
+							<label class="pb-question" for="pbTitle5-Q2"  >售后-如何选择发动机排量？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择发动机排量？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle5-Q3">
+							<label class="pb-question" for="pbTitle5-Q3"  >售后-怎么取消订单？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 怎么取消订单？
+							</div>
+						</div>
+						<div>
+							<input type="radio" name="pbQuestion" id="pbTitle5-Q4">
+							<label class="pb-question" for="pbTitle5-Q4"  >售后-如何选择生产年份？<div class="pull-right"><span class="fa fa-angle-down"></span></div></label>
+							<div class="pb-answer">
+								answer 如何选择生产年份？
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+		<script>
+			horizontalMove("#horizontalMoveWrap").init()
+		</script>
+	</body>
+</html>

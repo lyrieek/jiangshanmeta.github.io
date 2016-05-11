@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+</head>
+	<meta charset='utf-8'>
+	<title>test</title>
+</head>
+<body>
+<select name="year" id="year">
+        <option value="0">--</option>
+        <option value="1999">1999</option>
+        <option value="2000">2000</option>
+        <option value="2001">2001</option>
+    </select>年
+    <select name="month" id="month">
+        <option value="0">--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+    </select>月
+    <select name="date" id="date">
+        <option value="0">--</option>
+    </select>日
+	<script>
+		var year=document.getElementById('year');
+		var month=document.getElementById('month');
+		var date=document.getElementById('date');
+		function getDaysOfMonth(year,month){
+			var helpDate=new Date(year,month,0);
+			return helpDate.getDate();
+		}
+		function removeOpt(select){
+			for(var i=select.length-1;i>0;i--){
+				select.remove(i);
+			}
+		}
+		function fillDate(dateSelect,year,month){
+			var dateOfMonth=getDaysOfMonth(year,month);
+			for(var i=1;i<=dateOfMonth;i++){
+				var option=new Option(i,i);
+				dateSelect.add(option);
+			}
+		}
+		function fillMonth(monthSelect){
+			for(var i=1;i<=12;i++){
+				var option=new Option(i,i);
+				monthSelect.add(option);
+			}
+		}
+		year.onchange=function(){
+			var yearValue=year.value;
+			var monthValue=month.value;
+			removeOpt(month);
+			removeOpt(date);
+			if(yearValue!='0'){
+				fillMonth(month);
+			}
+		}
+
+
+
+		month.onchange=function(){
+			var monthValue=month.value;
+			var yearValue=year.value;
+			removeOpt(date);
+			if(monthValue!='0'){
+				fillDate(date,yearValue,monthValue);
+			}
+		}
+	</script>
+</body>
+</html>

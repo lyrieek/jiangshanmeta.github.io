@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>mobile</title>
+		<link rel="stylesheet" href="myFullpage.css">
+		<link rel="stylesheet" href="../org/css/animate.css">
+		<script src="../org/js/jquery-1.11.3.js"></script>
+		<script src="../org/js/lib.js"></script>
+		<script src="myTouch.js"></script>
+		<script src="myFullpage.js"></script>
+		<style>
+			
+			body{
+				background-color:#ff4b6e;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="fullpage">
+			<div class="section  ">
+				<img src="mobile/177b6dcafd6d6592.png" class="img-responsive  ab vis-hidden" style="" data-role="animation" data-delay="0" data-method="wobble">
+				<img src="mobile/d4311f7f601d1bfb.png" class="img-responsive  ab vis-hidden" style="top:0%;" data-role="animation" data-delay="300" data-method="rotateIn">
+				<img src="mobile/692e4f34ba0c9aff.png" class="img-responsive  ab vis-hidden" style="bottom:0;" data-role="animation" data-delay="500" data-method="slideInUp">
+			</div>
+			<div class="section  ">
+		
+
+				<img src="mobile/3f5fd7beb809e0aa.png" class="img-responsive  ab vis-hidden" style="" data-role="animation" data-delay="0" data-method="wobble">
+				<img src="mobile/f219241f97814335.png" class="img-responsive  ab vis-hidden" style="top:20%;" data-role="animation" data-delay="0" data-method="flipInX">		
+
+			</div>
+			<div class="section  ">
+				<img src="mobile/3812868ad20b851d.jpg" class="img-responsive  ab vis-hidden" style="top:15%;" data-role="animation" data-delay="0" data-method="zoomHalf">		
+
+
+			</div>
+
+		</div>
+		<script>
+			$(document).ready(function(){
+				$("#fullpage").fullpage({
+
+					navigation : true,
+				//	navpos : "right",
+					continuous  : true,
+					keyboard : true,
+					mobile : true,
+					method : "swing",
+					onLeave : function(index){
+
+					},
+					afterLoad :function(index){
+						var cur = $(".section").eq(index);
+						cur.siblings().find("[data-role='animation']").each(function(){
+							$(this).addClass("vis-hidden").removeClass("animated "+$(this).data("method"));
+						})
+
+						cur.find("[data-role='animation']").each(function(){
+							var that = $(this);
+							var delay = that.data("delay") || 0;
+							//console.log(delayT)
+							var method = that.data("method");
+							setTimeout(function(){
+								that.removeClass("vis-hidden").addClass("animated "+method );
+							},delay)
+							
+						});
+					}
+				})
+			})
+
+		</script>
+	</body>
+</html>

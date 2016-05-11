@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>点击图片放大和缩小</title>
+  <style>
+    *{margin:0;padding:0;}
+    img{display:block;margin:105px auto 15px;width:300px;height:200px;}
+    div{text-align:center;}
+  
+  </style>
+</head>
+<img src='5.jpg' id='pic'>
+<div>
+<button id='fangda'>放大</button>
+<button id='suoxiao'>缩小</button>
+</div>
+<script>
+var fangda=document.getElementById('fangda');
+var suoxiao=document.getElementById('suoxiao');
+var pic=document.getElementById('pic');
+fangda.onclick=function(){
+  var timer=setInterval(function(){
+    if(parseInt(getStyle(pic,'width'))<600){
+      pic.style.width=parseInt(getStyle(pic,'width'))+3+'px';
+      pic.style.height=parseInt(getStyle(pic,'height'))+2+'px';
+      pic.style.marginTop=parseInt(getStyle(pic,'marginTop'))-1+'px';
+    }else{
+      clearInterval(timer);
+    }
+    
+    
+    },20)
+  
+}
+suoxiao.onclick=function(){
+  var timer=setInterval(function(){
+    if(parseInt(getStyle(pic,'width'))>300){
+      pic.style.width=parseInt(getStyle(pic,'width'))-3+'px';
+      pic.style.height=parseInt(getStyle(pic,'height'))-2+'px';
+      pic.style.marginTop=parseInt(getStyle(pic,'marginTop'))+1+'px';
+    }else{
+      clearInterval(timer);
+    } 
+    },20)
+  
+}
+function getStyle(elem,cssname){
+  if(window.getComputedStyle){
+    return window.getComputedStyle(elem)[cssname];
+  }else{
+    return elem.currentStyle[cssname];
+  }
+
+}
+</script>
+</html>

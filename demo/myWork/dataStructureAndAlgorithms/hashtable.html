@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>hashtable</title>
+		<script src="hashtable.js"></script>
+	</head>
+	<body>
+		<script>
+			var htInstance = new HashTable();
+			htInstance.put("abc","abcv");
+			htInstance.put("acc","accv");
+			console.log(htInstance.get("abc"));
+			htInstance.remove("acc");
+			console.log(htInstance.get("acc"));
+		</script>
+	</body>
+</html>

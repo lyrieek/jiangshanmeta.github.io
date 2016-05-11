@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>test</title>
+
+	</head>
+	<body>
+
+		我就想试试我写的php而已
+		<input type="text" placeholder="请输入性别 男或女" id="input" name="sex">
+		<button id="btn">提交</button>
+		<p id="result"></p>
+
+
+
+
+
+		<script>
+			document.getElementById("btn").onclick = function(){
+				var val = document.getElementById("input").value;
+				if(val == "男" || val =="女"){
+					var xhr = new XMLHttpRequest();
+					var data="sex="+val;
+					xhr.open("POST","judgeSex.php",true);
+					xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+					
+					xhr.onreadystatechange = function(){
+						if(xhr.readyState==4){
+							if(xhr.status ==200){
+								document.getElementById("result").innerHTML =xhr.responseText;
+							}
+						}
+					}
+					xhr.send(data);
+				}
+			}
+
+		</script>
+	</body>
+
+</html>

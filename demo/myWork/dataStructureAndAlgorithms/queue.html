@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>queue</title>
+		<script src="queue.js"></script>
+	</head>
+	<body>
+		<script>
+			var queue = new Queue();
+			queue.enqueue("John");
+			queue.enqueue("Jack");
+			queue.enqueue("Camila");
+			console.log(queue.size());
+			console.log(queue.front());
+			console.log(queue.dequeue());
+			queue.print();
+			queue.clear();
+			queue.print();
+		</script>
+	</body>
+</html>

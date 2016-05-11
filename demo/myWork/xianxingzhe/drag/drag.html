@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>drag</title>
+	</head>
+	<body>
+		<img src="2.jpg" draggable="true" ondragstart="dragstart()" ondrag="drag(event)" ondragend="dragend()" id="a">
+
+		<div style="border:1px solid #ccc;padding:0;width:100%;min-height:100px;" ondragenter="dragenter(event)" ondragover="dragover(event)" ondrop="drop(event)"></div>
+
+		拖动某元素时，依次触发dragstart drag dragend三个事件，其中drag是多次触发，要避免大量计算，在dragstart是可以通过dataTransfer设置一些信息<br>\
+		当某个元素拖动到有效的放置目标时，依次发生dragenter dragover dragleave||drop <br>
+		要使某个元素成为有效放置目标，需要在dragenter dragover阶段阻止默认事件
+		<script>
+			function dragstart(){
+				console.log("start");
+				event.dataTransfer.setData("text",event.target.id);
+			}
+			function drag(event){
+				console.log("drag");
+			}
+			function dragend(){
+				console.log("end");
+			}
+			function dragenter(event){
+				event.preventDefault();
+			}
+			function dragover(event){
+				event.preventDefault();
+			}
+			function drop(event){
+				var data = event.dataTransfer.getData("text");
+				event.target.appendChild(document.getElementById(data));
+			}
+		</script>
+	</body>
+</html>
