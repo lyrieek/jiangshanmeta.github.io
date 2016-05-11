@@ -101,3 +101,12 @@ hr{
 .quarter-ellipse-bottomleft{
 	border-radius:0 0 0 100%;
 }
+
+.diamond{
+	-webkit-transform:rotate(45deg);
+	transform:rotate(45deg);
+	overflow: hidden;
+}
+.diamond>img{
+	transform:rotate(-45deg) scale(1.42);
+}

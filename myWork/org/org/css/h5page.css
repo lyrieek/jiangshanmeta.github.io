@@ -120,8 +120,8 @@ html,body{
 }
 /* 为了以后写多个页面切换效果，将h5page-showing h5page-hasShown h5page-notShow 作为开关使用，具体的转换效果由其他的类处理 */
 
-
-.top{
+	/* 珍爱生命，远离命名冲突，所以默默地加了一个命名空间 */
+.h5page.top{
 	z-index:9998;
 }
 /* 进度条样式  */
@@ -234,7 +234,14 @@ html,body{
 .quarter-ellipse-bottomleft{
 	border-radius:0 0 0 100%;
 }
-
+	/*  菱形  */
+.diamond-clip{
+	-webkit-clip-path:polygon(50% 0, 100% 50%, 50% 100%,0 50%);
+	-moz-clip-path:polygon(50% 0, 100% 50%, 50% 100%,0 50%);
+	-o-clip-path:polygon(50% 0, 100% 50%, 50% 100%,0 50%);
+	-ms-clip-path:polygon(50% 0, 100% 50%, 50% 100%,0 50%);
+	clip-path:polygon(50% 0, 100% 50%, 50% 100%,0 50%);
+}
 
 /* 文本排版 */
 .text-center{
