@@ -21,68 +21,33 @@
 
 &lt;h2 id=&#34;浮动布局:5a257f88feea4060d9c6a1cf42573807&#34;&gt;浮动布局&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;浮动最初是为文字环绕功能而设计的，然而现在成了基本的布局方式。
+&lt;p&gt;浮动最初是为文字环绕功能而设计的，然而现在成了基本的布局方式。&lt;/p&gt;
 
-熟悉bootstrap的人都知道，其经典的12列网格设计就是基于浮动所实现的。bootstrap的网格主要的知识点就是浮动+ `box-sizing:border-box` + 媒体查询
+&lt;p&gt;熟悉bootstrap的人都知道，其经典的12列网格设计就是基于浮动所实现的。bootstrap的网格主要的知识点就是浮动+ &lt;code&gt;box-sizing:border-box&lt;/code&gt; + 媒体查询&lt;/p&gt;
 
-浮动所带来的问题是盒子的塌陷，bootstrap的网格布局解决方案是采取百分比进行限制。这样实现的是两列自适应布局，然而，要实现一列定宽一列自适应就比较困难了，所幸CSS支持计算，可以利用 **calc** 实现两列一列定宽一列自适应的两列布局
+&lt;p&gt;浮动所带来的问题是盒子的塌陷，bootstrap的网格布局解决方案是采取百分比进行限制。这样实现的是两列自适应布局，然而，要实现一列定宽一列自适应就比较困难了，所幸CSS支持计算，可以利用&lt;code&gt;calc&lt;/code&gt; 实现两列一列定宽一列自适应的两列布局&lt;/p&gt;
 
-bootstrap采用的是两列均左浮动实现两列布局，那么一列左浮动可不可以？当然可以。只要给右侧足够的`margin-left`就行了。知乎首页人和问题的两列布局就是采用的这种布局方式。这种布局方式有什么问题呢？一是`margin-left`值是要写死在代码里的，这一点其实还好，因为基本上大的布局不会变，所以基本上不会改。二是如果右侧有清除浮动的元素，会影响布局。当然对于知乎来说不存在这个问题，毕竟只是文字和图片。
+&lt;p&gt;bootstrap采用的是两列均左浮动实现两列布局，那么一列左浮动可不可以？当然可以。只要给右侧足够的&lt;code&gt;margin-left&lt;/code&gt;就行了。知乎首页人和问题的两列布局就是采用的这种布局方式。这种布局方式有什么问题呢？一是&lt;code&gt;margin-left&lt;/code&gt;值是要写死在代码里的，这一点其实还好，因为基本上大的布局不会变，所以基本上不会改。二是如果右侧有清除浮动的元素，会影响布局。当然对于知乎来说不存在这个问题，毕竟只是文字和图片。&lt;/p&gt;
 
-有什么方法解决上面说的第二个问题呢？对第二个列加上一行`overflow:hidden;`就好了。原理是形成BFC然后自己就玩自己的去了。
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>second</title>
-      <link>http://jiangshanmeta.github.io/post/second/</link>
-      <pubDate>Wed, 11 May 2016 21:15:48 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/second/</guid>
-      <description>
+&lt;p&gt;有什么方法解决上面说的第二个问题呢？对第二个列加上一行&lt;code&gt;overflow:hidden;&lt;/code&gt;就好了。原理是形成BFC然后自己就玩自己的去了。&lt;/p&gt;
 
-&lt;h1 id=&#34;test:9f7936f9b5c071ae81db818b80a44a0d&#34;&gt;test&lt;/h1&gt;
+&lt;h2 id=&#34;column:5a257f88feea4060d9c6a1cf42573807&#34;&gt;column&lt;/h2&gt;
 
-&lt;p&gt;1.aaabb
-2.bbb
-3.ccc
-1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc&lt;/p&gt;
+&lt;p&gt;coolumn的出现是为了模仿报纸的排版的，如果想要实现文字的两列或者多列布局，应用column布局很轻松，然而，不幸的是，如果想要使用column布局的话，我建议还是放弃这个想法吧，一方面各大浏览器对其支持还不够，需要加私有前缀，另一方面其显示有些问题，具体可见&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/pic/waterfall/waterfall_CSS.html&#34;&gt;column实现的瀑布流效果&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc&lt;/p&gt;
+&lt;h2 id=&#34;table:5a257f88feea4060d9c6a1cf42573807&#34;&gt;table&lt;/h2&gt;
+
+&lt;p&gt;这里的table指的可不是HTML中的table，而是&lt;code&gt;display:table;&lt;/code&gt;利用table布局很容易实现两列布局，而且还能顺便实现等高布局。关于table的各种坑，我以后后做一个总结&lt;/p&gt;
+
+&lt;h2 id=&#34;flex:5a257f88feea4060d9c6a1cf42573807&#34;&gt;flex&lt;/h2&gt;
+
+&lt;p&gt;flex确实是布局神器，然而在生产环境下还是注意一下的好，移动端的情况稍微好点，然而在pc端IE10才支持，至少在pc端有替代方案的就用替代方案吧&lt;/p&gt;
+
+&lt;h2 id=&#34;inline-block:5a257f88feea4060d9c6a1cf42573807&#34;&gt;inline-block&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;display:inline-block;&lt;/code&gt;确实是可以实现两列布局，如果两列宽度加起来不够父元素的宽度，那还好说，如果你想两个元素宽度均为50%,你很有可能会发现并没有实现。原因是两列之间有空格，两个50%加上一个空格显然超过100%。解决方案可以是通过那双灵巧的手，写HTML的时候注意空格，然而对于这种缩进会被不经意间手抖改掉，所以你还要写三遍注释告诉别人和自己不要手抖。这么干的人实在是太无聊了。靠谱点的解决方案是设定父元素&lt;code&gt;font-size:0;&lt;/code&gt;，然后两列字体大小该多少是多少，是个靠谱的解决方案。&lt;/p&gt;
+
+&lt;p&gt;总结起来我个人倾向于各种基于浮动的方案。&lt;/p&gt;
 </description>
     </item>
     
