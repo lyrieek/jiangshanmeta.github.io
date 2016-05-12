@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/post/</link>
-    <description>Recent content in Posts on jsmeta</description>
+    <title>Css on jsmeta</title>
+    <link>http://jiangshanmeta.github.io/categories/css/</link>
+    <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 12 May 2016 20:10:08 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://jiangshanmeta.github.io/categories/css/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>两列布局常见方法</title>
@@ -31,58 +31,6 @@ bootstrap采用的是两列均左浮动实现两列布局，那么一列左浮�
 
 有什么方法解决上面说的第二个问题呢？对第二个列加上一行`overflow:hidden;`就好了。原理是形成BFC然后自己就玩自己的去了。
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>second</title>
-      <link>http://jiangshanmeta.github.io/post/second/</link>
-      <pubDate>Wed, 11 May 2016 21:15:48 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/second/</guid>
-      <description>
-
-&lt;h1 id=&#34;test:9f7936f9b5c071ae81db818b80a44a0d&#34;&gt;test&lt;/h1&gt;
-
-&lt;p&gt;1.aaabb
-2.bbb
-3.ccc
-1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc&lt;/p&gt;
-
-&lt;p&gt;2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc1.aaabb
-2.bbb
-3.ccc&lt;/p&gt;
 </description>
     </item>
     

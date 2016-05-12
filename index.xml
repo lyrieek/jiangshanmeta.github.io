@@ -6,8 +6,33 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 May 2016 21:15:48 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 May 2016 20:10:08 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>两列布局常见方法</title>
+      <link>http://jiangshanmeta.github.io/post/twocolumn/</link>
+      <pubDate>Thu, 12 May 2016 20:10:08 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/twocolumn/</guid>
+      <description>
+
+&lt;p&gt;画页面最开始要想好的就是如何进行布局。两列布局既是一种常见的布局方式，又是多列布局的基础。本文就我所熟悉的两列布局方式进行总结和比较。&lt;/p&gt;
+
+&lt;h2 id=&#34;浮动布局:5a257f88feea4060d9c6a1cf42573807&#34;&gt;浮动布局&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;浮动最初是为文字环绕功能而设计的，然而现在成了基本的布局方式。
+
+熟悉bootstrap的人都知道，其经典的12列网格设计就是基于浮动所实现的。bootstrap的网格主要的知识点就是浮动+ `box-sizing:border-box` + 媒体查询
+
+浮动所带来的问题是盒子的塌陷，bootstrap的网格布局解决方案是采取百分比进行限制。这样实现的是两列自适应布局，然而，要实现一列定宽一列自适应就比较困难了，所幸CSS支持计算，可以利用 **calc** 实现两列一列定宽一列自适应的两列布局
+
+bootstrap采用的是两列均左浮动实现两列布局，那么一列左浮动可不可以？当然可以。只要给右侧足够的`margin-left`就行了。知乎首页人和问题的两列布局就是采用的这种布局方式。这种布局方式有什么问题呢？一是`margin-left`值是要写死在代码里的，这一点其实还好，因为基本上大的布局不会变，所以基本上不会改。二是如果右侧有清除浮动的元素，会影响布局。当然对于知乎来说不存在这个问题，毕竟只是文字和图片。
+
+有什么方法解决上面说的第二个问题呢？对第二个列加上一行`overflow:hidden;`就好了。原理是形成BFC然后自己就玩自己的去了。
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>second</title>
