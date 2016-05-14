@@ -6,8 +6,93 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 12 May 2016 20:10:08 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 14 May 2016 11:26:46 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>你真的会用CSS画写正方形吗？</title>
+      <link>http://jiangshanmeta.github.io/post/autosquare/</link>
+      <pubDate>Sat, 14 May 2016 11:26:46 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/autosquare/</guid>
+      <description>
+
+&lt;p&gt;用CSS写一个正方形，对于前端工作者来说是一个再常见不过的需求了，通常情况下，你可能会写出这样的代码：&lt;code&gt;width:200px;height:200px;&lt;/code&gt; 这是最简单的实现了，然而，如果我想要一个300px的正方形呢？或许你会写出如下代码：&lt;code&gt;width:300px;height:300px;&lt;/code&gt; 。那么，如果我想要一个400px的正方形呢？你可能会写出以下代码：&lt;code&gt;width:400px;height:400px;&lt;/code&gt; 同时开始准备和产品以及美术来一场大战。&lt;/p&gt;
+
+&lt;p&gt;显然，一个爱敲键盘的程序员不是好程序员，想偷懒就要对上面的需求进行抽象，然后脑洞大开。上面的需求可以抽象为如何写一个自适应的正方形，这一点其实没什么问题。&lt;/p&gt;
+
+&lt;h2 id=&#34;脑洞大开时间:e010fd746b92c0785d41a89ff0373934&#34;&gt;脑洞大开时间&lt;/h2&gt;
+
+&lt;p&gt;CSS经常被一些大神认为不是一种编程语言，然而，我们可以假装CSS是一门编程语言，就像我可以假装自己有女朋友一样。好了，现在CSS是一门编程语言了，那它会有什么？ &lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，一门编程语言没有*this*你还怎么面向对象编程。如果CSS有this的话，这里就可以这么写了&lt;code&gt;height:this.width&lt;/code&gt;,感觉上挺自然的，以后写CSS会不会要求OOP风格？&lt;/p&gt;
+
+&lt;p&gt;然而，CSS并不支持this，所以脑洞时间结束了，回归现实世界吧&lt;/p&gt;
+
+&lt;h2 id=&#34;回归正常前的瞎折腾阶段:e010fd746b92c0785d41a89ff0373934&#34;&gt;回归正常前的瞎折腾阶段&lt;/h2&gt;
+
+&lt;p&gt;在CSS中，有一些相对单位，比如em，rem，vw，vh之类的，能否用这些做点尝试。&lt;/p&gt;
+
+&lt;p&gt;比如，一个div，宽度是50vw，那么高度也是50vw就好了，算是一种自适应的正方形的实现方案吧。然而，宽高都要基于视口，稍微复杂点的场景就解决不了了，比如，这个div的宽度根本就不是根据视口来的你想怎么办。vw和vh的解决方案由于不够健壮而排出，em 、rem的实现也类似，宽度和高度都要写死 是多少rem/em，大家都有同样的问题，所以也排除了。&lt;/p&gt;
+
+&lt;h2 id=&#34;咦-为什么一定要纠结于设定高度呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;咦，为什么一定要纠结于设定高度呢？&lt;/h2&gt;
+
+&lt;p&gt;对啊，需求是写一个自适应的正方形，谁说一定要在*height*上折腾，比如，可以用padding撑开这个盒子啊。这一要说一点知识性的东西了，padding值如果取值为百分比，则该百分比是相对于父元素的宽度进行计算的，比那个height的百分比不知道高到哪里去了（height的百分比是相较于父元素的高度的），所以以下代码就可以实现一个响应式的正方形&lt;code&gt;width:25%;padding-bottom:25%;&lt;/code&gt;然而还不够优雅，还是要针对不同的场景写不同的padding-bottom。&lt;/p&gt;
+
+&lt;p&gt;给大家安利一本我最近在看的书 *CSS Secrets*，其中讲到伪元素能做很多事情。那这里伪元素能做什么呢？伪元素如果是块级元素，其宽度就是父元素宽度（不考虑padding和border），那么伪元素的padding如果为百分比，就是参考于我们正在处理的这个盒子，所以我们有了阶段性的成果：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;.auto-square::before{
+	content:&#39;&#39;;
+	display:block;
+	padding-bottom:100%;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;于是一个自适应的正方形就这么写出来了&lt;/p&gt;
+
+&lt;p&gt;于是，又有新的需求的，还要填内容啊！！&lt;/p&gt;
+
+&lt;h2 id=&#34;在自适应的正方形里如何填内容呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;在自适应的正方形里如何填内容呢？&lt;/h2&gt;
+
+&lt;p&gt;如果按照正常的流填什么内容都会破坏正方形的结构，所以我的解决方案是对内容进行绝对定位定位到正方形里。相应的，CSS代码也要加点东西&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.auto-square{
+	position:relative;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;实战:e010fd746b92c0785d41a89ff0373934&#34;&gt;实战&lt;/h2&gt;
+
+&lt;p&gt;朋友圈里经常有人发个九连拍，每张图所在的盒子就是一个正方形。然而，朋友圈的图片是正方形缩略图，在自己的项目中还要拜托后端处理出一张缩略图来。想想自己也要写后端就觉得干脆用原图然后居中显示得了。&lt;/p&gt;
+
+&lt;p&gt;下面是核心代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.auto-square{
+	position:relative;
+}
+.auto-square::before{
+	content:&#39;&#39;;
+	display:block;
+	padding-bottom:100%;
+}
+.center-ab{
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform:translate(-50%,-50%);
+	-moz-transform:translate(-50%,-50%);
+	-ms-transform:translate(-50%,-50%);
+	-o-transform:translate(-50%,-50%);
+	transform:translate(-50%,-50%);
+}
+.img-responsive{
+	display:block;
+	max-width:100%;
+	max-height:100%;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以及一个&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/auto-square.html&#34;&gt;简单地实例&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>两列布局常见方法</title>
