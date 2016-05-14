@@ -11,9 +11,9 @@
   <title> 你真的会用CSS画写正方形吗？ &middot; jsmeta </title>
 
   
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/poole.css">
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/syntax.css">
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://jiangshanmet.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://jiangshanmet.github.io/css/syntax.css">
+  <link rel="stylesheet" href="http://jiangshanmet.github.io/css/hyde.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
@@ -28,7 +28,7 @@
 		<div class="sidebar">
   <div class="container sidebar-sticky">
     <div class="sidebar-about">
-      <a href="http://jiangshanmeta.github.io/"><h1>jsmeta</h1></a>
+      <a href="http://jiangshanmet.github.io/"><h1>jsmeta</h1></a>
       <p class="lead">
        我是喵星人派来哒~ 
       </p>
@@ -57,7 +57,7 @@
 
 <h2 id="脑洞大开时间:e010fd746b92c0785d41a89ff0373934">脑洞大开时间</h2>
 
-<p>CSS经常被一些大神认为不是一种编程语言，然而，我们可以假装CSS是一门编程语言，就像我可以假装自己有女朋友一样。好了，现在CSS是一门编程语言了，那它会有什么？ <strong>this</strong>，<strong>this</strong>，<strong>this</strong>，一门编程语言没有*this*你还怎么面向对象编程。如果CSS有this的话，这里就可以这么写了<code>height:this.width</code>,感觉上挺自然的，以后写CSS会不会要求OOP风格？</p>
+<p>CSS经常被一些大神认为不是一种编程语言，然而，我们可以假装CSS是一门编程语言，就像我可以假装自己有女朋友一样。好了，现在CSS是一门编程语言了，那它会有什么？ <strong>this</strong>，<strong>this</strong>，<strong>this</strong>，一门编程语言没有this你还怎么面向对象编程。如果CSS有this的话，这里就可以这么写了<code>height:this.width</code>,感觉上挺自然的，以后写CSS会不会要求OOP风格？</p>
 
 <p>然而，CSS并不支持this，所以脑洞时间结束了，回归现实世界吧</p>
 
@@ -69,9 +69,9 @@
 
 <h2 id="咦-为什么一定要纠结于设定高度呢:e010fd746b92c0785d41a89ff0373934">咦，为什么一定要纠结于设定高度呢？</h2>
 
-<p>对啊，需求是写一个自适应的正方形，谁说一定要在*height*上折腾，比如，可以用padding撑开这个盒子啊。这一要说一点知识性的东西了，padding值如果取值为百分比，则该百分比是相对于父元素的宽度进行计算的，比那个height的百分比不知道高到哪里去了（height的百分比是相较于父元素的高度的），所以以下代码就可以实现一个响应式的正方形<code>width:25%;padding-bottom:25%;</code>然而还不够优雅，还是要针对不同的场景写不同的padding-bottom。</p>
+<p>对啊，需求是写一个自适应的正方形，谁说一定要在height上折腾，比如，可以用padding撑开这个盒子啊。这一要说一点知识性的东西了，padding值如果取值为百分比，则该百分比是相对于父元素的宽度进行计算的，比那个height的百分比不知道高到哪里去了（height的百分比是相较于父元素的高度的），所以以下代码就可以实现一个响应式的正方形<code>width:25%;padding-bottom:25%;</code>然而还不够优雅，还是要针对不同的场景写不同的padding-bottom。</p>
 
-<p>给大家安利一本我最近在看的书 *CSS Secrets*，其中讲到伪元素能做很多事情。那这里伪元素能做什么呢？伪元素如果是块级元素，其宽度就是父元素宽度（不考虑padding和border），那么伪元素的padding如果为百分比，就是参考于我们正在处理的这个盒子，所以我们有了阶段性的成果：</p>
+<p>给大家安利一本我最近在看的书 <strong>CSS Secrets</strong>，其中讲到伪元素能做很多事情。那这里伪元素能做什么呢？伪元素如果是块级元素，其宽度就是父元素宽度（不考虑padding和border），那么伪元素的padding如果为百分比，就是参考于我们正在处理的这个盒子，所以我们有了阶段性的成果：</p>
 
 <pre><code class="language-css">.auto-square::before{
 	content:'';
