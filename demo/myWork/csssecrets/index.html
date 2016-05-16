@@ -207,7 +207,19 @@
 	<figure style="display:table;padding:10px;margin-left:auto;margin-right:auto;border:1px solid yellowgreen;padding:10px;">
 		<img src="2.jpg">
 	</figure>
+	<style>
+		.selection{
+			background-color:#252525;
+			color:#252525;
+		}
+		.selection::selection{
+			color:#fff;
+		}
+	</style>
+	<div class="selection">
+		the selection word
 
+	</div>
 		<script>
 			console.log(testProperty("transition"));
 			console.log(testValue("transition","1"));
