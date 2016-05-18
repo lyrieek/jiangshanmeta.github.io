@@ -9,52 +9,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <title> 两列布局常见方法 &middot; jsmeta </title>
-
   
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/poole.css">
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/syntax.css">
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/hyde.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
   <link rel="shortcut icon" href="/favicon.png">
 
-  
-  <link href="" rel="alternate" type="application/rss+xml" title="jsmeta" />
 </head>
 
 	<body class="">
-		<div class="sidebar">
-  <div class="container sidebar-sticky">
+		
+<div class="sidebar">
+  <div class=" sidebar-sticky">
     <div class="sidebar-about">
       <a href="http://jiangshanmeta.github.io/"><h1>jsmeta</h1></a>
-      <p class="lead">
+      <p class="description lead">
        我是喵星人派来哒~ 
       </p>
     </div>
 
-    <ul class="sidebar-nav">
+    <ul class="sidebar-nav list-unstyled text-md">
       <li><a href="/">Home</a> </li>
       <li><a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a> </li>
       <li><a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a> </li>
       
     </ul>
 
-    <p>&copy; 2016. All rights reserved. </p>
+    <p class="description">&copy; 2016. All rights reserved. </p>
   </div>
 </div>
 
 
-		<div class="content container">
-			<div class="post">
-			 	<h1>两列布局常见方法</h1>
-			  <span class="post-date">Thu, May 12, 2016</span>
+		<div class="content ">
+			<div >
+			  <h1>两列布局常见方法</h1>
+			  <p >Thu, May 12, 2016</p>
 			      
 
 <p>画页面最开始要想好的就是如何进行布局。两列布局既是一种常见的布局方式，又是多列布局的基础。本文就我所熟悉的两列布局方式进行总结和比较。</p>
 
 <h2 id="浮动布局:5a257f88feea4060d9c6a1cf42573807">浮动布局</h2>
+
+<hr />
 
 <p>浮动最初是为文字环绕功能而设计的，然而现在成了基本的布局方式。</p>
 
@@ -68,13 +64,19 @@
 
 <h2 id="column:5a257f88feea4060d9c6a1cf42573807">column</h2>
 
+<hr />
+
 <p>coolumn的出现是为了模仿报纸的排版的，如果想要实现文字的两列或者多列布局，应用column布局很轻松，然而，不幸的是，如果想要使用column布局的话，我建议还是放弃这个想法吧，一方面各大浏览器对其支持还不够，需要加私有前缀，另一方面其显示有些问题，具体可见<a href="http://jiangshanmeta.github.io/demo/myWork/pic/waterfall/waterfall_CSS.html">column实现的瀑布流效果</a></p>
 
 <h2 id="table:5a257f88feea4060d9c6a1cf42573807">table</h2>
 
+<hr />
+
 <p>这里的table指的可不是HTML中的table，而是<code>display:table;</code>利用table布局很容易实现两列布局，而且还能顺便实现等高布局。关于table的各种坑，我以后后做一个总结</p>
 
 <h2 id="flex:5a257f88feea4060d9c6a1cf42573807">flex</h2>
+
+<hr />
 
 <p>flex确实是布局神器，然而在生产环境下还是注意一下的好，移动端的情况稍微好点，然而在pc端IE10才支持，至少在pc端有替代方案的就用替代方案吧</p>
 
@@ -86,7 +88,7 @@
 
 			</div>
 
-			
+
 		</div>
 
   </body>

@@ -12,7 +12,11 @@ html,body{
 	height:100%;
 	position:relative;
 }
-
+.h5page-widthFix{
+	max-width:640px;
+	margin-left:auto;
+	margin-right:auto;
+}
 .h5page-unite{
 	-webkit-transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);
 	transition:transform 0.8s cubic-bezier(.260,.860,.440,.985);	

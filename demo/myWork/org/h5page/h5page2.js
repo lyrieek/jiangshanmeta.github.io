@@ -68,27 +68,30 @@ function getCSS(el,prop){
 }
 (function(document,window){
 	var startTouchX,startTouchY,endTouchX,endTouchY,startTS,endTS;
+	//简单地支持一下pc端吧
+	var is_Mobile = "ontouchstart" in window;
+	var startEvent = is_Mobile?"touchstart":"mousedown";
+	var moveEvent = is_Mobile?"touchmove":"mousemove";
+	var endEvent = is_Mobile?"touchend":"mouseup";
+	console.log(is_Mobile,startEvent,moveEvent,endEvent);
 	var _opts = {
 		swipe:true,
 	}
 	var _touchHandler = {
 			touchstartHandler:function(event){
-				startTouchX = event.touches[0].clientX;
-				startTouchY = event.touches[0].clientY;
+				startTouchX = event.clientX?event.clientX:event.touches[0].clientX;
+				startTouchY = event.clientY?event.clientY:event.touches[0].clientY;
 				startTS = Date.now();		
 			},
 			touchmoveHandler:function(event){
-				// if(_opts.swipe){
-				// 	event.preventDefault();
-				// }
-				var curTouchX = event.changedTouches[0].clientX;
-				var curTouchY = event.changedTouches[0].clientY;
+				var curTouchX = event.clientX?event.clientX:event.changedTouches[0].clientX;
+				var curTouchY = event.clientY?event.clientY:event.changedTouches[0].clientY;
 				event.deltaX = curTouchX - startTouchX;
 				event.deltaY = curTouchY - startTouchY;			
 			},
 			touchendHandler:function(event){
-				endTouchX = event.changedTouches[0].clientX;
-				endTouchY = event.changedTouches[0].clientY;
+				endTouchX = event.clientX?event.clientX:event.changedTouches[0].clientX;
+				endTouchY = event.clientY?event.clientY:event.changedTouches[0].clientY;
 				endTS = Date.now();
 				var deltaX = endTouchX - startTouchX;
 				var deltaY = endTouchY - startTouchY;
@@ -96,6 +99,7 @@ function getCSS(el,prop){
 				event.deltaY = deltaY;
 				var absY = Math.abs(deltaY);
 				var absX = Math.abs(deltaX);
+				console.log(absX,absY)
 				if(_opts.swipe){
 					if(absX>50 || absY>50){
 						var eventName = absX>absY? (deltaX == absX? 'swipeRight':'swipeLeft'):(deltaY==absY? 'swipeDown':'swipeUp');
@@ -114,16 +118,16 @@ function getCSS(el,prop){
 		},
 		on:function(selector,type,fn){
 			var ele = typeof selector == 'object'?selector:document.querySelector(selector);
-			ele.addEventListener('touchstart',_touchHandler.touchstartHandler,false);
-			ele.addEventListener('touchmove',_touchHandler.touchmoveHandler,false);
-			ele.addEventListener('touchend',_touchHandler.touchendHandler,false);
+			ele.addEventListener(startEvent,_touchHandler.touchstartHandler,false);
+			ele.addEventListener(moveEvent,_touchHandler.touchmoveHandler,false);
+			ele.addEventListener(endEvent,_touchHandler.touchendHandler,false);
 			ele.addEventListener(type,fn,false);
 		},
 		off:function(selector,type,fn){
 			var ele = typeof selector == 'object'?selector:document.querySelector(selector);
-			ele.removeEventListener('touchstart',_touchHandler.touchstartHandler,false);
-			ele.removeEventListener('touchmove',_touchHandler.touchmoveHandler,false);
-			ele.removeEventListener('touchend',_touchHandler.touchendHandler,false);			
+		//	ele.removeEventListener('touchstart',_touchHandler.touchstartHandler,false);
+		//	ele.removeEventListener('touchmove',_touchHandler.touchmoveHandler,false);
+		//	ele.removeEventListener('touchend',_touchHandler.touchendHandler,false);			
 			ele.removeEventListener(type,fn,false);			
 		},
 		trigger:function(selector,type){
@@ -163,13 +167,13 @@ function H5page(option){
 		wrapSelector:'.h5page-wrap',
 		arrow:true,
 		mode:'',
-		beforeLeave:function(curPage,nextPage,pageNum){
+		beforeLeave:function(curPage,nextPage,pageNum,pages){
 
 		},
-		afterLoad:function(nextPage,curPage,pageNum){
+		afterLoad:function(nextPage,curPage,pageNum,pages){
 
 		},
-		init:function(){
+		init:function(pages){
 
 		}
 
@@ -208,14 +212,14 @@ function H5page(option){
 				}
 				h5pageWrap.style[pfx('transform')] = 'translateY(' + (-(nextPage-1)*100 +'%') +')';
 				pageSwitch = true;
-				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum,pages);
 				toggleArrow()
 			},
 			pageTransitionEndEvent:function(event){
 				if(event.target != h5pageWrap){
 					return;
 				}
-				option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+				option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum,pages);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -243,7 +247,7 @@ function H5page(option){
 				needTransEle.classList.add("h5page-showing");
 				needTransEle.classList.add("top");
 				pageSwitch = true;
-				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum,pages);
 				toggleArrow();		
 			},
 			pageTransitionEndEvent:function(event){
@@ -267,7 +271,7 @@ function H5page(option){
 					needTransEle.classList.remove("h5page-hasShown");
 					needTransEle.classList.add(cls);
 				}
-				curPage != nextPage && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+				curPage != nextPage && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum,pages);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();				
@@ -310,7 +314,7 @@ function H5page(option){
 			 	needTransEle.classList.add("h5page-showing");
 
 			 	pageSwitch = true;
-			 	option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
+			 	option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum,pages);
 			 	toggleArrow();
 			},
 			pageTransitionEndEvent:function(event){
@@ -319,7 +323,7 @@ function H5page(option){
 					return;
 				}
 				//bug 并不是bug，如果过渡的时候有多个属性发生了改变，则会多次触发transitionend事件
-				curPage!=nextPage && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+				curPage!=nextPage && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum,pages);
 				curPage = nextPage;
 				pageSwitch = false;
 			//	updateProgressBar();
@@ -357,8 +361,7 @@ function H5page(option){
 				}		
 
 				pageSwitch = true;
-				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum);
-			//	addAnimation(nextPage-1);				
+				option.beforeLeave&&option.beforeLeave(curPage,nextPage,pageNum,pages);			
 				toggleArrow();
 			},
 			pageTransitionEndEvent:function(event){
@@ -368,9 +371,9 @@ function H5page(option){
 				}
 
 				if(nextPage>curPage){
-					curPage != nextPage && index == nextPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+					curPage != nextPage && index == nextPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum,pages);
 				}else{
-					curPage != nextPage && index == curPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum);
+					curPage != nextPage && index == curPage-1 && option.afterLoad&&option.afterLoad(nextPage,curPage,pageNum,pages);
 				}
 				curPage = nextPage;
 				pageSwitch = false;
@@ -378,16 +381,8 @@ function H5page(option){
 			}			
 		}
 	};
-	// var cfgInit = {
-	// 	threeD:function(){
-	// 		var winH = getCSS(document.documentElement,"height");
-	// 		var styleEle = document.createElement("style");
-	// 		//是一个很笨的方法，这里的前缀也不能用上面的pfx，浏览器不认
-	// 		styleEle.innerHTML = ".h5page-threeD .h5page-notShow{ -webkit-transform: translate3d(0," + winH + ", 0) rotate3d(1, 0, 0, -90deg); transform: translate3d(0, " + winH +", 0) rotate3d(1, 0, 0, -90deg);";
-	// 		document.head.appendChild(styleEle);					
-	// 	},
-	// }; 
-	//整体思路是css控制页面切换效果，但是对应的js就那么几个,气候css控制的页面切换多了，就在这里添加cfg
+
+	//整体思路是css控制页面切换效果，但是对应的js就那么几个,以后css控制的页面切换多了，就在这里添加cfg,或者直接在option里传入用哪个js
 	var cfgPageRole = {
 		alltogether:["unite"],//整体动
 		step:["seperate"],//下一页先动，动完上一页再动
@@ -410,34 +405,48 @@ function H5page(option){
 
 	var mode = cfgMethod[jsMethod];
 
-	// function addAnimation(pageNum){
-	// 	var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
-	// 	for(var i = 0;i<curPageAnimationEle.length;i++){
-	// 		var thisEle = curPageAnimationEle[i];
-	// 		thisEle.style[animation] = thisEle.dataset.method;
-	// 	}
-	// }
-	// function removeAnimation(pageNum){
-	// 	var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
-	// 	for(var i = 0;i<curPageAnimationEle.length;i++){
-	// 		var thisEle = curPageAnimationEle[i];
-	// 		thisEle.style[animation] = '';
-	// 	}		
-	// }
+
 	function toggleArrow(){
 		option.arrow && (arrow.style.display = (nextPage == pageNum? 'none':'block'));
 	}
-	// function updateProgressBar(){
-	// 	progressBar.style.width = (curPage/pageNum)*100 +"%";
-	// }
+
+
+
+	var fixAndInit = {
+		realInit:function(){
+			option.init&&option.init(pages);
+			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
+		},
+		checkEnvironment:function(){
+			//移动设备横屏要等待竖过来再继续
+			//横屏的移动设备和pc直接继续fix
+			var that = this;
+			if(window.orientation === 90 || window.orientation === -90){
+				alert("请在竖屏下浏览此页");
+				document.addEventListener("orientationchange",function(){
+					if(window.orientation === 180 || window.orientation===0){
+						//终于是竖屏了
+						that.afterCheckEnvironment();
+					}
+				},false);
+			}else{
+				this.afterCheckEnvironment();
+			}
+		},
+		afterCheckEnvironment:function(){
+			//此时已经是竖屏或者pc
+			var clientW = document.documentElement.clientWidth;
+			//平板或pc给个最大宽度
+			if(clientW>640){
+				h5pageWrap.classList.add("h5page-widthFix");
+			}
+			this.realInit();			
+		}
+	}
 
 	return {
-		init:function(){
-			option.init&&option.init();
-		//	cfgInit[h5method]&&cfgInit[h5method]();
-			mode['pageTransitionEndEvent']&&h5pageWrap.addEventListener(transitionendEvent,mode['pageTransitionEndEvent'],false);
-		//	addAnimation(0);
-		//	updateProgressBar();
+		init:function(pages){
+			fixAndInit.checkEnvironment();
 		},
 		prev:function(){
 			mode['goto'](curPage-1);
@@ -454,21 +463,20 @@ function H5page(option){
 		bottom:function(){
 			mode['goto'](pageNum);
 		},
-		pages:pages
 	}
 }
 
-//各个页面的集合数组取名为pages,写死的
+//这里是与animation结合
 var animationHandler = {
 	animation:pfx('animation'),
-	addAnimation:function(pageNum){
+	addAnimation:function(pageNum,pages){
 		var curPageAnimationEle = pages[pageNum].querySelectorAll("[data-role='animation']");
 		for(var i = 0;i<curPageAnimationEle.length;i++){
 			var thisEle = curPageAnimationEle[i];
 			thisEle.style[this.animation] = thisEle.dataset.method;
 		}
 	},
-	removeAnimation:function(cur){
+	removeAnimation:function(cur,pages){
 		//这样写略暴力，但是为了将动画效果和页面切换分离，先这样吧,然而既然我可以知道是从那个页面切过来的，把那一个页面的动画效果去掉就好了，所以有了下面的removeOne
 		var pageNum = pages.length;
 		for(var i = 0;i<pageNum;i++){
@@ -482,7 +490,7 @@ var animationHandler = {
 			}
 		}						
 	},
-	removeOne:function(num){
+	removeOne:function(num,pages){
 		var curPageAnimationEle = pages[num].querySelectorAll("[data-role='animation']");
 		for(var j = 0;j<curPageAnimationEle.length;j++){
 			var thisEle = curPageAnimationEle[j];
@@ -492,47 +500,47 @@ var animationHandler = {
 }
 var h5pageDefaultCallbacks = {
 	alltogether:{
-		beforeLeave:function(cur,next,total){
-			animationHandler.addAnimation(next-1);
+		beforeLeave:function(cur,next,total,pages){
+			animationHandler.addAnimation(next-1,pages);
 		},
-		afterLoad:function(cur,prev,total){
-			animationHandler.removeOne(prev-1);
+		afterLoad:function(cur,prev,total,pages){
+			animationHandler.removeOne(prev-1,pages);
 		},
-		init:function(){
-			animationHandler.addAnimation(0);
+		init:function(pages){
+			animationHandler.addAnimation(0,pages);
 		},
 	},
 	step:{
-		beforeLeave:function(cur,next,total){
-			animationHandler.addAnimation(next-1);
+		beforeLeave:function(cur,next,total,pages){
+			animationHandler.addAnimation(next-1,pages);
 		},
-		afterLoad:function(cur,prev,total){
-			animationHandler.removeOne(prev-1);
+		afterLoad:function(cur,prev,total,pages){
+			animationHandler.removeOne(prev-1,pages);
 		},
-		init:function(){
-			animationHandler.addAnimation(0);
+		init:function(pages){
+			animationHandler.addAnimation(0,pages);
 		},		
 	},
 	twotogether:{
-		beforeLeave:function(cur,next,total){
-			animationHandler.addAnimation(next-1);
+		beforeLeave:function(cur,next,total,pages){
+			animationHandler.addAnimation(next-1,pages);
 		},
-		afterLoad:function(cur,prev,total){
-			animationHandler.removeOne(prev-1);
+		afterLoad:function(cur,prev,total,pages){
+			animationHandler.removeOne(prev-1,pages);
 		},
-		init:function(){
-			animationHandler.addAnimation(0);
+		init:function(pages){
+			animationHandler.addAnimation(0,pages);
 		},		
 	},
 	oneonly:{
-		beforeLeave:function(cur,next,total){
-			animationHandler.addAnimation(next-1);
+		beforeLeave:function(cur,next,total,pages){
+			animationHandler.addAnimation(next-1,pages);
 		},
-		afterLoad:function(cur,prev,total){
-			animationHandler.removeAnimation(cur-1);
+		afterLoad:function(cur,prev,total,pages){
+			animationHandler.removeAnimation(cur-1,pages);
 		},
-		init:function(){
-			animationHandler.addAnimation(0);
+		init:function(pages){
+			animationHandler.addAnimation(0,pages);
 		},		
 	}
 }

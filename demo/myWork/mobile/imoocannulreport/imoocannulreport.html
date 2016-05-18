@@ -311,20 +311,19 @@
 		var menus = arrayify(rightNav.children);
 		var h5Ins = new H5page({
 			arrow:false,
-			init:function(){
-				h5pageDefaultCallbacks.twotogether.init();
+			init:function(pages){
+				h5pageDefaultCallbacks.twotogether.init(pages);
 				h5pageDefaultInit.threeD();
 			},
-			beforeLeave:function(cur,next,total){
-				h5pageDefaultCallbacks.twotogether.beforeLeave(cur,next,total);
+			beforeLeave:function(cur,next,total,pages){
+				h5pageDefaultCallbacks.twotogether.beforeLeave(cur,next,total,pages);
 			},
-			afterLoad:function(cur,prev,total){
+			afterLoad:function(cur,prev,total,pages){
 				menus[prev-1].classList.remove("active");
 				menus[cur-1].classList.add("active");
-				h5pageDefaultCallbacks.twotogether.afterLoad(cur,prev,total);
+				h5pageDefaultCallbacks.twotogether.afterLoad(cur,prev,total,pages);
 			}
 		});
-		var pages = h5Ins.pages;
 		h5Ins.init();
 
 		//绑定swipe

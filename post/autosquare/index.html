@@ -9,47 +9,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <title> 你真的会用CSS画写正方形吗？ &middot; jsmeta </title>
-
   
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/poole.css">
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/syntax.css">
-  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/hyde.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
   <link rel="shortcut icon" href="/favicon.png">
 
-  
-  <link href="" rel="alternate" type="application/rss+xml" title="jsmeta" />
 </head>
 
 	<body class="">
-		<div class="sidebar">
-  <div class="container sidebar-sticky">
+		
+<div class="sidebar">
+  <div class=" sidebar-sticky">
     <div class="sidebar-about">
       <a href="http://jiangshanmeta.github.io/"><h1>jsmeta</h1></a>
-      <p class="lead">
+      <p class="description lead">
        我是喵星人派来哒~ 
       </p>
     </div>
 
-    <ul class="sidebar-nav">
+    <ul class="sidebar-nav list-unstyled text-md">
       <li><a href="/">Home</a> </li>
       <li><a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a> </li>
       <li><a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a> </li>
       
     </ul>
 
-    <p>&copy; 2016. All rights reserved. </p>
+    <p class="description">&copy; 2016. All rights reserved. </p>
   </div>
 </div>
 
 
-		<div class="content container">
-			<div class="post">
-			 	<h1>你真的会用CSS画写正方形吗？</h1>
-			  <span class="post-date">Sat, May 14, 2016</span>
+		<div class="content ">
+			<div >
+			  <h1>你真的会用CSS画写正方形吗？</h1>
+			  <p >Sat, May 14, 2016</p>
 			      
 
 <p>用CSS写一个正方形，对于前端工作者来说是一个再常见不过的需求了，通常情况下，你可能会写出这样的代码：<code>width:200px;height:200px;</code> 这是最简单的实现了，然而，如果我想要一个300px的正方形呢？或许你会写出如下代码：<code>width:300px;height:300px;</code> 。那么，如果我想要一个400px的正方形呢？你可能会写出以下代码：<code>width:400px;height:400px;</code> 同时开始准备和产品以及美术来一场大战。</p>
@@ -58,17 +52,23 @@
 
 <h2 id="脑洞大开时间:e010fd746b92c0785d41a89ff0373934">脑洞大开时间</h2>
 
+<hr />
+
 <p>CSS经常被一些大神认为不是一种编程语言，然而，我们可以假装CSS是一门编程语言，就像我可以假装自己有女朋友一样。好了，现在CSS是一门编程语言了，那它会有什么？ <strong>this</strong>，<strong>this</strong>，<strong>this</strong>，一门编程语言没有this你还怎么面向对象编程。如果CSS有this的话，这里就可以这么写了<code>height:this.width</code>,感觉上挺自然的，以后写CSS会不会要求OOP风格？</p>
 
 <p>然而，CSS并不支持this，所以脑洞时间结束了，回归现实世界吧</p>
 
 <h2 id="回归正常前的瞎折腾阶段:e010fd746b92c0785d41a89ff0373934">回归正常前的瞎折腾阶段</h2>
 
+<hr />
+
 <p>在CSS中，有一些相对单位，比如em，rem，vw，vh之类的，能否用这些做点尝试。</p>
 
 <p>比如，一个div，宽度是50vw，那么高度也是50vw就好了，算是一种自适应的正方形的实现方案吧。然而，宽高都要基于视口，稍微复杂点的场景就解决不了了，比如，这个div的宽度根本就不是根据视口来的你想怎么办。vw和vh的解决方案由于不够健壮而排出，em 、rem的实现也类似，宽度和高度都要写死 是多少rem/em，大家都有同样的问题，所以也排除了。</p>
 
 <h2 id="咦-为什么一定要纠结于设定高度呢:e010fd746b92c0785d41a89ff0373934">咦，为什么一定要纠结于设定高度呢？</h2>
+
+<hr />
 
 <p>对啊，需求是写一个自适应的正方形，谁说一定要在height上折腾，比如，可以用padding撑开这个盒子啊。这一要说一点知识性的东西了，padding值如果取值为百分比，则该百分比是相对于父元素的宽度进行计算的，比那个height的百分比不知道高到哪里去了（height的百分比是相较于父元素的高度的），所以以下代码就可以实现一个响应式的正方形<code>width:25%;padding-bottom:25%;</code>然而还不够优雅，还是要针对不同的场景写不同的padding-bottom。</p>
 
@@ -87,6 +87,8 @@
 
 <h2 id="在自适应的正方形里如何填内容呢:e010fd746b92c0785d41a89ff0373934">在自适应的正方形里如何填内容呢？</h2>
 
+<hr />
+
 <p>如果按照正常的流填什么内容都会破坏正方形的结构，所以我的解决方案是对内容进行绝对定位定位到正方形里。相应的，CSS代码也要加点东西</p>
 
 <pre><code class="language-CSS">.auto-square{
@@ -95,6 +97,8 @@
 </code></pre>
 
 <h2 id="实战:e010fd746b92c0785d41a89ff0373934">实战</h2>
+
+<hr />
 
 <p>朋友圈里经常有人发个九连拍，每张图所在的盒子就是一个正方形。然而，朋友圈的图片是正方形缩略图，在自己的项目中还要拜托后端处理出一张缩略图来。想想自己也要写后端就觉得干脆用原图然后居中显示得了。</p>
 
@@ -127,12 +131,14 @@
 
 <p>以及一个<a href="http://jiangshanmeta.github.io/demo/myWork/layout/auto-square.html">简单地实例</a></p>
 
+<hr />
+
 <p>update 2016/5/16
 想起来这一方法不仅仅能够实现正方形，也能实现长宽比一定的矩形</p>
 
 			</div>
 
-			
+
 		</div>
 
   </body>
