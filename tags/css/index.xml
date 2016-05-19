@@ -233,6 +233,11 @@ transform:translate(-50%,-50%);
 &lt;p&gt;浮动其实是没有center这一值的，但是一个居中的文字环绕效果确实挺漂亮。别人的&lt;a href=&#34;https://css-tricks.com/float-center/&#34;&gt;demo&lt;/a&gt;,使用具有一定宽度和高度的伪元素浮动占据位置，再用绝对定位把图片定位到伪元素占据的地方。这个效果我觉得很有创意。&lt;/p&gt;
 
 &lt;p&gt;伪元素能做的东西很多，然而自己接触的还比较少，上面所说的就是我目前所见到的。其实结合:hover伪类，:checked伪类，以及transition和animation，是可以做一些小东西出来的，至少可以取代一些用js才能写出来的效果。以后看到效果试着能否只是用CSS实现。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;update 2016/05/19
+&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/dopant/cssclock/cssclock.html&#34;&gt;使用伪元素结合CSS3动画做的时钟&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
