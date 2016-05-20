@@ -198,6 +198,9 @@
 			//这里在touchstart阶段就阻止了默认事件是因为需求中不需要再关联其他的事件如click tap之类的，所以为了性能考虑采用了touchstart
 			document.addEventListener("touchstart",swipePrevent,false);
 			myTouch.on(document,"swipeUp",h5Ins.next);
+			// myTouch.on(document,"swipeUp",function(e){
+			// 	console.log(e,this);
+			// });
 			myTouch.on(document,"swipeDown",h5Ins.prev);
 		</script>
 	</body>

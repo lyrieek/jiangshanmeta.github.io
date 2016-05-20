@@ -58,6 +58,14 @@ var pfx = (function () {
 var triggerEvent = function (el, eventName, detail) {
     var event = document.createEvent("CustomEvent");
     event.initCustomEvent(eventName, true, true, detail);
+    //触发eventName后，回调里的event就是上面的event，下面的操作是将detail的的信息挂到event上，否则读取信息要通过event.detail
+    if(typeof detail == "object"){
+    	for( k in detail){
+    		if(detail.hasOwnProperty(k)){
+    			event[k]=detail[k]
+    		}
+    	}
+    }
     el.dispatchEvent(event);
 };
 function getCSS(el,prop){
@@ -95,15 +103,19 @@ function getCSS(el,prop){
 				endTS = Date.now();
 				var deltaX = endTouchX - startTouchX;
 				var deltaY = endTouchY - startTouchY;
-				event.deltaX = deltaX;
-				event.deltaY = deltaY;
 				var absY = Math.abs(deltaY);
 				var absX = Math.abs(deltaX);
-				console.log(absX,absY)
 				if(_opts.swipe){
 					if(absX>50 || absY>50){
+						var detail = {};
+						detail.originalEvent = event;
+						detail.deltaX = deltaX;
+						detail.deltaY = deltaY;
+						detail.duration =  (endTS-startTS)/1000;
 						var eventName = absX>absY? (deltaX == absX? 'swipeRight':'swipeLeft'):(deltaY==absY? 'swipeDown':'swipeUp');
-						triggerEvent(event.target,eventName);
+						detail.type = eventName;
+						triggerEvent(event.target,eventName,detail);
+						detail.type = "swipe";
 						triggerEvent(event.target,"swipe");
 					}								
 				}
