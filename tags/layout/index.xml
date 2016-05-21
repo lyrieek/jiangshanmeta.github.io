@@ -26,8 +26,6 @@
 
 &lt;h2 id=&#34;1-水平居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;1.水平居中&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;实现水平居中其实并不难，而且有多个可靠地方案可以使用。&lt;/p&gt;
 
 &lt;h4 id=&#34;margin方案:903435e3d66e261bf87738ad6f965a5c&#34;&gt;margin方案&lt;/h4&gt;
@@ -72,8 +70,6 @@
 
 &lt;h2 id=&#34;2-垂直居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;2.垂直居中&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;相较于水平居中，垂直居中相比较而言就有点难度了&lt;/p&gt;
 
 &lt;h4 id=&#34;单行文字垂直居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;单行文字垂直居中&lt;/h4&gt;
@@ -105,8 +101,6 @@
 
 &lt;h2 id=&#34;3-水平垂直都居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;3.水平垂直都居中&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;h4 id=&#34;绝对定位方案-2:903435e3d66e261bf87738ad6f965a5c&#34;&gt;绝对定位方案&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;.center-xy-ab{
@@ -135,8 +129,6 @@
 &lt;p&gt;水平垂直居中算是水平居中和垂直居中的综合使用，上个&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/center.html&#34;&gt;demo&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;4-基于视口的居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;4.基于视口的居中&lt;/h2&gt;
-
-&lt;hr /&gt;
 
 &lt;p&gt;常见的各种模态框基本上是相较于视口水平垂直居中的，其实我最早知道模态框的实现的时候它的居中是通过js计算得到的。作为 &lt;em&gt;能用CSS实现的就绝对不用js实现&lt;/em&gt; 神教教徒，这个需求肯定要尝试使用CSS解决。&lt;/p&gt;
 
@@ -169,23 +161,17 @@ transform:translate(-50%,-50%);
 
 &lt;h2 id=&#34;脑洞大开时间:e010fd746b92c0785d41a89ff0373934&#34;&gt;脑洞大开时间&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;CSS经常被一些大神认为不是一种编程语言，然而，我们可以假装CSS是一门编程语言，就像我可以假装自己有女朋友一样。好了，现在CSS是一门编程语言了，那它会有什么？ &lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，一门编程语言没有this你还怎么面向对象编程。如果CSS有this的话，这里就可以这么写了&lt;code&gt;height:this.width&lt;/code&gt;,感觉上挺自然的，以后写CSS会不会要求OOP风格？&lt;/p&gt;
 
 &lt;p&gt;然而，CSS并不支持this，所以脑洞时间结束了，回归现实世界吧&lt;/p&gt;
 
 &lt;h2 id=&#34;回归正常前的瞎折腾阶段:e010fd746b92c0785d41a89ff0373934&#34;&gt;回归正常前的瞎折腾阶段&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;在CSS中，有一些相对单位，比如em，rem，vw，vh之类的，能否用这些做点尝试。&lt;/p&gt;
 
 &lt;p&gt;比如，一个div，宽度是50vw，那么高度也是50vw就好了，算是一种自适应的正方形的实现方案吧。然而，宽高都要基于视口，稍微复杂点的场景就解决不了了，比如，这个div的宽度根本就不是根据视口来的你想怎么办。vw和vh的解决方案由于不够健壮而排出，em 、rem的实现也类似，宽度和高度都要写死 是多少rem/em，大家都有同样的问题，所以也排除了。&lt;/p&gt;
 
 &lt;h2 id=&#34;咦-为什么一定要纠结于设定高度呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;咦，为什么一定要纠结于设定高度呢？&lt;/h2&gt;
-
-&lt;hr /&gt;
 
 &lt;p&gt;对啊，需求是写一个自适应的正方形，谁说一定要在height上折腾，比如，可以用padding撑开这个盒子啊。这一要说一点知识性的东西了，padding值如果取值为百分比，则该百分比是相对于父元素的宽度进行计算的，比那个height的百分比不知道高到哪里去了（height的百分比是相较于父元素的高度的），所以以下代码就可以实现一个响应式的正方形&lt;code&gt;width:25%;padding-bottom:25%;&lt;/code&gt;然而还不够优雅，还是要针对不同的场景写不同的padding-bottom。&lt;/p&gt;
 
@@ -204,8 +190,6 @@ transform:translate(-50%,-50%);
 
 &lt;h2 id=&#34;在自适应的正方形里如何填内容呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;在自适应的正方形里如何填内容呢？&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;如果按照正常的流填什么内容都会破坏正方形的结构，所以我的解决方案是对内容进行绝对定位定位到正方形里。相应的，CSS代码也要加点东西&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.auto-square{
@@ -214,8 +198,6 @@ transform:translate(-50%,-50%);
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;实战:e010fd746b92c0785d41a89ff0373934&#34;&gt;实战&lt;/h2&gt;
-
-&lt;hr /&gt;
 
 &lt;p&gt;朋友圈里经常有人发个九连拍，每张图所在的盒子就是一个正方形。然而，朋友圈的图片是正方形缩略图，在自己的项目中还要拜托后端处理出一张缩略图来。想想自己也要写后端就觉得干脆用原图然后居中显示得了。&lt;/p&gt;
 
@@ -248,8 +230,6 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;以及一个&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/auto-square.html&#34;&gt;简单地实例&lt;/a&gt;&lt;/p&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;update 2016/5/16
 想起来这一方法不仅仅能够实现正方形，也能实现长宽比一定的矩形&lt;/p&gt;
 </description>
@@ -267,8 +247,6 @@ transform:translate(-50%,-50%);
 
 &lt;h2 id=&#34;浮动布局:5a257f88feea4060d9c6a1cf42573807&#34;&gt;浮动布局&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;浮动最初是为文字环绕功能而设计的，然而现在成了基本的布局方式。&lt;/p&gt;
 
 &lt;p&gt;熟悉bootstrap的人都知道，其经典的12列网格设计就是基于浮动所实现的。bootstrap的网格主要的知识点就是浮动+ &lt;code&gt;box-sizing:border-box&lt;/code&gt; + 媒体查询&lt;/p&gt;
@@ -281,19 +259,13 @@ transform:translate(-50%,-50%);
 
 &lt;h2 id=&#34;column:5a257f88feea4060d9c6a1cf42573807&#34;&gt;column&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;coolumn的出现是为了模仿报纸的排版的，如果想要实现文字的两列或者多列布局，应用column布局很轻松，然而，不幸的是，如果想要使用column布局的话，我建议还是放弃这个想法吧，一方面各大浏览器对其支持还不够，需要加私有前缀，另一方面其显示有些问题，具体可见&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/pic/waterfall/waterfall_CSS.html&#34;&gt;column实现的瀑布流效果&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;table:5a257f88feea4060d9c6a1cf42573807&#34;&gt;table&lt;/h2&gt;
 
-&lt;hr /&gt;
-
 &lt;p&gt;这里的table指的可不是HTML中的table，而是&lt;code&gt;display:table;&lt;/code&gt;利用table布局很容易实现两列布局，而且还能顺便实现等高布局。关于table的各种坑，我以后后做一个总结&lt;/p&gt;
 
 &lt;h2 id=&#34;flex:5a257f88feea4060d9c6a1cf42573807&#34;&gt;flex&lt;/h2&gt;
-
-&lt;hr /&gt;
 
 &lt;p&gt;flex确实是布局神器，然而在生产环境下还是注意一下的好，移动端的情况稍微好点，然而在pc端IE10才支持，至少在pc端有替代方案的就用替代方案吧&lt;/p&gt;
 

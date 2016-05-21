@@ -34,19 +34,13 @@
 
 <h2 id="clearfix:dc5e44b284002f2c33b84936afab53a1">clearfix</h2>
 
-<hr />
-
 <p>写过几个网页的人就会知道clearfix，毕竟是布局相关的东西，实现起来有不少，经典的是<code>.clearfix::after{content:'';display:table;clear:both;}</code></p>
 
 <h2 id="字体图标:dc5e44b284002f2c33b84936afab53a1">字体图标</h2>
 
-<hr />
-
 <p>网页上的小图标是很常见的设计，通常的实现方案有图片和字体图标两种，作为并不喜欢切图的我显然更倾向于使用字体图标这种方式。目前用过的字体图标有<a href="http://v3.bootcss.com/components/#glyphicons-glyphs">bootstrap</a>里面自带的，还有<a href="http://fontawesome.dashgame.com/">font-awesome</a>两个，基本能满足需求，如果不能满足请说服美术。</p>
 
 <h2 id="一条线:dc5e44b284002f2c33b84936afab53a1">一条线</h2>
-
-<hr />
 
 <p>为了一条线写一个标签通常来说是很不划算的，除非你很爱敲键盘。
 <a href="http://jiangshanmeta.github.io/demo/myWork/mobile/cateList/cateList.html">我之前写的一个分类列表</a>这里结合使用了:checked伪类和::after伪元素，实现了无JS的tab切换效果。</p>
@@ -58,8 +52,6 @@
 <p>还有见过走马灯效果里，用::after做分割的。然而最近没怎么见过走马灯效果了，这个设计目测已经过气了。</p>
 
 <h2 id="背景图形:dc5e44b284002f2c33b84936afab53a1">背景图形</h2>
-
-<hr />
 
 <h4 id="模拟多背景-实现多重边框:dc5e44b284002f2c33b84936afab53a1">模拟多背景、实现多重边框</h4>
 
@@ -85,19 +77,13 @@
 
 <h2 id="扩大响应区域:dc5e44b284002f2c33b84936afab53a1">扩大响应区域</h2>
 
-<hr />
-
 <p>其实这也不算是样式了，已经是交互部分了。伪元素结合定位就可以扩展原来元素的相应区域，结合:hover伪类应该能做出一些东西，目前没见过眼前一亮的例子</p>
 
 <h2 id="模拟float-center:dc5e44b284002f2c33b84936afab53a1">模拟float:center</h2>
 
-<hr />
-
 <p>浮动其实是没有center这一值的，但是一个居中的文字环绕效果确实挺漂亮。别人的<a href="https://css-tricks.com/float-center/">demo</a>,使用具有一定宽度和高度的伪元素浮动占据位置，再用绝对定位把图片定位到伪元素占据的地方。这个效果我觉得很有创意。</p>
 
 <p>伪元素能做的东西很多，然而自己接触的还比较少，上面所说的就是我目前所见到的。其实结合:hover伪类，:checked伪类，以及transition和animation，是可以做一些小东西出来的，至少可以取代一些用js才能写出来的效果。以后看到效果试着能否只是用CSS实现。</p>
-
-<hr />
 
 <p>update 2016/05/19
 <a href="http://jiangshanmeta.github.io/demo/myWork/dopant/cssclock/cssclock.html">使用伪元素结合CSS3动画做的时钟</a></p>
