@@ -181,7 +181,7 @@ h6{
   font-family: inherit;
   font-weight: 500;
   color: inherit;
-  margin:0;
+  margin:20px 0;
 }
 
 h1 {
@@ -203,7 +203,7 @@ h6 {
   font-size: 12px;
 }
 p {
-  margin: 0 0 10px;
+  margin:20px 0;
 }
 .lead {
   margin-bottom: 20px;
@@ -387,4 +387,13 @@ pre code {
   padding:20px;
   background:#fff;
   box-shadow:0 1px 1px rgba(0,0,0,0.2);
+}
+.article{
+  padding-left:15px;
+  padding-right:15px;
+}
+@media (min-width: 768px) {
+  .article{
+    max-width:660px;
+  }
 }
