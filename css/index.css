@@ -394,6 +394,15 @@ pre code {
   margin-left:auto;
   margin-right:auto;
 }
+.article h2{
+  color:#00a3cf;
+}
+.article h4{
+  color:#00a3cf;
+}
+.article a{
+  color:#337ab7;
+}
 @media (min-width: 768px) {
   .article{
     max-width:660px;
