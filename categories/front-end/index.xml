@@ -6,11 +6,95 @@
     <description>Recent content in Front End on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 22 May 2016 17:05:41 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 23 May 2016 21:49:52 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/front-end/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>一个bug引发的血案——浏览器基本渲染</title>
+      <title>前端需要知道的WEB知识（1）</title>
+      <link>http://jiangshanmeta.github.io/post/browser1/</link>
+      <pubDate>Mon, 23 May 2016 21:49:52 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/browser1/</guid>
+      <description>&lt;p&gt;之前无意间触发了一个bug，让我开始接触浏览器相关的知识。搞web开发的如果不了解浏览器的基本知识，不了解一个网页是如何形成的，以及如何展示的，基本上也就到天花板了。&lt;/p&gt;
+
+&lt;p&gt;今天并不想从发起一个http请求开始讲起，战线会拉的太长。就从web服务器返回页面开始讲起吧。&lt;/p&gt;
+
+&lt;p&gt;浏览器接收到服务器返回的HTML，开始按顺序进行解析，先是head部分，再是body部分。&lt;/p&gt;
+
+&lt;p&gt;在head部分，可能会遇到&lt;code&gt;&amp;lt;link&amp;gt;&lt;/code&gt; 或者 &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt;,会发起相应的http请求对应的文件，在相应的文件下载之后，渲染才会继续进行，在这一段期间浏览器的状态是一片白。一些常见的web优化就是根据这个原因进行的。比如对CSS文件和JS文件进行压缩，这样可以减少请求文件的体积，从而减少传输时间。又比如CSS文件或者JS文件该合并的进行合并，这样可以减少http请求，而http请求会带来额外的开销。还有是一些js文件从head中移除，放到body中，这样可以先让用户看点东西，不至于一片白然后一怒之下关网页。&lt;/p&gt;
+
+&lt;p&gt;然后就是解析body进行渲染了。这里我想借助一幅图说明&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/browser.png&#34; alt=&#34;浏览器渲染原理&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;简单来说就是HTML解析器生成DOM，CSS解析器生成CSSOM，然后层叠，布局绘制，最终展示成为我们所看到的页面。&lt;/p&gt;
+
+&lt;p&gt;再上张图&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/browser2.png&#34; alt=&#34;浏览器渲染原理&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;其中大部分的工作对于web开发者来说都是不可控的，只有控制DOM和并不好用的样式操作对web开发者是可控的，其余的都是只能按照规则来。然而&lt;a href=&#34;https://zhuanlan.zhihu.com/p/20939640&#34;&gt;知乎上有篇文章指出这一现状可能会被改善&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;虽然绘制的过程目前是无法控制只能看浏览器心情，有些基本概念还是要了解的。&lt;/p&gt;
+
+&lt;p&gt;当DOM的变化影响了元素的几何属性，浏览器需要重新计算元素的几何属性，同样其他元素的几何属性和位置也会受到影响。浏览器会使渲染树的受到影响的部分失效，并重新构造渲染树。这个过程称为&lt;strong&gt;重排(reflow)&lt;/strong&gt;。完成重排后，浏览器会重新绘制受到影响的部分到屏幕中，这个过程称为&lt;strong&gt;重绘(repaint)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;显然，重排一定会导致重绘，重绘却不一定意味着重排。从前端性能优化的角度来看，我们需要尽可能减少重绘重排这样昂贵的操作。从CSS的角度上来讲，似乎能做的不多，我能想到的是利用&lt;code&gt;outline&lt;/code&gt;或者&lt;code&gt;box-shadow&lt;/code&gt;这样不影响元素几何属性的属性模拟一些几何属性，比如边框，不能减少重绘但是能减少重排。可能说的不太明白，还是上代码吧。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-HTML&#34;&gt;&amp;lt;div class=&amp;quot;box&amp;quot;&amp;gt;
+
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.box{
+	width:300px;
+	margin-left:20px;
+}
+.box:hover{
+	border:1px solid #ccc;
+	margin-left:19px;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以将CSS优化成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.box{
+	width:300px;
+	margin-left:20px;
+}
+.box:hover{
+	outline:1px solid #ccc;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在js部分减少重绘重排能做的就比较多了。&lt;/p&gt;
+
+&lt;p&gt;1.缓存布局信息，减少对布局信息的请求。可能会有人问了，难道对布局信息请求会强制重绘？我想引用*高性能JavaScript*中的一段话回答&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;由于每次重排都会产生计算消耗，大多数浏览器通过队列化修改并批量执行来优化重排过程。然而，你可能会（经常不知不觉）强制刷新队列并要求计划任务立即执行。获取布局信息的操作会导致队列刷新。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;2.批量处理样式操作。利用cssText属性可以合并一些操作。如果可以通过添加类名改变样式的话尽可能控制类名而不是具体的style。&lt;/p&gt;
+
+&lt;p&gt;3.利用documentFragment优化。这个我现在用的不多。&lt;/p&gt;
+
+&lt;p&gt;4.还有搞前端最喜欢玩的，能用CSS实现的就不要用JS。不细说，自己体会。&lt;/p&gt;
+
+&lt;p&gt;从浏览器的重绘重排扯到了前端性能优化，我觉得还是扯回来吧&lt;/p&gt;
+
+&lt;p&gt;在&lt;a href=&#34;http://jiangshanmeta.github.io/post/browser/&#34;&gt;上篇文章&lt;/a&gt;中，我提到了线程问题。当时找的资料有点杂，我觉得还是引用一些书籍上的话加深理解吧&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;大多数浏览器让一个单线程共用于执行javascript和更新用户界面。每个时刻只能执行其中一种操作，这意味着当javascript代码正在执行时用户界面无法相应输入，反之亦然。当javascri代码执行时，用户界面处于“锁定”状态。&lt;/p&gt;
+
+&lt;p&gt;用于执行javascript和更新用户界面的进程通常被称为“浏览器UI线程”。UI线程的工作基于一个简单的队列系统，任务会被保存到队列中直到进程空闲。一旦空闲，队列中的下一个任务就被重新提出来并运行。这些任务要么是运行javascript代码，要么是执行UI更新，包括重绘和重排。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>一个bug引发的血案—浏览器基本渲染</title>
       <link>http://jiangshanmeta.github.io/post/browser/</link>
       <pubDate>Sun, 22 May 2016 17:05:41 +0800</pubDate>
       
@@ -78,7 +162,7 @@ cssclock(&amp;quot;clockwrap&amp;quot;)
 },0)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;实践证明确实是可行的，然而诡异的事情又来了：当我把定时器的时间设为 &lt;strong&gt;0&lt;/strong&gt; 依然可以触发过渡，我是我就不明觉厉了。&lt;/p&gt;
+&lt;p&gt;实践证明确实是可行的，然而诡异的事情又来了：当我把定时器的时间设为 &lt;strong&gt;0&lt;/strong&gt; 依然可以触发过渡，于是我就不明觉厉了。&lt;/p&gt;
 
 &lt;p&gt;然后我想起来之前看到的&lt;a href=&#34;https://github.com/gomeplusFED/blog/blob/master/2016-04/do-you-really-understand-how-to-write-a-countdown-by-javascript.md&#34;&gt;关于定时器的文章&lt;/a&gt;,里面谈到了js的线程问题，于是我便顺着这条线索开始找。&lt;/p&gt;
 
