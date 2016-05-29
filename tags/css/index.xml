@@ -6,8 +6,90 @@
     <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 May 2016 21:49:52 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 29 May 2016 18:19:27 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/css/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>结构与样式相分离之CSS图形</title>
+      <link>http://jiangshanmeta.github.io/post/cssshape/</link>
+      <pubDate>Sun, 29 May 2016 18:19:27 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/cssshape/</guid>
+      <description>&lt;p&gt;做前端的应该都听说过“结构与样式相分离”这一句话。最简单的理解是HTML负责结构，CSS负责样式。然而，自己在实际项目中并没有很好地应用这句话，经常为了实现某个特殊样式加上一堆div。&lt;/p&gt;
+
+&lt;p&gt;比如说之前实现的一个效果
+&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/cssshape1.png&#34; alt=&#34;彩色的边框&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;当时实现这个效果的基本思路是用border画出外面的环，由于角度问题，所以还要加上一个transform转45deg，这样边框就画出来了，但是内部的人物头像也随着父元素，所以也要加上一个transform抵消父元素转动的影响。&lt;/p&gt;
+
+&lt;p&gt;这样虽然实现了，但是总感觉不够优雅，加的额外的HTML和CSS略多，而仅仅是为了实现一个环。&lt;/p&gt;
+
+&lt;p&gt;再次安利一下我最近看的书&lt;strong&gt;CSS Secrets&lt;/strong&gt;，这本书还没看完，但是给我不少启发。之前写过一篇&lt;a href=&#34;http://jiangshanmeta.github.io/post/pseudo/&#34;&gt;小的总结&lt;/a&gt;，谈到了伪元素的一些应用。我想，用伪元素做一些装饰性的工作，可以减少冗余的div和CSS，增强重用性。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-HTML&#34;&gt;&amp;lt;div class=&amp;quot;img-outer-circle&amp;quot;&amp;gt;
+	&amp;lt;img src=&amp;quot;&amp;quot;&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.img-outer-circle{
+	position:relative;
+	width:135px;
+	height:135px;
+}
+.img-outer-circle::before{
+	content:&#39;&#39;;
+	position:absolute;
+	top:-10px;
+	left:-10px;
+	right:-10px;
+	bottom:-10px;
+	border-radius:50%;
+	border-width:5px;
+	border-style:solid;
+	border-color:#3d8ceb #3d8ceb #f1cb2f #f1cb2f ;
+	-webkit-transform:rotate(-45deg);
+	transform:rotate(-45deg);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;说实话，HTML还是以前的，因为像是&lt;code&gt;&amp;lt;img&amp;gt;&lt;/code&gt;这样的自闭合标签没有伪元素这一说法，不能直接加在图片上。CSS上实现边框的思路还是和以前一样，但是因为不是对整个div进行transform，所以不用对图片再进行处理了。目前看不出来什么特别的优势。但是试想如果来了需求，说要给图片加个出场动画，如果用animation实现的话，免不了各种transform，transform各种影响，免不了出些奇奇怪怪的bug。//不要问我怎么知道的&lt;/p&gt;
+
+&lt;p&gt;伪元素能做的装饰性的东西其实很多，上面是伪元素结合border做了一个彩色的边框，其实还可以做一些三角形、菱形、梯形之类的。三角形和菱形就不说了，简单说一下梯形。&lt;/p&gt;
+
+&lt;p&gt;在&lt;strong&gt;CSS Secrets&lt;/strong&gt;这本书中，作者采用的方法伪元素+transform3d，伪元素的方案我是赞同的，但是transform3d一方面有些兼容性问题，另一方面3d效果理解起来比较困难，尤其是结合transform-origin的3d效果。于是，我决定用border一条路走到黑。&lt;/p&gt;
+
+&lt;p&gt;因为border经常用来实现各种图形，我&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/org/vue/v_box.html&#34;&gt;结合Vue实现了一个查看border能做什么的demo&lt;/a&gt;，想象力再丰富也比不上直接拖拖拽拽看效果来的快。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.tab{
+	position:relative;
+	display:inline-block;
+	padding-right:8px;
+	padding-left:8px;
+	margin-right:25px;
+	text-align:center;
+}
+
+.tab::before{
+	z-index:-1;
+	content:&#39;&#39;;
+	position:absolute;
+	top:0;
+	left:-10px;
+	right:-10px;
+	bottom:0;
+	width:100%;
+	height:0;
+	border-style:solid;
+	border-width:0 10px 18px 10px;
+	border-color:transparent transparent yellowgreen transparent;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样也可以实现梯形标签。其实如果浏览器支持嵌套伪元素这个问题就更好解决了。不知道那时候那群玩one div的会搞出什么来。&lt;/p&gt;
+
+&lt;p&gt;先写到这里吧，以后在实践中如果有用到的再补充。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>前端需要知道的WEB知识（1）</title>
