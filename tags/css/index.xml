@@ -6,8 +6,71 @@
     <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 29 May 2016 18:19:27 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 30 May 2016 21:39:46 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/css/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>理解CSS3中width新的几个关键字成员</title>
+      <link>http://jiangshanmeta.github.io/post/css3width/</link>
+      <pubDate>Mon, 30 May 2016 21:39:46 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/css3width/</guid>
+      <description>
+
+&lt;p&gt;最近看了&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2016/05/css3-width-max-contnet-min-content-fit-content/&#34;&gt;张鑫旭大神的一片文章&lt;/a&gt;,介绍了&lt;code&gt;width&lt;/code&gt;属性的几个关键字成员：&lt;code&gt;fill-available&lt;/code&gt;、&lt;code&gt;max-content&lt;/code&gt;、&lt;code&gt;min-content&lt;/code&gt;、&lt;code&gt;fit-content&lt;/code&gt;。如果有不熟悉基本概念的链接都有了自己点过去看。他的那篇文章偏重于概念介绍，我想介绍一些细节以及应用&lt;/p&gt;
+
+&lt;h2 id=&#34;fill-available:3de20cc74c1f43aee615802a184084e5&#34;&gt;fill-available&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.fill-available{
+	width:fill-available;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个关键字使得盒子尽可能填充满剩余空间，听起来很像是&lt;code&gt;width:100%;&lt;/code&gt;。那么直接用&lt;code&gt;width:100%;&lt;/code&gt;行吗,至少没有兼容问题啊？&lt;/p&gt;
+
+&lt;p&gt;其实是分情况的。如果对这个盒子设置了&lt;code&gt;box-sizing:border-box&lt;/code&gt;,那真的无所谓，用什么都行。但是默认的&lt;code&gt;box-sizing&lt;/code&gt;是*content-box*在这种情况下如果有margin padding border的，此时使用&lt;code&gt;width:100%&lt;/code&gt;就会面临超出父盒子的问题，但是&lt;code&gt;width:fill-available&lt;/code&gt;就没有这个问题。&lt;/p&gt;
+
+&lt;p&gt;//像我们这种基于bootstrap改改用的，已经有了&lt;code&gt;*{box-sizing:border-box;}&lt;/code&gt;，所以好像没什么用。&lt;/p&gt;
+
+&lt;h2 id=&#34;max-content:3de20cc74c1f43aee615802a184084e5&#34;&gt;max-content&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;max-content的行为表现可以这么理解，假设我们的容器有足够的宽度，足够的空间，此时，所占据的宽度是就是max-content所表示的尺寸。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;说实话至今我没想起来这个能用来干什么。如果内容很长，会出现横向滚动条，对于web横向滚动条并不是什么好的设计。如果内容并不多，它的表现和下面的fit-content是一致的。真·找不到应用场景。&lt;/p&gt;
+
+&lt;h2 id=&#34;min-content:3de20cc74c1f43aee615802a184084e5&#34;&gt;min-content&lt;/h2&gt;
+
+&lt;p&gt;这个就比较有意思了，我们可以用来自适应内部元素。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;div style=&amp;quot;&amp;quot; class=&amp;quot;responsive-wrap&amp;quot;&amp;gt;
+	&amp;lt;img src=&amp;quot;http://jiangshanmeta.github.io/demo/myWork/csssecrets/2.jpg&amp;quot;&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以往常见的图片展示效果是规定外层div的大小，然后图片大小跟着外层div来。bootstrap里的一个实现是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;img-responsive{
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果我偏要父元素的宽度跟着子元素走，以往我可能会这么做：给外层div加个&lt;code&gt;display:table;&lt;/code&gt;利用其尺寸收缩的特性。有点hack的味道在这里。而且这么做健壮性不够，如果我想给图片下面加上几行描述，尤其是字数要长长长，这时候&lt;code&gt;display:table;&lt;/code&gt;的效果，&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/css3width/table.html&#34;&gt;点开自己看&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;如果把div的width设为min-content,就能在长描述的存在下，依然做到父元素大小跟着图片大小走。结果请点击上面链接&lt;/p&gt;
+
+&lt;h2 id=&#34;fit-content:3de20cc74c1f43aee615802a184084e5&#34;&gt;fit-content&lt;/h2&gt;
+
+&lt;p&gt;这个属性的性质和上面说的&lt;code&gt;display:table;&lt;/code&gt;最终表现可以说一模一样。我没找到区别。&lt;/p&gt;
+
+&lt;h2 id=&#34;结束语:3de20cc74c1f43aee615802a184084e5&#34;&gt;结束语&lt;/h2&gt;
+
+&lt;p&gt;好像也就min-content用处多点，其他的我还在想能做什么特别而且能用到的事情&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>结构与样式相分离之CSS图形</title>
@@ -17,8 +80,9 @@
       <guid>http://jiangshanmeta.github.io/post/cssshape/</guid>
       <description>&lt;p&gt;做前端的应该都听说过“结构与样式相分离”这一句话。最简单的理解是HTML负责结构，CSS负责样式。然而，自己在实际项目中并没有很好地应用这句话，经常为了实现某个特殊样式加上一堆div。&lt;/p&gt;
 
-&lt;p&gt;比如说之前实现的一个效果
-&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/cssshape1.png&#34; alt=&#34;彩色的边框&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;比如说之前实现的一个效果&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/cssshape1.png&#34; alt=&#34;彩色的边框&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;当时实现这个效果的基本思路是用border画出外面的环，由于角度问题，所以还要加上一个transform转45deg，这样边框就画出来了，但是内部的人物头像也随着父元素，所以也要加上一个transform抵消父元素转动的影响。&lt;/p&gt;
 
@@ -483,6 +547,9 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2016/05/19
 &lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/dopant/cssclock/cssclock.html&#34;&gt;使用伪元素结合CSS3动画做的时钟&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;update 2016/05/29
+&lt;a href=&#34;http://jiangshanmeta.github.io/post/cssshape/&#34;&gt;使用伪元素结合border实现彩色环和梯形&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

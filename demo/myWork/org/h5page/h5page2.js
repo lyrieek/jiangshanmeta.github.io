@@ -74,7 +74,14 @@ function getCSS(el,prop){
 	  }
 	  return window.getComputedStyle(el);
 }
-(function(document,window){
+
+(function(root,factory){
+	if(typeof define === 'function' && (define.amd || define.cmd )){
+		define(factory);
+	}else{
+		root.myTouch = factory();
+	}
+})(this,function(){
 	var startTouchX,startTouchY,endTouchX,endTouchY,startTS,endTS;
 	//简单地支持一下pc端吧
 	var is_Mobile = "ontouchstart" in window;
@@ -137,9 +144,7 @@ function getCSS(el,prop){
 		},
 		off:function(selector,type,fn){
 			var ele = typeof selector == 'object'?selector:document.querySelector(selector);
-		//	ele.removeEventListener('touchstart',_touchHandler.touchstartHandler,false);
-		//	ele.removeEventListener('touchmove',_touchHandler.touchmoveHandler,false);
-		//	ele.removeEventListener('touchend',_touchHandler.touchendHandler,false);			
+		
 			ele.removeEventListener(type,fn,false);			
 		},
 		trigger:function(selector,type){
@@ -147,9 +152,15 @@ function getCSS(el,prop){
 			triggerEvent(ele,type);
 		}
 	};
-	window.myTouch = myTouch;
-})(document,window);
+	var exports = {};
+	exports.config = myTouch.config;
+	exports.on = myTouch.on;
+	exports.off = myTouch.off;
+	exports.off = myTouch.off;
+	return exports;
 
+
+});
 
 //deal with pfx of transitionent event
 function whichTransitionEvent(){  
