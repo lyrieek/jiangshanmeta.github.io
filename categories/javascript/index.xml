@@ -69,6 +69,9 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
 &lt;p&gt;js的this坑其实也不算什么坑，熟悉了就好了。&lt;/p&gt;
 
 &lt;p&gt;//话说我的表达能力还是too young啊&lt;/p&gt;
+
+&lt;p&gt;//update 2016/6/3
+于是今天的项目中就用到了缓存this&lt;/p&gt;
 </description>
     </item>
     

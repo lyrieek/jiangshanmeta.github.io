@@ -6,8 +6,24 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 02 Jun 2016 21:36:26 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 03 Jun 2016 19:55:29 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>技术类文章汇总</title>
+      <link>http://jiangshanmeta.github.io/post/blog/techblog/</link>
+      <pubDate>Fri, 03 Jun 2016 19:55:29 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/blog/techblog/</guid>
+      <description>
+
+&lt;p&gt;收藏一些提高知识水平的技术类文章&lt;/p&gt;
+
+&lt;h2 id=&#34;css相关:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;CSS相关&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2015/03/background-object-position-value-percent/&#34;&gt;&lt;position&gt;值简介,相对底部右侧定位,理解百分比定位——张鑫旭&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>JavaScript的this坑</title>
@@ -69,6 +85,9 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
 &lt;p&gt;js的this坑其实也不算什么坑，熟悉了就好了。&lt;/p&gt;
 
 &lt;p&gt;//话说我的表达能力还是too young啊&lt;/p&gt;
+
+&lt;p&gt;//update 2016/6/3
+于是今天的项目中就用到了缓存this&lt;/p&gt;
 </description>
     </item>
     
@@ -228,14 +247,15 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
 
 &lt;p&gt;mongoDB的增删查改&lt;/p&gt;
 
-&lt;p&gt;##基本概念
-mongoDB以document的形式存储数据，document类似于编程语言中的键值对的形式。document的集合成为collection，类似于一些数据库中表的概念。&lt;/p&gt;
+&lt;h2 id=&#34;基本概念:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;基本概念&lt;/h2&gt;
+
+&lt;p&gt;mongoDB以document的形式存储数据，document类似于编程语言中的键值对的形式。document的集合成为collection，类似于一些数据库中表的概念。&lt;/p&gt;
 
 &lt;p&gt;一下代码中均以users作为表名&lt;/p&gt;
 
-&lt;p&gt;##插入数据&lt;/p&gt;
+&lt;h2 id=&#34;插入数据:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;插入数据&lt;/h2&gt;
 
-&lt;p&gt;####插入一条记录&lt;/p&gt;
+&lt;h4 id=&#34;插入一条记录:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;插入一条记录&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;db.users.insert({name:&#39;jsmeta&#39;,&#39;age&#39;:23})
 &lt;/code&gt;&lt;/pre&gt;
@@ -251,7 +271,7 @@ mongoDB以document的形式存储数据，document类似于编程语言中的键
 
 &lt;p&gt;插完这两条记录数据库的结果是这样的：&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/insert0.jpg&#34; alt=&#34;insert&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;####插入多条数据&lt;/p&gt;
+&lt;h4 id=&#34;插入多条数据:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;插入多条数据&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;db.users.insert([{name:&#39;xiaoming&#39;,age:33,money:12345},{name:&#39;nobida&#39;,tech:[&#39;html&#39;,&#39;css&#39;,&#39;javascript&#39;]}]);
 &lt;/code&gt;&lt;/pre&gt;
@@ -260,9 +280,9 @@ mongoDB以document的形式存储数据，document类似于编程语言中的键
 
 &lt;p&gt;从上面的代码可以看出，mongoDB可以存一个array，这就有点意思了。在mysql中，对于上面的信息，我们可能需要拆除一张表来表明一个人会的技能，但是在mongoDB里直接存一个array就好了，顿时感觉省事多了。&lt;/p&gt;
 
-&lt;p&gt;##查找数据&lt;/p&gt;
+&lt;h2 id=&#34;查找数据:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;查找数据&lt;/h2&gt;
 
-&lt;p&gt;####查找全部的记录&lt;/p&gt;
+&lt;h4 id=&#34;查找全部的记录:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;查找全部的记录&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;db.users.find({})
 &lt;/code&gt;&lt;/pre&gt;
@@ -274,7 +294,7 @@ mongoDB以document的形式存储数据，document类似于编程语言中的键
 
 &lt;p&gt;然而正常情况下是用不到把整张表都拿出来的&lt;/p&gt;
 
-&lt;p&gt;####相等条件&lt;/p&gt;
+&lt;h4 id=&#34;相等条件:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;相等条件&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;db.users.find({name:&#39;jsmeta&#39;})
 &lt;/code&gt;&lt;/pre&gt;

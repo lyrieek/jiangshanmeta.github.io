@@ -28,14 +28,15 @@
 
 <p>mongoDB的增删查改</p>
 
-<p>##基本概念
-mongoDB以document的形式存储数据，document类似于编程语言中的键值对的形式。document的集合成为collection，类似于一些数据库中表的概念。</p>
+<h2 id="基本概念:e26229a1d4143975e4d61b9e4403a9c5">基本概念</h2>
+
+<p>mongoDB以document的形式存储数据，document类似于编程语言中的键值对的形式。document的集合成为collection，类似于一些数据库中表的概念。</p>
 
 <p>一下代码中均以users作为表名</p>
 
-<p>##插入数据</p>
+<h2 id="插入数据:e26229a1d4143975e4d61b9e4403a9c5">插入数据</h2>
 
-<p>####插入一条记录</p>
+<h4 id="插入一条记录:e26229a1d4143975e4d61b9e4403a9c5">插入一条记录</h4>
 
 <pre><code>db.users.insert({name:'jsmeta','age':23})
 </code></pre>
@@ -51,7 +52,7 @@ mongoDB以document的形式存储数据，document类似于编程语言中的键
 
 <p>插完这两条记录数据库的结果是这样的：<img src="http://jiangshanmeta.github.io/blogimg/insert0.jpg" alt="insert" /></p>
 
-<p>####插入多条数据</p>
+<h4 id="插入多条数据:e26229a1d4143975e4d61b9e4403a9c5">插入多条数据</h4>
 
 <pre><code>db.users.insert([{name:'xiaoming',age:33,money:12345},{name:'nobida',tech:['html','css','javascript']}]);
 </code></pre>
@@ -60,9 +61,9 @@ mongoDB以document的形式存储数据，document类似于编程语言中的键
 
 <p>从上面的代码可以看出，mongoDB可以存一个array，这就有点意思了。在mysql中，对于上面的信息，我们可能需要拆除一张表来表明一个人会的技能，但是在mongoDB里直接存一个array就好了，顿时感觉省事多了。</p>
 
-<p>##查找数据</p>
+<h2 id="查找数据:e26229a1d4143975e4d61b9e4403a9c5">查找数据</h2>
 
-<p>####查找全部的记录</p>
+<h4 id="查找全部的记录:e26229a1d4143975e4d61b9e4403a9c5">查找全部的记录</h4>
 
 <pre><code>db.users.find({})
 </code></pre>
@@ -74,7 +75,7 @@ mongoDB以document的形式存储数据，document类似于编程语言中的键
 
 <p>然而正常情况下是用不到把整张表都拿出来的</p>
 
-<p>####相等条件</p>
+<h4 id="相等条件:e26229a1d4143975e4d61b9e4403a9c5">相等条件</h4>
 
 <pre><code>db.users.find({name:'jsmeta'})
 </code></pre>
