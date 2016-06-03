@@ -6,8 +6,71 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 30 May 2016 21:39:46 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 02 Jun 2016 21:36:26 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>JavaScript的this坑</title>
+      <link>http://jiangshanmeta.github.io/post/jsthis/</link>
+      <pubDate>Thu, 02 Jun 2016 21:36:26 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/jsthis/</guid>
+      <description>&lt;p&gt;JavaScript有许多坑，一个典型的代表就是this，动不动this的指向就变了。&lt;/p&gt;
+
+&lt;p&gt;我也不想扯太多理论性的东西，那些是属于看着明白看完就忘的。我想干脆找个例子去说一下吧。今天在某个前端群里看到有人问相关问题。干脆就借用别人遇到的问题说一下吧。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/this/right.png&#34; alt=&#34;最原始的代码&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这是最原始的代码。目测是在一个构造函数里截取的一段。这张图里的this我想大家都很明白，而在回调函数里，出现的不是this，而是_this,目测是对上面this的保存。因为在回调里，this已经指向了ul_wrap，和外面的this不一样了。&lt;/p&gt;
+
+&lt;p&gt;然后群里的人想改这段代码称为如下的样子&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/this/wrong.png&#34; alt=&#34;想要改成的代码&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;下面是报错信息&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/this/error.png&#34; alt=&#34;报错信息&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;下面是里面提到的几个回调的具体实现&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/this/prototype.png&#34; alt=&#34;prototype&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;看报错信息是出在 touchMove 和touchEnd两个内部对move方法的调用上。
+那么，目测应该有一段是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;UcanSlide.prototype.move=function(){
+	//do something
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;那就很明确问题在哪里了。修改代码之后，其实就相当于&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;this.ul_wrap.addEventListener(&amp;quot;touchmove&amp;quot;,function(e){
+	e.preventDefault();
+	this.autoScroll = false;
+	this.dirX+=e.targetTouches[0].clientX-this.startX;
+	this.startX=e.targetTouches[0].clientX;
+	this.move();
+},false);
+this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
+	var _this = this;
+	this.autoScroll = true;
+	this.setTime = setInterval(function(){
+		_this.move();
+	},_this.scrollSpeed)
+},false)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样写就看的明白多了。现在回调内部的this指的是ul_wrap，而不是外面的this，而move方法是在外面的this上的，而不是ul_wrap上的，所以内部调用move方法相当于调用ul_wrap的move方法，显然会报错。&lt;/p&gt;
+
+&lt;p&gt;还有值得一提的是在touchend的回调里先是缓存了当前的this，因为在setInterval的回调里this也飘了，指向了window。&lt;/p&gt;
+
+&lt;p&gt;js的this坑其实也不算什么坑，熟悉了就好了。&lt;/p&gt;
+
+&lt;p&gt;//话说我的表达能力还是too young啊&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>理解CSS3中width新的几个关键字成员</title>
