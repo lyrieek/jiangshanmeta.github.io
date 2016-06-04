@@ -59,8 +59,10 @@
       text-indent:40px;
     }
     .according-title.closed+.according-list{
-      /*之所以要加上定位的改变是因为transform之后其他元素依然认为这个元素处于原来位置。类似于relative移动*/
-      position:absolute;
+      /*
+        问题的根本原因是transform之后其他的元素认为该元素还在原来的状态。
+        原来的方案改变了position，能解决问题但是不是很好。后来决定用height：0；正常情况下height：auto，不会形成height过度，何况我把时间设为0s
+      */
       -webkit-transform:scale(1,0);
       -moz-transform:scale(1,0);
       -ms-transform:scale(1,0);
@@ -71,15 +73,15 @@
       -ms-transition-duration:0s;
       -o-transition-duration:0s;
       transition-duration:0s;
+      height:0;
     }
     .according-list{
-      position:static;
       padding-left:30px;
       -webkit-transform-origin:top center;
       -moz-transform-origin:top center;
       -o-transform-origin:top center;
       -ms-transform-origin:top center;
-      transform-origin:top center;
+      transform-origin:top left;
       -webkit-transition:transform 0.6s cubic-bezier(0.25,0.1,0.3,1.5);
       -moz-transition:transform 0.6s cubic-bezier(0.25,0.1,0.3,1.5);
       -ms-transition:transform 0.6s cubic-bezier(0.25,0.1,0.3,1.5);
