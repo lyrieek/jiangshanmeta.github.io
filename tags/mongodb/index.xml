@@ -71,6 +71,11 @@
 &lt;pre&gt;&lt;code&gt;db.users.find({name:&#39;jsmeta&#39;})
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;pre&gt;&lt;code&gt;db.users.find({name:&#39;jsmeta&#39;,age:10})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;查询名称为jsmeta且年龄为10的&lt;/p&gt;
+
 &lt;h4 id=&#34;常见运算符:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;常见运算符&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;db.users.find({age:{$gte:10,$lte:30}})

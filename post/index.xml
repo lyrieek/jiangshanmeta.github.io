@@ -303,6 +303,11 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
 &lt;pre&gt;&lt;code&gt;db.users.find({name:&#39;jsmeta&#39;})
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;pre&gt;&lt;code&gt;db.users.find({name:&#39;jsmeta&#39;,age:10})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;查询名称为jsmeta且年龄为10的&lt;/p&gt;
+
 &lt;h4 id=&#34;常见运算符:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;常见运算符&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;db.users.find({age:{$gte:10,$lte:30}})
@@ -632,7 +637,8 @@ cssclock(&amp;quot;clockwrap&amp;quot;)
 
 &lt;p&gt;2.感觉有点大材小用的方案&lt;/p&gt;
 
-&lt;p&gt;父元素div &lt;code&gt;display:flex:justify-content:center;&lt;/code&gt;评价如小标题&lt;/p&gt;
+&lt;p&gt;父元素div &lt;code&gt;display:flex:justify-content:center;&lt;/code&gt;评价如小标题
+&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/animation/animation_spin.html&#34;&gt;上个例子&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;2-垂直居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;2.垂直居中&lt;/h2&gt;
 
