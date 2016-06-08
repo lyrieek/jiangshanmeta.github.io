@@ -322,7 +322,7 @@ O'Reilly Media, Inc.介绍	阅读
 		}	
 
 		.bgtiaowen4{
-			background-image:repeating-linear-gradient(90deg,#fb3 ,#fb3 15px,#58a 0,#58a 30px,yellowgreen 0,yellowgreen 45px);
+			background-image:repeating-linear-gradient(180deg,#fb3 ,#fb3 15px,#58a 0,#58a 30px,yellowgreen 0,yellowgreen 45px);
 			
 		}	
 
@@ -347,5 +347,81 @@ O'Reilly Media, Inc.介绍	阅读
 	竟然还有一个repeating-linear-gradient，这个方法可以用来制作各种角度的条纹
 	<div class="bgtiaowen4" style="min-height:200px;">
 	</div>
+
+	网格
+	<style>
+		.net-bg{
+			width:200px;
+			height:200px;
+			margin-top:50px;
+
+			background:white;
+			background-image:linear-gradient(90deg ,rgba(200,0,0,0.5) 50%,rgba(0,0,0,0) 0),linear-gradient(rgba(200,0,0,0.5) 50%,rgba(0,0,0,0) 0);
+			background-size:30px 30px;
+
+		}
+
+		.net-bg2{
+			width:200px;
+			height:200px;
+			margin-top:50px;
+
+			background:#58a;
+			background-image:linear-gradient(white 1px,transparent 0),linear-gradient(90deg,white 1px,transparent 0);
+			background-size:30px 30px;
+			
+		}
+
+
+	</style>
+	<div class="net-bg"></div>
+	<div class="net-bg2"></div>
+	<style>
+		.polka1{
+			width:200px;
+			height:200px;
+			background-color:#655;
+			background-image:radial-gradient(tan 30%,transparent 0);
+			background-size:30px 30px;
+			margin-top:20px;
+		}
+		.polka2{
+			width:200px;
+			height:200px;
+			background-color:#655;
+			margin-top:20px;
+			background-image:radial-gradient(tan 30%,transparent 0),radial-gradient(tan 30%,transparent 0);
+			background-size:30px 30px;
+			background-position:0 0,15px 15px;
+			
+		}
+
+
+	</style>
+	<div class="polka1"></div>
+	<div class="polka2"></div>
+
+
+	<style>
+		.qipan{
+			width:400px;
+			height:400px;
+			margin-top:20px;
+			background-color:#eee;
+			background-image:linear-gradient(45deg,rgba(0,0,0,0.25) 25%,transparent 0,transparent 75%,rgba(0,0,0,0.25) 0),linear-gradient(45deg,rgba(0,0,0,0.25) 25%,transparent 0,transparent 75%,rgba(0,0,0,0.25) 0);
+			background-size:40px 40px;
+			background-position:0 0,20px 20px;
+		}
+
+	</style>
+
+	<div class="qipan"></div>
+	<style>
+		.border-image{
+			border-width:10px;
+			border-image:url(2.jpg);
+		}
+	</style>
+	<div style="width:300px;height:300px;" class="border-image"></div>
 	</body>
 </html>
