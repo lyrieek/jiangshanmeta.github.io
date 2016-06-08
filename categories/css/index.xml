@@ -118,38 +118,44 @@
 
 &lt;p&gt;说实话，HTML还是以前的，因为像是&lt;code&gt;&amp;lt;img&amp;gt;&lt;/code&gt;这样的自闭合标签没有伪元素这一说法，不能直接加在图片上。CSS上实现边框的思路还是和以前一样，但是因为不是对整个div进行transform，所以不用对图片再进行处理了。目前看不出来什么特别的优势。但是试想如果来了需求，说要给图片加个出场动画，如果用animation实现的话，免不了各种transform，transform各种影响，免不了出些奇奇怪怪的bug。//不要问我怎么知道的&lt;/p&gt;
 
-&lt;p&gt;这里提一句，本来是想用&lt;code&gt;&amp;lt;img&amp;gt;&lt;/code&gt;的伪元素写一个边框的，但是没能实现，上面的理由说的太简单了。&lt;a href=&#34;https://www.zhihu.com/question/21296044&#34;&gt;知乎上有个相关问题&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这里提一句，本来是想用&lt;code&gt;&amp;lt;img&amp;gt;&lt;/code&gt;的伪元素写一个边框的，但是没能实现，上面的理由说的太简单了。&lt;/p&gt;
 
-&lt;p&gt;伪元素能做的装饰性的东西其实很多，上面是伪元素结合border做了一个彩色的边框，其实还可以做一些三角形、菱形、梯形之类的。三角形和菱形就不说了，简单说一下梯形。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.zhihu.com/question/21296044&#34;&gt;知乎上有个相关问题&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;在&lt;strong&gt;CSS Secrets&lt;/strong&gt;这本书中，作者采用的方法伪元素+transform3d，伪元素的方案我是赞同的，但是transform3d一方面有些兼容性问题，另一方面3d效果理解起来比较困难，尤其是结合transform-origin的3d效果。于是，我决定用border一条路走到黑。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-&amp;lt;img&amp;gt;```也不是完全不能应用伪元素，比如[利用伪元素美化加载失败的图片](http://web.jobbole.com/86079/)&#34;&gt;
 
-&lt;p&gt;因为border经常用来实现各种图形，我&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/org/vue/v_box.html&#34;&gt;结合Vue实现了一个查看border能做什么的demo&lt;/a&gt;，想象力再丰富也比不上直接拖拖拽拽看效果来的快。&lt;/p&gt;
+伪元素能做的装饰性的东西其实很多，上面是伪元素结合border做了一个彩色的边框，其实还可以做一些三角形、菱形、梯形之类的。三角形和菱形就不说了，简单说一下梯形。
 
-&lt;pre&gt;&lt;code&gt;.tab{
-	position:relative;
-	display:inline-block;
-	padding-right:8px;
-	padding-left:8px;
-	margin-right:25px;
-	text-align:center;
-}
+在**CSS Secrets**这本书中，作者采用的方法伪元素+transform3d，伪元素的方案我是赞同的，但是transform3d一方面有些兼容性问题，另一方面3d效果理解起来比较困难，尤其是结合transform-origin的3d效果。于是，我决定用border一条路走到黑。
 
-.tab::before{
-	z-index:-1;
-	content:&#39;&#39;;
-	position:absolute;
-	top:0;
-	left:-10px;
-	right:-10px;
-	bottom:0;
-	width:100%;
-	height:0;
-	border-style:solid;
-	border-width:0 10px 18px 10px;
-	border-color:transparent transparent yellowgreen transparent;
-}
+因为border经常用来实现各种图形，我[结合Vue实现了一个查看border能做什么的demo](http://jiangshanmeta.github.io/demo/myWork/org/vue/v_box.html)，想象力再丰富也比不上直接拖拖拽拽看效果来的快。
+
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;.tab{
+    position:relative;
+    display:inline-block;
+    padding-right:8px;
+    padding-left:8px;
+    margin-right:25px;
+    text-align:center;
+}&lt;/p&gt;
+
+&lt;p&gt;.tab::before{
+    z-index:-1;
+    content:&amp;ldquo;;
+    position:absolute;
+    top:0;
+    left:-10px;
+    right:-10px;
+    bottom:0;
+    width:100%;
+    height:0;
+    border-style:solid;
+    border-width:0 10px 18px 10px;
+    border-color:transparent transparent yellowgreen transparent;
+}
+```&lt;/p&gt;
 
 &lt;p&gt;这样也可以实现梯形标签。其实如果浏览器支持嵌套伪元素这个问题就更好解决了。不知道那时候那群玩one div的会搞出什么来。&lt;/p&gt;
 
