@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	<title>抽奖</title>
+	<link rel="stylesheet" href="../../org/org/css/animate.css">
+	<script src="lottery.js"></script>
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+		.center-block{
+			display:block;
+			margin-left:auto;
+			margin-right:auto;
+		}
+		.center-table{
+			display:table;
+			margin-left:auto;
+			margin-right:auto;
+		}
+
+	</style>
+</head>
+<body style="display:flex;min-height:100vh;">
+<!-- 	<div style="width:200px;height:200px;background-color:red;margin-left:auto;margin-right:auto;animation:rotate 4s linear infinite;transition:all 3s" id="a"></div> -->
+		<input type="hidden" name="credits" id="credits" value="100">
+		<div id="lotteryWrap" style="margin:auto;"></div>
+	<script>
+		var lotteryIns = new Lottery({
+			lotteris:[{bgColor:'#88adf6'},{bgColor:'#95ce2a'},{bgColor:'#ffeb4a'},{bgColor:'#ffa642'},{bgColor:'#ff0891'},{bgColor:'#88adf6'},{bgColor:'#53e7ff'},{bgColor:'#ff689f'}],
+			ajaxUrl:'http://jiangshanmeta.github.io',
+			needCredits:10,
+			creditsInputId:'credits'
+		})
+		// document.addEventListener("click",function(){
+		// 	var a = document.getElementById("a");
+			
+		// 		a.style['animationIterationCount'] = 3;
+		// 	a.addEventListener("animationend",function(){
+		// 		a.style.backgroundColor = "green"
+		// 		a.style.transform = "rotate(45deg)"
+		// 	})
+			
+		// })
+	</script>
+</body>
+</html>
