@@ -54,7 +54,22 @@ var pfx = (function () {
         return memory[ prop ];
     };
 })();
-
+function whichTransitionEvent(){  
+    var t;  
+    var el = document.createElement('p');  
+    var transitions = {  
+      'transition':'transitionend',  
+      'OTransition':'oTransitionEnd',  
+      'MozTransition':'mozTransitionEnd',  
+      'WebkitTransition':'webkitTransitionEnd',  
+      'MsTransition':'msTransitionEnd'  
+    }  
+    for(t in transitions){  
+        if( el.style[t] !== undefined ){  
+            return transitions[t];  
+        }  
+    }  
+}
 function whichAnimationEvent(){  
     var t;  
     var el = document.createElement('p');  
@@ -71,8 +86,16 @@ function whichAnimationEvent(){
         }  
     }  
 }
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
 function Lottery(option){
-  if(!option.lotteris || !option.ajaxUrl || !option.needCredits || !option.creditsInputId){
+  if(!option.lotteris || !option.ajaxUrl || !option.needCredits ){
     return;
   }
   var w = document.documentElement.clientWidth*0.9;
@@ -80,17 +103,16 @@ function Lottery(option){
   var defaults = {
     warpId:"lotteryWrap",
     ajaxUrl:"http://jiangshanmeta.github.io",
-    w:w
+    w:w,
+    creditsInputId:credits,
+    animationDuration:1,
+    rotateCountAfterAjax:3,
+    // durationAfterRes:2,
   }
   this.options = Object.assign(defaults,option || {});
   //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
   this.status = 0;
-  this.cfgs = {
-    animationDuration:0.5,
-    rotateCountAfterAjax:3,
 
-
-  }
   this.imgs = [];
   this.initDOM();
   this.preLoadImg();
@@ -117,6 +139,7 @@ Lottery.prototype = {
     this.wrap.classList.add("center-table");
     
     this.wrap.style['position'] = "relative";
+    this.wrap.style['overflow'] = "hidden";
     var fragment = document.createDocumentFragment();
     var w = options.w;
 
@@ -136,8 +159,12 @@ Lottery.prototype = {
     this.canvas2.style['left'] = 0;
     this.context2 = this.canvas2.getContext('2d');
 
+    this.textArea = document.createElement("div");
+    this.textArea.style = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+0.25*w+"px;height:"+0.25*w+"px;line-height:"+ 0.25*w +"px;left:37.5%;top:37.5%;background:#fff;text-align:center;white-space:nowrap;"
+    this.textArea.innerText = "开始抽奖";
     fragment.appendChild(this.canvas1);
     fragment.appendChild(this.canvas2);
+    fragment.appendChild(this.textArea);
     this.wrap.appendChild(fragment);
   },
   preLoadImg:function(){
@@ -178,24 +205,59 @@ Lottery.prototype = {
     var context1 = this.context1;
     var context2 = this.context2;
     var options = this.options;
+    var r = options.w/2;
     context2.save();
     
-    context2.translate(options.w/2,options.w/2);
+    context2.translate(r,r);
+
+
+
+
+    /* 外层两个环 阴影 */
     context2.save();
     context2.shadowColor = "rgba(0,0,0,0.5)";
     context2.shadowBlur = 8;
-    drawRing(context2,options.w/2-9,10,"#ffa642");
+    drawRing(context2,r-9,10,"#ffa642");
     context2.restore();
-    drawRing(context2,options.w/2-2,4,"#FF6900");
-    
+    drawRing(context2,r-2,4,"#FF6900");
 
-        
-
+    /* 外层指针 */
+    context2.save();
+    context2.beginPath();
+    context2.moveTo(-0.05*r,-r+9);
+    context2.lineTo(-0.05*r,-0.8*r);
+    context2.lineTo(-0.12*r,-0.8*r);
+    context2.lineTo(0,-0.7*r);   
+    context2.lineTo(0.12*r,-0.8*r);
+    context2.lineTo(0.05*r,-0.8*r);
+    context2.lineTo(0.05*r,-r+9);
+    context2.closePath();
+    context2.fillStyle = "#ffa642";
+    context2.fill();
     context2.restore();  
     
+
+    // 内层指针 
+    context2.save();
+    context2.beginPath();
+    context2.moveTo(-0.05*r,-0.25*r);
+    context2.lineTo(-0.05*r,-0.40*r);
+    context2.lineTo(-0.12*r,-0.40*r);
+    context2.lineTo(0,-0.50*r);   
+    context2.lineTo(0.12*r,-0.40*r);
+    context2.lineTo(0.05*r,-0.40*r);
+    context2.lineTo(0.05*r,-0.25*r);    
+
+
+    context2.closePath();
+    context2.fillStyle = "#ffa642";
+    context2.fill();
+    context2.restore();  
+    /* 奖区 */
     context1.save();
     context1.translate(options.w/2,options.w/2);
     this.drawBg(context1);
+    this.drawText(context1);
 
     context1.restore();
     
@@ -231,12 +293,13 @@ Lottery.prototype = {
      if(hasEnoughCredits){
       // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
       this.status = 1;
-      this.canvas1.style[pfx("animation")] = "rotate " + this.cfgs.animationDuration +"s linear infinite";
+      this.textArea.innerText = "抽奖中";
+      this.canvas2.style[pfx("animation")] = "rotate " + this.options.animationDuration +"s linear infinite";
       var _this = this;
       setTimeout(function(){
           var rst = Math.floor(Math.random()*_this.options.lotteris.length);
-          // console.log(_this.options.length)
-          _this.showLotteryRes(rst);
+          
+          _this.showLotteryRes({data:{index:rst}});
       },1000)   
       
      }else{
@@ -253,15 +316,76 @@ Lottery.prototype = {
     return false;
   },
   showLotteryRes:function(json){
-    this.status = 2;
-    document.querySelector("#"+this.options.creditsInputId).value-=this.options.needCredits;
+    console.log(json.data.index);
+    var _this = this;
     
-    var canvas1 = this.canvas1;
-    canvas1.style[pfx('animationDuration')] = 2*this.cfgs['animationDuration'] + "s";
-    canvas1.style[pfx('animationIterationCount')] = this.cfgs['rotateCountAfterAjax'];
+    var options = this.options;
+    document.querySelector("#"+options.creditsInputId).value-=options.needCredits;
+
+    // var curCount = 1;
+    var canvas2 = this.canvas2;
+    var animationCallback = function(e){
+      // var finalRotate = Math.PI/options.lotteris.length + Math.PI*2*rotateCountAfterAjax;
+      // var duration = options.durationAfterRes;
+      // var acceleration = finalRotate/duration;
+      // var continueRotate = true;
+      // var lastOmega = 2*Math.PI/options.animationDuration;
+      // var lastTime = Date.now();
+      // var reqAnimCallback = function(){
+      //   if(continueRotate){
+      //     requestAnimFrame(reqAnimCallback);
+      //   }else{
+      //     canvas2.style[pfx("transform")] = "rotate(" + finalRotate*180/Math.PI +"deg)";
+      //   }
+      // }
+      // requestAnimFrame(reqAnimCallback);
+
+
+      //不想用js去控制，想用css过渡实现，尽可能减少js动画,目前的问题是时间的控制和timing-function的控制
+      this.removeEventListener(e.type,animationCallback);
+      var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax
+      this.style[pfx("transition")] = "all 5s ease-out";
+      this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
+      var transitionndCallback = function(e){
+        _this.status = 2;
+        _this.textArea.innerText = "抽奖结束";
+        this.removeEventListener(e.type,transitionndCallback);
+      }
+      this.addEventListener(whichTransitionEvent(),transitionndCallback,false);
+
+
+    }
+
+
+
+    canvas2.addEventListener(whichAnimationEvent(),animationCallback,false);
+    canvas2.style[pfx("animationIterationCount")] = 1;
+
+
+
+
+
+    /*现在需要展示结果了*/
+
+
+    // canvas1.style[pfx('animationDuration')] = 1.5*duration + "s";
+    // canvas1.style[pfx('animationIterationCount')] = curCount;
+    // canvas1.addEventListener(whichAnimationEvent(),function(){
+    //   curCount++;
+    //   this.style[pfx('animationIterationCount')] =curCount;
+    //   duration = 1.5*duration;
+    //   console.log(curCount)
+    //   this.style[pfx('animationDuration')] = duration + "s";
+    // })
   },
   reset:function(){
     this.status = 0;
+    this.textArea.innerText = "开始抽奖";
+    var canvas2Style = this.canvas2.style;
+    canvas2Style[pfx("transition")] ="";
+    canvas2Style[pfx('transform')] = "";
+    canvas2Style[pfx('animation')] = "";
+
   }
 
 }
