@@ -423,5 +423,30 @@ O'Reilly Media, Inc.介绍	阅读
 		}
 	</style>
 	<div style="width:300px;height:300px;" class="border-image"></div>
+	<style>
+	.pie{
+		width:400px;
+		height:400px;
+		border-radius:50%;
+		margin-top:50px;
+		margin-left:auto;
+		margin-right:auto;
+		color:yellowgreen;
+		background-color:currentColor;
+		
+		background-image:linear-gradient(90deg,transparent 50%,#655 0);
+	}
+	.pie::before{
+		content:'';
+		display:block;
+		margin-left:50%;
+		height:100%;
+		border-radius:0 100% 100% 0/50%;
+		background-color:currentColor;
+		transform-origin:left;
+
+	}
+	</style>
+	<div class="pie"></div>
 	</body>
 </html>
