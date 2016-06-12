@@ -28,12 +28,20 @@
 <!-- 	<div style="width:200px;height:200px;background-color:red;transition:all 1s ease;" id="a"></div> -->
 		<input type="hidden" name="credits" id="credits" value="100">
 		<div id="lotteryWrap" style="margin:auto;"></div>
+
+		<div id="b" style="width:0;height:0;border-radius:50%;border-width:100px;border-style:solid;border-color:red green blue yellow;"></div>
 	<script>
 		var lotteryIns = new Lottery({
 			lotteris:[{bgColor:'#88adf6'},{bgColor:'#95ce2a'},{bgColor:'#ffeb4a'},{bgColor:'#ffa642'},{bgColor:'#ff0891'},{bgColor:'#88adf6'},{bgColor:'#53e7ff'},{bgColor:'#ff689f'}],
 			ajaxUrl:'http://jiangshanmeta.github.io',
 			needCredits:10,
 			creditsInputId:'credits'
+		})
+		document.getElementById("b").addEventListener("click",function(){
+			this.style[pfx("animation")] = "rotate 2s linear";
+			this.addEventListener(whichAnimationEvent(),function(){
+				alert("animation end")
+			})
 		})
 
 		// document.getElementById("a").addEventListener("click",function(){
