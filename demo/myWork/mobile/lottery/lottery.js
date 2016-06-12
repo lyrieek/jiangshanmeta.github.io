@@ -384,6 +384,8 @@ Lottery.prototype = {
 
 
     canvas2.addEventListener(whichAnimationEvent(),animationCallback,false);
+
+    // 在微信浏览器，能够正常监听animationend，但似乎对改变动画次数不认
     canvas2.style[("webkitAnimationIterationCount")] = 1;
 
 
