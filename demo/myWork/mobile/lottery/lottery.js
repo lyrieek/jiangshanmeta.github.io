@@ -366,14 +366,15 @@ Lottery.prototype = {
       this.removeEventListener(e.type,animationCallback);
       var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax
       // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
-      forceReflow();
-      this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
+      // forceReflow();
       var transitionndCallback = function(e){
         _this.status = 2;
         _this.textArea.innerText = "抽奖结束";
         this.removeEventListener(e.type,transitionndCallback);
       }
-      this.addEventListener(whichTransitionEvent(),transitionndCallback,false);
+      this.addEventListener(whichTransitionEvent(),transitionndCallback,false);      
+      this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
+
 
 
     }
