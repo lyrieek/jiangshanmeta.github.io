@@ -38,9 +38,11 @@
 			creditsInputId:'credits'
 		})
 		document.getElementById("b").addEventListener("click",function(){
-			this.style[pfx("animation")] = "rotate 2s linear";
+			this.style[pfx("animation")] = "rotate 5s linear";
 			this.addEventListener(whichAnimationEvent(),function(){
-				alert("animation end")
+				// alert("animation end")
+				this.style[pfx("animationIterationCount")] = 2;
+				alert(this.style[pfx("animationIterationCount")])
 			})
 		})
 

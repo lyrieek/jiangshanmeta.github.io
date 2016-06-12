@@ -172,11 +172,13 @@ Lottery.prototype = {
     this.canvas2 = document.createElement("canvas");
     this.canvas2.width = w;
     this.canvas2.height = w;
-    var canvas2Style = this.canvas2.style;
-    canvas2Style['position'] = "absolute";
-    canvas2Style['top'] = 0;
-    canvas2Style['left'] = 0;
-    canvas2Style[pfx("transform")] = "rotate(0deg)";
+    this.canvas2.style.cssText="position:absolute;top:0;left:0;"+pfx("transform") + ":rotate(0deg)";
+    // var canvas2Style = this.canvas2.style;
+
+    // canvas2Style['position'] = "absolute";
+    // canvas2Style['top'] = 0;
+    // canvas2Style['left'] = 0;
+    // canvas2Style[pfx("transform")] = "rotate(0deg)";
 
     this.context2 = this.canvas2.getContext('2d');
 
@@ -382,7 +384,7 @@ Lottery.prototype = {
 
 
     canvas2.addEventListener(whichAnimationEvent(),animationCallback,false);
-    canvas2.style[pfx("animationIterationCount")] = 1;
+    canvas2.style[("webkitAnimationIterationCount")] = 1;
 
 
 
