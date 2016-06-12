@@ -54,6 +54,23 @@ var pfx = (function () {
         return memory[ prop ];
     };
 })();
+
+function forceReflow() {
+    var tempDivID = "reflowDivBlock";
+    var domTreeOpDiv = document.getElementById(tempDivID);
+    if (!domTreeOpDiv) {
+        domTreeOpDiv = document.createElement("div");
+        domTreeOpDiv.id = tempDivID;
+        document.body.appendChild(domTreeOpDiv);
+    }
+    var parentNode = domTreeOpDiv.parentNode;
+    var nextSibling = domTreeOpDiv.nextSibling;
+    parentNode.removeChild(domTreeOpDiv);
+    parentNode.insertBefore(domTreeOpDiv, nextSibling);
+};
+
+
+
 function whichTransitionEvent(){  
     var t;  
     var el = document.createElement('p');  
@@ -344,7 +361,8 @@ Lottery.prototype = {
       //不想用js去控制，想用css过渡实现，尽可能减少js动画,目前的问题是时间的控制和timing-function的控制
       this.removeEventListener(e.type,animationCallback);
       var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax
-      this.style[pfx("transition")] = "all 5s ease-out";
+      this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
+      forceReflow();
       this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
       var transitionndCallback = function(e){
         _this.status = 2;
