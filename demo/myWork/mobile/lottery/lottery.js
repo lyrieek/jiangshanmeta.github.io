@@ -176,7 +176,7 @@ Lottery.prototype = {
     canvas2Style['position'] = "absolute";
     canvas2Style['top'] = 0;
     canvas2Style['left'] = 0;
-    
+    canvas2Style[pfx("transform")] = "rotate(0deg)";
 
     this.context2 = this.canvas2.getContext('2d');
 
