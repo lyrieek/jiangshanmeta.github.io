@@ -42,7 +42,7 @@
 			this.addEventListener(whichAnimationEvent(),function(){
 				// alert("animation end")
 				var count  = parseInt(this.style[pfx("animationIterationCount")]);
-				this.style[pfx("animationIterationCount")] = count+1;
+				this.style[pfx("animationIterationCount")] = "infinite";
 				alert(this.style[pfx("animationIterationCount")])
 			})
 		})
