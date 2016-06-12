@@ -138,6 +138,7 @@ function Lottery(option){
   this.wrap.addEventListener("click",function(){
     //没开始抽奖的时候点击，说明要抽奖
     if(_this.status===0){
+      _this.canvas2.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
       _this.ajaxGetLotteryRes();
     }else if(_this.status==2){
       //此时抽奖结束,点击应该是重置
@@ -175,7 +176,7 @@ Lottery.prototype = {
     canvas2Style['position'] = "absolute";
     canvas2Style['top'] = 0;
     canvas2Style['left'] = 0;
-    canvas2Style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
+    
 
     this.context2 = this.canvas2.getContext('2d');
 
@@ -403,7 +404,7 @@ Lottery.prototype = {
     this.status = 0;
     this.textArea.innerText = "开始抽奖";
     var canvas2Style = this.canvas2.style;
-    // canvas2Style[pfx("transition")] ="";
+    canvas2Style[pfx("transition")] ="";
     canvas2Style[pfx('transform')] = "";
     canvas2Style[pfx('animation')] = "";
 
