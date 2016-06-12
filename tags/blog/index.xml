@@ -10,7 +10,7 @@
     <atom:link href="http://jiangshanmeta.github.io/tags/blog/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>技术类文章汇总</title>
+      <title>技术类文章工具汇总</title>
       <link>http://jiangshanmeta.github.io/post/blog/techblog/</link>
       <pubDate>Fri, 03 Jun 2016 19:55:29 +0800</pubDate>
       
@@ -26,6 +26,12 @@
 &lt;p&gt;&lt;a href=&#34;http://www.cnblogs.com/aaronjs/p/4642015.html&#34;&gt;深入理解CSS3 Animation 帧动画——艾伦 Aaron&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://web.jobbole.com/86079/&#34;&gt;利用伪元素美化加载失败的图片&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://verou.me/css3patterns/&#34;&gt;能用渐变实现的图案&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://cubic-bezier.com&#34;&gt;贝赛尔曲线在线展示&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://easings.net/zh-cn&#34;&gt;常见缓动函数&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;移动端:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;移动端&lt;/h2&gt;
 
