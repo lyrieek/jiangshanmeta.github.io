@@ -38,13 +38,18 @@
 			creditsInputId:'credits'
 		})
 		document.getElementById("b").addEventListener("click",function(){
-			this.style[pfx("animation")] = "rotate 5s linear 1";
-			this.addEventListener(whichAnimationEvent(),function(){
-				// alert("animation end")
-				var count  = parseInt(this.style[pfx("animationIterationCount")]);
-				this.style[pfx("animationIterationCount")] = "infinite";
-				alert(this.style[pfx("animationIterationCount")])
+			this.style[pfx("animation")] = "rotate 5s linear infinite";
+			this.addEventListener('webkitAnimationIteration',function(){
+				alert(1);
 			})
+			alert(2)
+
+			// this.addEventListener(whichAnimationEvent(),function(){
+			// 	// alert("animation end")
+			// 	var count  = parseInt(this.style[pfx("animationIterationCount")]);
+			// 	this.style[pfx("animationIterationCount")] = "infinite";
+			// 	alert(this.style[pfx("animationIterationCount")])
+			// })
 		})
 
 		// document.getElementById("a").addEventListener("click",function(){
