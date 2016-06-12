@@ -171,13 +171,16 @@ Lottery.prototype = {
     this.canvas2 = document.createElement("canvas");
     this.canvas2.width = w;
     this.canvas2.height = w;
-    this.canvas2.style['position'] = "absolute";
-    this.canvas2.style['top'] = 0;
-    this.canvas2.style['left'] = 0;
+    var canvas2Style = this.canvas2.style;
+    canvas2Style['position'] = "absolute";
+    canvas2Style['top'] = 0;
+    canvas2Style['left'] = 0;
+    canvas2Style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
+
     this.context2 = this.canvas2.getContext('2d');
 
     this.textArea = document.createElement("div");
-    this.textArea.style = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+0.25*w+"px;height:"+0.25*w+"px;line-height:"+ 0.25*w +"px;left:37.5%;top:37.5%;background:#fff;text-align:center;white-space:nowrap;"
+    this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+0.25*w+"px;height:"+0.25*w+"px;line-height:"+ 0.25*w +"px;left:37.5%;top:37.5%;background:#fff;text-align:center;white-space:nowrap;"
     this.textArea.innerText = "开始抽奖";
     fragment.appendChild(this.canvas1);
     fragment.appendChild(this.canvas2);
@@ -361,7 +364,7 @@ Lottery.prototype = {
       //不想用js去控制，想用css过渡实现，尽可能减少js动画,目前的问题是时间的控制和timing-function的控制
       this.removeEventListener(e.type,animationCallback);
       var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax
-      this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
+      // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
       forceReflow();
       this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
       var transitionndCallback = function(e){
@@ -400,7 +403,7 @@ Lottery.prototype = {
     this.status = 0;
     this.textArea.innerText = "开始抽奖";
     var canvas2Style = this.canvas2.style;
-    canvas2Style[pfx("transition")] ="";
+    // canvas2Style[pfx("transition")] ="";
     canvas2Style[pfx('transform')] = "";
     canvas2Style[pfx('animation')] = "";
 
