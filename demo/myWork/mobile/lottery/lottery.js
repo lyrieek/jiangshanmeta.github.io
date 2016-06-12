@@ -348,7 +348,7 @@ Lottery.prototype = {
     // var curCount = 1;
     var canvas2 = this.canvas2;
     var animationIterationCallback = function(e){
-      alert(1)
+      // alert(1)
       // var finalRotate = Math.PI/options.lotteris.length + Math.PI*2*rotateCountAfterAjax;
       // var duration = options.durationAfterRes;
       // var acceleration = finalRotate/duration;
