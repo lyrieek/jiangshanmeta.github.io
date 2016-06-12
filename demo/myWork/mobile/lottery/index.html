@@ -24,8 +24,8 @@
 
 	</style>
 </head>
-<body style="display:flex;min-height:100vh;">
-<!-- 	<div style="width:200px;height:200px;background-color:red;margin-left:auto;margin-right:auto;animation:rotate 4s linear infinite;transition:all 3s" id="a"></div> -->
+<body style="display:flex;min-height:100vh;flex-direction:column;">
+	<div style="width:200px;height:200px;background-color:red;transition:all 1s ease;" id="a"></div>
 		<input type="hidden" name="credits" id="credits" value="100">
 		<div id="lotteryWrap" style="margin:auto;"></div>
 	<script>
@@ -34,6 +34,11 @@
 			ajaxUrl:'http://jiangshanmeta.github.io',
 			needCredits:10,
 			creditsInputId:'credits'
+		})
+
+		document.getElementById("a").addEventListener("click",function(){
+			this.style.width = "400px";
+			this.style.backgroundColor = "green";
 		})
 		// document.addEventListener("click",function(){
 		// 	var a = document.getElementById("a");
