@@ -358,8 +358,13 @@ Lottery.prototype = {
     var totalRotateCount = Math.ceil(hasPassTime/animationTimePerRound)+1;
     console.log(totalRotateCount,"z")
     var totalTime = animationTimePerRound*totalRotateCount-hasPassTime;
-    canvas2.style[pfx("transition")] = "all "+totalTime+"s linear";
-    canvas2.style[pfx("transform")] = "rotate("+ totalRotateCount*360 +"deg)";
+
+    var canvas2StyleStr = canvas2.style.cssText;
+    canvas2StyleStr = canvas2StyleStr+pfx("transition")+":all "+totalTime+"s linear;"+pfx("transform")+":rotate("+totalRotateCount*360+"deg)"
+
+    canvas2.style.cssText = canvas2StyleStr;
+    // canvas2.style[pfx("transition")] = "all "+totalTime+"s linear";
+    // canvas2.style[pfx("transform")] = "rotate("+ totalRotateCount*360 +"deg)";
 
 
     var transitionendCallback1 = function(e){
