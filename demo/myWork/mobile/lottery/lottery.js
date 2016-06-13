@@ -122,7 +122,7 @@ function Lottery(option){
     ajaxUrl:"http://jiangshanmeta.github.io",
     w:w,
     creditsInputId:credits,
-    animationDuration:1,
+    animationTimePerRound:1,     //animationDuration是指在 抽奖动画中匀速转动时没转一圈所需要的时间
     rotateCountAfterAjax:3,
     // durationAfterRes:2,
   }
@@ -138,7 +138,7 @@ function Lottery(option){
   this.wrap.addEventListener("click",function(){
     //没开始抽奖的时候点击，说明要抽奖
     if(_this.status===0){
-      _this.canvas2.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
+      // _this.canvas2.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
       _this.ajaxGetLotteryRes();
     }else if(_this.status==2){
       //此时抽奖结束,点击应该是重置
@@ -317,7 +317,13 @@ Lottery.prototype = {
       // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
       this.status = 1;
       this.textArea.innerText = "抽奖中";
-      this.canvas2.style[pfx("animation")] = "rotate " + this.options.animationDuration +"s linear infinite";
+      this.startLotteryTS = Date.now()/1000;
+      var canvas2 = this.canvas2;
+      //20s还不返回就真的没救了
+      var guessTime = 20;
+      var guessRound = guessTime/this.options.animationTimePerRound;  
+      canvas2.style[pfx("transition")] = "all " + guessTime  +"s linear";
+      canvas2.style[pfx("transform")] = "rotate(" + (guessRound*360) +"deg)";
       var _this = this;
       setTimeout(function(){
           var rst = Math.floor(Math.random()*_this.options.lotteris.length);
@@ -341,12 +347,51 @@ Lottery.prototype = {
   showLotteryRes:function(json){
     console.log(json.data.index);
     var _this = this;
-    
     var options = this.options;
+    var canvas2 = this.canvas2;
+    var endTS = Date.now()/1000;
+    var hasPassTime = endTS - this.startLotteryTS;
+    var animationTimePerRound = options.animationTimePerRound;
+    var totalRotateCount = Math.ceil(hasPassTime/animationTimePerRound)+1;
+    console.log(totalRotateCount)
+    var totalTime = animationTimePerRound*totalRotateCount;
+    canvas2.style[pfx("transition")] = "all "+totalTime+"s linear";
+    canvas2.style[pfx("transform")] = "rotate("+ totalRotateCount*360 +"deg)";
+
+
+    var transitionendCallback1 = function(e){
+        this.removeEventListener(e.type,transitionendCallback1);
+        var transitionendCallback2 = function(e){
+          this.removeEventListener(e.type,transitionendCallback2);
+          console.log(35);
+
+          _this.status = 2;
+          _this.textArea.innerText = "抽奖结束";          
+
+        }
+        this.addEventListener(e.type,transitionendCallback2);
+        var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax;
+        this.style[pfx("transition")] = "";
+        this.style[pfx("transform")] = "";
+        var _thisCanvas = this; 
+        setTimeout(function(){
+          console.log(23333)
+            // _this.addEventListener(e.type,transitionendCallback2)
+            _thisCanvas.style[pfx("transition")] = "all 6s cubic-bezier(0.33,0.5,0.66,0.83)";
+            _thisCanvas.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
+        },0)
+        // forceReflow();
+        // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
+        // this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
+
+    }
+    canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
+
+
     document.querySelector("#"+options.creditsInputId).value-=options.needCredits;
 
     // var curCount = 1;
-    var canvas2 = this.canvas2;
+    
     var animationIterationCallback = function(e){
       // alert(1)
       // var finalRotate = Math.PI/options.lotteris.length + Math.PI*2*rotateCountAfterAjax;
@@ -379,7 +424,7 @@ Lottery.prototype = {
           this.addEventListener(whichTransitionEvent(),transitionndCallback,false);      
           this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
       }
-      this.addEventListener(whichAnimationEvent(),animationEndCallback)
+      // this.addEventListener(whichAnimationEvent(),animationEndCallback)
 
       
       // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
@@ -391,7 +436,7 @@ Lottery.prototype = {
     }
 
     // animationiteration
-    canvas2.addEventListener('webkitAnimationIteration',animationIterationCallback)
+    // canvas2.addEventListener('webkitAnimationIteration',animationIterationCallback)
     // canvas2.addEventListener(whichAnimationEvent(),animationCallback,false);
 
     // 在微信浏览器，能够正常监听animationend，但似乎对改变动画次数不认
