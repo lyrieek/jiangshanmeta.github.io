@@ -357,7 +357,7 @@ Lottery.prototype = {
     var animationTimePerRound = options.animationTimePerRound;
     var totalRotateCount = Math.ceil(hasPassTime/animationTimePerRound)+1;
     console.log(totalRotateCount,"z")
-    var totalTime = animationTimePerRound*totalRotateCount;
+    var totalTime = animationTimePerRound*totalRotateCount-hasPassTime;
     canvas2.style[pfx("transition")] = "all "+totalTime+"s linear";
     canvas2.style[pfx("transform")] = "rotate("+ totalRotateCount*360 +"deg)";
 
