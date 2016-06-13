@@ -329,7 +329,7 @@ Lottery.prototype = {
           var rst = Math.floor(Math.random()*_this.options.lotteris.length);
           
           _this.showLotteryRes({data:{index:rst}});
-      },1500)   
+      },1800)   
       
      }else{
       alert("积分不足");
@@ -392,48 +392,48 @@ Lottery.prototype = {
 
     // var curCount = 1;
     
-    var animationIterationCallback = function(e){
-      // alert(1)
-      // var finalRotate = Math.PI/options.lotteris.length + Math.PI*2*rotateCountAfterAjax;
-      // var duration = options.durationAfterRes;
-      // var acceleration = finalRotate/duration;
-      // var continueRotate = true;
-      // var lastOmega = 2*Math.PI/options.animationDuration;
-      // var lastTime = Date.now();
-      // var reqAnimCallback = function(){
-      //   if(continueRotate){
-      //     requestAnimFrame(reqAnimCallback);
-      //   }else{
-      //     canvas2.style[pfx("transform")] = "rotate(" + finalRotate*180/Math.PI +"deg)";
-      //   }
-      // }
-      // requestAnimFrame(reqAnimCallback);
+    // var animationIterationCallback = function(e){
+    //   // alert(1)
+    //   // var finalRotate = Math.PI/options.lotteris.length + Math.PI*2*rotateCountAfterAjax;
+    //   // var duration = options.durationAfterRes;
+    //   // var acceleration = finalRotate/duration;
+    //   // var continueRotate = true;
+    //   // var lastOmega = 2*Math.PI/options.animationDuration;
+    //   // var lastTime = Date.now();
+    //   // var reqAnimCallback = function(){
+    //   //   if(continueRotate){
+    //   //     requestAnimFrame(reqAnimCallback);
+    //   //   }else{
+    //   //     canvas2.style[pfx("transform")] = "rotate(" + finalRotate*180/Math.PI +"deg)";
+    //   //   }
+    //   // }
+    //   // requestAnimFrame(reqAnimCallback);
 
-      this.style[pfx("animationIterationCount")] = 1;
-      //不想用js去控制，想用css过渡实现，尽可能减少js动画,目前的问题是时间的控制和timing-function的控制
-      this.removeEventListener(e.type,animationIterationCallback);
+    //   this.style[pfx("animationIterationCount")] = 1;
+    //   //不想用js去控制，想用css过渡实现，尽可能减少js动画,目前的问题是时间的控制和timing-function的控制
+    //   this.removeEventListener(e.type,animationIterationCallback);
 
-      var animationEndCallback = function(e){
-          this.removeEventListener(e.type,animationEndCallback);
-          var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax
-          var transitionndCallback = function(e){
-            _this.status = 2;
-            _this.textArea.innerText = "抽奖结束";
-            this.removeEventListener(e.type,transitionndCallback);
-          }
-          this.addEventListener(whichTransitionEvent(),transitionndCallback,false);      
-          this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
-      }
-      // this.addEventListener(whichAnimationEvent(),animationEndCallback)
+    //   var animationEndCallback = function(e){
+    //       this.removeEventListener(e.type,animationEndCallback);
+    //       var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax
+    //       var transitionndCallback = function(e){
+    //         _this.status = 2;
+    //         _this.textArea.innerText = "抽奖结束";
+    //         this.removeEventListener(e.type,transitionndCallback);
+    //       }
+    //       this.addEventListener(whichTransitionEvent(),transitionndCallback,false);      
+    //       this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
+    //   }
+    //   // this.addEventListener(whichAnimationEvent(),animationEndCallback)
 
       
-      // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
-      // forceReflow();
+    //   // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
+    //   // forceReflow();
 
 
 
 
-    }
+    // }
 
     // animationiteration
     // canvas2.addEventListener('webkitAnimationIteration',animationIterationCallback)
