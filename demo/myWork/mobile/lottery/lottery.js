@@ -54,27 +54,6 @@ var pfx = (function () {
         return memory[ prop ];
     };
 })();
-function getCSS(el,prop){
-    if(prop){
-      return window.getComputedStyle(el)[prop];
-    }
-    return window.getComputedStyle(el);
-}
-function forceReflow() {
-    var tempDivID = "reflowDivBlock";
-    var domTreeOpDiv = document.getElementById(tempDivID);
-    if (!domTreeOpDiv) {
-        domTreeOpDiv = document.createElement("div");
-        domTreeOpDiv.id = tempDivID;
-        document.body.appendChild(domTreeOpDiv);
-    }
-    var parentNode = domTreeOpDiv.parentNode;
-    var nextSibling = domTreeOpDiv.nextSibling;
-    parentNode.removeChild(domTreeOpDiv);
-    parentNode.insertBefore(domTreeOpDiv, nextSibling);
-};
-
-
 
 function whichTransitionEvent(){  
     var t;  
@@ -92,30 +71,8 @@ function whichTransitionEvent(){
         }  
     }  
 }
-function whichAnimationEvent(){  
-    var t;  
-    var el = document.createElement('p');  
-    var animations = {  
-      'animation':'animationend',  
-      'OAnimation':'oAnimationEnd',  
-      'MozAnimation':'mozAnimationEnd',  
-      'WebkitAnimation':'webkitAnimationEnd',  
-      'MsAnimation':'msAnimationEnd'  
-    }  
-    for(t in animations){  
-        if( el.style[t] !== undefined ){  
-            return animations[t];  
-        }  
-    }  
-}
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          function( callback ){
-            window.setTimeout(callback, 1000 / 60);
-          };
-})();
+
+
 function Lottery(option){
   if(!option.lotteris || !option.ajaxUrl || !option.needCredits ){
     return;
@@ -127,9 +84,9 @@ function Lottery(option){
     ajaxUrl:"http://jiangshanmeta.github.io",
     w:w,
     creditsInputId:credits,
-    animationTimePerRound:1,     //animationDuration是指在 抽奖动画中匀速转动时没转一圈所需要的时间
+    animationTimePerRound:1,     //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
     rotateCountAfterAjax:3,
-    // durationAfterRes:2,
+
   }
   this.options = Object.assign(defaults,option || {});
   //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
@@ -143,9 +100,8 @@ function Lottery(option){
   this.wrap.addEventListener("click",function(){
     //没开始抽奖的时候点击，说明要抽奖
     if(_this.status===0){
-      // _this.canvas2.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
       _this.ajaxGetLotteryRes();
-    }else if(_this.status==2){
+    }else if(_this.status===2){
       //此时抽奖结束,点击应该是重置
       _this.reset();
     }
@@ -178,18 +134,13 @@ Lottery.prototype = {
     this.canvas2.width = w;
     this.canvas2.height = w;
     this.canvas2.style.cssText="position:absolute;top:0;left:0;"+pfx("transform") + ":rotate(0deg)";
-    // var canvas2Style = this.canvas2.style;
-
-    // canvas2Style['position'] = "absolute";
-    // canvas2Style['top'] = 0;
-    // canvas2Style['left'] = 0;
-    // canvas2Style[pfx("transform")] = "rotate(0deg)";
-
     this.context2 = this.canvas2.getContext('2d');
 
+    // 文字区域
     this.textArea = document.createElement("div");
     this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+0.25*w+"px;height:"+0.25*w+"px;line-height:"+ 0.25*w +"px;left:37.5%;top:37.5%;background:#fff;text-align:center;white-space:nowrap;"
     this.textArea.innerText = "开始抽奖";
+
     fragment.appendChild(this.canvas1);
     fragment.appendChild(this.canvas2);
     fragment.appendChild(this.textArea);
@@ -238,9 +189,6 @@ Lottery.prototype = {
     
     context2.translate(r,r);
 
-
-
-
     /* 外层两个环 阴影 */
     context2.save();
     context2.shadowColor = "rgba(0,0,0,0.5)";
@@ -264,7 +212,6 @@ Lottery.prototype = {
     context2.fill();
     context2.restore();  
     
-
     // 内层指针 
     context2.save();
     context2.beginPath();
@@ -275,12 +222,11 @@ Lottery.prototype = {
     context2.lineTo(0.12*r,-0.40*r);
     context2.lineTo(0.05*r,-0.40*r);
     context2.lineTo(0.05*r,-0.25*r);    
-
-
     context2.closePath();
     context2.fillStyle = "#ffa642";
     context2.fill();
     context2.restore();  
+
     /* 奖区 */
     context1.save();
     context1.translate(options.w/2,options.w/2);
@@ -308,7 +254,6 @@ Lottery.prototype = {
       context1.restore();
     }
 
-
   },
   drawText:function(context1){
 
@@ -323,41 +268,29 @@ Lottery.prototype = {
       // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
       this.status = 1;
       this.textArea.innerText = "抽奖中";
-      this.startLotteryTS = Date.now()/1000;
       var canvas2 = this.canvas2;
-      //20s还不返回就真的没救了
-      var guessTime = 5;
-      var guessRound = guessTime/this.options.animationTimePerRound;
+      var animationTimePerRound = this.options.animationTimePerRound;
       var styleStr = canvas2.style.cssText;
-      styleStr = styleStr +pfx('transition') +":all " + this.options.animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(" + (1*360) +"deg);";
+      styleStr = styleStr +pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(360deg);";
       var hasAjaxRest = false;
       var ajaxRest;
-      var lastDuration = this.options.animationTimePerRound;
+      var lastDuration = animationTimePerRound;
       var transitionendCallback0 = function(e){
-        
         if(hasAjaxRest){
           this.removeEventListener(e.type,transitionendCallback0);
           _this.showLotteryRes(ajaxRest);
         }else{
-          var duration = parseInt(getCSS(canvas2,pfx("transitionDuration")));
-          // console.log(duration);
-          duration += _this.options.animationTimePerRound;
-          // this.style.cssText = pfx("transition") + ":;"
           this.style[pfx("transform")] = "";
           this.style[pfx("transition")] = "";
           var _thisCanvas = this;
-          // forceReflow();
+          // 你猜为什么要写在setTimeout中呢。为了强制渲染啊。
           setTimeout(function(){
             _thisCanvas.style.cssText = styleStr;
-            console.log(1)
           },0)
-          // this.style.cssText = styleStr;
-          // this.style[pfx("transitionDuration")] = duration+"s";
-          // this.style[pfx("transition")]
+
         }
       }
-      // canvas2.style[pfx("transition")] = "all " + guessTime  +"s linear";
-      // canvas2.style[pfx("transform")] = "rotate(" + (guessRound*360) +"deg)";
+
       canvas2.addEventListener(whichTransitionEvent(),transitionendCallback0);
       canvas2.style.cssText = styleStr;
       
@@ -366,7 +299,6 @@ Lottery.prototype = {
           var rst = Math.floor(Math.random()*_this.options.lotteris.length);
           hasAjaxRest = true;
           ajaxRest = {data:{index:rst}};
-          // _this.showLotteryRes({data:{index:rst}});
       },1800)   
       
      }else{
@@ -393,146 +325,14 @@ Lottery.prototype = {
       _this.textArea.innerText = "抽奖结束";  
     }
     canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
-
- var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1);
-
-
-            canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
-            canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    return;
-    var endTS = Date.now()/1000;
-    var hasPassTime = endTS - this.startLotteryTS;
-    var animationTimePerRound = options.animationTimePerRound;
-    var totalRotateCount = Math.ceil(hasPassTime/animationTimePerRound)+1;
-    console.log(totalRotateCount,"z")
-    var totalTime = animationTimePerRound*totalRotateCount-hasPassTime;
-
-    var canvas2StyleStr = canvas2.style.cssText;
-    canvas2StyleStr = canvas2StyleStr+pfx("transition")+":all "+totalTime+"s linear;"+pfx("transform")+":rotate("+totalRotateCount*360+"deg)"
-
-    canvas2.style.cssText = canvas2StyleStr;
-    // canvas2.style[pfx("transition")] = "all "+totalTime+"s linear";
-    // canvas2.style[pfx("transform")] = "rotate("+ totalRotateCount*360 +"deg)";
-
-
-    var transitionendCallback1 = function(e){
-        this.removeEventListener(e.type,transitionendCallback1);
-        var transitionendCallback2 = function(e){
-          this.removeEventListener(e.type,transitionendCallback2);
-          console.log(35);
-
-          _this.status = 2;
-          _this.textArea.innerText = "抽奖结束";          
-
-        }
-        this.addEventListener(e.type,transitionendCallback2);
-        var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax;
-        this.style[pfx("transition")] = "";
-        this.style[pfx("transform")] = "";
-        var _thisCanvas = this; 
-        setTimeout(function(){
-          console.log(23333)
-            // _this.addEventListener(e.type,transitionendCallback2)
-            _thisCanvas.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
-            _thisCanvas.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
-        },0)
-        // forceReflow();
-        // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
-        // this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
-
-    }
-    canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
-
+    //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
+    var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1);
+    canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
+    canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
 
     document.querySelector("#"+options.creditsInputId).value-=options.needCredits;
 
-    // var curCount = 1;
-    
-    // var animationIterationCallback = function(e){
-    //   // alert(1)
-    //   // var finalRotate = Math.PI/options.lotteris.length + Math.PI*2*rotateCountAfterAjax;
-    //   // var duration = options.durationAfterRes;
-    //   // var acceleration = finalRotate/duration;
-    //   // var continueRotate = true;
-    //   // var lastOmega = 2*Math.PI/options.animationDuration;
-    //   // var lastTime = Date.now();
-    //   // var reqAnimCallback = function(){
-    //   //   if(continueRotate){
-    //   //     requestAnimFrame(reqAnimCallback);
-    //   //   }else{
-    //   //     canvas2.style[pfx("transform")] = "rotate(" + finalRotate*180/Math.PI +"deg)";
-    //   //   }
-    //   // }
-    //   // requestAnimFrame(reqAnimCallback);
 
-    //   this.style[pfx("animationIterationCount")] = 1;
-    //   //不想用js去控制，想用css过渡实现，尽可能减少js动画,目前的问题是时间的控制和timing-function的控制
-    //   this.removeEventListener(e.type,animationIterationCallback);
-
-    //   var animationEndCallback = function(e){
-    //       this.removeEventListener(e.type,animationEndCallback);
-    //       var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*options.rotateCountAfterAjax
-    //       var transitionndCallback = function(e){
-    //         _this.status = 2;
-    //         _this.textArea.innerText = "抽奖结束";
-    //         this.removeEventListener(e.type,transitionndCallback);
-    //       }
-    //       this.addEventListener(whichTransitionEvent(),transitionndCallback,false);      
-    //       this.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
-    //   }
-    //   // this.addEventListener(whichAnimationEvent(),animationEndCallback)
-
-      
-    //   // this.style[pfx("transition")] = "all 5s cubic-bezier(0.33,0.5,0.66,0.83)";
-    //   // forceReflow();
-
-
-
-
-    // }
-
-    // animationiteration
-    // canvas2.addEventListener('webkitAnimationIteration',animationIterationCallback)
-    // canvas2.addEventListener(whichAnimationEvent(),animationCallback,false);
-
-    // 在微信浏览器，能够正常监听animationend，但似乎对改变动画次数不认
-    // canvas2.style[("webkitAnimationIterationCount")] = 1;
-
-
-
-
-
-    /*现在需要展示结果了*/
-
-
-    // canvas1.style[pfx('animationDuration')] = 1.5*duration + "s";
-    // canvas1.style[pfx('animationIterationCount')] = curCount;
-    // canvas1.addEventListener(whichAnimationEvent(),function(){
-    //   curCount++;
-    //   this.style[pfx('animationIterationCount')] =curCount;
-    //   duration = 1.5*duration;
-    //   console.log(curCount)
-    //   this.style[pfx('animationDuration')] = duration + "s";
-    // })
   },
   reset:function(){
     this.status = 0;
@@ -540,7 +340,6 @@ Lottery.prototype = {
     var canvas2Style = this.canvas2.style;
     canvas2Style[pfx("transition")] ="";
     canvas2Style[pfx('transform')] = "";
-    canvas2Style[pfx('animation')] = "";
 
   }
 
