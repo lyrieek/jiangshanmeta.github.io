@@ -353,7 +353,7 @@ Lottery.prototype = {
     var hasPassTime = endTS - this.startLotteryTS;
     var animationTimePerRound = options.animationTimePerRound;
     var totalRotateCount = Math.ceil(hasPassTime/animationTimePerRound)+1;
-    console.log(totalRotateCount)
+    console.log(totalRotateCount,"z")
     var totalTime = animationTimePerRound*totalRotateCount;
     canvas2.style[pfx("transition")] = "all "+totalTime+"s linear";
     canvas2.style[pfx("transform")] = "rotate("+ totalRotateCount*360 +"deg)";
@@ -377,7 +377,7 @@ Lottery.prototype = {
         setTimeout(function(){
           console.log(23333)
             // _this.addEventListener(e.type,transitionendCallback2)
-            _thisCanvas.style[pfx("transition")] = "all 6s cubic-bezier(0.33,0.5,0.66,0.83)";
+            _thisCanvas.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
             _thisCanvas.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
         },0)
         // forceReflow();
