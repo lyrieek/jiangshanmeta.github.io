@@ -329,7 +329,7 @@ Lottery.prototype = {
           var rst = Math.floor(Math.random()*_this.options.lotteris.length);
           
           _this.showLotteryRes({data:{index:rst}});
-      },1000)   
+      },1500)   
       
      }else{
       alert("积分不足");
