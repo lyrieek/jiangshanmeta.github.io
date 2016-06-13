@@ -320,10 +320,13 @@ Lottery.prototype = {
       this.startLotteryTS = Date.now()/1000;
       var canvas2 = this.canvas2;
       //20s还不返回就真的没救了
-      var guessTime = 20;
-      var guessRound = guessTime/this.options.animationTimePerRound;  
-      canvas2.style[pfx("transition")] = "all " + guessTime  +"s linear";
-      canvas2.style[pfx("transform")] = "rotate(" + (guessRound*360) +"deg)";
+      var guessTime = 5;
+      var guessRound = guessTime/this.options.animationTimePerRound;
+      var styleStr = canvas2.style.cssText;
+      styleStr = styleStr +pfx('transition') +":all " + guessTime  +"s linear;" + pfx("transform") + ":rotate(" + (guessRound*360) +"deg);";
+      // canvas2.style[pfx("transition")] = "all " + guessTime  +"s linear";
+      // canvas2.style[pfx("transform")] = "rotate(" + (guessRound*360) +"deg)";
+      canvas2.style.cssText = styleStr;
       var _this = this;
       setTimeout(function(){
           var rst = Math.floor(Math.random()*_this.options.lotteris.length);
