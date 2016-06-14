@@ -6,8 +6,80 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Jun 2016 20:46:09 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 14 Jun 2016 19:24:18 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>深入理解贝塞尔曲线之如何实现匀加/减速动画</title>
+      <link>http://jiangshanmeta.github.io/post/cubicbezier/</link>
+      <pubDate>Tue, 14 Jun 2016 19:24:18 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/cubicbezier/</guid>
+      <description>
+
+&lt;p&gt;如果要实现web动画，通常有三个方式，第一是使用gif图，第二是使用CSS3中的transition和animation，第三是使用javascript。gif图一般交给美术去制作，不需要coding，js实现web动画是一个比较成熟的方案了，它的特点是兼容性好，能控制的动画效果多，适合制作复杂的动画效果。随着CSS3的浏览器支持程度越来越高，使用CSS3写web动画也成为一个流行的方式。&lt;/p&gt;
+
+&lt;p&gt;为了控制动画进行过程，CSS3为我们提供了缓动函数，分别为transition-timing-function和animition-timing-function (以下统称timing-function),通常用的是几个关键字属性：linear、ease、ease-in、ease-out、ease-in-out。&lt;/p&gt;
+
+&lt;p&gt;linear是线性动画；ease是默认的动画效果，特点是先快后慢，时间50%的时候已经完成80%的动画效果了；ease-in是动画进行过程中一直加速；ease-out是动画进行过程中一直减速；ease-in-out和ease很相似，都是先加速后减速，但是时间50%的时候完成动画的50%；一般来说，如果没太大的追求这些关键字就足够了。有这种想法的可以直接点击右上角的那个X了。&lt;/p&gt;
+
+&lt;p&gt;稍微高级一点的玩法是使用cubic-bezier,通过指定贝塞尔曲线的两个控制点控制缓动函数。其实三次贝塞尔曲线有四个控制点，然而对于CSS来说第一个控制点是(0,0)，第四个控制点是(1,1)，所以留给我们操作的只有两个控制点了。而且这两个控制点也是有限制的，横坐标∈[0,1]，纵坐标可以大于1。上面几个关键字其实是预定义好的贝塞尔曲线。&lt;/p&gt;
+
+&lt;p&gt;这个贝塞尔曲线就是我们今天的主角。原始需求是：实现匀加/减速动画。最一开始的想法是使用js控制，好像也没什么难度，会高中物理的就能解决。后来我就想能不能用CSS实现这一效果，毕竟我的一个原则是能用CSS实现的绝对不用js。&lt;/p&gt;
+
+&lt;p&gt;先上图&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/beziercurve.jpg&#34; alt=&#34;贝塞尔曲线的物理含义&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;用这张图说明一下对应的物理含义。横轴是时间进度，纵轴是动画进度。有高中物理水平的就能看得出来这不就是 *路程-时间曲线*嘛。所以曲线一阶导数的物理含义就是速度，二阶导数的物理含义就是加速度。想要实现匀加/减速动画，只要使二阶导数是一个不为零的常数就好了。&lt;/p&gt;
+
+&lt;h4 id=&#34;前方高能预警-大量数学出没-请做好战斗准备:eec53d87b272616feb247dfa262869de&#34;&gt;前方高能预警，大量数学出没，请做好战斗准备&lt;/h4&gt;
+
+&lt;p&gt;三次贝塞尔曲线公式&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/cubicbezier.jpg&#34; alt=&#34;三次贝塞尔曲线公式&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;由于CSS的限制 P0为(0,0)，P3为(1,1)将其带入方程并展开，可以得到对x,y方向的两个方程&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation1.jpg&#34; alt=&#34;x,y方向的两个方程&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我们得到的是两个参数方程。要想得到y对x的二阶导数，需要下面的公式&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/derivative.jpg&#34; alt=&#34;参数方程二阶导数公式&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;看不懂过程就不要在乎这些细节了，公式推导里有一步我应该曾经明白但我现在不明白。直接看结论，我们需要两个参数方程对t的一阶导数和二阶导数&lt;/p&gt;
+
+&lt;p&gt;于是便有了下面的几个式子&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation2.jpg&#34; alt=&#34;一阶导数和二阶导数&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;带入不明觉厉的公式，我们可以观察到，分母最高次项是六次，而分子最高次项是三次，要使结果为一个常数，六次项的系数要为零&lt;/p&gt;
+
+&lt;p&gt;于是我们得到了第一个公式&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation3.jpg&#34; alt=&#34;第一个公式&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;将第一个公式带入二阶导数中，我们会发现分母最高次项为3，分子最高此项为2，和上面类似的思路，我们可以得到第二个公式&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation4.jpg&#34; alt=&#34;第二个公式&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;两个方程联立我们可以解得&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation5.jpg&#34; alt=&#34;第一个结论&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这样分母就是一个常数了，分子还有一个一次项，所以&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation6.jpg&#34; alt=&#34;第二个结论&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;同时&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation7.jpg&#34; alt=&#34;第三个结论&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;注意到&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/conclusion.jpg&#34; alt=&#34;第四个结论&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>百度Touch.js代码解读</title>
@@ -351,6 +423,10 @@ utils.getPCevts = function(evt) {
 &lt;h2 id=&#34;移动端:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;移动端&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.jianshu.com/p/6e2b68a93c88&#34;&gt;移动端300ms点击延迟和点击穿透问题&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;浏览器相关:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;浏览器相关&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://web.jobbole.com/84926/&#34;&gt;前端科普文：为什么&amp;lt;!DOCTYPE&amp;gt;不可或缺&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -1108,6 +1184,10 @@ transform:translate(-50%,-50%);
 &lt;p&gt;在三角形的基础上也能实现其他的图形，&lt;em&gt;CSS Secrets&lt;/em&gt; 一书中提到了如何使用伪元素实现平行四边形和菱形，主要利用了transform+绝对定位。&lt;/p&gt;
 
 &lt;p&gt;更多的图形可以参见 &lt;a href=&#34;https://css-tricks.com/examples/ShapesOfCSS/&#34;&gt;css tricks&lt;/a&gt;,然而我觉得很多只是做着玩而不能在生产环境下使用。&lt;/p&gt;
+
+&lt;h4 id=&#34;结合filter实现毛玻璃效果:dc5e44b284002f2c33b84936afab53a1&#34;&gt;结合filter实现毛玻璃效果&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://dabblet.com/gist/d9f243ddd7dbffa341a4&#34;&gt;局部毛玻璃模糊效果的实现&lt;/a&gt;，从&lt;strong&gt;CSS Secrets&lt;/strong&gt;中看到的&lt;/p&gt;
 
 &lt;h2 id=&#34;扩大响应区域:dc5e44b284002f2c33b84936afab53a1&#34;&gt;扩大响应区域&lt;/h2&gt;
 
