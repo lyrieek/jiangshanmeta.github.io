@@ -1,3 +1,18 @@
-http://web.jobbole.com/84926/
+http://web.jobbole.com/83575/
+http://www.html-js.com/article/Accelerated-rendering-in-Chrome-model
+http://www.w3cplus.com/animation/animation-performance-guide.html
+http://www.w3cplus.com/css3/introduction-to-hardware-acceleration-css-animations.html
+http://www.cnblogs.com/PeunZhang/p/3510083.html
+http://www.cnblogs.com/coco1s/p/5439619.html
 
-http://dabblet.com/gist/d9f243ddd7dbffa341a4
+前端需要知道的WEB知识(2)
+
+经常听人说canvas能开启硬件加速加速，3d transform能开启硬件加速，可是，硬件加速到底是什么？它又能干什么？
+
+轮子哥是这么说的
+
+![轮子哥对于硬件加速的评价](http://jiangshanmeta.github.io/blogimg/web/vczh.jpg)
+
+好像有哪里不对。不说废话了开始正题。
+
+熟悉web开发的人都熟悉DOM这个概念，稍微进一步的开发者会了解 在浏览器中，
