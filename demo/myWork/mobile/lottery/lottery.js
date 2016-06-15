@@ -356,8 +356,6 @@ Lottery.prototype = {
     var styleStr = canvas2Style.cssText;
     styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotateZ(0deg);";
     canvas2Style.cssText = styleStr;
-    // canvas2Style[pfx("transition")] ="";
-    // canvas2Style[pfx('transform')] = "rotateZ(0deg)";
 
   }
 

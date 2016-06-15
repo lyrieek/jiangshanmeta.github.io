@@ -15,4 +15,45 @@ http://www.cnblogs.com/coco1s/p/5439619.html
 
 好像有哪里不对。不说废话了开始正题。
 
-熟悉web开发的人都熟悉DOM这个概念，稍微进一步的开发者会了解 在浏览器中，
+熟悉web开发的人都熟悉DOM这个概念，稍微进一步的开发者会了解 在浏览器中，有HTML解析器将HTML转化为DOM，然而web开发者并控制不了解析过程。然后呢，DOM又和CSS规则结合，形成了渲染树，此时，浏览器上依然是什么都没有。随后的部分就牵扯到我要说的硬件加速部分了。向上一张老图表示渲染过程。
+
+![浏览器工作原理](http://jiangshanmeta.github.io/blogimg/browser2.png)
+
+首先要介绍层的概念。Chrome存在几种不同类型的层：RenderLayers(渲染层)，负责DOM子树；GraphicsLayers(图形层)，负责RenderLayers的子树。GraphicsLayers会作为texture（纹理）上传到GPU。这里的纹理可以理解为位图。我们可以这么理解：chrome将DOM元素分割成为多个图层，然后对每个图层进行样式计算形成位图，然后上传到GPU中将多个图层进行合并形成我们看到的网页。在chrome开发模式中可以在rendering setting中选中show layer borders显示图形层。在正常的网页中会看到网页被蓝色线条分割成了多个小块。这些小块可以看成是层的子单元。下面有图有真相。
+
+![chrome](http://jiangshanmeta.github.io/blogimg/web/chrome.png)
+
+然后要说的是重绘和重排的概念。重排会导致重绘，重绘不一定有重排。要尽量减少重绘和重排。这几句话相信搞web开发的人都很熟。想起来当初开始写图片轮播的时候，css3用的不熟，更不要提什么前端性能优化了。那时候是各种暴力控制top、left移动，现在看来性能太差了，简直是有1mol重排重绘，而且javascript相当多时间在忙着处理纯展示的事情。
+
+接着说的是web界的另一句话
+
+> 移动端要想动画性能流畅，应该使用3d硬件加速
+
+终于到正题了。上面那句话很常见，可是为啥那？让我开始串起来吧。
+
+在某些特定情况下，一些DOM元素可以被拆分到独立的层中，这些层拼接起来就是我们所看到的页面。如果一个层的内容没有变化，而仅仅是层与层之间的合成属性变化，比如translate了，那么所需要的仅仅是在GPU内重新合成，不需要重绘。如果是按照我最早写图片轮播的模式来，经历的路程大概是这样的：
+
+计算样式--->为节点生成图形和位置--->将节点填充到图层位图中--->图层位图作为纹理上传到GPU--->GPU合成图层形成我们看到的网页
+
+如果我们出发了重绘重排，形成新页面的路程明显增长，你让浏览器做这么多事情，动画效果能好吗？想想就知道。
+
+那么什么条件能够使得DOM元素被拆分到独立的层呢？
+
+1. 3D 或透视变换(perspective transform) CSS 属性
+2. 使用加速视频解码的元素,如<video>
+3. 拥有 3D (WebGL) 上下文或加速的 2D 上下文的元素,如<canvas>
+4. 对自己的 opacity 做 CSS 动画或使用一个动画变换的元素
+5. 元素有一个包含复合层的后代节点(换句话说，就是一个元素拥有一个子元素，该子元素在自己的层里)
+6. 元素有一个 z-index 较低且包含一个复合层的兄弟元素(换句话说就是该元素在复合层上面渲染)
+
+我们最常见的是使用canvas，一些游戏引擎，比如egret最终是使用全屏的canvas实现游戏的，其能流畅实现动画效果离不开硬件加速。然后是使用3d transform,即使我们只是使用2dtransform，也可以欺骗浏览器说我们要使用3d transform，[这篇译文提到了常见的欺骗手段](http://www.cnblogs.com/PeunZhang/p/3510083.html)。
+
+使用分层确实可以减少重绘重排，那么有什么坑吗？轮子哥说费电，除此之外好要考虑手机浏览器的限制，毕竟不是pc，GPU做不到那么强，你要是不该分层的东西也分层了，GPU要心里苦了。[CSS3硬件加速也有坑](http://web.jobbole.com/83575/)中提到了一种误分层的情况及解决方案。
+
+参考资料
+
+[CSS动画之硬件加速](http://www.w3cplus.com/css3/introduction-to-hardware-acceleration-css-animations.html)
+
+[Web动画性能指南](http://www.w3cplus.com/animation/animation-performance-guide.html)
+
+[CSS3 3D 行星运转 && 浏览器渲染原理](http://www.cnblogs.com/coco1s/p/5439619.html)
