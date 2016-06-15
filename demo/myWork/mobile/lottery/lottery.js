@@ -113,14 +113,10 @@ Lottery.prototype = {
   construct:Lottery,
   initDOM:function(){
     var options = this.options;
-    
-    this.wrap = document.querySelector("#"+options.warpId);
-    this.wrap.classList.add("center-table");
-    
-    this.wrap.style['position'] = "relative";
-    this.wrap.style['overflow'] = "hidden";
-    var fragment = document.createDocumentFragment();
     var w = options.w;
+    //外层盒子初始样式设置
+    this.wrap = document.querySelector("#"+options.warpId);
+    this.wrap.style.cssText += "position:relative;overflow:hidden;margin-left:auto;margin-right:auto;display:table;"
 
     //canvas1负责绘制具体的奖项
     this.canvas1 = document.createElement("canvas");
@@ -138,9 +134,10 @@ Lottery.prototype = {
 
     // 文字区域
     this.textArea = document.createElement("div");
-    this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+0.25*w+"px;height:"+0.25*w+"px;line-height:"+ 0.25*w +"px;left:37.5%;top:37.5%;background:#fff;text-align:center;white-space:nowrap;"
+    this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+0.25*w+"px;height:"+0.25*w+"px;line-height:"+ 0.25*w +"px;left:37.5%;top:37.5%;background:#fff;text-align:center;white-space:nowrap;-webkit-user-select:none;"
     this.textArea.innerText = "开始抽奖";
 
+    var fragment = document.createDocumentFragment();
     fragment.appendChild(this.canvas1);
     fragment.appendChild(this.canvas2);
     fragment.appendChild(this.textArea);
@@ -188,14 +185,18 @@ Lottery.prototype = {
     context2.save();
     
     context2.translate(r,r);
+    //指针和和环的颜色先写死吧。 
 
     /* 外层两个环 阴影 */
     context2.save();
     context2.shadowColor = "rgba(0,0,0,0.5)";
     context2.shadowBlur = 8;
-    drawRing(context2,r-9,10,"#ffa642");
+    this.drawRing(context2,r-9,10,"#ffa642");
+
+    // drawRing(context2,r-9,10,"#ffa642");
     context2.restore();
-    drawRing(context2,r-2,4,"#FF6900");
+    this.drawRing(context2,r-2,4,"#FF6900");
+    // drawRing(context2,r-2,4,"#FF6900");
 
     /* 外层指针 */
     context2.save();
@@ -255,6 +256,19 @@ Lottery.prototype = {
     }
 
   },
+  drawRing:function(context,radius,lineWidth,strokeStyle){
+// function drawRing(context,radius,lineWidth,strokeStyle){
+    context.save();
+    context.beginPath();
+    context.arc(0,0,radius,0,2*Math.PI,false);
+    context.lineWidth = lineWidth;
+    context.strokeStyle = strokeStyle;
+    context.closePath();
+    context.stroke();
+    context.restore();  
+
+// }    
+  },
   drawText:function(context1){
 
   },
@@ -271,18 +285,18 @@ Lottery.prototype = {
       var canvas2 = this.canvas2;
       var animationTimePerRound = this.options.animationTimePerRound;
       var styleStr = canvas2.style.cssText;
-      styleStr = styleStr +pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotateZ(360deg);";
+      styleStr = styleStr + pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotateZ(360deg);";
       var hasAjaxRest = false;
       var ajaxRest;
-      var lastDuration = animationTimePerRound;
       var transitionendCallback0 = function(e){
         if(hasAjaxRest){
           this.removeEventListener(e.type,transitionendCallback0);
           _this.showLotteryRes(ajaxRest);
         }else{
-          this.style[pfx("transition")] = "";
-          this.style[pfx("transform")] = "rotateZ(0deg)";
-          
+          var styleStr2 = this.style.cssText;
+          styleStr2+= pfx("transition") + ":0s;" + pfx("transform") + ":rotateZ(0deg);";
+          this.style.cssText = styleStr2;
+
           var _thisCanvas = this;
           // 你猜为什么要写在setTimeout中呢。为了强制渲染啊。
           setTimeout(function(){
@@ -339,20 +353,12 @@ Lottery.prototype = {
     this.status = 0;
     this.textArea.innerText = "开始抽奖";
     var canvas2Style = this.canvas2.style;
-    canvas2Style[pfx("transition")] ="";
-    canvas2Style[pfx('transform')] = "rotateZ(0deg)";
+    var styleStr = canvas2Style.cssText;
+    styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotateZ(0deg);";
+    canvas2Style.cssText = styleStr;
+    // canvas2Style[pfx("transition")] ="";
+    // canvas2Style[pfx('transform')] = "rotateZ(0deg)";
 
   }
-
-}
-function drawRing(context,radius,lineWidth,strokeStyle){
-    context.save();
-    context.beginPath();
-    context.arc(0,0,radius,0,2*Math.PI,false);
-    context.lineWidth = lineWidth;
-    context.strokeStyle = strokeStyle;
-    context.closePath();
-    context.stroke();
-    context.restore();  
 
 }
