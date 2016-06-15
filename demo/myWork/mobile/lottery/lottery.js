@@ -133,7 +133,7 @@ Lottery.prototype = {
     this.canvas2 = document.createElement("canvas");
     this.canvas2.width = w;
     this.canvas2.height = w;
-    this.canvas2.style.cssText="position:absolute;top:0;left:0;"+pfx("transform") + ":rotate(0deg)";
+    this.canvas2.style.cssText="position:absolute;top:0;left:0;"+pfx("transform") + ":rotateZ(0deg)";
     this.context2 = this.canvas2.getContext('2d');
 
     // 文字区域
@@ -271,7 +271,7 @@ Lottery.prototype = {
       var canvas2 = this.canvas2;
       var animationTimePerRound = this.options.animationTimePerRound;
       var styleStr = canvas2.style.cssText;
-      styleStr = styleStr +pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(360deg);";
+      styleStr = styleStr +pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotateZ(360deg);";
       var hasAjaxRest = false;
       var ajaxRest;
       var lastDuration = animationTimePerRound;
@@ -280,8 +280,9 @@ Lottery.prototype = {
           this.removeEventListener(e.type,transitionendCallback0);
           _this.showLotteryRes(ajaxRest);
         }else{
-          this.style[pfx("transform")] = "";
           this.style[pfx("transition")] = "";
+          this.style[pfx("transform")] = "rotateZ(0deg)";
+          
           var _thisCanvas = this;
           // 你猜为什么要写在setTimeout中呢。为了强制渲染啊。
           setTimeout(function(){
@@ -328,7 +329,7 @@ Lottery.prototype = {
     //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
     var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1);
     canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
-    canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
+    canvas2.style[pfx("transform")] = "rotateZ("+  finalRotate +"deg)";
 
     document.querySelector("#"+options.creditsInputId).value-=options.needCredits;
 
@@ -339,7 +340,7 @@ Lottery.prototype = {
     this.textArea.innerText = "开始抽奖";
     var canvas2Style = this.canvas2.style;
     canvas2Style[pfx("transition")] ="";
-    canvas2Style[pfx('transform')] = "";
+    canvas2Style[pfx('transform')] = "rotateZ(0deg)";
 
   }
 
