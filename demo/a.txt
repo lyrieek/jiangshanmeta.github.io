@@ -65,3 +65,6 @@ http://www.cnblogs.com/coco1s/p/5439619.html
 
 根据数据的流向，将渲染过程分为三个阶段，第一阶段是从网页的URL到构建完DOM树，第二个阶段是从DOM树到构建完webkit的绘图上下文，第三个阶段是从绘图上下文到生成最终的图像。
 
+https://github.com/oneuijs/You-Dont-Need-jQuery/blob/master/README.zh-CN.md
+
+https://daneden.github.io/animate.css/
