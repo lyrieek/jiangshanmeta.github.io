@@ -11,10 +11,11 @@
 				width:100%;
 				list-style:none;
 				padding-left:0;/* 这里之所以加上一个padding-left：0是因为要清除浏览器的默认ul的padding，虽然一开始有*清除了，但是实际项目reset或者nomalrize处理的可能没有清除*/
+
 			}
 			.cateList .cateItem{
 				width:45%;
-				border-right:1px solid #d9d9d9;
+				
 			}
 			.cateList input[type='radio']{
 				position:fixed;
@@ -33,14 +34,18 @@
 				border-top:1px solid #d9d9d9;
 				border-bottom:1px solid #d9d9d9;				
 			}
+			.cateList .cateItem:first-child  input[type='radio']:checked ~  .cateTitle{
+				border-top-width: 0px;
+			}
 			.cateList input[type='radio']:checked ~ .cateTitle:after{
-				content:' ';
+				content:'';
 				position:absolute;
 				height:100%;
 				background:#fff;
 				right:-1px;
 				width:1px;
 				top:0;
+				z-index:1;	
 			}
 			.cateList input[type='radio']~.cateCont{
 				display:none;
@@ -52,8 +57,10 @@
 				right:0;
 				width:55%;
 				min-height:100%;
-				overflow-y:scroll;
-				padding-left:0;				
+				overflow-y:auto;
+				padding-left:0;	
+				border-left:1px solid #d9d9d9;	
+					
 			}
 			.cateList .list-item{
 				display:block;
@@ -91,6 +98,15 @@
 					<li class="list-item">安全带扣</li>
 					<li class="list-item">纸巾包</li>
 					<li class="list-item">遮阳板卡包</li>	
+					<li class="list-item">遮阳板卡包</li>
+					<li class="list-item">安全带扣</li>
+					<li class="list-item">纸巾包</li>
+					<li class="list-item">遮阳板卡包</li>
+					<li class="list-item">手机支架</li>
+					<li class="list-item">充电器</li>
+					<li class="list-item">手机支架</li>
+					<li class="list-item">充电器</li>
+
 				</ul>
 			</li>
 			<li class="cateItem">
