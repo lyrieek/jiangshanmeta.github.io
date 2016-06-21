@@ -71,69 +71,97 @@ http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/2986703
 
 https://blog.alexmaccaw.com/css-transitions
 
-关于CSS3 transition 的几个小tip
 
-关于CSS3的transition一般写过一阵的基本玩法也都会了，这里收集一些transition的小细节
-
-## 关于伪元素的过渡
-
-[之前总结过伪元素的一些应用](http://jiangshanmeta.github.io/post/pseudo/)，但是没有提及如何使用伪元素进行过渡。
-由于javascript对于伪元素的控制其实很弱，试图直接修改伪元素的样式的行为真的太折腾。常见的改变属性的方法还有类或者伪类，
-
-[在线demo](http://jiangshanmeta.github.io/blogdemo/transitiontip/pseudo.html)
-
-## 模拟input宽度的改变
-
-如果想利用硬件加速，避免重绘，我们一般要避免width、height、margin之类的属性过渡。然而，有的时候我们确实需要宽度变化的过渡，比如输入框在获取焦点的时候变长，失去焦点后宽度又恢复原状。[慕课网一个美化表单案例](http://t.imooc.com/learn/42)就提到了这么一种需求。想实现这一需求可以使用width、padding属性的过渡实现，但是免不了大量的重绘，从前端性能优化的角度来看实现地并不优雅。
-
-其实换一种思路，我们不见得让输入框真的变长，只要是输入框看起来变长了就行，毕竟我们的目的是加一个动画效果提升用户体验。于是就有了这么一个障眼法：
-
-```HTML
-	<div class="clipped" >
-		<input type="text">
-		<div class="clip"></div>
-	</div>
-
-```
-
-```CSS
-	.clipped{
-		position:relative;
-		width:154px;
-	}
-	.clipped .clip{
-		position:absolute;
-		right:0;
-		top:0;
-		width:50px;
-		height:25px;
-		border:2px solid #ccc;
-		border-left:0;
-		border-radius:4px;
-		/*pointer-events:none;*/
-		z-index:-1;
-		transition:0.4s linear;
-	}
-	.clipped input{
-		width:150px;
-		height:25px;
-		border:2px solid #ccc;
-		border-radius:4px;
-		border-right:0px;
-		
-	}
-	.clipped input:focus{
-		outline:none;
-		
-	}
-	.clipped input:focus ~.clip{
-		transform:translate3d(40px,0,0);
-	}
-```
-
-[在线demo](http://jiangshanmeta.github.io/blogdemo/transitiontip/clipping.html)
-基本原理是一个绝对定位的div，定位到输入框的右边，模拟输入框右边的样子，input框获得焦点的时候把这个div transform。具体的看代码。如果可以的话想用伪元素实现这个div，然而input并不支持伪元素。
-
-基本原理
 
 bootstrap源码解读——transition.js
+
+bootstrap是一个出名的前端框架，它预制了一些常见的js插件。从头开始解读吧。
+
+这里要介绍的是transition.js，它的作用是对css3的过渡的兼容处理。
+
+立即执行的匿名函数就不说了，算是基本常识了。
+
+```
+function transitionEnd() {
+var el = document.createElement('bootstrap')
+
+var transEndEventNames = {
+  WebkitTransition : 'webkitTransitionEnd',
+  MozTransition    : 'transitionend',
+  OTransition      : 'oTransitionEnd otransitionend',
+  transition       : 'transitionend'
+}
+
+for (var name in transEndEventNames) {
+  if (el.style[name] !== undefined) {
+    return { end: transEndEventNames[name] }
+  }
+}
+
+return false 
+}
+```
+这一段是对transitionend事件做兼容，如果浏览器支持各种形式的transitionend，就以对象的形式返回兼容后的结果，否则返回false，表明不支持transitionend事件。
+
+之前我收集过一个类似功能的函数
+```js
+function whichTransitionEvent(){  
+    var t;  
+    var el = document.createElement('p');  
+    var transitions = {  
+      'transition':'transitionend',  
+      'OTransition':'oTransitionEnd',  
+      'MozTransition':'mozTransitionEnd',  
+      'WebkitTransition':'webkitTransitionEnd',  
+      'MsTransition':'msTransitionEnd'  
+    }  
+    for(t in transitions){  
+        if( el.style[t] !== undefined ){  
+            return transitions[t];  
+        }  
+    }  
+}
+```
+
+然后是调用上面那个函数，并且为transitionend起了一个别名。
+
+```
+$(function () {
+$.support.transition = transitionEnd()
+
+if (!$.support.transition) return
+
+$.event.special.bsTransitionEnd = {
+  bindType: $.support.transition.end,
+  delegateType: $.support.transition.end,
+  handle: function (e) {
+    if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+  }
+}
+})
+```
+
+这里把最终的transitionend事件挂到了$.support.transition上，相当于一个缓存。然后是一段让我很纠结的代码，$.event.special.bsTransitionEnd是干啥的的？然后我就在[stackoverflow上找到了答案](http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/29867037#29867037)
+
+它的意思是这里的bsTransitionEnd相当于兼容后的transitionend事件的别名。为什么要去一个别名而不是直接使用兼容后的transitionend呢？因为怕你我手抖移除transitionend事件的时候不传具体的回调而是直接移除整个事件然后bootstrap插件的回调也一并移除然后报bug。算是为了代码的健壮性吧。
+
+还有一段代码：
+```
+$.fn.emulateTransitionEnd = function (duration) {
+var called = false
+var $el = this
+$(this).one('bsTransitionEnd', function () { called = true })
+var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+setTimeout(callback, duration)
+return this
+}
+```
+$.fn.emulateTransitionEnd，看这个形式是直接挂到了jquery的prototype上了。看函数名猜测这一段代码是为了模拟transitionend事件的。不理解作者想干啥，但是[源码中给了一个连接](https://blog.alexmaccaw.com/css-transitions)，于是我就找来这篇博客看，原作者是这么说的：
+
+> Be aware that sometimes this event doesn’t fire, usually in the case when properties don’t change or a paint isn’t triggered. To ensure we always get a callback, let’s set a timeout that’ll trigger the event manually.
+
+换句话说作者是为了保证即使没有过渡也要触发transitionend事件保证相应的回调能够执行。其实我很怀疑为什么要这么做，毕竟这种情况下应该测试会报bug。
+
+具体实现上called变量保存的是transitionend是否被触发，这个变量的存在是为了保证transitionend只触发一次。可能触发多次的情况一个是transition多个属性会触发多个transitionend事件，另一个是真的transitionend事件已经触发，不需要模拟transitionend。一些具体的细节上可以结合setTimeout以及jquery的相关内容理解。突然想到之前写的[h5页面](http://jiangshanmeta.github.io/demo/myWork/org/h5page/h5page.html)里面也是监听了transitionend事件，可以参照这个思路改一改。
+
+transition.js内容不多，就只有三块，但是却是bootstap js插件非常重要的一环，后面只要用到css过渡的插件都依赖transition.js。
