@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	<title>伪元素的过渡</title>
+
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+		.clipped{
+			position:relative;
+			width:154px;
+		}
+		.clipped .clip{
+			position:absolute;
+			right:0;
+			top:0;
+			width:50px;
+			height:25px;
+			border:2px solid #ccc;
+			border-left:0;
+			border-radius:4px;
+			/*pointer-events:none;*/
+			z-index:-1;
+			transition:0.4s linear;
+		}
+		.clipped input{
+			width:150px;
+			height:25px;
+			border:2px solid #ccc;
+			border-radius:4px;
+			border-right:0px;
+			
+		}
+		.clipped input:focus{
+			outline:none;
+			
+		}
+		.clipped input:focus ~.clip{
+			transform:translate3d(40px,0,0);
+		}
+	</style>
+</head>
+<body style="display:flex;min-height:100vh;">
+		<div class="clipped" style="margin:auto;">
+			<input type="text">
+			<div class="clip"></div>
+		</div>
+
+</body>
+</html>

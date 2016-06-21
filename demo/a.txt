@@ -67,3 +67,73 @@ http://www.cnblogs.com/coco1s/p/5439619.html
 
 
 
+http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/29867037#29867037
+
+https://blog.alexmaccaw.com/css-transitions
+
+关于CSS3 transition 的几个小tip
+
+关于CSS3的transition一般写过一阵的基本玩法也都会了，这里收集一些transition的小细节
+
+## 关于伪元素的过渡
+
+[之前总结过伪元素的一些应用](http://jiangshanmeta.github.io/post/pseudo/)，但是没有提及如何使用伪元素进行过渡。
+由于javascript对于伪元素的控制其实很弱，试图直接修改伪元素的样式的行为真的太折腾。常见的改变属性的方法还有类或者伪类，
+
+[在线demo](http://jiangshanmeta.github.io/blogdemo/transitiontip/pseudo.html)
+
+## 模拟input宽度的改变
+
+如果想利用硬件加速，避免重绘，我们一般要避免width、height、margin之类的属性过渡。然而，有的时候我们确实需要宽度变化的过渡，比如输入框在获取焦点的时候变长，失去焦点后宽度又恢复原状。[慕课网一个美化表单案例](http://t.imooc.com/learn/42)就提到了这么一种需求。想实现这一需求可以使用width、padding属性的过渡实现，但是免不了大量的重绘，从前端性能优化的角度来看实现地并不优雅。
+
+其实换一种思路，我们不见得让输入框真的变长，只要是输入框看起来变长了就行，毕竟我们的目的是加一个动画效果提升用户体验。于是就有了这么一个障眼法：
+
+```HTML
+	<div class="clipped" >
+		<input type="text">
+		<div class="clip"></div>
+	</div>
+
+```
+
+```CSS
+	.clipped{
+		position:relative;
+		width:154px;
+	}
+	.clipped .clip{
+		position:absolute;
+		right:0;
+		top:0;
+		width:50px;
+		height:25px;
+		border:2px solid #ccc;
+		border-left:0;
+		border-radius:4px;
+		/*pointer-events:none;*/
+		z-index:-1;
+		transition:0.4s linear;
+	}
+	.clipped input{
+		width:150px;
+		height:25px;
+		border:2px solid #ccc;
+		border-radius:4px;
+		border-right:0px;
+		
+	}
+	.clipped input:focus{
+		outline:none;
+		
+	}
+	.clipped input:focus ~.clip{
+		transform:translate3d(40px,0,0);
+	}
+```
+
+[在线demo](http://jiangshanmeta.github.io/blogdemo/transitiontip/clipping.html)
+基本原理是一个绝对定位的div，定位到输入框的右边，模拟输入框右边的样子，input框获得焦点的时候把这个div transform。具体的看代码。如果可以的话想用伪元素实现这个div，然而input并不支持伪元素。
+
+基本原理
+
+bootstrap源码解读——transition.js
