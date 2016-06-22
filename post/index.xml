@@ -6,8 +6,117 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Jun 2016 20:19:53 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 22 Jun 2016 19:07:30 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>bootstrap源码解读——transition.js</title>
+      <link>http://jiangshanmeta.github.io/post/bootstrap/transition/</link>
+      <pubDate>Wed, 22 Jun 2016 19:07:30 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/bootstrap/transition/</guid>
+      <description>&lt;p&gt;bootstrap是一个出名的前端框架，它预制了一些常见的js插件。从头开始解读吧。&lt;/p&gt;
+
+&lt;p&gt;这里要介绍的是transition.js，它的作用是对css3的过渡的兼容处理。&lt;/p&gt;
+
+&lt;p&gt;立即执行的匿名函数就不说了，算是基本常识了。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function transitionEnd() {
+	var el = document.createElement(&#39;bootstrap&#39;)
+
+	var transEndEventNames = {
+	  WebkitTransition : &#39;webkitTransitionEnd&#39;,
+	  MozTransition    : &#39;transitionend&#39;,
+	  OTransition      : &#39;oTransitionEnd otransitionend&#39;,
+	  transition       : &#39;transitionend&#39;
+	}
+
+	for (var name in transEndEventNames) {
+	  if (el.style[name] !== undefined) {
+	    return { end: transEndEventNames[name] }
+	  }
+	}
+
+	return false 
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这一段是对transitionend事件做兼容，如果浏览器支持各种形式的transitionend，就以对象的形式返回兼容后的结果，否则返回false，表明不支持transitionend事件，另一层意思就是不支持css3过渡。&lt;/p&gt;
+
+&lt;p&gt;之前我收集过一个类似功能的函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;function whichTransitionEvent(){  
+    var t;  
+    var el = document.createElement(&#39;p&#39;);  
+    var transitions = {  
+      &#39;transition&#39;:&#39;transitionend&#39;,  
+      &#39;OTransition&#39;:&#39;oTransitionEnd&#39;,  
+      &#39;MozTransition&#39;:&#39;mozTransitionEnd&#39;,  
+      &#39;WebkitTransition&#39;:&#39;webkitTransitionEnd&#39;,  
+      &#39;MsTransition&#39;:&#39;msTransitionEnd&#39;  
+    }  
+    for(t in transitions){  
+        if( el.style[t] !== undefined ){  
+            return transitions[t];  
+        }  
+    }  
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后是调用上面那个函数，并且为transitionend起了一个别名。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$(function () {
+$.support.transition = transitionEnd()
+
+if (!$.support.transition) return
+
+$.event.special.bsTransitionEnd = {
+  bindType: $.support.transition.end,
+  delegateType: $.support.transition.end,
+  handle: function (e) {
+    if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+  }
+}
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这里把最终的transitionend事件挂到了$.support.transition上，相当于一个缓存。然后是一段让我很纠结的代码，$.event.special.bsTransitionEnd是干啥的的？搜索了一下中文文章发现虽然有提的但是完全不靠谱（这么不靠谱的文章竟然有一堆转载），然后我就在&lt;a href=&#34;http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/29867037#29867037&#34;&gt;stackoverflow上找到了答案&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;它的意思是这里的bsTransitionEnd相当于兼容后的transitionend事件的别名。为什么要去一个别名而不是直接使用兼容后的transitionend呢？因为怕你我手抖移除transitionend事件的时候不传具体的回调而是直接移除整个事件然后bootstrap插件的回调也一并移除然后报bug。算是为了代码的健壮性吧。&lt;/p&gt;
+
+&lt;p&gt;还有一段代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$.fn.emulateTransitionEnd = function (duration) {
+	var called = false
+	var $el = this
+	$(this).one(&#39;bsTransitionEnd&#39;, function () { called = true })
+	var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+	setTimeout(callback, duration)
+	return this
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;$.fn.emulateTransitionEnd，看这个形式是直接挂到了jquery的prototype上了。看函数名猜测这一段代码是为了模拟transitionend事件的。不理解作者想干啥，但是&lt;a href=&#34;https://blog.alexmaccaw.com/css-transitions&#34;&gt;源码中给了一个连接&lt;/a&gt;，于是我就找来这篇博客看，原作者是这么说的：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Be aware that sometimes this event doesn’t fire, usually in the case when properties don’t change or a paint isn’t triggered. To ensure we always get a callback, let’s set a timeout that’ll trigger the event manually.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;换句话说作者是为了保证即使没有过渡也要触发transitionend事件保证相应的回调能够执行。其实我很怀疑为什么要这么做，毕竟这种情况下应该测试会报bug。&lt;/p&gt;
+
+&lt;p&gt;具体实现上called变量保存的是transitionend是否被触发，这个变量的存在是为了保证transitionend只触发一次。可能触发多次的情况一个是transition多个属性会触发多个transitionend事件，另一个是真的transitionend事件已经触发，不需要模拟transitionend。一些具体的细节上可以结合setTimeout以及jquery的相关内容理解。突然想到之前写的&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/org/h5page/h5page.html&#34;&gt;h5页面&lt;/a&gt;里面也是监听了transitionend事件，可以参照这个思路改一改。&lt;/p&gt;
+
+&lt;p&gt;顺便提一句，上面那篇文章提到了强制重绘，有一句话我觉得很好&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;This will work in most browsers, but I’ve had occasions in Android where this hasn’t been enough. The alternative is to either use timeouts, or by toggling a class name.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;就在上个周我就遇到了这个问题，强制重绘在pc上测试没问题，在微信内置浏览器上就报bug，最终解决方案也是使用定时器，&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html&#34;&gt;实现的代码&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;transition.js内容不多，就只有三块，但是却是bootstap js插件非常重要的一环，后面只要用到css过渡的插件都依赖transition.js。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>关于CSS3 transition 的几个小tip</title>
@@ -1371,48 +1480,6 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2016/5/16
 想起来这一方法不仅仅能够实现正方形，也能实现长宽比一定的矩形&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>两列布局常见方法</title>
-      <link>http://jiangshanmeta.github.io/post/twocolumn/</link>
-      <pubDate>Thu, 12 May 2016 20:10:08 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/twocolumn/</guid>
-      <description>
-
-&lt;p&gt;画页面最开始要想好的就是如何进行布局。两列布局既是一种常见的布局方式，又是多列布局的基础。本文就我所熟悉的两列布局方式进行总结和比较。&lt;/p&gt;
-
-&lt;h2 id=&#34;浮动布局:5a257f88feea4060d9c6a1cf42573807&#34;&gt;浮动布局&lt;/h2&gt;
-
-&lt;p&gt;浮动最初是为文字环绕功能而设计的，然而现在成了基本的布局方式。&lt;/p&gt;
-
-&lt;p&gt;熟悉bootstrap的人都知道，其经典的12列网格设计就是基于浮动所实现的。bootstrap的网格主要的知识点就是浮动+ &lt;code&gt;box-sizing:border-box&lt;/code&gt; + 媒体查询&lt;/p&gt;
-
-&lt;p&gt;浮动所带来的问题是盒子的塌陷，bootstrap的网格布局解决方案是采取百分比进行限制。这样实现的是两列自适应布局，然而，要实现一列定宽一列自适应就比较困难了，所幸CSS支持计算，可以利用&lt;code&gt;calc&lt;/code&gt; 实现两列一列定宽一列自适应的两列布局&lt;/p&gt;
-
-&lt;p&gt;bootstrap采用的是两列均左浮动实现两列布局，那么一列左浮动可不可以？当然可以。只要给右侧足够的&lt;code&gt;margin-left&lt;/code&gt;就行了。知乎首页人和问题的两列布局就是采用的这种布局方式。这种布局方式有什么问题呢？一是&lt;code&gt;margin-left&lt;/code&gt;值是要写死在代码里的，这一点其实还好，因为基本上大的布局不会变，所以基本上不会改。二是如果右侧有清除浮动的元素，会影响布局。当然对于知乎来说不存在这个问题，毕竟只是文字和图片。&lt;/p&gt;
-
-&lt;p&gt;有什么方法解决上面说的第二个问题呢？对第二个列加上一行&lt;code&gt;overflow:hidden;&lt;/code&gt;就好了。原理是形成BFC然后自己就玩自己的去了。&lt;/p&gt;
-
-&lt;h2 id=&#34;column:5a257f88feea4060d9c6a1cf42573807&#34;&gt;column&lt;/h2&gt;
-
-&lt;p&gt;coolumn的出现是为了模仿报纸的排版的，如果想要实现文字的两列或者多列布局，应用column布局很轻松，然而，不幸的是，如果想要使用column布局的话，我建议还是放弃这个想法吧，一方面各大浏览器对其支持还不够，需要加私有前缀，另一方面其显示有些问题，具体可见&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/pic/waterfall/waterfall_CSS.html&#34;&gt;column实现的瀑布流效果&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;table:5a257f88feea4060d9c6a1cf42573807&#34;&gt;table&lt;/h2&gt;
-
-&lt;p&gt;这里的table指的可不是HTML中的table，而是&lt;code&gt;display:table;&lt;/code&gt;利用table布局很容易实现两列布局，而且还能顺便实现等高布局。关于table的各种坑，我以后后做一个总结&lt;/p&gt;
-
-&lt;h2 id=&#34;flex:5a257f88feea4060d9c6a1cf42573807&#34;&gt;flex&lt;/h2&gt;
-
-&lt;p&gt;flex确实是布局神器，然而在生产环境下还是注意一下的好，移动端的情况稍微好点，然而在pc端IE10才支持，至少在pc端有替代方案的就用替代方案吧&lt;/p&gt;
-
-&lt;h2 id=&#34;inline-block:5a257f88feea4060d9c6a1cf42573807&#34;&gt;inline-block&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;display:inline-block;&lt;/code&gt;确实是可以实现两列布局，如果两列宽度加起来不够父元素的宽度，那还好说，如果你想两个元素宽度均为50%,你很有可能会发现并没有实现。原因是两列之间有空格，两个50%加上一个空格显然超过100%。解决方案可以是通过那双灵巧的手，写HTML的时候注意空格，然而对于这种缩进会被不经意间手抖改掉，所以你还要写三遍注释告诉别人和自己不要手抖。这么干的人实在是太无聊了。靠谱点的解决方案是设定父元素&lt;code&gt;font-size:0;&lt;/code&gt;，然后两列字体大小该多少是多少，是个靠谱的解决方案。&lt;/p&gt;
-
-&lt;p&gt;总结起来我个人倾向于各种基于浮动的方案。&lt;/p&gt;
 </description>
     </item>
     

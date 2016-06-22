@@ -1,0 +1,136 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> bootstrap源码解读——transition.js &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class="">
+		
+
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">bootstrap源码解读——transition.js</h1>
+			  <p >Wed, Jun 22, 2016</p>
+			      <p>bootstrap是一个出名的前端框架，它预制了一些常见的js插件。从头开始解读吧。</p>
+
+<p>这里要介绍的是transition.js，它的作用是对css3的过渡的兼容处理。</p>
+
+<p>立即执行的匿名函数就不说了，算是基本常识了。</p>
+
+<pre><code>function transitionEnd() {
+	var el = document.createElement('bootstrap')
+
+	var transEndEventNames = {
+	  WebkitTransition : 'webkitTransitionEnd',
+	  MozTransition    : 'transitionend',
+	  OTransition      : 'oTransitionEnd otransitionend',
+	  transition       : 'transitionend'
+	}
+
+	for (var name in transEndEventNames) {
+	  if (el.style[name] !== undefined) {
+	    return { end: transEndEventNames[name] }
+	  }
+	}
+
+	return false 
+}
+</code></pre>
+
+<p>这一段是对transitionend事件做兼容，如果浏览器支持各种形式的transitionend，就以对象的形式返回兼容后的结果，否则返回false，表明不支持transitionend事件，另一层意思就是不支持css3过渡。</p>
+
+<p>之前我收集过一个类似功能的函数</p>
+
+<pre><code class="language-js">function whichTransitionEvent(){  
+    var t;  
+    var el = document.createElement('p');  
+    var transitions = {  
+      'transition':'transitionend',  
+      'OTransition':'oTransitionEnd',  
+      'MozTransition':'mozTransitionEnd',  
+      'WebkitTransition':'webkitTransitionEnd',  
+      'MsTransition':'msTransitionEnd'  
+    }  
+    for(t in transitions){  
+        if( el.style[t] !== undefined ){  
+            return transitions[t];  
+        }  
+    }  
+}
+</code></pre>
+
+<p>然后是调用上面那个函数，并且为transitionend起了一个别名。</p>
+
+<pre><code>$(function () {
+$.support.transition = transitionEnd()
+
+if (!$.support.transition) return
+
+$.event.special.bsTransitionEnd = {
+  bindType: $.support.transition.end,
+  delegateType: $.support.transition.end,
+  handle: function (e) {
+    if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+  }
+}
+})
+</code></pre>
+
+<p>这里把最终的transitionend事件挂到了$.support.transition上，相当于一个缓存。然后是一段让我很纠结的代码，$.event.special.bsTransitionEnd是干啥的的？搜索了一下中文文章发现虽然有提的但是完全不靠谱（这么不靠谱的文章竟然有一堆转载），然后我就在<a href="http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/29867037#29867037">stackoverflow上找到了答案</a></p>
+
+<p>它的意思是这里的bsTransitionEnd相当于兼容后的transitionend事件的别名。为什么要去一个别名而不是直接使用兼容后的transitionend呢？因为怕你我手抖移除transitionend事件的时候不传具体的回调而是直接移除整个事件然后bootstrap插件的回调也一并移除然后报bug。算是为了代码的健壮性吧。</p>
+
+<p>还有一段代码：</p>
+
+<pre><code>$.fn.emulateTransitionEnd = function (duration) {
+	var called = false
+	var $el = this
+	$(this).one('bsTransitionEnd', function () { called = true })
+	var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+	setTimeout(callback, duration)
+	return this
+}
+</code></pre>
+
+<p>$.fn.emulateTransitionEnd，看这个形式是直接挂到了jquery的prototype上了。看函数名猜测这一段代码是为了模拟transitionend事件的。不理解作者想干啥，但是<a href="https://blog.alexmaccaw.com/css-transitions">源码中给了一个连接</a>，于是我就找来这篇博客看，原作者是这么说的：</p>
+
+<blockquote>
+<p>Be aware that sometimes this event doesn’t fire, usually in the case when properties don’t change or a paint isn’t triggered. To ensure we always get a callback, let’s set a timeout that’ll trigger the event manually.</p>
+</blockquote>
+
+<p>换句话说作者是为了保证即使没有过渡也要触发transitionend事件保证相应的回调能够执行。其实我很怀疑为什么要这么做，毕竟这种情况下应该测试会报bug。</p>
+
+<p>具体实现上called变量保存的是transitionend是否被触发，这个变量的存在是为了保证transitionend只触发一次。可能触发多次的情况一个是transition多个属性会触发多个transitionend事件，另一个是真的transitionend事件已经触发，不需要模拟transitionend。一些具体的细节上可以结合setTimeout以及jquery的相关内容理解。突然想到之前写的<a href="http://jiangshanmeta.github.io/demo/myWork/org/h5page/h5page.html">h5页面</a>里面也是监听了transitionend事件，可以参照这个思路改一改。</p>
+
+<p>顺便提一句，上面那篇文章提到了强制重绘，有一句话我觉得很好</p>
+
+<blockquote>
+<p>This will work in most browsers, but I’ve had occasions in Android where this hasn’t been enough. The alternative is to either use timeouts, or by toggling a class name.</p>
+</blockquote>
+
+<p>就在上个周我就遇到了这个问题，强制重绘在pc上测试没问题，在微信内置浏览器上就报bug，最终解决方案也是使用定时器，<a href="http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html">实现的代码</a>。</p>
+
+<p>transition.js内容不多，就只有三块，但是却是bootstap js插件非常重要的一环，后面只要用到css过渡的插件都依赖transition.js。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+			console.log("contact 540118044@qq.com");
+		</script>
+  </body>
+</html>
