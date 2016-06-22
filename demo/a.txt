@@ -83,25 +83,25 @@ bootstrap是一个出名的前端框架，它预制了一些常见的js插件。
 
 ```
 function transitionEnd() {
-var el = document.createElement('bootstrap')
+	var el = document.createElement('bootstrap')
 
-var transEndEventNames = {
-  WebkitTransition : 'webkitTransitionEnd',
-  MozTransition    : 'transitionend',
-  OTransition      : 'oTransitionEnd otransitionend',
-  transition       : 'transitionend'
-}
+	var transEndEventNames = {
+	  WebkitTransition : 'webkitTransitionEnd',
+	  MozTransition    : 'transitionend',
+	  OTransition      : 'oTransitionEnd otransitionend',
+	  transition       : 'transitionend'
+	}
 
-for (var name in transEndEventNames) {
-  if (el.style[name] !== undefined) {
-    return { end: transEndEventNames[name] }
-  }
-}
+	for (var name in transEndEventNames) {
+	  if (el.style[name] !== undefined) {
+	    return { end: transEndEventNames[name] }
+	  }
+	}
 
-return false 
+	return false 
 }
 ```
-这一段是对transitionend事件做兼容，如果浏览器支持各种形式的transitionend，就以对象的形式返回兼容后的结果，否则返回false，表明不支持transitionend事件。
+这一段是对transitionend事件做兼容，如果浏览器支持各种形式的transitionend，就以对象的形式返回兼容后的结果，否则返回false，表明不支持transitionend事件，另一层意思就是不支持css3过渡。
 
 之前我收集过一个类似功能的函数
 ```js
@@ -141,7 +141,7 @@ $.event.special.bsTransitionEnd = {
 })
 ```
 
-这里把最终的transitionend事件挂到了$.support.transition上，相当于一个缓存。然后是一段让我很纠结的代码，$.event.special.bsTransitionEnd是干啥的的？然后我就在[stackoverflow上找到了答案](http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/29867037#29867037)
+这里把最终的transitionend事件挂到了$.support.transition上，相当于一个缓存。然后是一段让我很纠结的代码，$.event.special.bsTransitionEnd是干啥的的？搜索了一下中文文章发现虽然有提的但是完全不靠谱（这么不靠谱的文章竟然有一堆转载），然后我就在[stackoverflow上找到了答案](http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/29867037#29867037)
 
 它的意思是这里的bsTransitionEnd相当于兼容后的transitionend事件的别名。为什么要去一个别名而不是直接使用兼容后的transitionend呢？因为怕你我手抖移除transitionend事件的时候不传具体的回调而是直接移除整个事件然后bootstrap插件的回调也一并移除然后报bug。算是为了代码的健壮性吧。
 
@@ -164,4 +164,58 @@ $.fn.emulateTransitionEnd，看这个形式是直接挂到了jquery的prototype�
 
 具体实现上called变量保存的是transitionend是否被触发，这个变量的存在是为了保证transitionend只触发一次。可能触发多次的情况一个是transition多个属性会触发多个transitionend事件，另一个是真的transitionend事件已经触发，不需要模拟transitionend。一些具体的细节上可以结合setTimeout以及jquery的相关内容理解。突然想到之前写的[h5页面](http://jiangshanmeta.github.io/demo/myWork/org/h5page/h5page.html)里面也是监听了transitionend事件，可以参照这个思路改一改。
 
+
+顺便提一句，上面那篇文章提到了强制重绘，有一句话我觉得很好
+
+> This will work in most browsers, but I’ve had occasions in Android where this hasn’t been enough. The alternative is to either use timeouts, or by toggling a class name.
+
+就在上个周我就遇到了这个问题，强制重绘在pc上测试没问题，在微信内置浏览器上就报bug，最终解决方案也是使用定时器，[实现的代码](http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html)。
+
 transition.js内容不多，就只有三块，但是却是bootstap js插件非常重要的一环，后面只要用到css过渡的插件都依赖transition.js。
+
+
+bootstrap源码解读——alert.js
+
+之前已经[解读过bootstrap的transition.js](http://jiangshanmeta.github.io/post/bootstrap/transition/)，今天继续解读alert插件。
+
+bootstrap的alert插件从功能上看并不复杂，就是让一个警告框消失，所以重要的不是这个功能。重要的是bootstrap如何通过data属性使用插件的，以及bootstrap是如何暴露方法和事件的。
+
+先解答第一个问题，直接上代码
+
+```
+var dismiss = '[data-dismiss="alert"]'
+$(document).on('click.bs.alert.data-api', dismiss, Alert.prototype.close)
+```
+利用事件委托，监听```document```的click事件，然后子元素的选择器是```[data-dismiss="alert"]```。第一个问题回答完毕。然后是如何暴露方法的。
+
+```
+function Plugin(option) {
+	return this.each(function () {
+	  var $this = $(this)
+	  var data  = $this.data('bs.alert')
+
+	  if (!data) $this.data('bs.alert', (data = new Alert(this)))
+	  if (typeof option == 'string') data[option].call($this)
+	})
+}
+
+var old = $.fn.alert
+
+$.fn.alert             = Plugin
+$.fn.alert.Constructor = Alert
+```
+如果写过jquery插件，对于这种形式应该很熟悉，在jquery的prototype上添加了alert方法，这样就暴露了```alert```方法。手动调用```alert```方法的时候，首先会确保data上面挂着一个```Alert```实例，挂在data上面是为了缓存这么一个实例。如果传入了参数，则调用```Alert```对应方法。
+
+
+
+看一下添加这个实例的时候做了什么：
+
+```
+var Alert   = function (el) {
+$(el).on('click', dismiss, this.close)
+}
+```
+和上面在```document```上做的差不多，都是监听click事件做事件委托。
+
+
+
