@@ -94,7 +94,7 @@ function Plugin(option) {
 $.fn.alert             = Plugin
 $.fn.alert.Constructor = Alert
 ```
-如果写过jquery插件，对这种形式应该很熟悉，在jquery的prototype上添加了alert方法，这样就暴露了```alert```方法。手动调用```alert```方法的时候，首先会确保data上面挂着一个```Alert```实例，挂在data上面是为了缓存这么一个实例。如果传入了参数，则调用```Alert```对应方法。个人认为不传参数的情况其实用的不多，传参手动关闭警告框有实际应用价值。
+如果写过jquery插件，对这种形式应该很熟悉，在jquery的prototype上添加了alert方法，这样就暴露了```alert```方法。手动调用```alert```方法的时候，首先会确保data上面挂着一个```Alert```实例，挂在data上面是为了缓存这么一个实例。如果传入了参数，则调用```Alert```对应方法。个人认为不传参数的情况其实用的不多，传参手动关闭警告框有实际应用价值。以前自己写jq插件的时候，对于面向对象的理解不是很到位，对于jq插件的写法了解的也少，这种写法值得学习。
 
 
 
@@ -242,7 +242,7 @@ padding-left: 15px;
 ## 浮动部分
 如果让你实现多列布局，你想怎么办？最容易想到的就是浮动啊。bootstrap确实是使用浮动实现多列布局的。
 
-代码如下
+部分代码如下
 
 ```
 .col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {
@@ -288,3 +288,34 @@ position: relative;
 其实对于手机端来说，bootstrap一方面可能太重了，另一方面响应式布局也不见得是万能的。这就是另一个话题了。
 
 对于bootstrap的css，目前觉得也就是它的栅格系统有必要说一下，其他的再说吧。
+
+
+
+bootstrap源码解读——button.js
+
+button.js我个人觉得是属于
+
+
+
+
+
+data-*
+https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes#attr-data-*
+*可以被任何符合以下限制的the producton rule of xml names(xml的命名规则)代替：
+
+名字不能以xml开头，除此之外其他任何情形都可是使用这3个字母；
+名字不能含有分号；
+名字不能含有大写字母。
+注意：HTMLElement.dataset是一个 StringMap。一个名叫data-test-value的自定义属性可以通过HTMLElment.dataset.testValue来访问，属性的名字中的中线(U+002D)被挨着它字母的大写字母代替了（驼峰命名）。
+
+
+https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLElement/dataset
+HTMLElement.dataset 属性允许我们访问所有在元素上自定义的data属性 (这种属性一般以data-开头）. 它的结构是一个DOMString映射表，对每一个自定义的数据属性都有一个实体与之对应。
+
+自定义的数据属性名称是以 data- 开头的。 它必须要遵循 the production rule of xml names 规则，该规则是说它只可以包含字母，数字和下面的字符： dash (-), dot (.), colon (:), underscore (_)。此外不应包含ASCII 码大写字母。
+
+自定义的data 属性名称转化成 DOMStringMap 的键值时会遵循下面的规则：
+
+前缀  data- 被去除(包括减号)；
+对于每个在ASCII小写字母 a到 z前面的减号 (U+002D)，减号会被去除，并且字母会转变成对应的大写字母。
+其他字符（包含其他减号）都不发生变化
