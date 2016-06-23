@@ -1,0 +1,111 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> bootstrap源码解读——alert.js &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class="">
+		
+
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">bootstrap源码解读——alert.js</h1>
+			  <p >Thu, Jun 23, 2016</p>
+			      <p>之前已经<a href="http://jiangshanmeta.github.io/post/bootstrap/transition/">解读过bootstrap的transition.js</a>，今天继续解读alert插件。</p>
+
+<p>bootstrap的alert插件从功能上看并不复杂，就是让一个警告框消失，所以重要的不是这个功能。重要的是bootstrap如何通过data属性使用插件的，以及bootstrap的插件是如何暴露方法和事件的。</p>
+
+<p>先解答第一个问题，直接上代码</p>
+
+<pre><code>var dismiss = '[data-dismiss=&quot;alert&quot;]'
+$(document).on('click.bs.alert.data-api', dismiss, Alert.prototype.close)
+</code></pre>
+
+<p>利用事件委托，监听<code>document</code>的click事件，然后子元素的选择器是<code>[data-dismiss=&quot;alert&quot;]</code>。第一个问题回答完毕。利用data的形式使用bootstrap的插件是官方推荐的，当然也可以手动调用，虽然我觉得这样的需求很少。手动调用需要了解方法是如何暴露的。</p>
+
+<pre><code>function Plugin(option) {
+	return this.each(function () {
+	  var $this = $(this)
+	  var data  = $this.data('bs.alert')
+
+	  if (!data) $this.data('bs.alert', (data = new Alert(this)))
+	  if (typeof option == 'string') data[option].call($this)
+	})
+}
+
+$.fn.alert             = Plugin
+$.fn.alert.Constructor = Alert
+</code></pre>
+
+<p>如果写过jquery插件，对这种形式应该很熟悉，在jquery的prototype上添加了alert方法，这样就暴露了<code>alert</code>方法。手动调用<code>alert</code>方法的时候，首先会确保data上面挂着一个<code>Alert</code>实例，挂在data上面是为了缓存这么一个实例。如果传入了参数，则调用<code>Alert</code>对应方法。个人认为不传参数的情况其实用的不多，传参手动关闭警告框有实际应用价值。以前自己写jq插件的时候，对于面向对象的理解不是很到位，对于jq插件的写法了解的也少，这种写法值得学习。</p>
+
+<p>看一下Alert构造函数的具体内容：</p>
+
+<pre><code>var Alert   = function (el) {
+$(el).on('click', dismiss, this.close)
+}
+</code></pre>
+
+<p>和上面在<code>document</code>上做的差不多，都是监听click事件做事件委托。</p>
+
+<p>Alert的原型上有具体的<code>close</code>方法，在这个方法里定义了两个事件<code>close.bs.alert</code> 和<code>closed.bs.alert</code>，看一下源代码吧</p>
+
+<pre><code>Alert.prototype.close = function (e) {
+	var $this    = $(this)
+
+	var selector = $this.attr('data-target')
+	if (!selector) {
+	  selector = $this.attr('href')
+	  selector = selector &amp;&amp; selector.replace(/.*(?=#[^\s]*$)/, '') 
+	}
+	var $parent = $(selector)
+	if (e) e.preventDefault()
+	if (!$parent.length) {
+	  $parent = $this.closest('.alert')
+	}
+
+	$parent.trigger(e = $.Event('close.bs.alert'))
+
+	if (e.isDefaultPrevented()) return
+
+	$parent.removeClass('in')
+
+	function removeElement() {
+	  // detach from parent, fire event then clean up data
+	  $parent.detach().trigger('closed.bs.alert').remove()
+	}
+
+	$.support.transition &amp;&amp; $parent.hasClass('fade') ?
+	  $parent
+	    .one('bsTransitionEnd', removeElement)
+	    .emulateTransitionEnd(Alert.TRANSITION_DURATION) :
+	  removeElement()
+}
+</code></pre>
+
+<p>首先做的是寻找关闭时要移除的元素，查找的优先顺序是 data-target、href、最近的含有<code>alert</code>类的元素。在官方文档里其实并没有提及前两种情况，事实上第三种情况更接近实际需求。对于警告框的删除，一种是有过渡效果的，一种是没有过渡效果的。有过渡效果的情况警告框含有<code>fade</code>和<code>in</code>两个类并支持过渡，可以在相关css文件看一下代码，就是实现透明度从1过渡到0 。没过渡效果的情况可能是根本不支持css3过渡，也可能是没有<code>fade</code>这个类。有过渡效果的是在过渡完成后删除警告框，没有过渡的直接删除了，无过渡代码里没有尝试对淡出效果进行模拟。两个事件分别是在移除前和移除后触发的，注意<code>removeElement</code>的具体实现，先是detach，然后触发事件，最后remove，说实话这两个方法的区别我还体会不深，求大神指教。在实现过渡时使用了transition.js里提供的emulateTransitionEnd，为的是保证回调能够顺利执行。</p>
+
+<p>最后是防冲突，自己看源码吧，写的挺巧妙的，旧的函数和新的函数都能很好地得到保存。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+			console.log("contact 540118044@qq.com");
+		</script>
+  </body>
+</html>

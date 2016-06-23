@@ -6,8 +6,92 @@
     <description>Recent content in Javascript on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 22 Jun 2016 19:07:30 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 23 Jun 2016 21:59:53 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>bootstrap源码解读——alert.js</title>
+      <link>http://jiangshanmeta.github.io/post/bootstrap/alert/</link>
+      <pubDate>Thu, 23 Jun 2016 21:59:53 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/bootstrap/alert/</guid>
+      <description>&lt;p&gt;之前已经&lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/transition/&#34;&gt;解读过bootstrap的transition.js&lt;/a&gt;，今天继续解读alert插件。&lt;/p&gt;
+
+&lt;p&gt;bootstrap的alert插件从功能上看并不复杂，就是让一个警告框消失，所以重要的不是这个功能。重要的是bootstrap如何通过data属性使用插件的，以及bootstrap的插件是如何暴露方法和事件的。&lt;/p&gt;
+
+&lt;p&gt;先解答第一个问题，直接上代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var dismiss = &#39;[data-dismiss=&amp;quot;alert&amp;quot;]&#39;
+$(document).on(&#39;click.bs.alert.data-api&#39;, dismiss, Alert.prototype.close)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;利用事件委托，监听&lt;code&gt;document&lt;/code&gt;的click事件，然后子元素的选择器是&lt;code&gt;[data-dismiss=&amp;quot;alert&amp;quot;]&lt;/code&gt;。第一个问题回答完毕。利用data的形式使用bootstrap的插件是官方推荐的，当然也可以手动调用，虽然我觉得这样的需求很少。手动调用需要了解方法是如何暴露的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Plugin(option) {
+	return this.each(function () {
+	  var $this = $(this)
+	  var data  = $this.data(&#39;bs.alert&#39;)
+
+	  if (!data) $this.data(&#39;bs.alert&#39;, (data = new Alert(this)))
+	  if (typeof option == &#39;string&#39;) data[option].call($this)
+	})
+}
+
+$.fn.alert             = Plugin
+$.fn.alert.Constructor = Alert
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果写过jquery插件，对这种形式应该很熟悉，在jquery的prototype上添加了alert方法，这样就暴露了&lt;code&gt;alert&lt;/code&gt;方法。手动调用&lt;code&gt;alert&lt;/code&gt;方法的时候，首先会确保data上面挂着一个&lt;code&gt;Alert&lt;/code&gt;实例，挂在data上面是为了缓存这么一个实例。如果传入了参数，则调用&lt;code&gt;Alert&lt;/code&gt;对应方法。个人认为不传参数的情况其实用的不多，传参手动关闭警告框有实际应用价值。以前自己写jq插件的时候，对于面向对象的理解不是很到位，对于jq插件的写法了解的也少，这种写法值得学习。&lt;/p&gt;
+
+&lt;p&gt;看一下Alert构造函数的具体内容：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var Alert   = function (el) {
+$(el).on(&#39;click&#39;, dismiss, this.close)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;和上面在&lt;code&gt;document&lt;/code&gt;上做的差不多，都是监听click事件做事件委托。&lt;/p&gt;
+
+&lt;p&gt;Alert的原型上有具体的&lt;code&gt;close&lt;/code&gt;方法，在这个方法里定义了两个事件&lt;code&gt;close.bs.alert&lt;/code&gt; 和&lt;code&gt;closed.bs.alert&lt;/code&gt;，看一下源代码吧&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Alert.prototype.close = function (e) {
+	var $this    = $(this)
+
+	var selector = $this.attr(&#39;data-target&#39;)
+	if (!selector) {
+	  selector = $this.attr(&#39;href&#39;)
+	  selector = selector &amp;amp;&amp;amp; selector.replace(/.*(?=#[^\s]*$)/, &#39;&#39;) 
+	}
+	var $parent = $(selector)
+	if (e) e.preventDefault()
+	if (!$parent.length) {
+	  $parent = $this.closest(&#39;.alert&#39;)
+	}
+
+	$parent.trigger(e = $.Event(&#39;close.bs.alert&#39;))
+
+	if (e.isDefaultPrevented()) return
+
+	$parent.removeClass(&#39;in&#39;)
+
+	function removeElement() {
+	  // detach from parent, fire event then clean up data
+	  $parent.detach().trigger(&#39;closed.bs.alert&#39;).remove()
+	}
+
+	$.support.transition &amp;amp;&amp;amp; $parent.hasClass(&#39;fade&#39;) ?
+	  $parent
+	    .one(&#39;bsTransitionEnd&#39;, removeElement)
+	    .emulateTransitionEnd(Alert.TRANSITION_DURATION) :
+	  removeElement()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先做的是寻找关闭时要移除的元素，查找的优先顺序是 data-target、href、最近的含有&lt;code&gt;alert&lt;/code&gt;类的元素。在官方文档里其实并没有提及前两种情况，事实上第三种情况更接近实际需求。对于警告框的删除，一种是有过渡效果的，一种是没有过渡效果的。有过渡效果的情况警告框含有&lt;code&gt;fade&lt;/code&gt;和&lt;code&gt;in&lt;/code&gt;两个类并支持过渡，可以在相关css文件看一下代码，就是实现透明度从1过渡到0 。没过渡效果的情况可能是根本不支持css3过渡，也可能是没有&lt;code&gt;fade&lt;/code&gt;这个类。有过渡效果的是在过渡完成后删除警告框，没有过渡的直接删除了，无过渡代码里没有尝试对淡出效果进行模拟。两个事件分别是在移除前和移除后触发的，注意&lt;code&gt;removeElement&lt;/code&gt;的具体实现，先是detach，然后触发事件，最后remove，说实话这两个方法的区别我还体会不深，求大神指教。在实现过渡时使用了transition.js里提供的emulateTransitionEnd，为的是保证回调能够顺利执行。&lt;/p&gt;
+
+&lt;p&gt;最后是防冲突，自己看源码吧，写的挺巧妙的，旧的函数和新的函数都能很好地得到保存。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——transition.js</title>

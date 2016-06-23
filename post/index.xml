@@ -6,8 +6,92 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 22 Jun 2016 19:07:30 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 23 Jun 2016 21:59:53 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>bootstrap源码解读——alert.js</title>
+      <link>http://jiangshanmeta.github.io/post/bootstrap/alert/</link>
+      <pubDate>Thu, 23 Jun 2016 21:59:53 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/bootstrap/alert/</guid>
+      <description>&lt;p&gt;之前已经&lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/transition/&#34;&gt;解读过bootstrap的transition.js&lt;/a&gt;，今天继续解读alert插件。&lt;/p&gt;
+
+&lt;p&gt;bootstrap的alert插件从功能上看并不复杂，就是让一个警告框消失，所以重要的不是这个功能。重要的是bootstrap如何通过data属性使用插件的，以及bootstrap的插件是如何暴露方法和事件的。&lt;/p&gt;
+
+&lt;p&gt;先解答第一个问题，直接上代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var dismiss = &#39;[data-dismiss=&amp;quot;alert&amp;quot;]&#39;
+$(document).on(&#39;click.bs.alert.data-api&#39;, dismiss, Alert.prototype.close)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;利用事件委托，监听&lt;code&gt;document&lt;/code&gt;的click事件，然后子元素的选择器是&lt;code&gt;[data-dismiss=&amp;quot;alert&amp;quot;]&lt;/code&gt;。第一个问题回答完毕。利用data的形式使用bootstrap的插件是官方推荐的，当然也可以手动调用，虽然我觉得这样的需求很少。手动调用需要了解方法是如何暴露的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Plugin(option) {
+	return this.each(function () {
+	  var $this = $(this)
+	  var data  = $this.data(&#39;bs.alert&#39;)
+
+	  if (!data) $this.data(&#39;bs.alert&#39;, (data = new Alert(this)))
+	  if (typeof option == &#39;string&#39;) data[option].call($this)
+	})
+}
+
+$.fn.alert             = Plugin
+$.fn.alert.Constructor = Alert
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果写过jquery插件，对这种形式应该很熟悉，在jquery的prototype上添加了alert方法，这样就暴露了&lt;code&gt;alert&lt;/code&gt;方法。手动调用&lt;code&gt;alert&lt;/code&gt;方法的时候，首先会确保data上面挂着一个&lt;code&gt;Alert&lt;/code&gt;实例，挂在data上面是为了缓存这么一个实例。如果传入了参数，则调用&lt;code&gt;Alert&lt;/code&gt;对应方法。个人认为不传参数的情况其实用的不多，传参手动关闭警告框有实际应用价值。以前自己写jq插件的时候，对于面向对象的理解不是很到位，对于jq插件的写法了解的也少，这种写法值得学习。&lt;/p&gt;
+
+&lt;p&gt;看一下Alert构造函数的具体内容：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var Alert   = function (el) {
+$(el).on(&#39;click&#39;, dismiss, this.close)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;和上面在&lt;code&gt;document&lt;/code&gt;上做的差不多，都是监听click事件做事件委托。&lt;/p&gt;
+
+&lt;p&gt;Alert的原型上有具体的&lt;code&gt;close&lt;/code&gt;方法，在这个方法里定义了两个事件&lt;code&gt;close.bs.alert&lt;/code&gt; 和&lt;code&gt;closed.bs.alert&lt;/code&gt;，看一下源代码吧&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Alert.prototype.close = function (e) {
+	var $this    = $(this)
+
+	var selector = $this.attr(&#39;data-target&#39;)
+	if (!selector) {
+	  selector = $this.attr(&#39;href&#39;)
+	  selector = selector &amp;amp;&amp;amp; selector.replace(/.*(?=#[^\s]*$)/, &#39;&#39;) 
+	}
+	var $parent = $(selector)
+	if (e) e.preventDefault()
+	if (!$parent.length) {
+	  $parent = $this.closest(&#39;.alert&#39;)
+	}
+
+	$parent.trigger(e = $.Event(&#39;close.bs.alert&#39;))
+
+	if (e.isDefaultPrevented()) return
+
+	$parent.removeClass(&#39;in&#39;)
+
+	function removeElement() {
+	  // detach from parent, fire event then clean up data
+	  $parent.detach().trigger(&#39;closed.bs.alert&#39;).remove()
+	}
+
+	$.support.transition &amp;amp;&amp;amp; $parent.hasClass(&#39;fade&#39;) ?
+	  $parent
+	    .one(&#39;bsTransitionEnd&#39;, removeElement)
+	    .emulateTransitionEnd(Alert.TRANSITION_DURATION) :
+	  removeElement()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先做的是寻找关闭时要移除的元素，查找的优先顺序是 data-target、href、最近的含有&lt;code&gt;alert&lt;/code&gt;类的元素。在官方文档里其实并没有提及前两种情况，事实上第三种情况更接近实际需求。对于警告框的删除，一种是有过渡效果的，一种是没有过渡效果的。有过渡效果的情况警告框含有&lt;code&gt;fade&lt;/code&gt;和&lt;code&gt;in&lt;/code&gt;两个类并支持过渡，可以在相关css文件看一下代码，就是实现透明度从1过渡到0 。没过渡效果的情况可能是根本不支持css3过渡，也可能是没有&lt;code&gt;fade&lt;/code&gt;这个类。有过渡效果的是在过渡完成后删除警告框，没有过渡的直接删除了，无过渡代码里没有尝试对淡出效果进行模拟。两个事件分别是在移除前和移除后触发的，注意&lt;code&gt;removeElement&lt;/code&gt;的具体实现，先是detach，然后触发事件，最后remove，说实话这两个方法的区别我还体会不深，求大神指教。在实现过渡时使用了transition.js里提供的emulateTransitionEnd，为的是保证回调能够顺利执行。&lt;/p&gt;
+
+&lt;p&gt;最后是防冲突，自己看源码吧，写的挺巧妙的，旧的函数和新的函数都能很好地得到保存。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——transition.js</title>
@@ -1392,94 +1476,6 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2016/05/29
 &lt;a href=&#34;http://jiangshanmeta.github.io/post/cssshape/&#34;&gt;使用伪元素结合border实现彩色环和梯形&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>你真的会用CSS画写正方形吗？</title>
-      <link>http://jiangshanmeta.github.io/post/autosquare/</link>
-      <pubDate>Sat, 14 May 2016 11:26:46 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/autosquare/</guid>
-      <description>
-
-&lt;p&gt;用CSS写一个正方形，对于前端工作者来说是一个再常见不过的需求了，通常情况下，你可能会写出这样的代码：&lt;code&gt;width:200px;height:200px;&lt;/code&gt; 这是最简单的实现了，然而，如果我想要一个300px的正方形呢？或许你会写出如下代码：&lt;code&gt;width:300px;height:300px;&lt;/code&gt; 。那么，如果我想要一个400px的正方形呢？你可能会写出以下代码：&lt;code&gt;width:400px;height:400px;&lt;/code&gt; 同时开始准备和产品以及美术来一场大战。&lt;/p&gt;
-
-&lt;p&gt;显然，一个爱敲键盘的程序员不是好程序员，想偷懒就要对上面的需求进行抽象，然后脑洞大开。上面的需求可以抽象为如何写一个自适应的正方形，这一点其实没什么问题。&lt;/p&gt;
-
-&lt;h2 id=&#34;脑洞大开时间:e010fd746b92c0785d41a89ff0373934&#34;&gt;脑洞大开时间&lt;/h2&gt;
-
-&lt;p&gt;CSS经常被一些大神认为不是一种编程语言，然而，我们可以假装CSS是一门编程语言，就像我可以假装自己有女朋友一样。好了，现在CSS是一门编程语言了，那它会有什么？ &lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，一门编程语言没有this你还怎么面向对象编程。如果CSS有this的话，这里就可以这么写了&lt;code&gt;height:this.width&lt;/code&gt;,感觉上挺自然的，以后写CSS会不会要求OOP风格？&lt;/p&gt;
-
-&lt;p&gt;然而，CSS并不支持this，所以脑洞时间结束了，回归现实世界吧&lt;/p&gt;
-
-&lt;h2 id=&#34;回归正常前的瞎折腾阶段:e010fd746b92c0785d41a89ff0373934&#34;&gt;回归正常前的瞎折腾阶段&lt;/h2&gt;
-
-&lt;p&gt;在CSS中，有一些相对单位，比如em，rem，vw，vh之类的，能否用这些做点尝试。&lt;/p&gt;
-
-&lt;p&gt;比如，一个div，宽度是50vw，那么高度也是50vw就好了，算是一种自适应的正方形的实现方案吧。然而，宽高都要基于视口，稍微复杂点的场景就解决不了了，比如，这个div的宽度根本就不是根据视口来的你想怎么办。vw和vh的解决方案由于不够健壮而排出，em 、rem的实现也类似，宽度和高度都要写死 是多少rem/em，大家都有同样的问题，所以也排除了。&lt;/p&gt;
-
-&lt;h2 id=&#34;咦-为什么一定要纠结于设定高度呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;咦，为什么一定要纠结于设定高度呢？&lt;/h2&gt;
-
-&lt;p&gt;对啊，需求是写一个自适应的正方形，谁说一定要在height上折腾，比如，可以用padding撑开这个盒子啊。这一要说一点知识性的东西了，padding值如果取值为百分比，则该百分比是相对于父元素的宽度进行计算的，比那个height的百分比不知道高到哪里去了（height的百分比是相较于父元素的高度的），所以以下代码就可以实现一个响应式的正方形&lt;code&gt;width:25%;padding-bottom:25%;&lt;/code&gt;然而还不够优雅，还是要针对不同的场景写不同的padding-bottom。&lt;/p&gt;
-
-&lt;p&gt;给大家安利一本我最近在看的书 &lt;strong&gt;CSS Secrets&lt;/strong&gt;，其中讲到伪元素能做很多事情。那这里伪元素能做什么呢？伪元素如果是块级元素，其宽度就是父元素宽度（不考虑padding和border），那么伪元素的padding如果为百分比，就是参考于我们正在处理的这个盒子，所以我们有了阶段性的成果：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;.auto-square::before{
-	content:&#39;&#39;;
-	display:block;
-	padding-bottom:100%;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;于是一个自适应的正方形就这么写出来了&lt;/p&gt;
-
-&lt;p&gt;于是，又有新的需求的，还要填内容啊！！&lt;/p&gt;
-
-&lt;h2 id=&#34;在自适应的正方形里如何填内容呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;在自适应的正方形里如何填内容呢？&lt;/h2&gt;
-
-&lt;p&gt;如果按照正常的流填什么内容都会破坏正方形的结构，所以我的解决方案是对内容进行绝对定位定位到正方形里。相应的，CSS代码也要加点东西&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.auto-square{
-	position:relative;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;实战:e010fd746b92c0785d41a89ff0373934&#34;&gt;实战&lt;/h2&gt;
-
-&lt;p&gt;朋友圈里经常有人发个九连拍，每张图所在的盒子就是一个正方形。然而，朋友圈的图片是正方形缩略图，在自己的项目中还要拜托后端处理出一张缩略图来。想想自己也要写后端就觉得干脆用原图然后居中显示得了。&lt;/p&gt;
-
-&lt;p&gt;下面是核心代码&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.auto-square{
-	position:relative;
-}
-.auto-square::before{
-	content:&#39;&#39;;
-	display:block;
-	padding-bottom:100%;
-}
-.center-ab{
-	position:absolute;
-	top:50%;
-	left:50%;
-	-webkit-transform:translate(-50%,-50%);
-	-moz-transform:translate(-50%,-50%);
-	-ms-transform:translate(-50%,-50%);
-	-o-transform:translate(-50%,-50%);
-	transform:translate(-50%,-50%);
-}
-.img-responsive{
-	display:block;
-	max-width:100%;
-	max-height:100%;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;以及一个&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/auto-square.html&#34;&gt;简单地实例&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;update 2016/5/16
-想起来这一方法不仅仅能够实现正方形，也能实现长宽比一定的矩形&lt;/p&gt;
 </description>
     </item>
     

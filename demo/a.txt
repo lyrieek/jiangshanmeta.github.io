@@ -66,87 +66,9 @@ http://www.cnblogs.com/coco1s/p/5439619.html
 根据数据的流向，将渲染过程分为三个阶段，第一阶段是从网页的URL到构建完DOM树，第二个阶段是从DOM树到构建完webkit的绘图上下文，第三个阶段是从绘图上下文到生成最终的图像。
 
 
-bootstrap源码解读——alert.js
-
-之前已经[解读过bootstrap的transition.js](http://jiangshanmeta.github.io/post/bootstrap/transition/)，今天继续解读alert插件。
-
-bootstrap的alert插件从功能上看并不复杂，就是让一个警告框消失，所以重要的不是这个功能。重要的是bootstrap如何通过data属性使用插件的，以及bootstrap的插件是如何暴露方法和事件的。
-
-先解答第一个问题，直接上代码
-
-```
-var dismiss = '[data-dismiss="alert"]'
-$(document).on('click.bs.alert.data-api', dismiss, Alert.prototype.close)
-```
-利用事件委托，监听```document```的click事件，然后子元素的选择器是```[data-dismiss="alert"]```。第一个问题回答完毕。利用data的形式使用bootstrap的插件是官方推荐的，当然也可以手动调用，虽然我觉得这样的需求很少。手动调用需要了解方法是如何暴露的。
-
-```
-function Plugin(option) {
-	return this.each(function () {
-	  var $this = $(this)
-	  var data  = $this.data('bs.alert')
-
-	  if (!data) $this.data('bs.alert', (data = new Alert(this)))
-	  if (typeof option == 'string') data[option].call($this)
-	})
-}
-
-$.fn.alert             = Plugin
-$.fn.alert.Constructor = Alert
-```
-如果写过jquery插件，对这种形式应该很熟悉，在jquery的prototype上添加了alert方法，这样就暴露了```alert```方法。手动调用```alert```方法的时候，首先会确保data上面挂着一个```Alert```实例，挂在data上面是为了缓存这么一个实例。如果传入了参数，则调用```Alert```对应方法。个人认为不传参数的情况其实用的不多，传参手动关闭警告框有实际应用价值。以前自己写jq插件的时候，对于面向对象的理解不是很到位，对于jq插件的写法了解的也少，这种写法值得学习。
 
 
 
-看一下Alert构造函数的具体内容：
-
-```
-var Alert   = function (el) {
-$(el).on('click', dismiss, this.close)
-}
-```
-和上面在```document```上做的差不多，都是监听click事件做事件委托。
-
-Alert的原型上有具体的```close```方法，在这个方法里定义了两个事件```close.bs.alert``` 和```closed.bs.alert```，看一下源代码吧
-
-```
-Alert.prototype.close = function (e) {
-	var $this    = $(this)
-
-	var selector = $this.attr('data-target')
-	if (!selector) {
-	  selector = $this.attr('href')
-	  selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
-	}
-	var $parent = $(selector)
-	if (e) e.preventDefault()
-	if (!$parent.length) {
-	  $parent = $this.closest('.alert')
-	}
-
-	$parent.trigger(e = $.Event('close.bs.alert'))
-
-	if (e.isDefaultPrevented()) return
-
-	$parent.removeClass('in')
-
-	function removeElement() {
-	  // detach from parent, fire event then clean up data
-	  $parent.detach().trigger('closed.bs.alert').remove()
-	}
-
-	$.support.transition && $parent.hasClass('fade') ?
-	  $parent
-	    .one('bsTransitionEnd', removeElement)
-	    .emulateTransitionEnd(Alert.TRANSITION_DURATION) :
-	  removeElement()
-}
-```
-
-首先做的是寻找关闭时要移除的元素，查找的优先顺序是 data-target、href、最近的含有```alert```类的元素。在官方文档里其实并没有提及前两种情况，事实上第三种情况更接近实际需求。对于警告框的删除，一种是有过渡效果的，一种是没有过渡效果的。有过渡效果的情况警告框含有```fade```和```in```两个类并支持过渡，可以在相关css文件看一下代码，就是实现透明度从1过渡到0 。没过渡效果的情况可能是根本不支持css3过渡，也可能是没有```fade```这个类。有过渡效果的是在过渡完成后删除警告框，没有过渡的直接删除了，无过渡代码里没有尝试对淡出效果进行模拟。两个事件分别是在移除前和移除后触发的，注意```removeElement```的具体实现，先是detach，然后触发事件，最后remove，说实话这两个方法的区别我还体会不深，求大神指教。在实现过渡时使用了transition.js里提供的emulateTransitionEnd，为的是保证回调能够顺利执行。
-
-
-最后是防冲突，自己看源码吧，写的挺巧妙的，旧的函数和新的函数都能很好地得到保存。
 
 
 
@@ -293,29 +215,68 @@ position: relative;
 
 bootstrap源码解读——button.js
 
-button.js我个人觉得是属于
+button.js我个人觉得是属于从一开始就没想明白要做什么。和其他的bootstrap的插件一样，button也能用data的形式调用插件，但是我真心没想明白使用data调用的有什么实际用途。反而我觉得手动调用的对我来说更有实际意义，所以这里只说[button.js改变状态的部分](http://v3.bootcss.com/javascript/#buttons-stateful)。
 
+在web应用中免不了用户触发ajax请求，比如提交表单（实际项目中没有用表单的直接提交，而是使用了ajax提交表单），点击加载更多。在ajax过程中我们需要告诉用户正在进行中，需要等待。在实际项目中为了实现这一个需求我们使用了一个插件blockUI,可以自行百度一下，我觉得挺好用的。另一种方案是改变button的状态，把他标记为不可点击。
 
+整体形式是标准的bootstrap插件的形式，关于如何绑定方法，如何防冲突，这些都在 [bootstrap源码解读——alert.js](http://jiangshanmeta.github.io/post/bootstrap/alert/)中分析过了，没有必要去做过多的说明。
 
+```
+function Plugin(option) {
+  return this.each(function () {
+    var $this   = $(this)
+    var data    = $this.data('bs.button')
+    var options = typeof option == 'object' && option
 
+    if (!data) $this.data('bs.button', (data = new Button(this, options)))
 
-data-*
-https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes#attr-data-*
-*可以被任何符合以下限制的the producton rule of xml names(xml的命名规则)代替：
+    if (option == 'toggle') data.toggle()
+    else if (option) data.setState(option)
+  })
+}
+```
+和alert.js类似，这里也是采用data的形式进行缓存```Button```实例，我们不需要去关心```toggle```的实现，因为我连应用场景都没想到，我们只需关心调用```setState```方法。setState传入的参数其实只有```loading```和```reset```是有效的。
 
-名字不能以xml开头，除此之外其他任何情形都可是使用这3个字母；
-名字不能含有分号；
-名字不能含有大写字母。
+```
+Button.prototype.setState = function (state) {
+  var d    = 'disabled'
+  var $el  = this.$element
+  var val  = $el.is('input') ? 'val' : 'html'
+  var data = $el.data()
+
+  state += 'Text'
+
+  if (data.resetText == null) $el.data('resetText', $el[val]())
+
+  // push to event loop to allow forms to submit
+  setTimeout($.proxy(function () {
+    $el[val](data[state] == null ? this.options[state] : data[state])
+
+    if (state == 'loadingText') {
+      this.isLoading = true
+      $el.addClass(d).attr(d, d)
+    } else if (this.isLoading) {
+      this.isLoading = false
+      $el.removeClass(d).removeAttr(d)
+    }
+  }, this), 0)
+}
+```
+读起来并不是很难懂，一个要注意的地方是```setTimeout```，这个函数一方面会改变```this```的指向，我以前也分析过[javascript的this坑](http://jiangshanmeta.github.io/post/jsthis/)，另一方面是定时器的原理，不是相隔多长时间后执行，而是相隔多长时间后加入任务队列，这个[我以前也提及过](http://jiangshanmeta.github.io/post/browser/)。另一个要注意的点是data的使用，利用data保存button中原来的内容就不说了，很常规的一个写法。比较有趣的是对于加载时显示内容的处理。文档上说加载时保存的信息保存在了```data-loading-text```中，但是我们在代码中读取的时候是以```loadingText```的形式读写，这就比较有意思了，一个中划线没了，然后一个大小写改变了。查了查MDN找到了答案：
+
+data-*,*可以被任何符合以下限制的the producton rule of xml names(xml的命名规则)代替：
+
+1. 名字不能以xml开头，除此之外其他任何情形都可是使用这3个字母；
+2. 名字不能含有分号；
+3. 名字不能含有大写字母。
+
 注意：HTMLElement.dataset是一个 StringMap。一个名叫data-test-value的自定义属性可以通过HTMLElment.dataset.testValue来访问，属性的名字中的中线(U+002D)被挨着它字母的大写字母代替了（驼峰命名）。
-
-
-https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLElement/dataset
-HTMLElement.dataset 属性允许我们访问所有在元素上自定义的data属性 (这种属性一般以data-开头）. 它的结构是一个DOMString映射表，对每一个自定义的数据属性都有一个实体与之对应。
-
-自定义的数据属性名称是以 data- 开头的。 它必须要遵循 the production rule of xml names 规则，该规则是说它只可以包含字母，数字和下面的字符： dash (-), dot (.), colon (:), underscore (_)。此外不应包含ASCII 码大写字母。
 
 自定义的data 属性名称转化成 DOMStringMap 的键值时会遵循下面的规则：
 
-前缀  data- 被去除(包括减号)；
-对于每个在ASCII小写字母 a到 z前面的减号 (U+002D)，减号会被去除，并且字母会转变成对应的大写字母。
-其他字符（包含其他减号）都不发生变化
+1. 前缀  data- 被去除(包括减号)；
+2. 对于每个在ASCII小写字母 a到 z前面的减号 (U+002D)，减号会被去除，并且字母会转变成对应的大写字母。其他字符（包含其他减号）都不发生变化
+
+
+具体链接: [data-*](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes#attr-data-*),[dataset](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLElement/dataset)
+
