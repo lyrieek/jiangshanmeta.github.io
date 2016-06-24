@@ -6,8 +6,90 @@
     <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Jun 2016 20:19:53 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 24 Jun 2016 20:05:51 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/css/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>如何将页脚固定在页面底部</title>
+      <link>http://jiangshanmeta.github.io/post/stickyfooter/</link>
+      <pubDate>Fri, 24 Jun 2016 20:05:51 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/stickyfooter/</guid>
+      <description>
+
+&lt;p&gt;在一个网页中通常会有页脚的设置。如果页面内容较少，看起来页脚就像是浮了起来，在浏览器的下面还有一块白色，显得非常难看。我不会告诉你我最近看到的新鲜的页面里还有这种问题，都是同行，给人个面子，不给链接了。那么如何解决这一问题呢？&lt;/p&gt;
+
+&lt;h2 id=&#34;javascript方案:57c3c18f56fe86510d201aa293fed882&#34;&gt;javascript方案&lt;/h2&gt;
+
+&lt;p&gt;不难，请自行百度。然而我总是想能用css解决的绝对不用js。先约定一下页面结构：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;body&amp;gt;
+	&amp;lt;header id=&amp;quot;header&amp;quot;&amp;gt;
+
+	&amp;lt;/header &amp;gt;
+	&amp;lt;main id=&amp;quot;header&amp;quot;&amp;gt;
+
+	&amp;lt;/main&amp;gt;
+	&amp;lt;footer id=&amp;quot;footer&amp;quot;&amp;gt;
+
+	&amp;lt;/footer&amp;gt;
+&amp;lt;/body&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;公共的样式设置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;*{
+	margin:0;
+	padding:0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;table方案:57c3c18f56fe86510d201aa293fed882&#34;&gt;table方案&lt;/h2&gt;
+
+&lt;p&gt;这里所说的table并不是说html table，而是css table。在css的display属性中，有一堆关于table的值，比如&lt;code&gt;table&lt;/code&gt;,&lt;code&gt;table-row&lt;/code&gt;,&lt;code&gt;table-cell&lt;/code&gt;。这些值可以帮助我们像表格一样布局而不使用html table。这里用到的是&lt;code&gt;table&lt;/code&gt;和&lt;code&gt;table-row&lt;/code&gt;两个值。&lt;/p&gt;
+
+&lt;p&gt;我们可以把整个body视为一个table，然后header、main、footer三部分视为table-row。并且让main占据100%高度。可能你觉得很奇怪如果main高度设为100%，那么header和footer的高度岂不是零了？但是table有许多神奇的特性，header和footer会正常显示。&lt;/p&gt;
+
+&lt;p&gt;这样你会发现依然没有实现固定在底部。因为body的高度现在是由内容决定的，我们要设置body的最小高度设为视口高度。可以采用100vh这么一个方案，如果担心兼容性问题，可以把高度设为百分比。&lt;/p&gt;
+
+&lt;p&gt;代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;body{
+	display:table;
+	width:100%;
+	min-height:100vh;
+}
+#main{
+	display:table-row;
+	height:100%;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在线demo：&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;固定在底部的页脚——table方案&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;flex方案:57c3c18f56fe86510d201aa293fed882&#34;&gt;flex方案&lt;/h2&gt;
+
+&lt;p&gt;flex作为布局神器，基本上你想到的用flex都能做。这里所需要的是两个属性&lt;code&gt;flex-direction&lt;/code&gt;和&lt;code&gt;flex-grow&lt;/code&gt;。我们需要把body作为 flex盒子，并把flex盒子方向设为column，把我们的主体内容的扩展属性设为1，header和footer不扩展，这样就会让主体内容自动填充空余部分。&lt;/p&gt;
+
+&lt;p&gt;代码如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;body{
+	display:flex;
+	flex-direction:column;
+	min-height:100vh;
+}
+#main{
+	flex-grow:1;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在线demo：&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/flex.html&#34;&gt;固定在底部的页脚——flex方案&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;总结:57c3c18f56fe86510d201aa293fed882&#34;&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;关于如何实现固定在底部的页脚，其实也有许多方案，但是有各种各样的问题，比如footer的高度必须是固定的。我上面所说的两种纯CSS方案都不需要固定footer的高度，基本上可以直接拿到生产环境里用。另外，关于css table的使用自己还需要多多学习，希望近期能够写篇总结。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>关于CSS3 transition 的几个小tip</title>

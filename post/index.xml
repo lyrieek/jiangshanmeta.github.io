@@ -6,8 +6,90 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jun 2016 21:59:53 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 24 Jun 2016 20:05:51 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>如何将页脚固定在页面底部</title>
+      <link>http://jiangshanmeta.github.io/post/stickyfooter/</link>
+      <pubDate>Fri, 24 Jun 2016 20:05:51 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/stickyfooter/</guid>
+      <description>
+
+&lt;p&gt;在一个网页中通常会有页脚的设置。如果页面内容较少，看起来页脚就像是浮了起来，在浏览器的下面还有一块白色，显得非常难看。我不会告诉你我最近看到的新鲜的页面里还有这种问题，都是同行，给人个面子，不给链接了。那么如何解决这一问题呢？&lt;/p&gt;
+
+&lt;h2 id=&#34;javascript方案:57c3c18f56fe86510d201aa293fed882&#34;&gt;javascript方案&lt;/h2&gt;
+
+&lt;p&gt;不难，请自行百度。然而我总是想能用css解决的绝对不用js。先约定一下页面结构：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;body&amp;gt;
+	&amp;lt;header id=&amp;quot;header&amp;quot;&amp;gt;
+
+	&amp;lt;/header &amp;gt;
+	&amp;lt;main id=&amp;quot;header&amp;quot;&amp;gt;
+
+	&amp;lt;/main&amp;gt;
+	&amp;lt;footer id=&amp;quot;footer&amp;quot;&amp;gt;
+
+	&amp;lt;/footer&amp;gt;
+&amp;lt;/body&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;公共的样式设置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;*{
+	margin:0;
+	padding:0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;table方案:57c3c18f56fe86510d201aa293fed882&#34;&gt;table方案&lt;/h2&gt;
+
+&lt;p&gt;这里所说的table并不是说html table，而是css table。在css的display属性中，有一堆关于table的值，比如&lt;code&gt;table&lt;/code&gt;,&lt;code&gt;table-row&lt;/code&gt;,&lt;code&gt;table-cell&lt;/code&gt;。这些值可以帮助我们像表格一样布局而不使用html table。这里用到的是&lt;code&gt;table&lt;/code&gt;和&lt;code&gt;table-row&lt;/code&gt;两个值。&lt;/p&gt;
+
+&lt;p&gt;我们可以把整个body视为一个table，然后header、main、footer三部分视为table-row。并且让main占据100%高度。可能你觉得很奇怪如果main高度设为100%，那么header和footer的高度岂不是零了？但是table有许多神奇的特性，header和footer会正常显示。&lt;/p&gt;
+
+&lt;p&gt;这样你会发现依然没有实现固定在底部。因为body的高度现在是由内容决定的，我们要设置body的最小高度设为视口高度。可以采用100vh这么一个方案，如果担心兼容性问题，可以把高度设为百分比。&lt;/p&gt;
+
+&lt;p&gt;代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;body{
+	display:table;
+	width:100%;
+	min-height:100vh;
+}
+#main{
+	display:table-row;
+	height:100%;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在线demo：&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;固定在底部的页脚——table方案&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;flex方案:57c3c18f56fe86510d201aa293fed882&#34;&gt;flex方案&lt;/h2&gt;
+
+&lt;p&gt;flex作为布局神器，基本上你想到的用flex都能做。这里所需要的是两个属性&lt;code&gt;flex-direction&lt;/code&gt;和&lt;code&gt;flex-grow&lt;/code&gt;。我们需要把body作为 flex盒子，并把flex盒子方向设为column，把我们的主体内容的扩展属性设为1，header和footer不扩展，这样就会让主体内容自动填充空余部分。&lt;/p&gt;
+
+&lt;p&gt;代码如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;body{
+	display:flex;
+	flex-direction:column;
+	min-height:100vh;
+}
+#main{
+	flex-grow:1;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在线demo：&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/flex.html&#34;&gt;固定在底部的页脚——flex方案&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;总结:57c3c18f56fe86510d201aa293fed882&#34;&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;关于如何实现固定在底部的页脚，其实也有许多方案，但是有各种各样的问题，比如footer的高度必须是固定的。我上面所说的两种纯CSS方案都不需要固定footer的高度，基本上可以直接拿到生产环境里用。另外，关于css table的使用自己还需要多多学习，希望近期能够写篇总结。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——alert.js</title>
@@ -1397,85 +1479,6 @@ transform:translate(-50%,-50%);
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;相关&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/center/center.css&#34;&gt;CSS下载&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>伪元素的应用总结</title>
-      <link>http://jiangshanmeta.github.io/post/pseudo/</link>
-      <pubDate>Mon, 16 May 2016 20:00:31 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/pseudo/</guid>
-      <description>
-
-&lt;dl&gt;
-&lt;dt&gt;CSS中的伪元素CSS中经常能玩出花样的东西，它包括::first-letter、::first-line、::before、::after、::selection,作为强迫症晚期患者我觉得还应该出现::last-letter和::last-line，然而并没有，我很伤心。&lt;/dt&gt;
-&lt;/dl&gt;
-
-&lt;p&gt;::first-letter、::first-line、::selection通常是用来对文字进行装饰，比如::first-letter实现首字母下沉效果,::selection实现萌娘百科的黑幕效果，目前我还没发现这三个能玩出太大的花样。这里主要总结::before和::after两个伪元素的花样。一直在纠结如何整理这些东西，最后还是决定按照表现分类，毕竟CSS关系的是样式。&lt;/p&gt;
-
-&lt;h2 id=&#34;clearfix:dc5e44b284002f2c33b84936afab53a1&#34;&gt;clearfix&lt;/h2&gt;
-
-&lt;p&gt;写过几个网页的人就会知道clearfix，毕竟是布局相关的东西，实现起来有不少，经典的是&lt;code&gt;.clearfix::after{content:&#39;&#39;;display:table;clear:both;}&lt;/code&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;字体图标:dc5e44b284002f2c33b84936afab53a1&#34;&gt;字体图标&lt;/h2&gt;
-
-&lt;p&gt;网页上的小图标是很常见的设计，通常的实现方案有图片和字体图标两种，作为并不喜欢切图的我显然更倾向于使用字体图标这种方式。目前用过的字体图标有&lt;a href=&#34;http://v3.bootcss.com/components/#glyphicons-glyphs&#34;&gt;bootstrap&lt;/a&gt;里面自带的，还有&lt;a href=&#34;http://fontawesome.dashgame.com/&#34;&gt;font-awesome&lt;/a&gt;两个，基本能满足需求，如果不能满足请说服美术。&lt;/p&gt;
-
-&lt;h2 id=&#34;一条线:dc5e44b284002f2c33b84936afab53a1&#34;&gt;一条线&lt;/h2&gt;
-
-&lt;p&gt;为了一条线写一个标签通常来说是很不划算的，除非你很爱敲键盘。
-&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/cateList/cateList.html&#34;&gt;我之前写的一个分类列表&lt;/a&gt;这里结合使用了:checked伪类和::after伪元素，实现了无JS的tab切换效果。&lt;/p&gt;
-
-&lt;p&gt;之前也见过在tab切换中，使用::after伪元素画一条线表示当前tab的。&lt;/p&gt;
-
-&lt;p&gt;在bootstrap里的面包屑导航里，也采用了::before伪元素做一条分割线。&lt;/p&gt;
-
-&lt;p&gt;还有见过走马灯效果里，用::after做分割的。然而最近没怎么见过走马灯效果了，这个设计目测已经过气了。&lt;/p&gt;
-
-&lt;h2 id=&#34;背景图形:dc5e44b284002f2c33b84936afab53a1&#34;&gt;背景图形&lt;/h2&gt;
-
-&lt;h4 id=&#34;模拟多背景-实现多重边框:dc5e44b284002f2c33b84936afab53a1&#34;&gt;模拟多背景、实现多重边框&lt;/h4&gt;
-
-&lt;p&gt;在多背景支持性还不够好的时候，就有人试图用&lt;a href=&#34;http://nicolasgallagher.com/multiple-backgrounds-and-borders-with-css2/&#34;&gt;::before和::after来实现多背景&lt;/a&gt;。这项技术其实已经有点老了，然而其中提到的&lt;strong&gt;用伪元素实现多边框&lt;/strong&gt;依然具有实战意义。&lt;/p&gt;
-
-&lt;h4 id=&#34;阴影效果:dc5e44b284002f2c33b84936afab53a1&#34;&gt;阴影效果&lt;/h4&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://t.imooc.com/learn/240&#34;&gt;CSS3实现“图片阴影”效果&lt;/a&gt;,给慕课网打个广告吧。如果对阴影效果扩展一下，就可以模拟弹出层的背景。&lt;/p&gt;
-
-&lt;h4 id=&#34;边框内圆角:dc5e44b284002f2c33b84936afab53a1&#34;&gt;边框内圆角&lt;/h4&gt;
-
-&lt;p&gt;这一效果是在*CSS Secrets*一书中看到的，基本原理是border-radius+定位+z-index。&lt;/p&gt;
-
-&lt;h4 id=&#34;各种图形:dc5e44b284002f2c33b84936afab53a1&#34;&gt;各种图形&lt;/h4&gt;
-
-&lt;p&gt;之前的日志中，我利用::before实现了&lt;a href=&#34;http://jiangshanmeta.github.io/post/autosquare/&#34;&gt;自适应的正方形&lt;/a&gt;,同时这一原理也可以用来实现长宽比一定的矩形。&lt;/p&gt;
-
-&lt;p&gt;伪元素实现三角形早就成为前端的必备技能了，不细说了。&lt;/p&gt;
-
-&lt;p&gt;在三角形的基础上也能实现其他的图形，&lt;em&gt;CSS Secrets&lt;/em&gt; 一书中提到了如何使用伪元素实现平行四边形和菱形，主要利用了transform+绝对定位。&lt;/p&gt;
-
-&lt;p&gt;更多的图形可以参见 &lt;a href=&#34;https://css-tricks.com/examples/ShapesOfCSS/&#34;&gt;css tricks&lt;/a&gt;,然而我觉得很多只是做着玩而不能在生产环境下使用。&lt;/p&gt;
-
-&lt;h4 id=&#34;结合filter实现毛玻璃效果:dc5e44b284002f2c33b84936afab53a1&#34;&gt;结合filter实现毛玻璃效果&lt;/h4&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://dabblet.com/gist/d9f243ddd7dbffa341a4&#34;&gt;局部毛玻璃模糊效果的实现&lt;/a&gt;，从&lt;strong&gt;CSS Secrets&lt;/strong&gt;中看到的&lt;/p&gt;
-
-&lt;h2 id=&#34;扩大响应区域:dc5e44b284002f2c33b84936afab53a1&#34;&gt;扩大响应区域&lt;/h2&gt;
-
-&lt;p&gt;其实这也不算是样式了，已经是交互部分了。伪元素结合定位就可以扩展原来元素的相应区域，结合:hover伪类应该能做出一些东西，目前没见过眼前一亮的例子&lt;/p&gt;
-
-&lt;h2 id=&#34;模拟float-center:dc5e44b284002f2c33b84936afab53a1&#34;&gt;模拟float:center&lt;/h2&gt;
-
-&lt;p&gt;浮动其实是没有center这一值的，但是一个居中的文字环绕效果确实挺漂亮。别人的&lt;a href=&#34;https://css-tricks.com/float-center/&#34;&gt;demo&lt;/a&gt;,使用具有一定宽度和高度的伪元素浮动占据位置，再用绝对定位把图片定位到伪元素占据的地方。这个效果我觉得很有创意。&lt;/p&gt;
-
-&lt;p&gt;伪元素能做的东西很多，然而自己接触的还比较少，上面所说的就是我目前所见到的。其实结合:hover伪类，:checked伪类，以及transition和animation，是可以做一些小东西出来的，至少可以取代一些用js才能写出来的效果。以后看到效果试着能否只是用CSS实现。&lt;/p&gt;
-
-&lt;p&gt;update 2016/05/19
-&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/dopant/cssclock/cssclock.html&#34;&gt;使用伪元素结合CSS3动画做的时钟&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;update 2016/05/29
-&lt;a href=&#34;http://jiangshanmeta.github.io/post/cssshape/&#34;&gt;使用伪元素结合border实现彩色环和梯形&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
