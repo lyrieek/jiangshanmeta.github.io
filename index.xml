@@ -6,8 +6,157 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 24 Jun 2016 20:05:51 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 25 Jun 2016 19:23:09 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>bootstrap源码解读——栅格系统</title>
+      <link>http://jiangshanmeta.github.io/post/bootstrap/grid/</link>
+      <pubDate>Sat, 25 Jun 2016 19:23:09 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/bootstrap/grid/</guid>
+      <description>
+
+&lt;p&gt;bootstrap的CSS部分中最出名的应该就是栅格系统了，它解决了网页中常见的多列布局问题。对应的实现其实并不是特别复杂，主要包括以下知识点：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;盒模型&lt;/li&gt;
+&lt;li&gt;浮动&lt;/li&gt;
+&lt;li&gt;相对定位&lt;/li&gt;
+&lt;li&gt;响应式布局&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;基本概念:53f7ea7618082d6b557ccddb7ec1053e&#34;&gt;基本概念&lt;/h2&gt;
+
+&lt;p&gt;栅格系统的行（row）必须包裹在&lt;code&gt;.container&lt;/code&gt;或者&lt;code&gt;container-fluid&lt;/code&gt;中。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+.container-fluid {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;从代码中看出bootstrap中移动优先的理念，默认的都是小屏下的样式，再逐步通过媒体查询实现大屏下的样式。&lt;code&gt;container&lt;/code&gt;和&lt;code&gt;container-fluid&lt;/code&gt;在小屏下的行为是一致的，但是在pad屏或者更大的屏幕下，前者表现为有固定宽度居中显示，而后者一直保持宽度100%，虽然我很好奇后者为什么要添加上&lt;code&gt;margin-left:auto;margin-right:auto;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;而列的样式比较有趣&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;row要包含在container中，container包含了15px的左右padding，row却用左右各-15px的margin撑了出去，抵消了container的padding，写这个框架的人在想什么？问题的答案在于列的样式以及列嵌套。在列的通用样式里，有这样的设置：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;padding-right: 15px;
+padding-left: 15px;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果我们想要实现列嵌套，例如如下代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;div class=&amp;quot;row&amp;quot;&amp;gt;
+  &amp;lt;div class=&amp;quot;col-sm-9&amp;quot;&amp;gt;
+    Level 1: .col-sm-9
+    &amp;lt;div class=&amp;quot;row&amp;quot;&amp;gt;
+      &amp;lt;div class=&amp;quot;col-xs-8 col-sm-6&amp;quot;&amp;gt;
+        Level 2: .col-xs-8 .col-sm-6
+      &amp;lt;/div&amp;gt;
+      &amp;lt;div class=&amp;quot;col-xs-4 col-sm-6&amp;quot;&amp;gt;
+        Level 2: .col-xs-4 .col-sm-6
+      &amp;lt;/div&amp;gt;
+    &amp;lt;/div&amp;gt;
+  &amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;我们需要内层的row抵消掉外层的col的padding。&lt;/p&gt;
+
+&lt;h2 id=&#34;盒模型部分:53f7ea7618082d6b557ccddb7ec1053e&#34;&gt;盒模型部分&lt;/h2&gt;
+
+&lt;p&gt;默认情况下box-sizing为content-box，bootstrap上来就重置了盒模型为border-box。为什么要这么做呢？因为栅格系统的每一列的宽度都是根据百分比计算得到的，如果使用默认的content-box，如果有的列加上border或者padding，布局直接会乱掉。基本上等分布局的实现离不开这一设置。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;浮动部分:53f7ea7618082d6b557ccddb7ec1053e&#34;&gt;浮动部分&lt;/h2&gt;
+
+&lt;p&gt;如果让你实现多列布局，你想怎么办？最容易想到的就是浮动啊。bootstrap确实是使用浮动实现多列布局的。&lt;/p&gt;
+
+&lt;p&gt;部分代码如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {
+  float: left;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;既然使用了浮动，那么就免不了要处理浮动带来的盒子塌陷问题。具体实现如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.container:after,
+.container-fluid:after,
+.row:after{
+  display: table;
+  content: &amp;quot; &amp;quot;;
+  clear: both;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有的时候我们需要对列进行偏移，bootstrap提供了&lt;code&gt;col-*-offset-*&lt;/code&gt;一系列类，实现原理是通过margin-left。&lt;/p&gt;
+
+&lt;h2 id=&#34;相对定位部分:53f7ea7618082d6b557ccddb7ec1053e&#34;&gt;相对定位部分&lt;/h2&gt;
+
+&lt;p&gt;一开始读bootstrap 源码的时候，发现列的公共样式里面有这么一条：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;position: relative;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一般来说相对定位是和绝对定位结合使用的，这里有没有绝对定位是干什么的呢？当我读到关于列顺序的代码的时候我就明白了。&lt;/p&gt;
+
+&lt;p&gt;相对定位的元素，如果是使用top left right bottom ，其定位是相对于原来的位置进行定位。举个例子&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.col-xs-push-6 {
+  left: 50%;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;应用此类后col相对于原来的位置向右偏移了50%。看起来是在模拟flex布局的order。然而我真的没在生产环境里用过，真的没有。&lt;/p&gt;
+
+&lt;h2 id=&#34;响应式布局:53f7ea7618082d6b557ccddb7ec1053e&#34;&gt;响应式布局&lt;/h2&gt;
+
+&lt;p&gt;作为一个前端框架，bootstrap显然要处理不同屏幕下的显示问题，所以使用了响应式布局。处于移动优先这一概念的考虑，bootstrap默认设施都是在手机小屏下，然后通过媒体查询实现其他较大屏幕的样式设置。当浏览器宽度超过了分界点，如果没有设置此区间的新样式，按照更小屏幕的样式显示。&lt;/p&gt;
+
+&lt;p&gt;其实对于手机端来说，bootstrap一方面可能太重了，另一方面响应式布局也不见得是万能的。这就是另一个话题了。&lt;/p&gt;
+
+&lt;p&gt;对于bootstrap的css，目前觉得也就是它的栅格系统有必要说一下，其他的再说吧。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>如何将页脚固定在页面底部</title>
@@ -1340,145 +1489,6 @@ cssclock(&amp;quot;clockwrap&amp;quot;)
 &lt;p&gt;扯了这么多也没有写到最开始的需求该如何实现，反正实现了，用了些最近学到的技巧，然而这个bug让我学到的更多，毕竟前端不仅仅是写写页面写写js，浏览器的工作原理也要理解一些的。&lt;/p&gt;
 
 &lt;p&gt;以上。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>居中的常见实现</title>
-      <link>http://jiangshanmeta.github.io/post/center/</link>
-      <pubDate>Mon, 16 May 2016 21:26:45 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/center/</guid>
-      <description>
-
-&lt;p&gt;约定HTML结构&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-HTML&#34;&gt;&amp;lt;div &amp;gt;
-	&amp;lt;img src=&amp;quot;&amp;quot;&amp;gt;
-&amp;lt;/div&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;1-水平居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;1.水平居中&lt;/h2&gt;
-
-&lt;p&gt;实现水平居中其实并不难，而且有多个可靠地方案可以使用。&lt;/p&gt;
-
-&lt;h4 id=&#34;margin方案:903435e3d66e261bf87738ad6f965a5c&#34;&gt;margin方案&lt;/h4&gt;
-
-&lt;p&gt;用过bootstrap的人会很熟悉这么一个类名&lt;code&gt;.center-block&lt;/code&gt;，这是实现居中的一个类名，具体实现是这样的&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.center-block{
-	display:block;
-	margin-left:auto;
-	margin-right:auto;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这应该是学习页面布局最基本的水平居中方案了，也没什么额外操作&lt;/p&gt;
-
-&lt;h4 id=&#34;绝对定位方案:903435e3d66e261bf87738ad6f965a5c&#34;&gt;绝对定位方案&lt;/h4&gt;
-
-&lt;p&gt;基本实现是这样的&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.center-x-ab{
-	position:absolute;
-	left:50%;
-	transform:translateX(-50%);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;主要是应用了translate如果值为百分比，则参考于自身。如果为了水平居中而这么做就有点折腾了，然而这一方案可以扩展到垂直居中和水平垂直都居中。这样做的缺点是父元素需要处理子元素绝对定位带来的问题。在实践中，制作h5页面慎用这种方法居中，因为h5页面经常有动画，动画离不开transform,两者同时存在会看到很诡异的问题。&lt;/p&gt;
-
-&lt;h4 id=&#34;文本居中方案:903435e3d66e261bf87738ad6f965a5c&#34;&gt;文本居中方案&lt;/h4&gt;
-
-&lt;p&gt;需要将要居中元素的父元素设定&lt;code&gt;text-align:center;&lt;/code&gt;需要居中的元素的display要设定为&lt;code&gt;inline-block&lt;/code&gt;,需要处理文本居中带来的影响，这一方案感觉用的不多。&lt;/p&gt;
-
-&lt;h4 id=&#34;flex方案:903435e3d66e261bf87738ad6f965a5c&#34;&gt;flex方案&lt;/h4&gt;
-
-&lt;p&gt;1.你为什么不用margin方案的方案&lt;/p&gt;
-
-&lt;p&gt;父元素div &lt;code&gt;display:flex&lt;/code&gt; 子元素img&lt;code&gt;margin-left:auto;margin-right:auto;&lt;/code&gt;我的评价见小标题&lt;/p&gt;
-
-&lt;p&gt;2.感觉有点大材小用的方案&lt;/p&gt;
-
-&lt;p&gt;父元素div &lt;code&gt;display:flex:justify-content:center;&lt;/code&gt;评价如小标题
-&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/animation/animation_spin.html&#34;&gt;上个例子&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;2-垂直居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;2.垂直居中&lt;/h2&gt;
-
-&lt;p&gt;相较于水平居中，垂直居中相比较而言就有点难度了&lt;/p&gt;
-
-&lt;h4 id=&#34;单行文字垂直居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;单行文字垂直居中&lt;/h4&gt;
-
-&lt;p&gt;在我刚开始学习写页面的时候，就听说过让&lt;strong&gt;line-height&lt;/strong&gt;和&lt;strong&gt;height&lt;/strong&gt;值相等即可使单行文字垂直居中，最开始只是从使用的角度看这个问题，没有深入思考过，后来&lt;a href=&#34;http://t.imooc.com/learn/403&#34;&gt;张鑫旭大神告诉我们&lt;/a&gt;，这只是伪垂直居中。从工程实践角度这已经够用了，不要在意这些细节&lt;/p&gt;
-
-&lt;h4 id=&#34;绝对定位方案-1:903435e3d66e261bf87738ad6f965a5c&#34;&gt;绝对定位方案&lt;/h4&gt;
-
-&lt;p&gt;在水平居中中提到可以使用绝对定位实现水平居中，同样也可以使用绝对定位实现垂直居中&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.center-y-ab{
-	position:absolute;
-	left:50%;
-	transform:translateY(-50%);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;虽然要处理绝对定位带来的后果，考虑到垂直居中方案并不多，这不失为一个好方案。&lt;/p&gt;
-
-&lt;h4 id=&#34;table方案:903435e3d66e261bf87738ad6f965a5c&#34;&gt;table方案&lt;/h4&gt;
-
-&lt;p&gt;请参阅&lt;a href=&#34;https://css-tricks.com/centering-in-the-unknown/&#34;&gt;这篇文章&lt;/a&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;flex方案-1:903435e3d66e261bf87738ad6f965a5c&#34;&gt;flex方案&lt;/h4&gt;
-
-&lt;p&gt;父元素div &lt;code&gt;display:flex&lt;/code&gt; 子元素img&lt;code&gt;margin-top:auto;margin-right:bottom;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;当然你也可以折腾flex的相关属性去，说的就是某些关于对其的属性。&lt;/p&gt;
-
-&lt;h2 id=&#34;3-水平垂直都居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;3.水平垂直都居中&lt;/h2&gt;
-
-&lt;h4 id=&#34;绝对定位方案-2:903435e3d66e261bf87738ad6f965a5c&#34;&gt;绝对定位方案&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;.center-xy-ab{
-	position:absolute;
-	top:50%;
-	left:50%;
-	transform:translate(-50%,-50%);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;有代码有真相，就是结合水平、垂直居中的绝对定位方案&lt;/p&gt;
-
-&lt;h4 id=&#34;flex方案-2:903435e3d66e261bf87738ad6f965a5c&#34;&gt;flex方案&lt;/h4&gt;
-
-&lt;p&gt;父元素&lt;code&gt;display:flex;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;子元素&lt;code&gt;margin:auto;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;也不用去折腾各种对齐的属性&lt;/p&gt;
-
-&lt;h4 id=&#34;水平文本居中-垂直table-的大杂烩:903435e3d66e261bf87738ad6f965a5c&#34;&gt;水平文本居中 + 垂直table 的大杂烩&lt;/h4&gt;
-
-&lt;p&gt;如果真考虑兼容性的话，这似乎是兼容性最好的方案了
-然而，需要多写一层标签&lt;/p&gt;
-
-&lt;p&gt;水平垂直居中算是水平居中和垂直居中的综合使用，上个&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/center.html&#34;&gt;demo&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;4-基于视口的居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;4.基于视口的居中&lt;/h2&gt;
-
-&lt;p&gt;常见的各种模态框基本上是相较于视口水平垂直居中的，其实我最早知道模态框的实现的时候它的居中是通过js计算得到的。作为 &lt;em&gt;能用CSS实现的就绝对不用js实现&lt;/em&gt; 神教教徒，这个需求肯定要尝试使用CSS解决。&lt;/p&gt;
-
-&lt;h4 id=&#34;transform方案:903435e3d66e261bf87738ad6f965a5c&#34;&gt;transform方案&lt;/h4&gt;
-
-&lt;p&gt;基本上是上边的绝对定位方案的翻版&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;相关&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/center/center.css&#34;&gt;CSS下载&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

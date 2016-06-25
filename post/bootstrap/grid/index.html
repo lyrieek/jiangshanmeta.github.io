@@ -1,0 +1,176 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> bootstrap源码解读——栅格系统 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class="">
+		
+
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">bootstrap源码解读——栅格系统</h1>
+			  <p >Sat, Jun 25, 2016</p>
+			      
+
+<p>bootstrap的CSS部分中最出名的应该就是栅格系统了，它解决了网页中常见的多列布局问题。对应的实现其实并不是特别复杂，主要包括以下知识点：</p>
+
+<ol>
+<li>盒模型</li>
+<li>浮动</li>
+<li>相对定位</li>
+<li>响应式布局</li>
+</ol>
+
+<h2 id="基本概念:53f7ea7618082d6b557ccddb7ec1053e">基本概念</h2>
+
+<p>栅格系统的行（row）必须包裹在<code>.container</code>或者<code>container-fluid</code>中。</p>
+
+<pre><code>.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+.container-fluid {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+</code></pre>
+
+<p>从代码中看出bootstrap中移动优先的理念，默认的都是小屏下的样式，再逐步通过媒体查询实现大屏下的样式。<code>container</code>和<code>container-fluid</code>在小屏下的行为是一致的，但是在pad屏或者更大的屏幕下，前者表现为有固定宽度居中显示，而后者一直保持宽度100%，虽然我很好奇后者为什么要添加上<code>margin-left:auto;margin-right:auto;</code></p>
+
+<p>而列的样式比较有趣</p>
+
+<pre><code>.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+</code></pre>
+
+<p>row要包含在container中，container包含了15px的左右padding，row却用左右各-15px的margin撑了出去，抵消了container的padding，写这个框架的人在想什么？问题的答案在于列的样式以及列嵌套。在列的通用样式里，有这样的设置：</p>
+
+<pre><code>padding-right: 15px;
+padding-left: 15px;
+</code></pre>
+
+<p>如果我们想要实现列嵌套，例如如下代码：</p>
+
+<pre><code>&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-sm-9&quot;&gt;
+    Level 1: .col-sm-9
+    &lt;div class=&quot;row&quot;&gt;
+      &lt;div class=&quot;col-xs-8 col-sm-6&quot;&gt;
+        Level 2: .col-xs-8 .col-sm-6
+      &lt;/div&gt;
+      &lt;div class=&quot;col-xs-4 col-sm-6&quot;&gt;
+        Level 2: .col-xs-4 .col-sm-6
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>我们需要内层的row抵消掉外层的col的padding。</p>
+
+<h2 id="盒模型部分:53f7ea7618082d6b557ccddb7ec1053e">盒模型部分</h2>
+
+<p>默认情况下box-sizing为content-box，bootstrap上来就重置了盒模型为border-box。为什么要这么做呢？因为栅格系统的每一列的宽度都是根据百分比计算得到的，如果使用默认的content-box，如果有的列加上border或者padding，布局直接会乱掉。基本上等分布局的实现离不开这一设置。</p>
+
+<pre><code>* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+</code></pre>
+
+<h2 id="浮动部分:53f7ea7618082d6b557ccddb7ec1053e">浮动部分</h2>
+
+<p>如果让你实现多列布局，你想怎么办？最容易想到的就是浮动啊。bootstrap确实是使用浮动实现多列布局的。</p>
+
+<p>部分代码如下</p>
+
+<pre><code>.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {
+  float: left;
+}
+</code></pre>
+
+<p>既然使用了浮动，那么就免不了要处理浮动带来的盒子塌陷问题。具体实现如下：</p>
+
+<pre><code>.container:after,
+.container-fluid:after,
+.row:after{
+  display: table;
+  content: &quot; &quot;;
+  clear: both;
+}
+</code></pre>
+
+<p>有的时候我们需要对列进行偏移，bootstrap提供了<code>col-*-offset-*</code>一系列类，实现原理是通过margin-left。</p>
+
+<h2 id="相对定位部分:53f7ea7618082d6b557ccddb7ec1053e">相对定位部分</h2>
+
+<p>一开始读bootstrap 源码的时候，发现列的公共样式里面有这么一条：</p>
+
+<pre><code>position: relative;
+</code></pre>
+
+<p>一般来说相对定位是和绝对定位结合使用的，这里有没有绝对定位是干什么的呢？当我读到关于列顺序的代码的时候我就明白了。</p>
+
+<p>相对定位的元素，如果是使用top left right bottom ，其定位是相对于原来的位置进行定位。举个例子</p>
+
+<pre><code>.col-xs-push-6 {
+  left: 50%;
+}
+</code></pre>
+
+<p>应用此类后col相对于原来的位置向右偏移了50%。看起来是在模拟flex布局的order。然而我真的没在生产环境里用过，真的没有。</p>
+
+<h2 id="响应式布局:53f7ea7618082d6b557ccddb7ec1053e">响应式布局</h2>
+
+<p>作为一个前端框架，bootstrap显然要处理不同屏幕下的显示问题，所以使用了响应式布局。处于移动优先这一概念的考虑，bootstrap默认设施都是在手机小屏下，然后通过媒体查询实现其他较大屏幕的样式设置。当浏览器宽度超过了分界点，如果没有设置此区间的新样式，按照更小屏幕的样式显示。</p>
+
+<p>其实对于手机端来说，bootstrap一方面可能太重了，另一方面响应式布局也不见得是万能的。这就是另一个话题了。</p>
+
+<p>对于bootstrap的css，目前觉得也就是它的栅格系统有必要说一下，其他的再说吧。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+			console.log("contact 540118044@qq.com");
+		</script>
+  </body>
+</html>
