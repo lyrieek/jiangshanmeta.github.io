@@ -6,8 +6,84 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Jun 2016 19:23:09 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Jun 2016 20:22:23 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>bootstrap源码解读——button.js</title>
+      <link>http://jiangshanmeta.github.io/post/bootstrap/button/</link>
+      <pubDate>Sun, 26 Jun 2016 20:22:23 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/bootstrap/button/</guid>
+      <description>&lt;p&gt;button.js我个人觉得是属于从一开始就没想明白要做什么。和其他的bootstrap的插件一样，button也能用data的形式调用插件，但是我真心没想明白使用data调用的有什么实际用途。反而我觉得手动调用的对我来说更有实际意义，所以这里只说&lt;a href=&#34;http://v3.bootcss.com/javascript/#buttons-stateful&#34;&gt;button.js改变状态的部分&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;在web应用中免不了用户触发ajax请求，比如提交表单（实际项目中没有用表单的直接提交，而是使用了ajax提交表单），点击加载更多。在ajax过程中我们需要告诉用户正在进行中，需要等待。在实际项目中为了实现这一个需求我们使用了一个插件blockUI,可以自行百度一下，我觉得挺好用的。另一种方案是改变button的状态，把他标记为不可点击。&lt;/p&gt;
+
+&lt;p&gt;整体形式是标准的bootstrap插件的形式，关于如何绑定方法，如何防冲突，这些都在 &lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/alert/&#34;&gt;bootstrap源码解读——alert.js&lt;/a&gt;中分析过了，没有必要去做过多的说明。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Plugin(option) {
+  return this.each(function () {
+    var $this   = $(this)
+    var data    = $this.data(&#39;bs.button&#39;)
+    var options = typeof option == &#39;object&#39; &amp;amp;&amp;amp; option
+
+    if (!data) $this.data(&#39;bs.button&#39;, (data = new Button(this, options)))
+
+    if (option == &#39;toggle&#39;) data.toggle()
+    else if (option) data.setState(option)
+  })
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;和alert.js类似，这里也是采用data的形式进行缓存&lt;code&gt;Button&lt;/code&gt;实例，我们不需要去关心&lt;code&gt;toggle&lt;/code&gt;的实现，因为我连应用场景都没想到，我们只需关心调用&lt;code&gt;setState&lt;/code&gt;方法。setState传入的参数其实只有&lt;code&gt;loading&lt;/code&gt;和&lt;code&gt;reset&lt;/code&gt;是有效的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Button.prototype.setState = function (state) {
+  var d    = &#39;disabled&#39;
+  var $el  = this.$element
+  var val  = $el.is(&#39;input&#39;) ? &#39;val&#39; : &#39;html&#39;
+  var data = $el.data()
+
+  state += &#39;Text&#39;
+
+  if (data.resetText == null) $el.data(&#39;resetText&#39;, $el[val]())
+
+  // push to event loop to allow forms to submit
+  setTimeout($.proxy(function () {
+    $el[val](data[state] == null ? this.options[state] : data[state])
+
+    if (state == &#39;loadingText&#39;) {
+      this.isLoading = true
+      $el.addClass(d).attr(d, d)
+    } else if (this.isLoading) {
+      this.isLoading = false
+      $el.removeClass(d).removeAttr(d)
+    }
+  }, this), 0)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;读起来并不是很难懂，一个要注意的地方是&lt;code&gt;setTimeout&lt;/code&gt;，这个函数一方面会改变&lt;code&gt;this&lt;/code&gt;的指向，我以前也分析过&lt;a href=&#34;http://jiangshanmeta.github.io/post/jsthis/&#34;&gt;javascript的this坑&lt;/a&gt;，另一方面是定时器的原理，不是相隔多长时间后执行，而是相隔多长时间后加入任务队列，这个&lt;a href=&#34;http://jiangshanmeta.github.io/post/browser/&#34;&gt;我以前也提及过&lt;/a&gt;。另一个要注意的点是data的使用，利用data保存button中原来的内容就不说了，很常规的一个写法。比较有趣的是对于加载时显示内容的处理。文档上说加载时保存的信息保存在了&lt;code&gt;data-loading-text&lt;/code&gt;中，但是我们在代码中读取的时候是以&lt;code&gt;loadingText&lt;/code&gt;的形式读写，这就比较有意思了，一个中划线没了，然后一个大小写改变了。查了查MDN找到了答案：&lt;/p&gt;
+
+&lt;p&gt;data-*,*可以被任何符合以下限制的the producton rule of xml names(xml的命名规则)代替：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;名字不能以xml开头，除此之外其他任何情形都可是使用这3个字母；&lt;/li&gt;
+&lt;li&gt;名字不能含有分号；&lt;/li&gt;
+&lt;li&gt;名字不能含有大写字母。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;注意：HTMLElement.dataset是一个 StringMap。一个名叫data-test-value的自定义属性可以通过HTMLElment.dataset.testValue来访问，属性的名字中的中线(U+002D)被挨着它字母的大写字母代替了（驼峰命名）。&lt;/p&gt;
+
+&lt;p&gt;自定义的data 属性名称转化成 DOMStringMap 的键值时会遵循下面的规则：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;前缀  data- 被去除(包括减号)；&lt;/li&gt;
+&lt;li&gt;对于每个在ASCII小写字母 a到 z前面的减号 (U+002D)，减号会被去除，并且字母会转变成对应的大写字母。其他字符（包含其他减号）都不发生变化&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;具体链接: &lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes#attr-data-*&#34;&gt;data-*&lt;/a&gt;,&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLElement/dataset&#34;&gt;dataset&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——栅格系统</title>
@@ -197,7 +273,7 @@ padding-left: 15px;
 
 &lt;p&gt;这里所说的table并不是说html table，而是css table。在css的display属性中，有一堆关于table的值，比如&lt;code&gt;table&lt;/code&gt;,&lt;code&gt;table-row&lt;/code&gt;,&lt;code&gt;table-cell&lt;/code&gt;。这些值可以帮助我们像表格一样布局而不使用html table。这里用到的是&lt;code&gt;table&lt;/code&gt;和&lt;code&gt;table-row&lt;/code&gt;两个值。&lt;/p&gt;
 
-&lt;p&gt;我们可以把整个body视为一个table，然后header、main、footer三部分视为table-row。并且让main占据100%高度。可能你觉得很奇怪如果main高度设为100%，那么header和footer的高度岂不是零了？但是table有许多神奇的特性，header和footer会正常显示。&lt;/p&gt;
+&lt;p&gt;我们可以把整个body视为一个table，然后header、main、footer三部分视为table-row。并且让main占据100%高度。可能你觉得很奇怪如果main高度设为100%，那么header和footer的高度岂不是零了？但是table有许多神奇的特性，header和footer会正常显示。这里的header和footer的高度会变成恰能放下内容的高度，main占据剩余空间。因为table的话无论是宽度还是高度计算都比较复杂，web开发者所设置的width或者height都是参考值。&lt;/p&gt;
 
 &lt;p&gt;这样你会发现依然没有实现固定在底部。因为body的高度现在是由内容决定的，我们要设置body的最小高度设为视口高度。可以采用100vh这么一个方案，如果担心兼容性问题，可以把高度设为百分比。&lt;/p&gt;
 
@@ -1388,107 +1464,6 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
 
 &lt;p&gt;用于执行javascript和更新用户界面的进程通常被称为“浏览器UI线程”。UI线程的工作基于一个简单的队列系统，任务会被保存到队列中直到进程空闲。一旦空闲，队列中的下一个任务就被重新提出来并运行。这些任务要么是运行javascript代码，要么是执行UI更新，包括重绘和重排。&lt;/p&gt;
 &lt;/blockquote&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>一个bug引发的血案—浏览器基本渲染</title>
-      <link>http://jiangshanmeta.github.io/post/browser/</link>
-      <pubDate>Sun, 22 May 2016 17:05:41 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/browser/</guid>
-      <description>&lt;p&gt;作为全知乎写bug水平第0的人，最近我又写了一个bug。&lt;/p&gt;
-
-&lt;p&gt;当时的需求是这样的：用js和CSS3画一个时钟，能动的那种。很早很早之前，我用&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/canvas/canvasWatch.html&#34;&gt;canvas实现过这个需求&lt;/a&gt;,然而canvas毕竟需要各种写js，而且实现上也需要大量的计算，于是我就想能不能用尽可能少的js结合CSS实现。&lt;/p&gt;
-
-&lt;p&gt;于是开始分解问题，我想实现的时钟和本地时间相对应，无论如何都要把Date对象拿出来然后求出当前的时分秒，然后进行初始偏转，再利用web动画进行转动即可，三个指针虽然在实际生活上有联系，但是把这三个割裂开会降低复杂度。只要求出当时的秒数，然后画出秒针的动画，99%的工作就完成了，时针和分针的效果只需要复制粘贴就能解决。&lt;/p&gt;
-
-&lt;p&gt;HTML是这样的&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-HTML&#34;&gt;&amp;lt;div class=&amp;quot;clock-wrap&amp;quot; id=&amp;quot;clock-wrap&amp;quot;&amp;gt;
-	&amp;lt;div class=&amp;quot;second&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-&amp;lt;/div&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;CSS&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.clock-wrap{
-	width:300px;
-	height:300px;
-	border-radius:50%;
-	background-color:#f1f1f1;
-	position:relative;
-}
-.second{
-	position:absolute;
-	width:4px;
-	height:40%;
-	top:10%;
-	left:calc(50% - 2px);
-	transform-origin:bottom center;
-	transition:all 60s linear;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;现在就出现了基本的时钟的样子了，剩下的就是写js了。然而，当时着急去洗澡，于是写下了bug。我试着回忆当时的思路，然而我觉得当时自己脑子里已经进了水。当时想的是根据当前时间算出初始偏离角度，写一条样式，然后根据初始偏移角度算出最终角度，写一条过渡后的样式，然后添加类名，利用类名触发过渡。代码如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;function cssclock(wrapId){
-	var time = new Date();
-	var s = time.getSeconds();
-
-	var sDOM = document.getElementById(&amp;quot;second&amp;quot;);
-	var wrap = document.getElementById(wrapId);
-	var style = document.createElement(&amp;quot;style&amp;quot;);
-	var str = &amp;quot;&amp;quot;;
-	str += &amp;quot;.second{transform:rotate(&amp;quot;+  6*s +&amp;quot;deg)}&amp;quot;;
-	str += &amp;quot;.go .second{ transform:rotate(&amp;quot; + (6*s+360) + &amp;quot;deg)}&amp;quot;;
-	style.innerHTML = str;
-	document.head.appendChild(style);
-	wrap.classList.add(&amp;quot;go&amp;quot;);
-}
-cssclock(&amp;quot;clockwrap&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;显然是有bug的，按照这个思路实现根本不会有过渡效果，就算有也只是转一圈。转一圈很好理解，这是我脑子里进水了整个思路错了，然而为什么根本没有过渡呢？&lt;/p&gt;
-
-&lt;p&gt;看控制台那里秒针样式秒针的转动的值直接是最终值，于是我便百思不得其解了。后来尝试着把最后一行给表的盒子加上类名去掉，然后在控制台手动给这个盒子加上类名，发现可以触发过渡。&lt;/p&gt;
-
-&lt;p&gt;于是我就脑洞大开了，难道是要在添加样式表完成的回调里执行给盒子添加类名的操作，然而appendChild没有回调啊，那干脆加个定时器过一会再加类名好了。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;setTimeout(function(){
- 	document.getElementById(wrapId).classList.add(&amp;quot;go&amp;quot;);
-},0)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;实践证明确实是可行的，然而诡异的事情又来了：当我把定时器的时间设为 &lt;strong&gt;0&lt;/strong&gt; 依然可以触发过渡，于是我就不明觉厉了。&lt;/p&gt;
-
-&lt;p&gt;然后我想起来之前看到的&lt;a href=&#34;https://github.com/gomeplusFED/blog/blob/master/2016-04/do-you-really-understand-how-to-write-a-countdown-by-javascript.md&#34;&gt;关于定时器的文章&lt;/a&gt;,里面谈到了js的线程问题，于是我便顺着这条线索开始找。&lt;/p&gt;
-
-&lt;p&gt;中间的曲折没什么意思，还是说结论吧。&lt;/p&gt;
-
-&lt;p&gt;因为浏览器内部有多个线程，比如负责画页面的线程，比如处理js的线程。画页面的线程 GUI渲染线程大体上是以每秒60次的速度工作的，这就是定时器常见的 16.7ms （1000/60）的由来,然而，渲染线程和js引擎线程是互斥的，这是为什么呢？因为js很有可能对DOM操作，这期间免不了获取一些渲染上的属性，比如width之类的，如果两个一起工作，js获取的就可能不准，所以两者是互斥的。&lt;/p&gt;
-
-&lt;p&gt;我上面的js代码里，将新的样式添加进去，我本来是期望秒针按照&lt;code&gt;.second&lt;/code&gt;类的样式进行渲染，然后给盒子加上&lt;code&gt;.go&lt;/code&gt;这一个类，触发过渡。但是按照上面的分析，直到js结束都没有进行页面的渲染，js结束后整个盒子已经加上了&lt;code&gt;.go&lt;/code&gt;类，渲染开始，因为已经存在&lt;code&gt;.go&lt;/code&gt;类了，渲染按照过渡结束的进行。&lt;/p&gt;
-
-&lt;p&gt;那么我用的定时器是起到什么作用？定时器设定时间为0，并不是立即去做，而是在0ms之后加入到js的todo队列中，也就是说添加完样式表后，js暂时休息，之前本应该干活但因为js干活而休息的GUI渲染开始工作，进行初始偏移，js的队列里出现定时器中要运行的代码，进行添加类名操作，触发过渡。&lt;/p&gt;
-
-&lt;p&gt;那有没什么办法在js里强制渲染一次再进行后续操作呢？有啊，比如说取一个宽度就能强制渲染一次，这是定时器方案的一个替代方案。这也是为什么用js做动画要缓存一些变量的原因，为了减少不必要的重绘重排。以前too young，too simple啊，还需要提高知识水平。&lt;/p&gt;
-
-&lt;p&gt;语文不太好，引用别人的话总结一下&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;一个浏览器至少实现三个常驻线程：JavaScript引擎线程，GUI渲染线程，浏览器事件触发线程。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;javascript引擎是基于事件驱动单线程执行的，JS引擎一直等待着任务队列中任务的到来，然后加以处理，浏览器无论什么时候都只有一个JS线程在运行JS程序。&lt;/li&gt;
-&lt;li&gt;GUI渲染线程负责渲染浏览器界面，当界面需要重绘（repaint）或由于某种操作引发回流(reflow)时,该线程就会执行。但需要注意 GUI渲染线程与JS引擎是互斥的，当JS引擎执行时GUI线程会被挂起，GUI更新会被保存在一个队列中等到JS引擎空闲时立即被执行。&lt;/li&gt;
-&lt;li&gt;事件触发线程，当一个事件被触发时该线程会把事件添加到待处理队列的队尾，等待JS引擎的处理。这些事件可来自JavaScript引擎当前执行的代码块如setTimeOut、也可来自浏览器内核的其他线程如鼠标点击、AJAX异步请求等，但由于JS的单线程关系所有这些事件都得排队等待JS引擎处理。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;扯了这么多也没有写到最开始的需求该如何实现，反正实现了，用了些最近学到的技巧，然而这个bug让我学到的更多，毕竟前端不仅仅是写写页面写写js，浏览器的工作原理也要理解一些的。&lt;/p&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;
 </description>
     </item>
     

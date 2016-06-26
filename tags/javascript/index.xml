@@ -6,8 +6,84 @@
     <description>Recent content in Javascript on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jun 2016 21:59:53 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Jun 2016 20:22:23 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>bootstrap源码解读——button.js</title>
+      <link>http://jiangshanmeta.github.io/post/bootstrap/button/</link>
+      <pubDate>Sun, 26 Jun 2016 20:22:23 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/bootstrap/button/</guid>
+      <description>&lt;p&gt;button.js我个人觉得是属于从一开始就没想明白要做什么。和其他的bootstrap的插件一样，button也能用data的形式调用插件，但是我真心没想明白使用data调用的有什么实际用途。反而我觉得手动调用的对我来说更有实际意义，所以这里只说&lt;a href=&#34;http://v3.bootcss.com/javascript/#buttons-stateful&#34;&gt;button.js改变状态的部分&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;在web应用中免不了用户触发ajax请求，比如提交表单（实际项目中没有用表单的直接提交，而是使用了ajax提交表单），点击加载更多。在ajax过程中我们需要告诉用户正在进行中，需要等待。在实际项目中为了实现这一个需求我们使用了一个插件blockUI,可以自行百度一下，我觉得挺好用的。另一种方案是改变button的状态，把他标记为不可点击。&lt;/p&gt;
+
+&lt;p&gt;整体形式是标准的bootstrap插件的形式，关于如何绑定方法，如何防冲突，这些都在 &lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/alert/&#34;&gt;bootstrap源码解读——alert.js&lt;/a&gt;中分析过了，没有必要去做过多的说明。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Plugin(option) {
+  return this.each(function () {
+    var $this   = $(this)
+    var data    = $this.data(&#39;bs.button&#39;)
+    var options = typeof option == &#39;object&#39; &amp;amp;&amp;amp; option
+
+    if (!data) $this.data(&#39;bs.button&#39;, (data = new Button(this, options)))
+
+    if (option == &#39;toggle&#39;) data.toggle()
+    else if (option) data.setState(option)
+  })
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;和alert.js类似，这里也是采用data的形式进行缓存&lt;code&gt;Button&lt;/code&gt;实例，我们不需要去关心&lt;code&gt;toggle&lt;/code&gt;的实现，因为我连应用场景都没想到，我们只需关心调用&lt;code&gt;setState&lt;/code&gt;方法。setState传入的参数其实只有&lt;code&gt;loading&lt;/code&gt;和&lt;code&gt;reset&lt;/code&gt;是有效的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Button.prototype.setState = function (state) {
+  var d    = &#39;disabled&#39;
+  var $el  = this.$element
+  var val  = $el.is(&#39;input&#39;) ? &#39;val&#39; : &#39;html&#39;
+  var data = $el.data()
+
+  state += &#39;Text&#39;
+
+  if (data.resetText == null) $el.data(&#39;resetText&#39;, $el[val]())
+
+  // push to event loop to allow forms to submit
+  setTimeout($.proxy(function () {
+    $el[val](data[state] == null ? this.options[state] : data[state])
+
+    if (state == &#39;loadingText&#39;) {
+      this.isLoading = true
+      $el.addClass(d).attr(d, d)
+    } else if (this.isLoading) {
+      this.isLoading = false
+      $el.removeClass(d).removeAttr(d)
+    }
+  }, this), 0)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;读起来并不是很难懂，一个要注意的地方是&lt;code&gt;setTimeout&lt;/code&gt;，这个函数一方面会改变&lt;code&gt;this&lt;/code&gt;的指向，我以前也分析过&lt;a href=&#34;http://jiangshanmeta.github.io/post/jsthis/&#34;&gt;javascript的this坑&lt;/a&gt;，另一方面是定时器的原理，不是相隔多长时间后执行，而是相隔多长时间后加入任务队列，这个&lt;a href=&#34;http://jiangshanmeta.github.io/post/browser/&#34;&gt;我以前也提及过&lt;/a&gt;。另一个要注意的点是data的使用，利用data保存button中原来的内容就不说了，很常规的一个写法。比较有趣的是对于加载时显示内容的处理。文档上说加载时保存的信息保存在了&lt;code&gt;data-loading-text&lt;/code&gt;中，但是我们在代码中读取的时候是以&lt;code&gt;loadingText&lt;/code&gt;的形式读写，这就比较有意思了，一个中划线没了，然后一个大小写改变了。查了查MDN找到了答案：&lt;/p&gt;
+
+&lt;p&gt;data-*,*可以被任何符合以下限制的the producton rule of xml names(xml的命名规则)代替：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;名字不能以xml开头，除此之外其他任何情形都可是使用这3个字母；&lt;/li&gt;
+&lt;li&gt;名字不能含有分号；&lt;/li&gt;
+&lt;li&gt;名字不能含有大写字母。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;注意：HTMLElement.dataset是一个 StringMap。一个名叫data-test-value的自定义属性可以通过HTMLElment.dataset.testValue来访问，属性的名字中的中线(U+002D)被挨着它字母的大写字母代替了（驼峰命名）。&lt;/p&gt;
+
+&lt;p&gt;自定义的data 属性名称转化成 DOMStringMap 的键值时会遵循下面的规则：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;前缀  data- 被去除(包括减号)；&lt;/li&gt;
+&lt;li&gt;对于每个在ASCII小写字母 a到 z前面的减号 (U+002D)，减号会被去除，并且字母会转变成对应的大写字母。其他字符（包含其他减号）都不发生变化&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;具体链接: &lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes#attr-data-*&#34;&gt;data-*&lt;/a&gt;,&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLElement/dataset&#34;&gt;dataset&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——alert.js</title>

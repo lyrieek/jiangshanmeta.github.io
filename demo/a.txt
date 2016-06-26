@@ -79,74 +79,114 @@ http://www.cnblogs.com/coco1s/p/5439619.html
 
 
 
-bootstrap源码解读——button.js
 
-button.js我个人觉得是属于从一开始就没想明白要做什么。和其他的bootstrap的插件一样，button也能用data的形式调用插件，但是我真心没想明白使用data调用的有什么实际用途。反而我觉得手动调用的对我来说更有实际意义，所以这里只说[button.js改变状态的部分](http://v3.bootcss.com/javascript/#buttons-stateful)。
 
-在web应用中免不了用户触发ajax请求，比如提交表单（实际项目中没有用表单的直接提交，而是使用了ajax提交表单），点击加载更多。在ajax过程中我们需要告诉用户正在进行中，需要等待。在实际项目中为了实现这一个需求我们使用了一个插件blockUI,可以自行百度一下，我觉得挺好用的。另一种方案是改变button的状态，把他标记为不可点击。
 
-整体形式是标准的bootstrap插件的形式，关于如何绑定方法，如何防冲突，这些都在 [bootstrap源码解读——alert.js](http://jiangshanmeta.github.io/post/bootstrap/alert/)中分析过了，没有必要去做过多的说明。
+
+
+table的那些事
+
+最近我的知乎时间线上出现了这么一个问题:[网页的 Table 布局和 DIV+CSS 布局从哪里可以看出来？Table 布局已经过时了吗？](https://www.zhihu.com/question/20003535)，于是便想着总结一下关于table的一些知识点。先声明一下，这里table是指css table，而不是html table，以下所说的可能用html的形式来写，但都是指的css table。
+
+## 基本概念
+
+#### 关于表格的display值
+
+1. table                对应html中的<table>
+2. table-row            对应html中的<tr>
+3. table-cell           对应htnl中的<td>
+4. table-row-group      对应html中的<tbody>
+5. table-header-group   对应html中的<thead>
+6. table-footer-group   对应html中的<tfoot>
+7. table-caption        对应html中的<caption>
+8. table-column         对应html中的<col>
+9. table-column-group   对应html中的<colgroup>
+
+最重要的是前三个属性，而最后两个可以认为没什么用处，因为css将其表模型定义为以行为主，也就是说，它认为web开发者会显式声明行，而列是从单元格行的布局推导出来的。
+
+#### 匿名表对象
+在html的table，有一些嵌套标签即使你不去写，浏览器也会去帮你填充，css的table也有类似的现象，可以将“遗漏的”组件作为匿名对象插入。插入遵循以下规则：
+
+1. 如果一个table-cell元素的父元素不是table-row元素，则会在该table-cell元素及其父元素之间插入一个匿名table-row对象。所插入的这个对象将包含该table-cell元素的所有连续兄弟。
+2. 如果一个table-row元素的父元素不是table、table-row-group元素，则会在该table-row元素及其父元素之间插入一个匿名table元素。插入的这个对象将包含该table-row元素的连续兄弟。
+3. 如果一个table-column元素的父元素不是table、table-column-group元素，则在该table-column元素及其父元素之间插入一个匿名table元素。
+4. 如果一个table-row-group、table-header-group、table-footer-group、table-column-group或table-caption元素的父元素不是table元素，则会在该元素及其父元素之间插入一个匿名table元素。
+5. 如果一个table元素的子元素不是table-row-group、table-header-group、table-footer-group、table-row或table-caption元素，则在该table元素及其子元素之间插入一个匿名table-row对象。这个匿名对象将包含该子元素及所有不是table-row-group、table-header-group、table-footer-group、table-row、table-caption元素的连续兄弟
+6. 如果一个table-row-group、table-header-group、table-footer-group元素的子元素不是table-row对象，则在该元素及其子元素之间插入一个匿名table-row对象。这个匿名对象包含该子元素及其所有非table-row对象的连续兄弟
+7. 如果一个table-row元素的子元素不是table-cell元素，则在该元素和其子元素之间插入一个匿名table-cell对象。这个匿名对象包含该子元素及其所有非table-cell元素的连续兄弟
+
+看起来比较理论，大家自己读读就好。
+
+#### 固定布局
+熟悉css属性的人对于```table-layout```应该不陌生，这个属性很大程度上影响了table的布局。首先介绍的固定布局，对应的属性值是```fixed```。
+
+要实现固定布局，首先要设定```table-layout```为```fixed```,这是显然的，但是也是不足的，除此之外还要设定table的宽度，否则会按照自动布局进行。
+
+具体实现上包括以下步骤：
+
+1. width属性不是auto的列元素会根据width值设置该列的宽度。
+2. 如果一个列的宽度为auto，但是表首行中该列的单元格width不为auto，则根据单元格宽度设置此列宽度。其它行设定的宽度无效。
+3. 经过前两步，如果列的宽度依然为auto，会自动确定其大小，使其宽度尽可能相等。
+
+固定布局速度比较快，因为布局不依赖与内容，而是根据表的宽度、列和单元格的width决定。
+
+上面提到的第三点是table实现等分布局的基础。
+
+#### 自动布局
+
+自动布局是table的默认布局，但是因为要根据内容决定布局，所以布局速度较慢。
+
+对于自动布局，具体宽度的计算比较复杂，而且对于中英文分割也比较复杂。所以这里就简要介绍一下：
+
+1. 对于一列的各个单元格，计算最小和最大单元格宽度。
+2. 对于各列，计算最小和最大列宽
+3. 计算出表的真正宽度和各列宽度。如果表的```width```属性不是auto，则将width属性值与所有列宽之和比较，取较大的作为表的宽度。如果最终宽度大于各列宽度之和，多余宽度各列均分。如果表的```width```属性为auto，则将各列宽度之和作为表的宽度。换句话说，表的宽度恰好足够显示其内容，这一点是**不定宽元素水平居中**的基础。然而，在```width```为```auto```的情况下，一个表可能会很难看，尤其是中文，有的时候可能发现每一列宽度都很小甚至只能写下一个字然后整个文字就竖起来了。目测bootstrap也是因为这个所以给table一个```width:100%```。
+
+#### 关于height
+
+对于web开发者来说，一般很少显式声明一个元素的高度，但是对于table来说，就有点有趣了
+
+先约定一下页面结构
 
 ```
-function Plugin(option) {
-  return this.each(function () {
-    var $this   = $(this)
-    var data    = $this.data('bs.button')
-    var options = typeof option == 'object' && option
+<div style="display:table;height:600px;">
+    <div style="display:table-row;"></div>
+    <div style="display:table-row;"></div>
+    <div style="display:table-row;"></div>
+</div>
+```
 
-    if (!data) $this.data('bs.button', (data = new Button(this, options)))
+如果行高度不限制，三行内容一致，你会发现三行等分了整个表的高度，共同占据了600px的高度，这一点和常规div表现不一致。[在线demo](http://jiangshanmeta.github.io/blogdemo/table/table.html)
 
-    if (option == 'toggle') data.toggle()
-    else if (option) data.setState(option)
-  })
+如果高度不限制，三行内容不一致，那么三行均分剩余高度。看起来上面说的内容一致的是这里的特殊情况。你不觉得和```flex```有点像吗，```flex-grow```属性就可以分配剩余空间，不过能设置分配系数，比这里强大点。[在线demo（和上面同一个）](http://jiangshanmeta.github.io/blogdemo/table/table.html)
+
+//于是，我无意间实现了简单模拟```flex-grow```属性。
+
+如果高度限制了比例，你会发现这里的比例只是参考比例，如果足够放得下，那么就按照这个比例，如果不够放，那么会调整比例使其恰能放开。[在线demo（依然和上面同一个）](http://jiangshanmeta.github.io/blogdemo/table/table.html)
+
+在上面的情况延伸一下，如果有一个行高度设为了100%，其它行高度会调整为恰好够填充，而这一行会填充满剩余空间。之前提到过这一点可以用来实现sticky footer，[在线demo](http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html)
+
+
+
+
+## table的用处
+
+#### 不定宽元素水平居中
+```
+.center-table{
+  display:table;
+  margin-left:auto;
+  margin-right:auto;
 }
 ```
-和alert.js类似，这里也是采用data的形式进行缓存```Button```实例，我们不需要去关心```toggle```的实现，因为我连应用场景都没想到，我们只需关心调用```setState```方法。setState传入的参数其实只有```loading```和```reset```是有效的。
+原理上面有说，是自动布局```width```属性为```auto```时```display:table```的元素宽度为内容宽度
 
-```
-Button.prototype.setState = function (state) {
-  var d    = 'disabled'
-  var $el  = this.$element
-  var val  = $el.is('input') ? 'val' : 'html'
-  var data = $el.data()
+#### 垂直居中
 
-  state += 'Text'
+#### 等分布局/多列布局
 
-  if (data.resetText == null) $el.data('resetText', $el[val]())
+#### 等高布局
 
-  // push to event loop to allow forms to submit
-  setTimeout($.proxy(function () {
-    $el[val](data[state] == null ? this.options[state] : data[state])
+#### sticky footer
 
-    if (state == 'loadingText') {
-      this.isLoading = true
-      $el.addClass(d).attr(d, d)
-    } else if (this.isLoading) {
-      this.isLoading = false
-      $el.removeClass(d).removeAttr(d)
-    }
-  }, this), 0)
-}
-```
-读起来并不是很难懂，一个要注意的地方是```setTimeout```，这个函数一方面会改变```this```的指向，我以前也分析过[javascript的this坑](http://jiangshanmeta.github.io/post/jsthis/)，另一方面是定时器的原理，不是相隔多长时间后执行，而是相隔多长时间后加入任务队列，这个[我以前也提及过](http://jiangshanmeta.github.io/post/browser/)。另一个要注意的点是data的使用，利用data保存button中原来的内容就不说了，很常规的一个写法。比较有趣的是对于加载时显示内容的处理。文档上说加载时保存的信息保存在了```data-loading-text```中，但是我们在代码中读取的时候是以```loadingText```的形式读写，这就比较有意思了，一个中划线没了，然后一个大小写改变了。查了查MDN找到了答案：
-
-data-*,*可以被任何符合以下限制的the producton rule of xml names(xml的命名规则)代替：
-
-1. 名字不能以xml开头，除此之外其他任何情形都可是使用这3个字母；
-2. 名字不能含有分号；
-3. 名字不能含有大写字母。
-
-注意：HTMLElement.dataset是一个 StringMap。一个名叫data-test-value的自定义属性可以通过HTMLElment.dataset.testValue来访问，属性的名字中的中线(U+002D)被挨着它字母的大写字母代替了（驼峰命名）。
-
-自定义的data 属性名称转化成 DOMStringMap 的键值时会遵循下面的规则：
-
-1. 前缀  data- 被去除(包括减号)；
-2. 对于每个在ASCII小写字母 a到 z前面的减号 (U+002D)，减号会被去除，并且字母会转变成对应的大写字母。其他字符（包含其他减号）都不发生变化
-
-
-具体链接: [data-*](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes#attr-data-*),[dataset](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLElement/dataset)
-
-
-
-
-
+之前[总结过sticky footer的实现](http://jiangshanmeta.github.io/post/stickyfooter/),以及[在线demo](http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html)

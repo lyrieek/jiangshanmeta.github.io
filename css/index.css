@@ -143,11 +143,6 @@ body {
 a {
   color: #909090;
   text-decoration: none;
-  -webkit-transition:all 0.3s ease-in-out;
-  -moz-transition:all 0.3s ease-in-out;
-  -ms-transition:all 0.3s ease-in-out;
-  -o-transition:all 0.3s ease-in-out;
-  transition:all 0.3s ease-in-out;
 }
 a:hover,
 a:focus {
@@ -405,4 +400,13 @@ pre code {
 }
 .article-nav a:hover{
   color:#fff;
+}
+
+
+.article-nav a,.post a{
+  -webkit-transition:all 0.3s ease-in-out;
+  -moz-transition:all 0.3s ease-in-out;
+  -ms-transition:all 0.3s ease-in-out;
+  -o-transition:all 0.3s ease-in-out;
+  transition:all 0.3s ease-in-out;
 }

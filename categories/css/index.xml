@@ -197,7 +197,7 @@ padding-left: 15px;
 
 &lt;p&gt;这里所说的table并不是说html table，而是css table。在css的display属性中，有一堆关于table的值，比如&lt;code&gt;table&lt;/code&gt;,&lt;code&gt;table-row&lt;/code&gt;,&lt;code&gt;table-cell&lt;/code&gt;。这些值可以帮助我们像表格一样布局而不使用html table。这里用到的是&lt;code&gt;table&lt;/code&gt;和&lt;code&gt;table-row&lt;/code&gt;两个值。&lt;/p&gt;
 
-&lt;p&gt;我们可以把整个body视为一个table，然后header、main、footer三部分视为table-row。并且让main占据100%高度。可能你觉得很奇怪如果main高度设为100%，那么header和footer的高度岂不是零了？但是table有许多神奇的特性，header和footer会正常显示。&lt;/p&gt;
+&lt;p&gt;我们可以把整个body视为一个table，然后header、main、footer三部分视为table-row。并且让main占据100%高度。可能你觉得很奇怪如果main高度设为100%，那么header和footer的高度岂不是零了？但是table有许多神奇的特性，header和footer会正常显示。这里的header和footer的高度会变成恰能放下内容的高度，main占据剩余空间。因为table的话无论是宽度还是高度计算都比较复杂，web开发者所设置的width或者height都是参考值。&lt;/p&gt;
 
 &lt;p&gt;这样你会发现依然没有实现固定在底部。因为body的高度现在是由内容决定的，我们要设置body的最小高度设为视口高度。可以采用100vh这么一个方案，如果担心兼容性问题，可以把高度设为百分比。&lt;/p&gt;
 
