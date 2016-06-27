@@ -6,8 +6,130 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Jun 2016 20:22:23 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 27 Jun 2016 21:09:14 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>table那些事</title>
+      <link>http://jiangshanmeta.github.io/post/table/</link>
+      <pubDate>Mon, 27 Jun 2016 21:09:14 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/table/</guid>
+      <description>
+
+&lt;p&gt;最近我的知乎时间线上出现了这么一个问题:&lt;a href=&#34;https://www.zhihu.com/question/20003535&#34;&gt;网页的 Table 布局和 DIV+CSS 布局从哪里可以看出来？Table 布局已经过时了吗？&lt;/a&gt;，于是便想着总结一下关于table的一些知识点。先声明一下，这里table是指css table，而不是html table，以下所说的可能用html的形式来写，但都是指的css table。&lt;/p&gt;
+
+&lt;h2 id=&#34;基本概念:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;基本概念&lt;/h2&gt;
+
+&lt;h4 id=&#34;关于表格的display值:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;关于表格的display值&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;table                对应html中的&lt;code&gt;&amp;lt;table&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-row            对应html中的&lt;code&gt;&amp;lt;tr&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-cell           对应htnl中的&lt;code&gt;&amp;lt;td&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-row-group      对应html中的&lt;code&gt;&amp;lt;tbody&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-header-group   对应html中的&lt;code&gt;&amp;lt;thead&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-footer-group   对应html中的&lt;code&gt;&amp;lt;tfoot&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-caption        对应html中的&lt;code&gt;&amp;lt;caption&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-column         对应html中的&lt;code&gt;&amp;lt;col&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;table-column-group   对应html中的&lt;code&gt;&amp;lt;colgroup&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;最重要的是前三个属性，而最后两个可以认为没什么用处，因为css将其表模型定义为以行为主，也就是说，它认为web开发者会显式声明行，而列是从单元格行的布局推导出来的。&lt;/p&gt;
+
+&lt;h4 id=&#34;匿名表对象:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;匿名表对象&lt;/h4&gt;
+
+&lt;p&gt;在html的table，有一些嵌套标签即使你不去写，浏览器也会去帮你填充，css的table也有类似的现象，可以将“遗漏的”组件作为匿名对象插入。插入遵循以下规则：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;如果一个table-cell元素的父元素不是table-row元素，则会在该table-cell元素及其父元素之间插入一个匿名table-row对象。所插入的这个对象将包含该table-cell元素的所有连续兄弟。&lt;/li&gt;
+&lt;li&gt;如果一个table-row元素的父元素不是table、table-row-group元素，则会在该table-row元素及其父元素之间插入一个匿名table元素。插入的这个对象将包含该table-row元素的连续兄弟。&lt;/li&gt;
+&lt;li&gt;如果一个table-column元素的父元素不是table、table-column-group元素，则在该table-column元素及其父元素之间插入一个匿名table元素。&lt;/li&gt;
+&lt;li&gt;如果一个table-row-group、table-header-group、table-footer-group、table-column-group或table-caption元素的父元素不是table元素，则会在该元素及其父元素之间插入一个匿名table元素。&lt;/li&gt;
+&lt;li&gt;如果一个table元素的子元素不是table-row-group、table-header-group、table-footer-group、table-row或table-caption元素，则在该table元素及其子元素之间插入一个匿名table-row对象。这个匿名对象将包含该子元素及所有不是table-row-group、table-header-group、table-footer-group、table-row、table-caption元素的连续兄弟&lt;/li&gt;
+&lt;li&gt;如果一个table-row-group、table-header-group、table-footer-group元素的子元素不是table-row对象，则在该元素及其子元素之间插入一个匿名table-row对象。这个匿名对象包含该子元素及其所有非table-row对象的连续兄弟&lt;/li&gt;
+&lt;li&gt;如果一个table-row元素的子元素不是table-cell元素，则在该元素和其子元素之间插入一个匿名table-cell对象。这个匿名对象包含该子元素及其所有非table-cell元素的连续兄弟&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;看起来比较理论，大家自己读读就好。&lt;/p&gt;
+
+&lt;h4 id=&#34;固定布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;固定布局&lt;/h4&gt;
+
+&lt;p&gt;熟悉css属性的人对于&lt;code&gt;table-layout&lt;/code&gt;应该不陌生，这个属性很大程度上影响了table的布局。首先介绍的固定布局，对应的属性值是&lt;code&gt;fixed&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;要实现固定布局，首先要设定&lt;code&gt;table-layout&lt;/code&gt;为&lt;code&gt;fixed&lt;/code&gt;,这是显然的，但是也是不足的，除此之外还要设定table的宽度，否则会按照自动布局进行。&lt;/p&gt;
+
+&lt;p&gt;具体实现上包括以下步骤：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;width属性不是auto的列元素会根据width值设置该列的宽度。&lt;/li&gt;
+&lt;li&gt;如果一个列的宽度为auto，但是表首行中该列的单元格width不为auto，则根据单元格宽度设置此列宽度。其它行设定的宽度无效。&lt;/li&gt;
+&lt;li&gt;经过前两步，如果列的宽度依然为auto，会自动确定其大小，使其宽度尽可能相等。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;固定布局速度比较快，因为布局不依赖与内容，而是根据表的宽度、列和单元格的width决定。&lt;/p&gt;
+
+&lt;p&gt;上面提到的第三点是table实现等分布局的基础。&lt;/p&gt;
+
+&lt;h4 id=&#34;自动布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;自动布局&lt;/h4&gt;
+
+&lt;p&gt;自动布局是table的默认布局，但是因为要根据内容决定布局，所以布局速度较慢。&lt;/p&gt;
+
+&lt;p&gt;对于自动布局，具体宽度的计算比较复杂，而且对于中英文分割也比较复杂。所以这里就简要介绍一下：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;对于一列的各个单元格，计算最小和最大单元格宽度。&lt;/li&gt;
+&lt;li&gt;对于各列，计算最小和最大列宽&lt;/li&gt;
+&lt;li&gt;计算出表的真正宽度和各列宽度。如果表的&lt;code&gt;width&lt;/code&gt;属性不是auto，则将width属性值与所有列宽之和比较，取较大的作为表的宽度。如果最终宽度大于各列宽度之和，多余宽度各列均分。如果表的&lt;code&gt;width&lt;/code&gt;属性为auto，则将各列宽度之和作为表的宽度。换句话说，表的宽度恰好足够显示其内容，这一点是&lt;strong&gt;不定宽元素水平居中&lt;/strong&gt;的基础。然而，在&lt;code&gt;width&lt;/code&gt;为&lt;code&gt;auto&lt;/code&gt;的情况下，一个表可能会很难看，尤其是中文，有的时候可能发现每一列宽度都很小甚至只能写下一个字然后整个文字就竖起来了。目测bootstrap也是因为这个所以给table一个&lt;code&gt;width:100%&lt;/code&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;关于height:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;关于height&lt;/h4&gt;
+
+&lt;p&gt;对于web开发者来说，一般很少显式声明一个元素的高度，但是对于table来说，就有点有趣了&lt;/p&gt;
+
+&lt;p&gt;先约定一下页面结构&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;div style=&amp;quot;display:table;height:600px;&amp;quot;&amp;gt;
+    &amp;lt;div style=&amp;quot;display:table-row;&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+    &amp;lt;div style=&amp;quot;display:table-row;&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+    &amp;lt;div style=&amp;quot;display:table-row;&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果行高度不限制，三行内容一致，你会发现三行等分了整个表的高度，共同占据了600px的高度，这一点和常规div表现不一致。&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;如果高度不限制，三行内容不一致，那么三行均分剩余高度。看起来上面说的内容一致的是这里的特殊情况。你不觉得和&lt;code&gt;flex&lt;/code&gt;有点像吗，&lt;code&gt;flex-grow&lt;/code&gt;属性就可以分配剩余空间，不过能设置分配系数，比这里强大点。&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/table.html&#34;&gt;在线demo（和上面同一个）&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;//于是，我无意间实现了简单模拟&lt;code&gt;flex-grow&lt;/code&gt;属性。&lt;/p&gt;
+
+&lt;p&gt;如果高度限制了比例，你会发现这里的比例只是参考比例，如果足够放得下，那么就按照这个比例，如果不够放，那么会调整比例使其恰能放开。&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/table.html&#34;&gt;在线demo（依然和上面同一个）&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;在上面的情况延伸一下，如果有一个行高度设为了100%，其它行高度会调整为恰好够填充，而这一行会填充满剩余空间。之前提到过这一点可以用来实现sticky footer，&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;table的用处:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;table的用处&lt;/h2&gt;
+
+&lt;h4 id=&#34;不定宽元素水平居中:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;不定宽元素水平居中&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;.center-table{
+  display:table;
+  margin-left:auto;
+  margin-right:auto;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;原理上面有说，是自动布局&lt;code&gt;width&lt;/code&gt;属性为&lt;code&gt;auto&lt;/code&gt;时&lt;code&gt;display:table&lt;/code&gt;的元素宽度为内容宽度&lt;/p&gt;
+
+&lt;h4 id=&#34;垂直居中:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;垂直居中&lt;/h4&gt;
+
+&lt;h4 id=&#34;等分布局-多列布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等分布局/多列布局&lt;/h4&gt;
+
+&lt;h4 id=&#34;等高布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等高布局&lt;/h4&gt;
+
+&lt;h4 id=&#34;sticky-footer:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;sticky footer&lt;/h4&gt;
+
+&lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/stickyfooter/&#34;&gt;总结过sticky footer的实现&lt;/a&gt;,以及&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——button.js</title>
@@ -1380,90 +1502,6 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
 &lt;p&gt;还有一块内容想做的是评论系统。感觉是再做一个贴吧。&lt;/p&gt;
 
 &lt;p&gt;好吧，我抄的APP是半糖，然后我已经忍不住买买买了。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>前端需要知道的WEB知识（1）</title>
-      <link>http://jiangshanmeta.github.io/post/browser1/</link>
-      <pubDate>Mon, 23 May 2016 21:49:52 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/browser1/</guid>
-      <description>&lt;p&gt;之前无意间触发了一个bug，让我开始接触浏览器相关的知识。搞web开发的如果不了解浏览器的基本知识，不了解一个网页是如何形成的，以及如何展示的，基本上也就到天花板了。&lt;/p&gt;
-
-&lt;p&gt;今天并不想从发起一个http请求开始讲起，战线会拉的太长。就从web服务器返回页面开始讲起吧。&lt;/p&gt;
-
-&lt;p&gt;浏览器接收到服务器返回的HTML，开始按顺序进行解析，先是head部分，再是body部分。&lt;/p&gt;
-
-&lt;p&gt;在head部分，可能会遇到&lt;code&gt;&amp;lt;link&amp;gt;&lt;/code&gt; 或者 &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt;,会发起相应的http请求对应的文件，在相应的文件下载之后，渲染才会继续进行，在这一段期间浏览器的状态是一片白。一些常见的web优化就是根据这个原因进行的。比如对CSS文件和JS文件进行压缩，这样可以减少请求文件的体积，从而减少传输时间。又比如CSS文件或者JS文件该合并的进行合并，这样可以减少http请求，而http请求会带来额外的开销。还有是一些js文件从head中移除，放到body中，这样可以先让用户看点东西，不至于一片白然后一怒之下关网页。&lt;/p&gt;
-
-&lt;p&gt;然后就是解析body进行渲染了。这里我想借助一幅图说明&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/browser.png&#34; alt=&#34;浏览器渲染原理&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;简单来说就是HTML解析器生成DOM，CSS解析器生成CSSOM，然后层叠，布局绘制，最终展示成为我们所看到的页面。&lt;/p&gt;
-
-&lt;p&gt;再上张图&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/browser2.png&#34; alt=&#34;浏览器渲染原理&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;其中大部分的工作对于web开发者来说都是不可控的，只有控制DOM和并不好用的样式操作对web开发者是可控的，其余的都是只能按照规则来。然而&lt;a href=&#34;https://zhuanlan.zhihu.com/p/20939640&#34;&gt;知乎上有篇文章指出这一现状可能会被改善&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;虽然绘制的过程目前是无法控制只能看浏览器心情，有些基本概念还是要了解的。&lt;/p&gt;
-
-&lt;p&gt;当DOM的变化影响了元素的几何属性，浏览器需要重新计算元素的几何属性，同样其他元素的几何属性和位置也会受到影响。浏览器会使渲染树的受到影响的部分失效，并重新构造渲染树。这个过程称为&lt;strong&gt;重排(reflow)&lt;/strong&gt;。完成重排后，浏览器会重新绘制受到影响的部分到屏幕中，这个过程称为&lt;strong&gt;重绘(repaint)&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;显然，重排一定会导致重绘，重绘却不一定意味着重排。从前端性能优化的角度来看，我们需要尽可能减少重绘重排这样昂贵的操作。从CSS的角度上来讲，似乎能做的不多，我能想到的是利用&lt;code&gt;outline&lt;/code&gt;或者&lt;code&gt;box-shadow&lt;/code&gt;这样不影响元素几何属性的属性模拟一些几何属性，比如边框，不能减少重绘但是能减少重排。可能说的不太明白，还是上代码吧。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-HTML&#34;&gt;&amp;lt;div class=&amp;quot;box&amp;quot;&amp;gt;
-
-&amp;lt;/div&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.box{
-	width:300px;
-	margin-left:20px;
-}
-.box:hover{
-	border:1px solid #ccc;
-	margin-left:19px;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以将CSS优化成&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.box{
-	width:300px;
-	margin-left:20px;
-}
-.box:hover{
-	outline:1px solid #ccc;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;在js部分减少重绘重排能做的就比较多了。&lt;/p&gt;
-
-&lt;p&gt;1.缓存布局信息，减少对布局信息的请求。可能会有人问了，难道对布局信息请求会强制重绘？我想引用*高性能JavaScript*中的一段话回答&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;由于每次重排都会产生计算消耗，大多数浏览器通过队列化修改并批量执行来优化重排过程。然而，你可能会（经常不知不觉）强制刷新队列并要求计划任务立即执行。获取布局信息的操作会导致队列刷新。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;2.批量处理样式操作。利用cssText属性可以合并一些操作。如果可以通过添加类名改变样式的话尽可能控制类名而不是具体的style。&lt;/p&gt;
-
-&lt;p&gt;3.利用documentFragment优化。这个我现在用的不多。&lt;/p&gt;
-
-&lt;p&gt;4.还有搞前端最喜欢玩的，能用CSS实现的就不要用JS。不细说，自己体会。&lt;/p&gt;
-
-&lt;p&gt;从浏览器的重绘重排扯到了前端性能优化，我觉得还是扯回来吧&lt;/p&gt;
-
-&lt;p&gt;在&lt;a href=&#34;http://jiangshanmeta.github.io/post/browser/&#34;&gt;上篇文章&lt;/a&gt;中，我提到了线程问题。当时找的资料有点杂，我觉得还是引用一些书籍上的话加深理解吧&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;大多数浏览器让一个单线程共用于执行javascript和更新用户界面。每个时刻只能执行其中一种操作，这意味着当javascript代码正在执行时用户界面无法相应输入，反之亦然。当javascri代码执行时，用户界面处于“锁定”状态。&lt;/p&gt;
-
-&lt;p&gt;用于执行javascript和更新用户界面的进程通常被称为“浏览器UI线程”。UI线程的工作基于一个简单的队列系统，任务会被保存到队列中直到进程空闲。一旦空闲，队列中的下一个任务就被重新提出来并运行。这些任务要么是运行javascript代码，要么是执行UI更新，包括重绘和重排。&lt;/p&gt;
-&lt;/blockquote&gt;
 </description>
     </item>
     
