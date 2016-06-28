@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1, user-scalable=no">
+	<title>图文混排</title>
+
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+		html,body{
+			/*height:100%;*/
+		}
+		body{
+			display:flex;
+			flex-direction:column;
+			min-height:100vh;
+		}
+		.dtable{
+			display:table;
+		}
+		.dcell{
+			display:table-cell;
+			/*vertical-align:top;*/
+		}
+		.dblock{
+			display:block;
+		}
+		.dib{
+			display:inline-block;
+		}
+		.img-responsive{
+			max-width:100%;
+			height:auto;
+		}
+		.clearfix::after{
+			content:'';
+			display:table;
+			clear:both;
+		}
+		.pull-right{
+			float:right;
+		}
+	</style>
+</head>
+<body >
+	<div style="width:100%;table-layout:fixed;margin:auto;" class="dtable">
+		<div class="dcell" style="max-width:50%;vertical-align:top;">
+			<img src="http://jiangshanmeta.github.io/demo/myWork/pic/photowall/2.jpg" class=" img-responsive dblock" >
+		</div>
+		<div class="dcell" style="position:relative;vertical-align:top;">
+			<div class="clearfix">
+				取变量名很痛苦
+				<div class="pull-right">右面站位</div>
+			</div>
+			<div style="position:absolute;bottom:5px;left:0;">想放在下面的东西</div>
+		</div>
+	</div>
+</body>
+</html>

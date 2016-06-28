@@ -6,8 +6,34 @@
     <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 27 Jun 2016 21:09:14 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jun 2016 23:14:10 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/css/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>图文混排布局的一个小tip</title>
+      <link>http://jiangshanmeta.github.io/post/tabletip/</link>
+      <pubDate>Tue, 28 Jun 2016 23:14:10 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/tabletip/</guid>
+      <description>&lt;p&gt;如果想实现一个左图右文布局，可以使用浮动，这是很普遍的一点。但是如果如果右侧文字很少，会显得右侧很空，这时候我们会希望一些文字能够拿到下面来，差不多和图片齐平，显然浮动无法实现，一个很直接的想法是需要等高布局。等高布局比较靠谱的解决方案是利用&lt;a href=&#34;http://jiangshanmeta.github.io/post/table/&#34;&gt;css table&lt;/a&gt;，利用同一行中单元格登高这一特性来实现。但是说实话table真的很难驯服，再加上图文混排出幺蛾子的概率很高。如果按照默认样式的可能是这样的：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/table/tabletip.png&#34; alt=&#34;乱的布局&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这一其实还做过一些处理，因为图可能很大，但是我只希望图片区占有一定比例，其他的所以采用&lt;code&gt;table-layout:fixed&lt;/code&gt;属性加上百分比的宽度，具体的分析上面那个连接给出了说明。&lt;/p&gt;
+
+&lt;p&gt;为什么文字会这么靠下呢，因为&lt;code&gt;vertical-align&lt;/code&gt;属性默认值为&lt;code&gt;baseline&lt;/code&gt;,把右侧文字区的&lt;code&gt;vertical-align&lt;/code&gt;设为&lt;code&gt;top&lt;/code&gt;就好了。然后想放在下面的文字就绝对定位就好了，别忘了给右侧文字区域加上&lt;code&gt;position:ralative&lt;/code&gt;，基本常识了。&lt;/p&gt;
+
+&lt;p&gt;这样基本上差不多了，可以上&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/tabletip.html&#34;&gt;demo&lt;/a&gt;了。&lt;/p&gt;
+
+&lt;p&gt;稍微精益求精的可以发现左侧图片区的高度比图片高度大那么一点，换句话说就是图片下面还有一定空间，这一因为行高，可行的解决方案有如下几个&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;图片设置为&lt;code&gt;display:block;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;左侧图片区行高设置&lt;code&gt;line-height:0;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;左侧图片&lt;code&gt;vertical-align&lt;/code&gt;设置为&lt;code&gt;top&lt;/code&gt; || &lt;code&gt;bottom&lt;/code&gt; || &lt;code&gt;middle&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>table那些事</title>
@@ -124,6 +150,8 @@
 &lt;h4 id=&#34;等分布局-多列布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等分布局/多列布局&lt;/h4&gt;
 
 &lt;h4 id=&#34;等高布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等高布局&lt;/h4&gt;
+
+&lt;p&gt;还是直接上&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/tabletip.html&#34;&gt;demo&lt;/a&gt;吧，我这里实现了图文混排下的等高。&lt;/p&gt;
 
 &lt;h4 id=&#34;sticky-footer:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;sticky footer&lt;/h4&gt;
 
