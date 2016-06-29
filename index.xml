@@ -32,6 +32,8 @@
 &lt;li&gt;左侧图片区行高设置&lt;code&gt;line-height:0;&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;左侧图片&lt;code&gt;vertical-align&lt;/code&gt;设置为&lt;code&gt;top&lt;/code&gt; || &lt;code&gt;bottom&lt;/code&gt; || &lt;code&gt;middle&lt;/code&gt;&lt;/li&gt;
 &lt;/ol&gt;
+
+&lt;p&gt;于是第二天就用到相关知识了。老板想做类似的东西，左侧依然是图片区，中间是文字区，右侧是一个垂直居中的箭头。这个设计确实挺常见的。然后我就把上面的实现说了一下，然后最右侧加了一个&lt;code&gt;vertical-align:middle&lt;/code&gt;,我实现的demo和上面的demo放在一个页面里了。老板听完我的实现后就默默地决定最右边的那个箭头放背景图里然后默默切图去了。嘤嘤嘤。&lt;/p&gt;
 </description>
     </item>
     
