@@ -71,7 +71,14 @@ function whichTransitionEvent(){
         }  
     }  
 }
-
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
 
 function Lottery(option){
   if(!option.lotteris || !option.ajaxUrl || !option.needCredits ){
@@ -299,9 +306,17 @@ Lottery.prototype = {
 
           var _thisCanvas = this;
           // 你猜为什么要写在setTimeout中呢。为了强制渲染啊。
-          setTimeout(function(){
-            _thisCanvas.style.cssText = styleStr;
-          },0)
+          // setTimeout(function(){
+          //   _thisCanvas.style.cssText = styleStr;
+          // },0)
+
+          //用requestAnimationFrame的作用是一样的，等重置需要一帧时间，再下一次重绘的时候写入新的样式。
+          requestAnimFrame(function(){
+            requestAnimFrame(function(){
+              _thisCanvas.style.cssText = styleStr;
+            })
+             
+          });
 
         }
       }
