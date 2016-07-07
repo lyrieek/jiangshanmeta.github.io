@@ -48,6 +48,8 @@
 &lt;p&gt;这个小电商基本上是实现了，但是我的主要工作是实现功能，也就是把js和php写完，换句话说就是样式完全没理，根本没法看。看看是让美术设计一套还是抄一套别的电商的样式。&lt;/p&gt;
 
 &lt;p&gt;基本就这样。写了差不多一个星期，完活，撒花。&lt;/p&gt;
+
+&lt;p&gt;然后就遇到坑了。在商品分类那里，原来是要考虑多家门店多个库存的，后来老板说这样维护起来压力过大，让我在商品分类那里存一个配件id，把这个当成一个配件，然后在库存表里查库存信息。其实写起来并没有什么问题，多查一次表而已。&lt;/p&gt;
 </description>
     </item>
     
@@ -191,9 +193,15 @@
 
 &lt;h4 id=&#34;垂直居中:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;垂直居中&lt;/h4&gt;
 
+&lt;p&gt;在&lt;a href=&#34;http://jiangshanmeta.github.io/post/center/&#34;&gt;我的总结&amp;ndash;居中的实现&lt;/a&gt;中提到到过，利用的是&lt;code&gt;vertical-align:middle&lt;/code&gt;。&lt;/p&gt;
+
 &lt;h4 id=&#34;等分布局-多列布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等分布局/多列布局&lt;/h4&gt;
 
+&lt;p&gt;这两类基本布局我更习惯用浮动实现，对于&lt;code&gt;table&lt;/code&gt;实现没有什么特别大的爱好，等分布局需要&lt;code&gt;table-layout:fixed;&lt;/code&gt;这一属性。&lt;/p&gt;
+
 &lt;h4 id=&#34;等高布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等高布局&lt;/h4&gt;
+
+&lt;p&gt;如果不用table，实现等高布局的最简单方式应该是&lt;code&gt;flex&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;还是直接上&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/tabletip.html&#34;&gt;demo&lt;/a&gt;吧，我这里实现了图文混排下的等高。&lt;/p&gt;
 

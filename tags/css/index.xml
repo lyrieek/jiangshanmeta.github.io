@@ -149,9 +149,15 @@
 
 &lt;h4 id=&#34;垂直居中:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;垂直居中&lt;/h4&gt;
 
+&lt;p&gt;在&lt;a href=&#34;http://jiangshanmeta.github.io/post/center/&#34;&gt;我的总结&amp;ndash;居中的实现&lt;/a&gt;中提到到过，利用的是&lt;code&gt;vertical-align:middle&lt;/code&gt;。&lt;/p&gt;
+
 &lt;h4 id=&#34;等分布局-多列布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等分布局/多列布局&lt;/h4&gt;
 
+&lt;p&gt;这两类基本布局我更习惯用浮动实现，对于&lt;code&gt;table&lt;/code&gt;实现没有什么特别大的爱好，等分布局需要&lt;code&gt;table-layout:fixed;&lt;/code&gt;这一属性。&lt;/p&gt;
+
 &lt;h4 id=&#34;等高布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等高布局&lt;/h4&gt;
+
+&lt;p&gt;如果不用table，实现等高布局的最简单方式应该是&lt;code&gt;flex&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;还是直接上&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/tabletip.html&#34;&gt;demo&lt;/a&gt;吧，我这里实现了图文混排下的等高。&lt;/p&gt;
 
@@ -1087,6 +1093,9 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2016/05/29
 &lt;a href=&#34;http://jiangshanmeta.github.io/post/cssshape/&#34;&gt;使用伪元素结合border实现彩色环和梯形&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;update 2016/07/07
+&lt;a href=&#34;https://css-tricks.com/centering-in-the-unknown/&#34;&gt;伪元素在垂直居中的应用&lt;/a&gt;。这是一篇发布在css-tricks上的文章，显示利用&lt;code&gt;table&lt;/code&gt;+&lt;code&gt;vertical-align:middle&lt;/code&gt;实现了垂直居中。考虑到&lt;code&gt;vertical-align&lt;/code&gt;依赖于&lt;code&gt;table-cell&lt;/code&gt;或&lt;code&gt;inline-block&lt;/code&gt;或&lt;code&gt;inline&lt;/code&gt;，这篇文章又利用&lt;code&gt;inline-block&lt;/code&gt;实现了。&lt;/p&gt;
 </description>
     </item>
     

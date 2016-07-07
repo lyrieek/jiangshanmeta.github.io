@@ -69,6 +69,23 @@ http://www.cnblogs.com/coco1s/p/5439619.html
 
 CSS中一些比较好玩的属性
 
+#### currentColor
+这是一个颜色的关键字值，浏览器将对应的值解析为color的值，可以用在border 、box-shadow、background上面。有点像less、sass中的变量。用途的话[张鑫旭大神已经给了几个](http://www.zhangxinxu.com/wordpress/2014/10/currentcolor-css3-powerful-css-keyword/)
+
+#### user-select
+知乎上有一个作者保留权利，对于这种情况如果用户复制的话会复制一些版权信息。其实现上我猜是监听了copy事件之类的。我觉得知乎可以对这些作者保留权利的内容使用```user-select:none;```，这样对于普通用户连选择都做不到。
+
+不过这个属性兼容性有点差，在[can I use](http://caniuse.com/#search=user-select%3A)上查到的信息是目前还是乖乖加上私有前缀吧。
+
+#### ::selection
+在CSS中伪元素常用的只有```::before```和```::after```,```::selection```就显得比较小众了。浏览器默认的文字选中样式是白字蓝底，说实话真的不好看。这个伪元素就给了我们控制选中状态文字样式的可能性。
+
+本来以为萌娘百科的黑幕样式会使用这一个选择器，然而他们使用了浏览器的默认选择状态。
+
+
+
+
+
 https://www.zhihu.com/question/39817183
 https://www.zhihu.com/question/27432017
 
