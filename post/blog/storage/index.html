@@ -1,0 +1,68 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 本地存储的一些比较 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">本地存储的一些比较</h1>
+			  <p >Sat, Jul 9, 2016</p>
+			      
+
+<p><a href="http://jiangshanmeta.github.io/post/blog/ebussiness/">最近的项目中使用了localStorage实现了本地购物车</a>，借着这个机会总结一下各种本地存储。还有，发现以往过于关注API层面的东西了，反而对API是为了解决什么忽视了。</p>
+
+<h2 id="cookie:5fe4e2fe3590b5bd8669d1961910a370">cookie</h2>
+
+<p>cookie应该是最早的本地存储，本来今天不想谈API的东西，但是cookie的api设计的简直反人类。</p>
+
+<p>cookie的一个很重要的应用是用来判断用户是谁（登录功能）。因为http是无状态协议，无法根据之前的状态进行本次的请求处理。在登录成功后后端返回的报文中会设定包含用户登录信息的cookie，以后请求的时候会在请求头信息中包含cookie。</p>
+
+<p>cookie在每次http请求中都是默认自带的，这点有好处也有坏处。好处是不用手动把cookie信息写入报文，并且一般后端语言也会默认支持对cookie的读取，比如php的<code>$_COOKIE</code>，坏处是不管用不用得到都会一股脑传过去，虽然对于现在的网络环境而言这并不是什么太大的问题。cookie还有一个缺点是大小限制为4k，复杂点的web应用应该就不够用了。</p>
+
+<p>最近在看http相关的东西，发现还有个<code>httponly</code>属性，我觉得挺好的，以前是以一个纯前端的角度去看cookie，因为js无法控制<code>httponly</code>的cookie，所以没见过有人提。这个属性很好的提升了cookie的安全性。</p>
+
+<h2 id="localstorage:5fe4e2fe3590b5bd8669d1961910a370">localStorage</h2>
+
+<p>最近的项目中是要做一个购物车，因而使用了localStorage，相比较于cookie，它的存储空间更大，并且没有过期时间的概念，也就是说除非手动删除它会一直保存。</p>
+
+<p>和cookie还有一点不同就是需要自己手动向后端提交localStorage的内容，服务器端无法直接访问localStorage。确实可以减少网络传输。。毕竟设计的最大存储比cookie大多了，要是和cookie似的自动写到报文里每次请求估计最大的内容就是localStorage了吧。</p>
+
+<p>对于我的购物车功能，我觉得写得最折腾的就是同步本地数据和线上数据，每一次增删查改之后都要拿一份线上数据处理后然后返回给前端，前端再更新页面和更新localStorage。</p>
+
+<h2 id="sessionstorage:5fe4e2fe3590b5bd8669d1961910a370">sessionStorage</h2>
+
+<p>这是为了会话控制而存在的，看起来和localStorage很像但是生命周期短得多，如果关了网页重开就没了，开一个新的tab也不会有当前的sessionStorage。</p>
+
+<h2 id="indexeddb:5fe4e2fe3590b5bd8669d1961910a370">indexedDB</h2>
+
+<p>？？这货出现是为了解决啥？没想明白，难道是出来自high的？？</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>
