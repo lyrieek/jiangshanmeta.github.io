@@ -999,6 +999,9 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2016/5/16
 想起来这一方法不仅仅能够实现正方形，也能实现长宽比一定的矩形&lt;/p&gt;
+
+&lt;p&gt;update 2017/7/10
+慕课网上&lt;a href=&#34;http://t.imooc.com/video/12102&#34;&gt;张鑫旭大神分享了相关内容&lt;/a&gt;，只是他说的是&lt;code&gt;margin&lt;/code&gt;，我这里实现的都是使用&lt;code&gt;padding&lt;/code&gt;。&lt;/p&gt;
 </description>
     </item>
     
@@ -1024,13 +1027,39 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;有什么方法解决上面说的第二个问题呢？对第二个列加上一行&lt;code&gt;overflow:hidden;&lt;/code&gt;就好了。原理是形成BFC然后自己就玩自己的去了。&lt;/p&gt;
 
+&lt;p&gt;update 2017/7/10
+上面基本上说的是左侧定宽右侧自适应，如果我想实现右侧定宽左侧自适应，你可能说简单，右侧&lt;code&gt;float:right;&lt;/code&gt;加上一个固定的宽度，左侧&lt;code&gt;margin-right&lt;/code&gt;即可。确实没错，但是这要求右侧定宽区域的html更靠前，而感觉上左侧才应该更靠前。如果我偏要实现左侧靠前呢（一般是处于SEO的考虑），我们可以考虑结合浮动和负值margin&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;div id=&amp;quot;left-wrap&amp;quot;&amp;gt;
+	&amp;lt;div id=&amp;quot;left-cont&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;
+&amp;lt;div id=&amp;quot;right-cont&amp;quot;&amp;gt;
+&amp;lt;/div&amp;gt;	
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;#left-wrap{
+	float:left;
+	width:100%;
+}
+#left-cont{
+	margin-right:200px; //假设右侧定宽为200px
+}
+#right-cont{
+	float:left;
+	margin-left:-200px;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;类似的思路，可以实现&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2009/11/%E6%88%91%E7%86%9F%E7%9F%A5%E7%9A%84%E4%B8%89%E7%A7%8D%E4%B8%89%E6%A0%8F%E7%BD%91%E9%A1%B5%E5%AE%BD%E5%BA%A6%E8%87%AA%E9%80%82%E5%BA%94%E5%B8%83%E5%B1%80%E6%96%B9%E6%B3%95/&#34;&gt;左右两侧定宽中间自适应且中间html更靠前的三列布局&lt;/a&gt;&lt;/p&gt;
+
 &lt;h2 id=&#34;column:5a257f88feea4060d9c6a1cf42573807&#34;&gt;column&lt;/h2&gt;
 
 &lt;p&gt;coolumn的出现是为了模仿报纸的排版的，如果想要实现文字的两列或者多列布局，应用column布局很轻松，然而，不幸的是，如果想要使用column布局的话，我建议还是放弃这个想法吧，一方面各大浏览器对其支持还不够，需要加私有前缀，另一方面其显示有些问题，具体可见&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/pic/waterfall/waterfall_CSS.html&#34;&gt;column实现的瀑布流效果&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;table:5a257f88feea4060d9c6a1cf42573807&#34;&gt;table&lt;/h2&gt;
 
-&lt;p&gt;这里的table指的可不是HTML中的table，而是&lt;code&gt;display:table;&lt;/code&gt;利用table布局很容易实现两列布局，而且还能顺便实现等高布局。关于table的各种坑，我以后后做一个总结&lt;/p&gt;
+&lt;p&gt;这里的table指的可不是HTML中的table，而是&lt;code&gt;display:table;&lt;/code&gt;利用table布局很容易实现两列布局，而且还能顺便实现等高布局。关于table的各种坑，我以后会做一个总结。&lt;a href=&#34;http://jiangshanmeta.github.io/post/table/&#34;&gt;关于table的总结&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;flex:5a257f88feea4060d9c6a1cf42573807&#34;&gt;flex&lt;/h2&gt;
 
