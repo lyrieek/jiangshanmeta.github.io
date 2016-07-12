@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>C# on jsmeta</title>
+    <link>http://jiangshanmeta.github.io/categories/c/</link>
+    <description>Recent content in C# on jsmeta</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 13 Jul 2016 00:16:02 +0800</lastBuildDate>
+    <atom:link href="http://jiangshanmeta.github.io/categories/c" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>C#的基本语法</title>
+      <link>http://jiangshanmeta.github.io/post/blog/csharp/</link>
+      <pubDate>Wed, 13 Jul 2016 00:16:02 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/blog/csharp/</guid>
+      <description>
+
+&lt;p&gt;今天老板问我，想学C#吗？于是我就念了两句诗：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;苟利国家生死以,岂因祸福避趋之&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;想想一个语言基本语法其实没多少，无非就是&lt;/p&gt;
+
+&lt;h2 id=&#34;变量-常量-关键字-运算符-数组:daae90d06331bc886739d748003841f1&#34;&gt;变量、常量、关键字、运算符、数组&lt;/h2&gt;
+
+&lt;h2 id=&#34;条件语句:daae90d06331bc886739d748003841f1&#34;&gt;条件语句&lt;/h2&gt;
+
+&lt;h2 id=&#34;循环语句:daae90d06331bc886739d748003841f1&#34;&gt;循环语句&lt;/h2&gt;
+
+&lt;p&gt;和我常用的javascript和php没什么太大区别，只是感觉有点像当年学的谭浩强的C。&lt;/p&gt;
+
+&lt;p&gt;又想起来，被谭浩强支配的恐怖。&lt;/p&gt;
+
+&lt;p&gt;为什么数组的长度是固定。。。。为什么数组内部元素要是一个类型。。。&lt;/p&gt;
+
+&lt;p&gt;没有代码，因为真的不需要代码。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
