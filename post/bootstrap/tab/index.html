@@ -1,0 +1,143 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> bootstrap源码解读——tab.js &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">bootstrap源码解读——tab.js</h1>
+			  <p >Thu, Jul 14, 2016</p>
+			      <p>tab切换是网页中的常见设计，从实现上讲也并不复杂，基本思路是导航监听事件，然后把之前显示的tab窗口隐藏掉，然后把导航对应的窗口展示出来，并且更新导航条的状态。bootstrap也对此提供了相应的插件支持，基本思路上都差不太多。先说一下依赖的html结构和css代码</p>
+
+<pre><code class="language-html">&lt;div&gt;
+  &lt;!-- Nav tabs --&gt;
+  &lt;ul class=&quot;nav nav-tabs&quot; role=&quot;tablist&quot;&gt;
+    &lt;li role=&quot;presentation&quot; class=&quot;active&quot;&gt;
+    	&lt;a href=&quot;#home&quot; aria-controls=&quot;home&quot; role=&quot;tab&quot; data-toggle=&quot;tab&quot;&gt;
+    		Home
+    	&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li role=&quot;presentation&quot;&gt;
+    	&lt;a href=&quot;#profile&quot; aria-controls=&quot;profile&quot; role=&quot;tab&quot; data-toggle=&quot;tab&quot;&gt;
+   			 Profile
+    	&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li role=&quot;presentation&quot;&gt;
+    	&lt;a href=&quot;#messages&quot; aria-controls=&quot;messages&quot; role=&quot;tab&quot; data-toggle=&quot;tab&quot;&gt;
+    		Messages
+    	&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li role=&quot;presentation&quot;&gt;
+    	&lt;a href=&quot;#settings&quot; aria-controls=&quot;settings&quot; role=&quot;tab&quot; data-toggle=&quot;tab&quot;&gt;
+    		Settings
+    	&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;!-- Tab panes --&gt; 
+  &lt;div class=&quot;tab-content&quot;&gt;
+    &lt;div role=&quot;tabpanel&quot; class=&quot;tab-pane active&quot; id=&quot;home&quot;&gt;...&lt;/div&gt;
+    &lt;div role=&quot;tabpanel&quot; class=&quot;tab-pane&quot; id=&quot;profile&quot;&gt;...&lt;/div&gt;
+    &lt;div role=&quot;tabpanel&quot; class=&quot;tab-pane&quot; id=&quot;messages&quot;&gt;...&lt;/div&gt;
+    &lt;div role=&quot;tabpanel&quot; class=&quot;tab-pane&quot; id=&quot;settings&quot;&gt;...&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</code></pre>
+
+<p>整体上分为两大块，一部分是导航，一部分是tab窗口，tab窗口的css比较简单，</p>
+
+<pre><code>.tab-content &gt; .tab-pane {
+  display: none;
+}
+.tab-content &gt; .active {
+  display: block;
+}
+</code></pre>
+
+<p>说白了只要控制<code>active</code>类就能控制tab窗口的切换。比较复杂的是导航条的样式，基本款式有两种<code>nav-tabs</code>和<code>nav-pills</code>，这两个都可以配合<code>nav-justified</code>类形成两端对齐的导航。其实这些样式层面的东西对于js代码没什么影响，我就说几个比较好玩的。</p>
+
+<pre><code>.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs &gt; li {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs &gt; li &gt; a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs &gt; li.active &gt; a,
+.nav-tabs &gt; li.active &gt; a:hover,
+.nav-tabs &gt; li.active &gt; a:focus {
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+</code></pre>
+
+<p>tab标签页我觉得是写的比较好的，尤其是对于导航条下面那条线的处理上。每一个标签项都是浮动的，显然会有清除浮动影响，没写在这里。那条线是写在整个导航条上的。那么如何实现 当前标签页没有下面那条线的？首先是利用<code>margin-bottom:-1px</code>把每个标签项向下移动1px，然后每个标签项都有一个透明的1px边框，这时候标签项的下边框和导航条的下边框正好是重合的，由于颜色是透明的所以可以看得到导航条的边框。对于当前标签页，加了一个白色背景颜色，相当于是用背景色把导航边框色给盖住了。然而，为什么不用边框色盖住呢？非要写一个白色背景色，因为要处理<code>:hover</code>和<code>:focus</code>的情况。</p>
+
+<p>样式的东西就写这些，其实我觉得<code>nav-justified</code>写得也很好，既实现了所有标签项占据100%空间，又能兼顾标签项内容的长度分配剩余空间，<a href="http://stackoverflow.com/a/27846774">stackoverflow上面有评论</a>。</p>
+
+<p>说js部分了，利用data形式绑定事件以前已经说过了，然而我怀疑有没有必要整出<code>[data-toggle=&quot;tab&quot;]</code>和<code>[data-toggle=&quot;pill&quot;]</code>两个来。</p>
+
+<pre><code>function Plugin(option) {
+	return this.each(function () {
+	  var $this = $(this)
+	  var data  = $this.data('bs.tab')
+
+	  if (!data) $this.data('bs.tab', (data = new Tab(this)))
+	  if (typeof option == 'string') data[option]()
+	})
+}
+</code></pre>
+
+<p>和以往一样是把生成的对象挂到了data上，然后根据传入的参数做一些操作。在<code>Tab</code>的原型上主要挂了两个方法<code>show</code>和<code>activate</code> , <code>show</code>方法主要的功能是判断要不要进行tab切换，切换的对象是谁。具体的切换是<code>activate</code>方法实现的，这个方法相当于是对切换这个操作剥离出来，导航条标签的切换、tab窗口的切换都通过这个方法实现，这两个切换没有耦合在一起，这一点很不错。</p>
+
+<p>在<code>show</code>方法里确定要展示的tab窗口是通过tab标签的<code>data-target</code>或者<code>href</code>实现的，弱弱的说一句，在bootstrap的插件里，有的是<code>href</code>优先，有的是<code>data-target</code>优先，不过正常人是不会两个都加上的。在<code>show</code>方法里还触发了一些事件，相较于之前看过的几个插件，这里的事件复杂在有<code>relatedTarget</code>的概念。</p>
+
+<p>在<code>activate</code>方法中，首先获取当前活动的元素，然后判断是否要过渡。</p>
+
+<pre><code>var transition = callback
+  &amp;&amp; $.support.transition
+  &amp;&amp; ($active.length &amp;&amp; $active.hasClass('fade') || !!container.find('&gt; .fade').length)
+</code></pre>
+
+<p>然而我不太明白的是为啥一定要有callback才支持过渡。然后就是判断是否要过渡，如果要过渡的首先把当前展示的页面过渡、逐渐淡出，淡出完成后当前的移除<code>active</code>类，target元素添加<code>active</code>类，如果target元素需要过渡出来的话，还要先强制重绘一次，再添加<code>in</code>这个类，否则会直接进入最终状态。如果不需要过渡直接从移除<code>active</code>类开始执行。</p>
+
+<p>说实话，bootstrap的插件长的差不多，一开始觉得写法很独特，后来就习惯了，熟悉了写法之后其实插件的业务逻辑很好懂。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

@@ -6,8 +6,121 @@
     <description>Recent content in Javascript on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 08 Jul 2016 20:33:24 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 14 Jul 2016 22:56:40 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>bootstrap源码解读——tab.js</title>
+      <link>http://jiangshanmeta.github.io/post/bootstrap/tab/</link>
+      <pubDate>Thu, 14 Jul 2016 22:56:40 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/bootstrap/tab/</guid>
+      <description>&lt;p&gt;tab切换是网页中的常见设计，从实现上讲也并不复杂，基本思路是导航监听事件，然后把之前显示的tab窗口隐藏掉，然后把导航对应的窗口展示出来，并且更新导航条的状态。bootstrap也对此提供了相应的插件支持，基本思路上都差不太多。先说一下依赖的html结构和css代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;div&amp;gt;
+  &amp;lt;!-- Nav tabs --&amp;gt;
+  &amp;lt;ul class=&amp;quot;nav nav-tabs&amp;quot; role=&amp;quot;tablist&amp;quot;&amp;gt;
+    &amp;lt;li role=&amp;quot;presentation&amp;quot; class=&amp;quot;active&amp;quot;&amp;gt;
+    	&amp;lt;a href=&amp;quot;#home&amp;quot; aria-controls=&amp;quot;home&amp;quot; role=&amp;quot;tab&amp;quot; data-toggle=&amp;quot;tab&amp;quot;&amp;gt;
+    		Home
+    	&amp;lt;/a&amp;gt;
+    &amp;lt;/li&amp;gt;
+    &amp;lt;li role=&amp;quot;presentation&amp;quot;&amp;gt;
+    	&amp;lt;a href=&amp;quot;#profile&amp;quot; aria-controls=&amp;quot;profile&amp;quot; role=&amp;quot;tab&amp;quot; data-toggle=&amp;quot;tab&amp;quot;&amp;gt;
+   			 Profile
+    	&amp;lt;/a&amp;gt;
+    &amp;lt;/li&amp;gt;
+    &amp;lt;li role=&amp;quot;presentation&amp;quot;&amp;gt;
+    	&amp;lt;a href=&amp;quot;#messages&amp;quot; aria-controls=&amp;quot;messages&amp;quot; role=&amp;quot;tab&amp;quot; data-toggle=&amp;quot;tab&amp;quot;&amp;gt;
+    		Messages
+    	&amp;lt;/a&amp;gt;
+    &amp;lt;/li&amp;gt;
+    &amp;lt;li role=&amp;quot;presentation&amp;quot;&amp;gt;
+    	&amp;lt;a href=&amp;quot;#settings&amp;quot; aria-controls=&amp;quot;settings&amp;quot; role=&amp;quot;tab&amp;quot; data-toggle=&amp;quot;tab&amp;quot;&amp;gt;
+    		Settings
+    	&amp;lt;/a&amp;gt;
+    &amp;lt;/li&amp;gt;
+  &amp;lt;/ul&amp;gt;
+  &amp;lt;!-- Tab panes --&amp;gt; 
+  &amp;lt;div class=&amp;quot;tab-content&amp;quot;&amp;gt;
+    &amp;lt;div role=&amp;quot;tabpanel&amp;quot; class=&amp;quot;tab-pane active&amp;quot; id=&amp;quot;home&amp;quot;&amp;gt;...&amp;lt;/div&amp;gt;
+    &amp;lt;div role=&amp;quot;tabpanel&amp;quot; class=&amp;quot;tab-pane&amp;quot; id=&amp;quot;profile&amp;quot;&amp;gt;...&amp;lt;/div&amp;gt;
+    &amp;lt;div role=&amp;quot;tabpanel&amp;quot; class=&amp;quot;tab-pane&amp;quot; id=&amp;quot;messages&amp;quot;&amp;gt;...&amp;lt;/div&amp;gt;
+    &amp;lt;div role=&amp;quot;tabpanel&amp;quot; class=&amp;quot;tab-pane&amp;quot; id=&amp;quot;settings&amp;quot;&amp;gt;...&amp;lt;/div&amp;gt;
+  &amp;lt;/div&amp;gt;
+
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;整体上分为两大块，一部分是导航，一部分是tab窗口，tab窗口的css比较简单，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.tab-content &amp;gt; .tab-pane {
+  display: none;
+}
+.tab-content &amp;gt; .active {
+  display: block;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;说白了只要控制&lt;code&gt;active&lt;/code&gt;类就能控制tab窗口的切换。比较复杂的是导航条的样式，基本款式有两种&lt;code&gt;nav-tabs&lt;/code&gt;和&lt;code&gt;nav-pills&lt;/code&gt;，这两个都可以配合&lt;code&gt;nav-justified&lt;/code&gt;类形成两端对齐的导航。其实这些样式层面的东西对于js代码没什么影响，我就说几个比较好玩的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs &amp;gt; li {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs &amp;gt; li &amp;gt; a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs &amp;gt; li.active &amp;gt; a,
+.nav-tabs &amp;gt; li.active &amp;gt; a:hover,
+.nav-tabs &amp;gt; li.active &amp;gt; a:focus {
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;tab标签页我觉得是写的比较好的，尤其是对于导航条下面那条线的处理上。每一个标签项都是浮动的，显然会有清除浮动影响，没写在这里。那条线是写在整个导航条上的。那么如何实现 当前标签页没有下面那条线的？首先是利用&lt;code&gt;margin-bottom:-1px&lt;/code&gt;把每个标签项向下移动1px，然后每个标签项都有一个透明的1px边框，这时候标签项的下边框和导航条的下边框正好是重合的，由于颜色是透明的所以可以看得到导航条的边框。对于当前标签页，加了一个白色背景颜色，相当于是用背景色把导航边框色给盖住了。然而，为什么不用边框色盖住呢？非要写一个白色背景色，因为要处理&lt;code&gt;:hover&lt;/code&gt;和&lt;code&gt;:focus&lt;/code&gt;的情况。&lt;/p&gt;
+
+&lt;p&gt;样式的东西就写这些，其实我觉得&lt;code&gt;nav-justified&lt;/code&gt;写得也很好，既实现了所有标签项占据100%空间，又能兼顾标签项内容的长度分配剩余空间，&lt;a href=&#34;http://stackoverflow.com/a/27846774&#34;&gt;stackoverflow上面有评论&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;说js部分了，利用data形式绑定事件以前已经说过了，然而我怀疑有没有必要整出&lt;code&gt;[data-toggle=&amp;quot;tab&amp;quot;]&lt;/code&gt;和&lt;code&gt;[data-toggle=&amp;quot;pill&amp;quot;]&lt;/code&gt;两个来。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Plugin(option) {
+	return this.each(function () {
+	  var $this = $(this)
+	  var data  = $this.data(&#39;bs.tab&#39;)
+
+	  if (!data) $this.data(&#39;bs.tab&#39;, (data = new Tab(this)))
+	  if (typeof option == &#39;string&#39;) data[option]()
+	})
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;和以往一样是把生成的对象挂到了data上，然后根据传入的参数做一些操作。在&lt;code&gt;Tab&lt;/code&gt;的原型上主要挂了两个方法&lt;code&gt;show&lt;/code&gt;和&lt;code&gt;activate&lt;/code&gt; , &lt;code&gt;show&lt;/code&gt;方法主要的功能是判断要不要进行tab切换，切换的对象是谁。具体的切换是&lt;code&gt;activate&lt;/code&gt;方法实现的，这个方法相当于是对切换这个操作剥离出来，导航条标签的切换、tab窗口的切换都通过这个方法实现，这两个切换没有耦合在一起，这一点很不错。&lt;/p&gt;
+
+&lt;p&gt;在&lt;code&gt;show&lt;/code&gt;方法里确定要展示的tab窗口是通过tab标签的&lt;code&gt;data-target&lt;/code&gt;或者&lt;code&gt;href&lt;/code&gt;实现的，弱弱的说一句，在bootstrap的插件里，有的是&lt;code&gt;href&lt;/code&gt;优先，有的是&lt;code&gt;data-target&lt;/code&gt;优先，不过正常人是不会两个都加上的。在&lt;code&gt;show&lt;/code&gt;方法里还触发了一些事件，相较于之前看过的几个插件，这里的事件复杂在有&lt;code&gt;relatedTarget&lt;/code&gt;的概念。&lt;/p&gt;
+
+&lt;p&gt;在&lt;code&gt;activate&lt;/code&gt;方法中，首先获取当前活动的元素，然后判断是否要过渡。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var transition = callback
+  &amp;amp;&amp;amp; $.support.transition
+  &amp;amp;&amp;amp; ($active.length &amp;amp;&amp;amp; $active.hasClass(&#39;fade&#39;) || !!container.find(&#39;&amp;gt; .fade&#39;).length)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然而我不太明白的是为啥一定要有callback才支持过渡。然后就是判断是否要过渡，如果要过渡的首先把当前展示的页面过渡、逐渐淡出，淡出完成后当前的移除&lt;code&gt;active&lt;/code&gt;类，target元素添加&lt;code&gt;active&lt;/code&gt;类，如果target元素需要过渡出来的话，还要先强制重绘一次，再添加&lt;code&gt;in&lt;/code&gt;这个类，否则会直接进入最终状态。如果不需要过渡直接从移除&lt;code&gt;active&lt;/code&gt;类开始执行。&lt;/p&gt;
+
+&lt;p&gt;说实话，bootstrap的插件长的差不多，一开始觉得写法很独特，后来就习惯了，熟悉了写法之后其实插件的业务逻辑很好懂。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——collapse.js</title>
