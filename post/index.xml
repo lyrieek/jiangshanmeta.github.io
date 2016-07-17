@@ -6,8 +6,148 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 17 Jul 2016 00:43:18 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 17 Jul 2016 20:44:32 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>http方法和状态码</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</link>
+      <pubDate>Sun, 17 Jul 2016 20:44:32 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</guid>
+      <description>
+
+&lt;p&gt;http协议是web开发的基础，然而内容太多，即使是入门级的内容也不是一两篇文章能总结好的。这里就先总结一下http方法和状态码。&lt;/p&gt;
+
+&lt;h2 id=&#34;http方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;http方法&lt;/h2&gt;
+
+&lt;h4 id=&#34;get方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;GET方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;GET&lt;/code&gt;方法通常用来向服务器请求某个资源。一般打开某个网页就是使用&lt;code&gt;GET&lt;/code&gt;方法。&lt;/p&gt;
+
+&lt;h4 id=&#34;post方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;POST方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;POST&lt;/code&gt;方法是用来向服务器输入数据的。有的表单提交就是采用&lt;code&gt;POST&lt;/code&gt;方法，不过随着现在业务逻辑的复杂化，应该很少有人会直接使用这种方法提交表单，而是采用&lt;code&gt;ajax&lt;/code&gt;提交表单内容。&lt;/p&gt;
+
+&lt;h4 id=&#34;head方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;HEAD方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;HEAD&lt;/code&gt;方法和&lt;code&gt;GET&lt;/code&gt;方法很类似，但是服务器在响应中只会返回首部，而不会返回主体部分。&lt;/p&gt;
+
+&lt;h4 id=&#34;put方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;PUT方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;PUT&lt;/code&gt;方法用于向服务器写入文档。&lt;code&gt;PUT&lt;/code&gt;方法的语义是让服务器用请求的主体部分来创建一个由所请求URL命名的新文档，或者，如果那个URL已经存在，就用这个主体替代它。&lt;/p&gt;
+
+&lt;p&gt;因为&lt;code&gt;PUT&lt;/code&gt;方法允许对内容进行修改，对于WEB服务器，原则上应该需要用户登录确认身份。&lt;/p&gt;
+
+&lt;h4 id=&#34;delete方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;DELETE方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;DELETE&lt;/code&gt;方法是与&lt;code&gt;PUT&lt;/code&gt;方法相反的方法，它用来删除文件。&lt;/p&gt;
+
+&lt;h4 id=&#34;options方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;OPTIONS方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;OPTIONS&lt;/code&gt;方法请求服务器告知其支持的各种功能。可以询问服务器通常支持哪些方法，或者对某些特殊资源支持哪些方法。&lt;/p&gt;
+
+&lt;h4 id=&#34;trace方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;TRACE方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;TRACE&lt;/code&gt;方法允许客户端在最终将请求发送给服务器时，看看它变成了什么样子。服务器会在响应主体中携带它收到的原始请求报文。&lt;/p&gt;
+
+&lt;h2 id=&#34;http状态码和原因短语:299e9942cf324699ed9e60279b71ca7a&#34;&gt;http状态码和原因短语&lt;/h2&gt;
+
+&lt;p&gt;http状态码为客户端提供了一种理解事务处理结果的便捷方式。原因短语一般是为了方便人类理解而存在的。&lt;/p&gt;
+
+&lt;h3 id=&#34;100-199-信息性状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;100-199 信息性状态码&lt;/h3&gt;
+
+&lt;h4 id=&#34;101-switching-protocols:299e9942cf324699ed9e60279b71ca7a&#34;&gt;101 Switching Protocols&lt;/h4&gt;
+
+&lt;p&gt;服务器正在根据客户端的指定，将协议切换成Update首部所列的首部。&lt;/p&gt;
+
+&lt;h3 id=&#34;200-299-成功状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;200-299 成功状态码&lt;/h3&gt;
+
+&lt;h4 id=&#34;200-ok:299e9942cf324699ed9e60279b71ca7a&#34;&gt;200 OK&lt;/h4&gt;
+
+&lt;p&gt;表示从客户端发来的请求在服务器端正常处理了。在响应实体中包含了所请求的资源。&lt;/p&gt;
+
+&lt;h4 id=&#34;204-no-content:299e9942cf324699ed9e60279b71ca7a&#34;&gt;204 No Content&lt;/h4&gt;
+
+&lt;p&gt;表示客户端发来的请求在服务器端得到正常处理，但是在响应报文中不含实体的主体部分。大家可以看一下知乎专栏写文章那个页面，应该是监听输入事件然后发起ajax请求保存文章内容，然后返回的状态码就是204。虽然我个人认为知乎的这个保存设计不是很好。&lt;/p&gt;
+
+&lt;h4 id=&#34;206-partical-content:299e9942cf324699ed9e60279b71ca7a&#34;&gt;206 Partical Content&lt;/h4&gt;
+
+&lt;p&gt;成功执行了一个Range请求。206响应中必须包含&lt;code&gt;Content-Range&lt;/code&gt;、&lt;code&gt;Date&lt;/code&gt;、&lt;code&gt;ETag&lt;/code&gt;或&lt;code&gt;Content-Location&lt;/code&gt;首部。&lt;/p&gt;
+
+&lt;h3 id=&#34;300-399-重定向状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;300-399 重定向状态码&lt;/h3&gt;
+
+&lt;h4 id=&#34;301-moved-permanently:299e9942cf324699ed9e60279b71ca7a&#34;&gt;301 Moved Permanently&lt;/h4&gt;
+
+&lt;p&gt;永久重定向。表示请求的资源已经被分配了新的URL，响应的&lt;code&gt;Location&lt;/code&gt;首部字段包含资源现在所处的URL。&lt;/p&gt;
+
+&lt;h4 id=&#34;302-found-303-see-other-307-temporary-redirect:299e9942cf324699ed9e60279b71ca7a&#34;&gt;302 Found、303 See Other、307 Temporary Redirect&lt;/h4&gt;
+
+&lt;p&gt;这三个状态码表示临时重定向 ，功能差不多，但是有些许差异，而且还牵扯到http/1.0和http/1.1版本问题。&lt;/p&gt;
+
+&lt;p&gt;在http/1.0中，如果发送的是POST请求，服务器返回302，则需要向用户确认是否重发、重发依然是POST请求。&lt;/p&gt;
+
+&lt;p&gt;在http/1.1中，浏览器对于302，其实是按照303处理的，即POST请求会转换为GET请求然后重发。&lt;/p&gt;
+
+&lt;p&gt;在http/1.1中，浏览器对待307，其实和http/1.0中的302一致，不改变请求状态。&lt;/p&gt;
+
+&lt;p&gt;换句话说对于&lt;code&gt;GET&lt;/code&gt;请求这几个没什么区别，对于&lt;code&gt;POST&lt;/code&gt;请求，正常人会希望重定向为一个新的&lt;code&gt;POST&lt;/code&gt;请求，会采用307状态码。然而有应用场景？&lt;/p&gt;
+
+&lt;p&gt;可以参考&lt;a href=&#34;http://www.cnblogs.com/cswuyg/p/3871976.html&#34;&gt;这篇文章&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;304-not-modified:299e9942cf324699ed9e60279b71ca7a&#34;&gt;304 Not Modified&lt;/h4&gt;
+
+&lt;p&gt;客户端可以在请求首部中包含条件请求首部，如果不满足条件的话就返回304。带有这个状态码的响应不应该包含实体的主体部分。&lt;/p&gt;
+
+&lt;h3 id=&#34;400-499-客户端错误状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;400-499 客户端错误状态码&lt;/h3&gt;
+
+&lt;h4 id=&#34;400-bad-request:299e9942cf324699ed9e60279b71ca7a&#34;&gt;400 Bad Request&lt;/h4&gt;
+
+&lt;p&gt;表示请求报文有语法错误&lt;/p&gt;
+
+&lt;h4 id=&#34;403-forbidden:299e9942cf324699ed9e60279b71ca7a&#34;&gt;403 Forbidden&lt;/h4&gt;
+
+&lt;p&gt;表示请求被服务器拒绝了。如果服务器想说明为什么拒绝请求，可在响应主体对原因进行说明。然而，通常情况下因为不想说明为什么拒绝才用这个状态码，所以我至今不明白为什么有那么两天mongodb中文网给我403。&lt;/p&gt;
+
+&lt;h4 id=&#34;404-not-found:299e9942cf324699ed9e60279b71ca7a&#34;&gt;404 Not Found&lt;/h4&gt;
+
+&lt;p&gt;这个就太熟悉了，服务器找不到所请求的url。&lt;/p&gt;
+
+&lt;h3 id=&#34;500-599-服务器错误状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;500-599 服务器错误状态码&lt;/h3&gt;
+
+&lt;h4 id=&#34;500-internal-server-error:299e9942cf324699ed9e60279b71ca7a&#34;&gt;500 Internal Server Error&lt;/h4&gt;
+
+&lt;p&gt;在开发中，我的本地数据库连的同事的，然而有的时候连不上，就会报500。&lt;/p&gt;
+
+&lt;h4 id=&#34;503-service-unavailable:299e9942cf324699ed9e60279b71ca7a&#34;&gt;503 Service Unavailable&lt;/h4&gt;
+
+&lt;p&gt;服务器现在无法为请求提供服务，但将来可以。偶尔见到维护的时候用过这个状态码。&lt;/p&gt;
+
+&lt;h2 id=&#34;请求行与响应行:299e9942cf324699ed9e60279b71ca7a&#34;&gt;请求行与响应行&lt;/h2&gt;
+
+&lt;p&gt;请求行的语法如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;method&amp;gt;&amp;lt;request-URL&amp;gt;&amp;lt;version&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;举个例子，请求知乎首页的请求行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GET / HTTP/1.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;响应行的语法如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;version&amp;gt;&amp;lt;status&amp;gt;&amp;lt;reason-phrase&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;请求知乎首页响应行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HTTP/1.1 200 OK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;请求行和响应行需要方法、url、版本、状态码和状态短语。方法、状态码状态短语上面说过了，版本对于现代浏览器是http/1.1。url就不说了。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>DNS原理入门</title>
@@ -1145,78 +1285,6 @@ $.event.special.bsTransitionEnd = {
 
 &lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/transitiontip/clipping.html&#34;&gt;在线demo&lt;/a&gt;
 基本原理是一个绝对定位的div，定位到输入框的右边，模拟输入框右边的样子，input框获得焦点的时候把这个div transform。具体的看代码。如果可以的话想用伪元素实现这个div，然而input并不支持伪元素。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>深入理解贝塞尔曲线之如何实现匀加/减速动画</title>
-      <link>http://jiangshanmeta.github.io/post/cubicbezier/</link>
-      <pubDate>Tue, 14 Jun 2016 19:24:18 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/cubicbezier/</guid>
-      <description>
-
-&lt;p&gt;如果要实现web动画，通常有三个方式，第一是使用gif图，第二是使用CSS3中的transition和animation，第三是使用javascript。gif图一般交给美术去制作，不需要coding，js实现web动画是一个比较成熟的方案了，它的特点是兼容性好，能控制的动画效果多，适合制作复杂的动画效果。随着CSS3的浏览器支持程度越来越高，使用CSS3写web动画也成为一个流行的方式。&lt;/p&gt;
-
-&lt;p&gt;为了控制动画进行过程，CSS3为我们提供了缓动函数，分别为transition-timing-function和animition-timing-function (以下统称timing-function),通常用的是几个关键字属性：linear、ease、ease-in、ease-out、ease-in-out。&lt;/p&gt;
-
-&lt;p&gt;linear是线性动画；ease是默认的动画效果，特点是先快后慢，时间50%的时候已经完成80%的动画效果了；ease-in是动画进行过程中一直加速；ease-out是动画进行过程中一直减速；ease-in-out和ease很相似，都是先加速后减速，但是时间50%的时候完成动画的50%；一般来说，如果没太大的追求这些关键字就足够了。有这种想法的可以直接点击右上角的那个X了。&lt;/p&gt;
-
-&lt;p&gt;稍微高级一点的玩法是使用cubic-bezier,通过指定贝塞尔曲线的两个控制点控制缓动函数。其实三次贝塞尔曲线有四个控制点，然而对于CSS来说第一个控制点是(0,0)，第四个控制点是(1,1)，所以留给我们操作的只有两个控制点了。而且这两个控制点也是有限制的，横坐标∈[0,1]，纵坐标可以大于1。上面几个关键字其实是预定义好的贝塞尔曲线。&lt;/p&gt;
-
-&lt;p&gt;这个贝塞尔曲线就是我们今天的主角。原始需求是：实现匀加/减速动画。最一开始的想法是使用js控制，好像也没什么难度，会高中物理的就能解决。后来我就想能不能用CSS实现这一效果，毕竟我的一个原则是能用CSS实现的绝对不用js。&lt;/p&gt;
-
-&lt;p&gt;先上图&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/beziercurve.jpg&#34; alt=&#34;贝塞尔曲线的物理含义&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;用这张图说明一下对应的物理含义。横轴是时间进度，纵轴是动画进度。有高中物理水平的就能看得出来这不就是 *路程-时间曲线*嘛。所以曲线一阶导数的物理含义就是速度，二阶导数的物理含义就是加速度。想要实现匀加/减速动画，只要使二阶导数是一个不为零的常数就好了。&lt;/p&gt;
-
-&lt;h4 id=&#34;前方高能预警-大量数学出没-请做好战斗准备:eec53d87b272616feb247dfa262869de&#34;&gt;前方高能预警，大量数学出没，请做好战斗准备&lt;/h4&gt;
-
-&lt;p&gt;三次贝塞尔曲线公式&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/cubicbezier.jpg&#34; alt=&#34;三次贝塞尔曲线公式&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;由于CSS的限制 P0为(0,0)，P3为(1,1)将其带入方程并展开，可以得到对x,y方向的两个方程&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation1.jpg&#34; alt=&#34;x,y方向的两个方程&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;我们得到的是两个参数方程。要想得到y对x的二阶导数，需要下面的公式&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/derivative.jpg&#34; alt=&#34;参数方程二阶导数公式&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;看不懂过程就不要在乎这些细节了，公式推导里有一步我应该曾经明白但我现在不明白。直接看结论，我们需要两个参数方程对t的一阶导数和二阶导数&lt;/p&gt;
-
-&lt;p&gt;于是便有了下面的几个式子&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation2.jpg&#34; alt=&#34;一阶导数和二阶导数&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;带入不明觉厉的公式，我们可以观察到，分母最高次项是六次，而分子最高次项是三次，要使结果为一个常数，六次项的系数要为零&lt;/p&gt;
-
-&lt;p&gt;于是我们得到了第一个公式&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation3.jpg&#34; alt=&#34;第一个公式&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;将第一个公式带入二阶导数中，我们会发现分母最高次项为3，分子最高此项为2，和上面类似的思路，我们可以得到第二个公式&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation4.jpg&#34; alt=&#34;第二个公式&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;两个方程联立我们可以解得&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation5.jpg&#34; alt=&#34;第一个结论&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;这样分母就是一个常数了，分子还有一个一次项，所以&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation6.jpg&#34; alt=&#34;第二个结论&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;同时&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/equation7.jpg&#34; alt=&#34;第三个结论&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;注意到&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/webanimation/conclusion.jpg&#34; alt=&#34;第四个结论&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
