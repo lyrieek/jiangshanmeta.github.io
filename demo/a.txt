@@ -117,29 +117,10 @@ bootstrap源码解读——carousel.js
 
 
 
-http://www.w3cplus.com/css/media-object-vs-flag-object.html
 
-http://www.w3cplus.com/css/dirty-tricks-dark-corners-front-end-pt1.html
-http://www.w3cplus.com/css/dirty-tricks-dark-corners-front-end-pt2.html
 
-http://www.zhangxinxu.com/wordpress/2015/03/css3-object-position-object-fit/
 
-if ( ! function_exists('redirect'))
-{
-	function redirect($uri = '', $method = 'location', $http_response_code = 302)
-	{
-		if ( ! preg_match('#^https?://#i', $uri))
-		{
-			$uri = site_url($uri);
-		}
 
-		switch($method)
-		{
-			case 'refresh'	: header("Refresh:0;url=".$uri);
-				break;
-			default			: header("Location: ".$uri, TRUE, $http_response_code);
-				break;
-		}
-		exit;
-	}
-}
+
+
+

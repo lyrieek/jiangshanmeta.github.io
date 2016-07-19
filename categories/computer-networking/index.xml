@@ -146,6 +146,33 @@
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;请求行和响应行需要方法、url、版本、状态码和状态短语。方法、状态码状态短语上面说过了，版本对于现代浏览器是http/1.1。url就不说了。&lt;/p&gt;
+
+&lt;p&gt;update 2016/07/19&lt;/p&gt;
+
+&lt;p&gt;既然提到了状态码，引用一段项目中的相关函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if ( ! function_exists(&#39;redirect&#39;))
+{
+    function redirect($uri = &#39;&#39;, $method = &#39;location&#39;, $http_response_code = 302)
+    {
+        if ( ! preg_match(&#39;#^https?://#i&#39;, $uri))
+        {
+            $uri = site_url($uri);
+        }
+
+        switch($method)
+        {
+            case &#39;refresh&#39;  : header(&amp;quot;Refresh:0;url=&amp;quot;.$uri);
+                break;
+            default         : header(&amp;quot;Location: &amp;quot;.$uri, TRUE, $http_response_code);
+                break;
+        }
+        exit;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;代码语言是最好的编程语言php（大雾。作用是重定向，这里默认的重定向状态码就是302，虽然严格来说用303更好。&lt;/p&gt;
 </description>
     </item>
     

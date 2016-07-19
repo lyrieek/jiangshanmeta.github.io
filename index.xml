@@ -146,6 +146,33 @@
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;请求行和响应行需要方法、url、版本、状态码和状态短语。方法、状态码状态短语上面说过了，版本对于现代浏览器是http/1.1。url就不说了。&lt;/p&gt;
+
+&lt;p&gt;update 2016/07/19&lt;/p&gt;
+
+&lt;p&gt;既然提到了状态码，引用一段项目中的相关函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if ( ! function_exists(&#39;redirect&#39;))
+{
+    function redirect($uri = &#39;&#39;, $method = &#39;location&#39;, $http_response_code = 302)
+    {
+        if ( ! preg_match(&#39;#^https?://#i&#39;, $uri))
+        {
+            $uri = site_url($uri);
+        }
+
+        switch($method)
+        {
+            case &#39;refresh&#39;  : header(&amp;quot;Refresh:0;url=&amp;quot;.$uri);
+                break;
+            default         : header(&amp;quot;Location: &amp;quot;.$uri, TRUE, $http_response_code);
+                break;
+        }
+        exit;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;代码语言是最好的编程语言php（大雾。作用是重定向，这里默认的重定向状态码就是302，虽然严格来说用303更好。&lt;/p&gt;
 </description>
     </item>
     
@@ -586,6 +613,10 @@
 &lt;/ol&gt;
 
 &lt;p&gt;于是第二天就用到相关知识了。老板想做类似的东西，左侧依然是图片区，中间是文字区，右侧是一个垂直居中的箭头。这个设计确实挺常见的。然后我就把上面的实现说了一下，然后最右侧加了一个&lt;code&gt;vertical-align:middle&lt;/code&gt;,我实现的demo和上面的demo放在一个页面里了。老板听完我的实现后就默默地决定最右边的那个箭头放背景图里然后默默切图去了。嘤嘤嘤。&lt;/p&gt;
+
+&lt;p&gt;update 2016/07/19&lt;/p&gt;
+
+&lt;p&gt;看到&lt;a href=&#34;http://www.w3cplus.com/css/media-object-vs-flag-object.html&#34;&gt;一篇文章&lt;/a&gt;是讲这一类布局的，还起了一个高大上的名字叫做&lt;strong&gt;媒体对象&lt;/strong&gt;，话说bootstrap里也有类似实现。里面也提到了这种利用table布局的方式。&lt;/p&gt;
 </description>
     </item>
     

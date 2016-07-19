@@ -159,6 +159,33 @@
 
 <p>请求行和响应行需要方法、url、版本、状态码和状态短语。方法、状态码状态短语上面说过了，版本对于现代浏览器是http/1.1。url就不说了。</p>
 
+<p>update 2016/07/19</p>
+
+<p>既然提到了状态码，引用一段项目中的相关函数</p>
+
+<pre><code>if ( ! function_exists('redirect'))
+{
+    function redirect($uri = '', $method = 'location', $http_response_code = 302)
+    {
+        if ( ! preg_match('#^https?://#i', $uri))
+        {
+            $uri = site_url($uri);
+        }
+
+        switch($method)
+        {
+            case 'refresh'  : header(&quot;Refresh:0;url=&quot;.$uri);
+                break;
+            default         : header(&quot;Location: &quot;.$uri, TRUE, $http_response_code);
+                break;
+        }
+        exit;
+    }
+}
+</code></pre>
+
+<p>代码语言是最好的编程语言php（大雾。作用是重定向，这里默认的重定向状态码就是302，虽然严格来说用303更好。</p>
+
 			</div>
 
 
