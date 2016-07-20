@@ -113,21 +113,13 @@
 
 &lt;p&gt;&lt;a href=&#34;http://web.jobbole.com/86079/&#34;&gt;利用伪元素美化加载失败的图片&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://verou.me/css3patterns/&#34;&gt;能用渐变实现的图案&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://cubic-bezier.com&#34;&gt;贝赛尔曲线在线展示&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://easings.net/zh-cn&#34;&gt;常见缓动函数&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://css-tricks.com/examples/ShapesOfCSS/&#34;&gt;shapes of css&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://daneden.github.io/animate.css/&#34;&gt;CSS3动画库——animate.css&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2015/03/css3-object-position-object-fit/&#34;&gt;半深入理解CSS3 object-position/object-fit属性&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.w3cplus.com/css/dirty-tricks-dark-corners-front-end-pt1.html&#34;&gt;前端开发中的一些黑魔法Pt1(各种CSS技巧)&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.w3cplus.com/css/dirty-tricks-dark-corners-front-end-pt2.html&#34;&gt;前端开发中的一些黑魔法Pt2(各种CSS技巧)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.w3cplus.com/css3/introducing-css-clip-path-property.html&#34;&gt;clip-path介绍&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;移动端:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;移动端&lt;/h2&gt;
 
@@ -144,6 +136,20 @@
 &lt;p&gt;&lt;a href=&#34;http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html&#34;&gt;SSL/TLS协议运行机制的概述——阮一峰&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html&#34;&gt;图解SSL/TLS协议&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;工具-库:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;工具/库&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://verou.me/css3patterns/&#34;&gt;能用渐变实现的图案&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://cubic-bezier.com&#34;&gt;贝赛尔曲线在线展示&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://easings.net/zh-cn&#34;&gt;常见缓动函数&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://css-tricks.com/examples/ShapesOfCSS/&#34;&gt;shapes of css&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://daneden.github.io/animate.css/&#34;&gt;CSS3动画库——animate.css&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://bennettfeely.com/clippy/&#34;&gt;clip-path生成器&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

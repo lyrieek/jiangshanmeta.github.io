@@ -106,8 +106,8 @@ bootstrap源码解读——carousel.js
 
 
 
-[clip-path介绍](http://www.w3cplus.com/css3/introducing-css-clip-path-property.html)
-[clip-path生成器](http://bennettfeely.com/clippy/)
+
+
 
 
 
