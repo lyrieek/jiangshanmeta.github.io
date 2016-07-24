@@ -6,8 +6,70 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 17 Jul 2016 20:44:32 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 24 Jul 2016 20:36:07 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>初识传输层</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/transportlayer/</link>
+      <pubDate>Sun, 24 Jul 2016 20:36:07 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/transportlayer/</guid>
+      <description>
+
+&lt;p&gt;传输层位于应用层和网络层之间，是分层的网络体系结构的重要部分。作为WEB开发者虽然并不直接接触传输层，但是了解一下基本原理对于理解应用层还是有帮助的。&lt;/p&gt;
+
+&lt;h2 id=&#34;传输层的功能:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;传输层的功能&lt;/h2&gt;
+
+&lt;p&gt;传输层的功能是为不同主机上的应用进程之间提供了&lt;strong&gt;逻辑通信&lt;/strong&gt;。注意这里是逻辑通信，而不是物理通信，传输层是在端系统中实现的而不是在路由器中实现的。在发送端，传输层将从应用进程收到的报文转换成传输层报文段，添加传输层首部。在接收端，网络层从数据报中提取传输层报文，并将其交给传输层。传输层处理收到的报文段，为应用层提供数据。&lt;/p&gt;
+
+&lt;p&gt;常见的传输层协议有UDP和TCP。UDP为应用层提供了不可靠、无连接的服务，而TCP提供了可靠、面向连接的服务。&lt;/p&gt;
+
+&lt;h2 id=&#34;多路复用-多路分解:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;多路复用/多路分解&lt;/h2&gt;
+
+&lt;p&gt;应用层和传输层之间不是直接交换数据，而是通过套接字socket。每一个套接字都有唯一标识符。&lt;/p&gt;
+
+&lt;p&gt;为了在不同主机之间标示套接字，需要在传输层报文中有几个字段。在接收端，传输层检查这些字段，标识出接收套接字，进而将报文段定向到套接字。将传输层报文中的数据交付到正确的套接字的工作称为&lt;strong&gt;多路分解&lt;/strong&gt;。从源主机中不同套接字中收集数据块，为其封装首部信息，然后将报文段传给网络层，这些工作称为&lt;strong&gt;多路复用&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;在UDP中一个套接字是通过 目的IP和目的端口号标示的。在TCP中一个套接字是通过 源IP地址、源端口号、目的IP地址、目的端口号标示的。&lt;/p&gt;
+
+&lt;h2 id=&#34;udp协议:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;UDP协议&lt;/h2&gt;
+
+&lt;p&gt;UDP协议为应用层提供了不可靠、无连接的服务。UDP是应用层协议比较简单的实现，能提供的功能仅有多路复用/多路分用和差错检验。&lt;/p&gt;
+
+&lt;p&gt;先说一下UDP报文的结构。传输层报文是在应用层报文基础上添加了首部信息，即传输层报文 = 传输层首部 + 应用信息。我们的关注点显然是首部字段。&lt;/p&gt;
+
+&lt;p&gt;UDP有四个首部，分别是：源端口号、目的端口号、长度、校验和。源端口号和目的端口号是多路复用/多路分用的基础，长度字段指明了UDP报文的字节数（首部+数据）。校验和是为了差错检验功能。然而不幸的是UDP协议仅仅能够发现错误，但无法从错误中恢复出来，所以UDP协议无法提供可靠地数据传输。&lt;/p&gt;
+
+&lt;p&gt;应用UDP协议的应用，一般是对数据可靠性要求没那么高的，比如DNS查询、网络电话、在线直播之类的。&lt;/p&gt;
+
+&lt;h2 id=&#34;可靠数据传输原理:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;可靠数据传输原理&lt;/h2&gt;
+
+&lt;p&gt;这个问题说实话有点大了，其实写一个系列丛书讨论这个问题都不为过。我这里就说点总结性的。&lt;/p&gt;
+
+&lt;p&gt;为了检验数据是否有差错，采用了校验和。&lt;/p&gt;
+
+&lt;p&gt;为了返回检查结果和接受信息，采用了反馈机制。&lt;/p&gt;
+
+&lt;p&gt;为了处理丢包，采用了超时机制。&lt;/p&gt;
+
+&lt;p&gt;为了处理数据错误和丢包，采用了重传机制（重传大法好）。&lt;/p&gt;
+
+&lt;p&gt;为了标识每一个分组、处理冗余分组、检测丢包，采取了序号。&lt;/p&gt;
+
+&lt;p&gt;为了解决管线化操作中的差错恢复，出现了回退N步和选择重传。&lt;/p&gt;
+
+&lt;h2 id=&#34;tcp报文:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP报文&lt;/h2&gt;
+
+&lt;h2 id=&#34;tcp连接:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP连接&lt;/h2&gt;
+
+&lt;h2 id=&#34;tcp流量控制:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP流量控制&lt;/h2&gt;
+
+&lt;h2 id=&#34;tcp拥塞控制:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP拥塞控制&lt;/h2&gt;
+
+&lt;h2 id=&#34;从应用层角度看传输层:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;从应用层角度看传输层&lt;/h2&gt;
+</description>
+    </item>
     
     <item>
       <title>http方法和状态码</title>
@@ -1247,75 +1309,6 @@ $.event.special.bsTransitionEnd = {
 &lt;p&gt;就在上个周我就遇到了这个问题，强制重绘在pc上测试没问题，在微信内置浏览器上就报bug，最终解决方案也是使用定时器，&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html&#34;&gt;实现的代码&lt;/a&gt;。&lt;/p&gt;
 
 &lt;p&gt;transition.js内容不多，就只有三块，但是却是bootstap js插件非常重要的一环，后面只要用到css过渡的插件都依赖transition.js。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>关于CSS3 transition 的几个小tip</title>
-      <link>http://jiangshanmeta.github.io/post/transitiontip/</link>
-      <pubDate>Tue, 21 Jun 2016 20:19:53 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/transitiontip/</guid>
-      <description>
-
-&lt;p&gt;关于CSS3的transition一般写过一阵的基本玩法也都会了，这里收集一些transition的小细节&lt;/p&gt;
-
-&lt;h2 id=&#34;关于伪元素的过渡:fe079bb6a643aa02f488f646a5d5f38e&#34;&gt;关于伪元素的过渡&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/pseudo/&#34;&gt;之前总结过伪元素的一些应用&lt;/a&gt;，但是没有提及如何使用伪元素进行过渡。
-直接修改伪元素的属性或者给伪元素添加类名都是很折腾的。常见的改变伪元素的方案是给其父元素添加类名或者利用父元素的伪类。提到伪类，那么能否直接对伪元素本身应用伪类？比如:hover，希望伪元素hover的时候状态改变。然而尝试的结果是否定的。目前对其父元素添加类名或者伪类是对伪元素应用过渡的最简单可行的方法。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/transitiontip/pseudo.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;模拟input宽度的改变:fe079bb6a643aa02f488f646a5d5f38e&#34;&gt;模拟input宽度的改变&lt;/h2&gt;
-
-&lt;p&gt;如果想利用硬件加速，避免重绘，我们一般要避免width、height、margin之类的属性过渡。然而，有的时候我们确实需要宽度变化的过渡，比如输入框在获取焦点的时候变长，失去焦点后宽度又恢复原状。&lt;a href=&#34;http://t.imooc.com/learn/42&#34;&gt;慕课网一个美化表单案例&lt;/a&gt;就提到了这么一种需求。想实现这一需求可以使用width、padding属性的过渡实现，但是免不了大量的重绘，从前端性能优化的角度来看实现地并不优雅。&lt;/p&gt;
-
-&lt;p&gt;其实换一种思路，我们不见得让输入框真的变长，只要是输入框看起来变长了就行，毕竟我们的目的是加一个动画效果提升用户体验。于是就有了这么一个障眼法：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-HTML&#34;&gt;&amp;lt;div class=&amp;quot;clipped&amp;quot; &amp;gt;
-	&amp;lt;input type=&amp;quot;text&amp;quot;&amp;gt;
-	&amp;lt;div class=&amp;quot;clip&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-&amp;lt;/div&amp;gt;
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.clipped{
-	position:relative;
-	width:154px;
-}
-.clipped .clip{
-	position:absolute;
-	right:0;
-	top:0;
-	width:50px;
-	height:25px;
-	border:2px solid #ccc;
-	border-left:0;
-	border-radius:4px;
-	/*pointer-events:none;*/
-	z-index:-1;
-	transition:0.4s linear;
-}
-.clipped input{
-	width:150px;
-	height:25px;
-	border:2px solid #ccc;
-	border-radius:4px;
-	border-right:0px;
-	
-}
-.clipped input:focus{
-	outline:none;
-	
-}
-.clipped input:focus ~.clip{
-	transform:translate3d(40px,0,0);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/transitiontip/clipping.html&#34;&gt;在线demo&lt;/a&gt;
-基本原理是一个绝对定位的div，定位到输入框的右边，模拟输入框右边的样子，input框获得焦点的时候把这个div transform。具体的看代码。如果可以的话想用伪元素实现这个div，然而input并不支持伪元素。&lt;/p&gt;
 </description>
     </item>
     

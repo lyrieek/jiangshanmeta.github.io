@@ -6,8 +6,70 @@
     <description>Recent content in Computer Networking on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 17 Jul 2016 20:44:32 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 24 Jul 2016 20:36:07 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/computer-networking/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>初识传输层</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/transportlayer/</link>
+      <pubDate>Sun, 24 Jul 2016 20:36:07 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/transportlayer/</guid>
+      <description>
+
+&lt;p&gt;传输层位于应用层和网络层之间，是分层的网络体系结构的重要部分。作为WEB开发者虽然并不直接接触传输层，但是了解一下基本原理对于理解应用层还是有帮助的。&lt;/p&gt;
+
+&lt;h2 id=&#34;传输层的功能:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;传输层的功能&lt;/h2&gt;
+
+&lt;p&gt;传输层的功能是为不同主机上的应用进程之间提供了&lt;strong&gt;逻辑通信&lt;/strong&gt;。注意这里是逻辑通信，而不是物理通信，传输层是在端系统中实现的而不是在路由器中实现的。在发送端，传输层将从应用进程收到的报文转换成传输层报文段，添加传输层首部。在接收端，网络层从数据报中提取传输层报文，并将其交给传输层。传输层处理收到的报文段，为应用层提供数据。&lt;/p&gt;
+
+&lt;p&gt;常见的传输层协议有UDP和TCP。UDP为应用层提供了不可靠、无连接的服务，而TCP提供了可靠、面向连接的服务。&lt;/p&gt;
+
+&lt;h2 id=&#34;多路复用-多路分解:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;多路复用/多路分解&lt;/h2&gt;
+
+&lt;p&gt;应用层和传输层之间不是直接交换数据，而是通过套接字socket。每一个套接字都有唯一标识符。&lt;/p&gt;
+
+&lt;p&gt;为了在不同主机之间标示套接字，需要在传输层报文中有几个字段。在接收端，传输层检查这些字段，标识出接收套接字，进而将报文段定向到套接字。将传输层报文中的数据交付到正确的套接字的工作称为&lt;strong&gt;多路分解&lt;/strong&gt;。从源主机中不同套接字中收集数据块，为其封装首部信息，然后将报文段传给网络层，这些工作称为&lt;strong&gt;多路复用&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;在UDP中一个套接字是通过 目的IP和目的端口号标示的。在TCP中一个套接字是通过 源IP地址、源端口号、目的IP地址、目的端口号标示的。&lt;/p&gt;
+
+&lt;h2 id=&#34;udp协议:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;UDP协议&lt;/h2&gt;
+
+&lt;p&gt;UDP协议为应用层提供了不可靠、无连接的服务。UDP是应用层协议比较简单的实现，能提供的功能仅有多路复用/多路分用和差错检验。&lt;/p&gt;
+
+&lt;p&gt;先说一下UDP报文的结构。传输层报文是在应用层报文基础上添加了首部信息，即传输层报文 = 传输层首部 + 应用信息。我们的关注点显然是首部字段。&lt;/p&gt;
+
+&lt;p&gt;UDP有四个首部，分别是：源端口号、目的端口号、长度、校验和。源端口号和目的端口号是多路复用/多路分用的基础，长度字段指明了UDP报文的字节数（首部+数据）。校验和是为了差错检验功能。然而不幸的是UDP协议仅仅能够发现错误，但无法从错误中恢复出来，所以UDP协议无法提供可靠地数据传输。&lt;/p&gt;
+
+&lt;p&gt;应用UDP协议的应用，一般是对数据可靠性要求没那么高的，比如DNS查询、网络电话、在线直播之类的。&lt;/p&gt;
+
+&lt;h2 id=&#34;可靠数据传输原理:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;可靠数据传输原理&lt;/h2&gt;
+
+&lt;p&gt;这个问题说实话有点大了，其实写一个系列丛书讨论这个问题都不为过。我这里就说点总结性的。&lt;/p&gt;
+
+&lt;p&gt;为了检验数据是否有差错，采用了校验和。&lt;/p&gt;
+
+&lt;p&gt;为了返回检查结果和接受信息，采用了反馈机制。&lt;/p&gt;
+
+&lt;p&gt;为了处理丢包，采用了超时机制。&lt;/p&gt;
+
+&lt;p&gt;为了处理数据错误和丢包，采用了重传机制（重传大法好）。&lt;/p&gt;
+
+&lt;p&gt;为了标识每一个分组、处理冗余分组、检测丢包，采取了序号。&lt;/p&gt;
+
+&lt;p&gt;为了解决管线化操作中的差错恢复，出现了回退N步和选择重传。&lt;/p&gt;
+
+&lt;h2 id=&#34;tcp报文:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP报文&lt;/h2&gt;
+
+&lt;h2 id=&#34;tcp连接:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP连接&lt;/h2&gt;
+
+&lt;h2 id=&#34;tcp流量控制:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP流量控制&lt;/h2&gt;
+
+&lt;h2 id=&#34;tcp拥塞控制:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;TCP拥塞控制&lt;/h2&gt;
+
+&lt;h2 id=&#34;从应用层角度看传输层:7d394745458fab98d1011e5dc7ce06d1&#34;&gt;从应用层角度看传输层&lt;/h2&gt;
+</description>
+    </item>
     
     <item>
       <title>http方法和状态码</title>
