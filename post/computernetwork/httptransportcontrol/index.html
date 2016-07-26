@@ -1,0 +1,83 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> http连接控制 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">http连接控制</h1>
+			  <p >Tue, Jul 26, 2016</p>
+			      
+
+<p>http是一个应用层协议，http所依赖的传输层协议是TCP，对于http，只需要把需要传递的信息通过套接字socket传递给传输层的TCP，然后就可以坐等TCP可靠的把数据传到目标主机的目标进程了，至于TCP是如何处理数据如何传输的，从应用层角度并不需要关心，<a href="http://jiangshanmeta.github.io/post/computernetwork/transportlayer/">我之前也对TCP如何实现功能给出了最简单的描述</a>。然而http事务的性能很大程度上依赖TCP的性能，毕竟现在这个年代在端系统上处理数据一般很快，慢的是传输数据。那我们先看一下TCP哪些动作会引起时延，然后看提高http连接性能的技术。</p>
+
+<h2 id="tcp引起时延的动作:bcf53f62b95030078a83e7b9bb07b9b2">TCP引起时延的动作</h2>
+
+<h4 id="建立tcp连接:bcf53f62b95030078a83e7b9bb07b9b2">建立TCP连接</h4>
+
+<p>TCP是面向连接的，TCP在正式发送应用层信息之前需要与服务器端建立连接，建立连接的过程通常称为<strong>三次握手</strong>，首先客户端发送一个<strong>SYN报文</strong>请求建立连接、并携带一些初始化数据，服务器同意建立连接发送一个<strong>SYNACK报文</strong>，上面说的两个报文都没有传递应用层的信息，只是为了建立连接交换一些必要的数据，直到第三次握手才传输应用层信息。</p>
+
+<h4 id="延迟确认:bcf53f62b95030078a83e7b9bb07b9b2">延迟确认</h4>
+
+<p>为了实现可靠传输，TCP采取了累积确认机制，但是确认功能和传递应用层信息是两个不同的功能，仅仅为确认报文正确到达就发送一个TCP报文是不合算的，所以会等待要发送的应用层信息，尝试捎带确认信息。这一机制成为<strong>延迟确认</strong>。</p>
+
+<h4 id="慢启动:bcf53f62b95030078a83e7b9bb07b9b2">慢启动</h4>
+
+<p>慢启动其实是TCP拥塞控制的一部分，在TCP连接的一开始传输速率其实是比较低的，随着通信的进行在一定速率范围内传输速率呈指数增长。</p>
+
+<h2 id="提高http连接性能的技术:bcf53f62b95030078a83e7b9bb07b9b2">提高http连接性能的技术</h2>
+
+<p>上面提到的建立TCP连接的时间是不可避免的，但是我们可以通过一个TCP连接传递多条http报文的方式，使得每一个http报文所分摊的建立连接时间缩短。慢启动也不可避免，也可以通过和上面一样的方式重复利用同一个连接，减少慢启动带来的消耗。下面介绍三种提高http连接性能的方法。</p>
+
+<h4 id="并行连接:bcf53f62b95030078a83e7b9bb07b9b2">并行连接</h4>
+
+<p>单个TCP连接的传输速率有限，但是如果是多个TCP连接一起运行速率就有可能提升。同时多个TCP连接比较消耗内存，所以浏览器在使用并行连接的同时，限制并行TCP连接的数量。</p>
+
+<h4 id="持久连接:bcf53f62b95030078a83e7b9bb07b9b2">持久连接</h4>
+
+<p>一个TCP连接首先要通过三次握手，然后要经过慢启动才能以一个适合的速率传递报文，如果传递完一份应用层信息就关闭连接，岂不是太浪费了，所以就有了持久连接的技术，传递完一份应用层报文后并不立即关闭TCP连接。</p>
+
+<p>在http/1.1中，在现在这个年代已经不需要考虑http/1.0了，默认采用了持久连接的技术，你可能会在http请求头或者响应头中看到这样的信息：</p>
+
+<pre><code>Connection: keep-alive
+</code></pre>
+
+<p>在http/1.1中，客户端假定收到响应后，除非响应中包含<code>Connection: close</code>，不然http/1.1连接仍维持打开状态。但是，客户端和服务器仍然可以随时关闭TCP连接，也就是说，<code>Connection: keep-alive</code>是一个不可靠的保证。</p>
+
+<h4 id="管道化连接:bcf53f62b95030078a83e7b9bb07b9b2">管道化连接</h4>
+
+<p>管道化连接是在持久连接的基础上的一项技术，在一条报文发出之后，在等待响应之前可以继续发送其他报文，提高连接的利用效率。</p>
+
+<p>管线化操作产生了顺序问题，TCP采用了<strong>回退N步</strong>和<strong>选择重传</strong>杂合的方式最终实现管道化连接。</p>
+
+<p>这篇文章没有从功能角度来描述TCP，而是从性能角度，讨论了影响TCP传输性能的几个因素，并给出了一些成熟提高传输性能的方案。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

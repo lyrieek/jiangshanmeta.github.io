@@ -6,8 +6,61 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 24 Jul 2016 20:36:07 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 26 Jul 2016 20:57:58 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>http连接控制</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/</link>
+      <pubDate>Tue, 26 Jul 2016 20:57:58 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/</guid>
+      <description>
+
+&lt;p&gt;http是一个应用层协议，http所依赖的传输层协议是TCP，对于http，只需要把需要传递的信息通过套接字socket传递给传输层的TCP，然后就可以坐等TCP可靠的把数据传到目标主机的目标进程了，至于TCP是如何处理数据如何传输的，从应用层角度并不需要关心，&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/transportlayer/&#34;&gt;我之前也对TCP如何实现功能给出了最简单的描述&lt;/a&gt;。然而http事务的性能很大程度上依赖TCP的性能，毕竟现在这个年代在端系统上处理数据一般很快，慢的是传输数据。那我们先看一下TCP哪些动作会引起时延，然后看提高http连接性能的技术。&lt;/p&gt;
+
+&lt;h2 id=&#34;tcp引起时延的动作:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;TCP引起时延的动作&lt;/h2&gt;
+
+&lt;h4 id=&#34;建立tcp连接:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;建立TCP连接&lt;/h4&gt;
+
+&lt;p&gt;TCP是面向连接的，TCP在正式发送应用层信息之前需要与服务器端建立连接，建立连接的过程通常称为&lt;strong&gt;三次握手&lt;/strong&gt;，首先客户端发送一个&lt;strong&gt;SYN报文&lt;/strong&gt;请求建立连接、并携带一些初始化数据，服务器同意建立连接发送一个&lt;strong&gt;SYNACK报文&lt;/strong&gt;，上面说的两个报文都没有传递应用层的信息，只是为了建立连接交换一些必要的数据，直到第三次握手才传输应用层信息。&lt;/p&gt;
+
+&lt;h4 id=&#34;延迟确认:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;延迟确认&lt;/h4&gt;
+
+&lt;p&gt;为了实现可靠传输，TCP采取了累积确认机制，但是确认功能和传递应用层信息是两个不同的功能，仅仅为确认报文正确到达就发送一个TCP报文是不合算的，所以会等待要发送的应用层信息，尝试捎带确认信息。这一机制成为&lt;strong&gt;延迟确认&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;h4 id=&#34;慢启动:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;慢启动&lt;/h4&gt;
+
+&lt;p&gt;慢启动其实是TCP拥塞控制的一部分，在TCP连接的一开始传输速率其实是比较低的，随着通信的进行在一定速率范围内传输速率呈指数增长。&lt;/p&gt;
+
+&lt;h2 id=&#34;提高http连接性能的技术:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;提高http连接性能的技术&lt;/h2&gt;
+
+&lt;p&gt;上面提到的建立TCP连接的时间是不可避免的，但是我们可以通过一个TCP连接传递多条http报文的方式，使得每一个http报文所分摊的建立连接时间缩短。慢启动也不可避免，也可以通过和上面一样的方式重复利用同一个连接，减少慢启动带来的消耗。下面介绍三种提高http连接性能的方法。&lt;/p&gt;
+
+&lt;h4 id=&#34;并行连接:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;并行连接&lt;/h4&gt;
+
+&lt;p&gt;单个TCP连接的传输速率有限，但是如果是多个TCP连接一起运行速率就有可能提升。同时多个TCP连接比较消耗内存，所以浏览器在使用并行连接的同时，限制并行TCP连接的数量。&lt;/p&gt;
+
+&lt;h4 id=&#34;持久连接:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;持久连接&lt;/h4&gt;
+
+&lt;p&gt;一个TCP连接首先要通过三次握手，然后要经过慢启动才能以一个适合的速率传递报文，如果传递完一份应用层信息就关闭连接，岂不是太浪费了，所以就有了持久连接的技术，传递完一份应用层报文后并不立即关闭TCP连接。&lt;/p&gt;
+
+&lt;p&gt;在http/1.1中，在现在这个年代已经不需要考虑http/1.0了，默认采用了持久连接的技术，你可能会在http请求头或者响应头中看到这样的信息：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Connection: keep-alive
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在http/1.1中，客户端假定收到响应后，除非响应中包含&lt;code&gt;Connection: close&lt;/code&gt;，不然http/1.1连接仍维持打开状态。但是，客户端和服务器仍然可以随时关闭TCP连接，也就是说，&lt;code&gt;Connection: keep-alive&lt;/code&gt;是一个不可靠的保证。&lt;/p&gt;
+
+&lt;h4 id=&#34;管道化连接:bcf53f62b95030078a83e7b9bb07b9b2&#34;&gt;管道化连接&lt;/h4&gt;
+
+&lt;p&gt;管道化连接是在持久连接的基础上的一项技术，在一条报文发出之后，在等待响应之前可以继续发送其他报文，提高连接的利用效率。&lt;/p&gt;
+
+&lt;p&gt;管线化操作产生了顺序问题，TCP采用了&lt;strong&gt;回退N步&lt;/strong&gt;和&lt;strong&gt;选择重传&lt;/strong&gt;杂合的方式最终实现管道化连接。&lt;/p&gt;
+
+&lt;p&gt;这篇文章没有从功能角度来描述TCP，而是从性能角度，讨论了影响TCP传输性能的几个因素，并给出了一些成熟提高传输性能的方案。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>初识传输层</title>
@@ -1233,115 +1286,6 @@ $(el).on(&#39;click&#39;, dismiss, this.close)
 &lt;p&gt;首先做的是寻找关闭时要移除的元素，查找的优先顺序是 data-target、href、最近的含有&lt;code&gt;alert&lt;/code&gt;类的元素。在官方文档里其实并没有提及前两种情况，事实上第三种情况更接近实际需求。对于警告框的删除，一种是有过渡效果的，一种是没有过渡效果的。有过渡效果的情况警告框含有&lt;code&gt;fade&lt;/code&gt;和&lt;code&gt;in&lt;/code&gt;两个类并支持过渡，可以在相关css文件看一下代码，就是实现透明度从1过渡到0 。没过渡效果的情况可能是根本不支持css3过渡，也可能是没有&lt;code&gt;fade&lt;/code&gt;这个类。有过渡效果的是在过渡完成后删除警告框，没有过渡的直接删除了，无过渡代码里没有尝试对淡出效果进行模拟。两个事件分别是在移除前和移除后触发的，注意&lt;code&gt;removeElement&lt;/code&gt;的具体实现，先是detach，然后触发事件，最后remove，说实话这两个方法的区别我还体会不深，求大神指教。在实现过渡时使用了transition.js里提供的emulateTransitionEnd，为的是保证回调能够顺利执行。&lt;/p&gt;
 
 &lt;p&gt;最后是防冲突，自己看源码吧，写的挺巧妙的，旧的函数和新的函数都能很好地得到保存。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>bootstrap源码解读——transition.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/transition/</link>
-      <pubDate>Wed, 22 Jun 2016 19:07:30 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/transition/</guid>
-      <description>&lt;p&gt;bootstrap是一个出名的前端框架，它预制了一些常见的js插件。从头开始解读吧。&lt;/p&gt;
-
-&lt;p&gt;这里要介绍的是transition.js，它的作用是对css3的过渡的兼容处理。&lt;/p&gt;
-
-&lt;p&gt;立即执行的匿名函数就不说了，算是基本常识了。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;function transitionEnd() {
-	var el = document.createElement(&#39;bootstrap&#39;)
-
-	var transEndEventNames = {
-	  WebkitTransition : &#39;webkitTransitionEnd&#39;,
-	  MozTransition    : &#39;transitionend&#39;,
-	  OTransition      : &#39;oTransitionEnd otransitionend&#39;,
-	  transition       : &#39;transitionend&#39;
-	}
-
-	for (var name in transEndEventNames) {
-	  if (el.style[name] !== undefined) {
-	    return { end: transEndEventNames[name] }
-	  }
-	}
-
-	return false 
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这一段是对transitionend事件做兼容，如果浏览器支持各种形式的transitionend，就以对象的形式返回兼容后的结果，否则返回false，表明不支持transitionend事件，另一层意思就是不支持css3过渡。&lt;/p&gt;
-
-&lt;p&gt;之前我收集过一个类似功能的函数&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;function whichTransitionEvent(){  
-    var t;  
-    var el = document.createElement(&#39;p&#39;);  
-    var transitions = {  
-      &#39;transition&#39;:&#39;transitionend&#39;,  
-      &#39;OTransition&#39;:&#39;oTransitionEnd&#39;,  
-      &#39;MozTransition&#39;:&#39;mozTransitionEnd&#39;,  
-      &#39;WebkitTransition&#39;:&#39;webkitTransitionEnd&#39;,  
-      &#39;MsTransition&#39;:&#39;msTransitionEnd&#39;  
-    }  
-    for(t in transitions){  
-        if( el.style[t] !== undefined ){  
-            return transitions[t];  
-        }  
-    }  
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;然后是调用上面那个函数，并且为transitionend起了一个别名。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$(function () {
-$.support.transition = transitionEnd()
-
-if (!$.support.transition) return
-
-$.event.special.bsTransitionEnd = {
-  bindType: $.support.transition.end,
-  delegateType: $.support.transition.end,
-  handle: function (e) {
-    if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
-  }
-}
-})
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这里把最终的transitionend事件挂到了$.support.transition上，相当于一个缓存。然后是一段让我很纠结的代码，$.event.special.bsTransitionEnd是干啥的的？搜索了一下中文文章发现虽然有提的但是完全不靠谱（这么不靠谱的文章竟然有一堆转载），然后我就在&lt;a href=&#34;http://stackoverflow.com/questions/29861597/what-is-jquery-event-special/29867037#29867037&#34;&gt;stackoverflow上找到了答案&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;它的意思是这里的bsTransitionEnd相当于兼容后的transitionend事件的别名。为什么要去一个别名而不是直接使用兼容后的transitionend呢？因为怕你我手抖移除transitionend事件的时候不传具体的回调而是直接移除整个事件然后bootstrap插件的回调也一并移除然后报bug。算是为了代码的健壮性吧。&lt;/p&gt;
-
-&lt;p&gt;还有一段代码：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$.fn.emulateTransitionEnd = function (duration) {
-	var called = false
-	var $el = this
-	$(this).one(&#39;bsTransitionEnd&#39;, function () { called = true })
-	var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
-	setTimeout(callback, duration)
-	return this
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;$.fn.emulateTransitionEnd，看这个形式是直接挂到了jquery的prototype上了。看函数名猜测这一段代码是为了模拟transitionend事件的。不理解作者想干啥，但是&lt;a href=&#34;https://blog.alexmaccaw.com/css-transitions&#34;&gt;源码中给了一个连接&lt;/a&gt;，于是我就找来这篇博客看，原作者是这么说的：&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Be aware that sometimes this event doesn’t fire, usually in the case when properties don’t change or a paint isn’t triggered. To ensure we always get a callback, let’s set a timeout that’ll trigger the event manually.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;换句话说作者是为了保证即使没有过渡也要触发transitionend事件保证相应的回调能够执行。其实我很怀疑为什么要这么做，毕竟这种情况下应该测试会报bug。&lt;/p&gt;
-
-&lt;p&gt;具体实现上called变量保存的是transitionend是否被触发，这个变量的存在是为了保证transitionend只触发一次。可能触发多次的情况一个是transition多个属性会触发多个transitionend事件，另一个是真的transitionend事件已经触发，不需要模拟transitionend。一些具体的细节上可以结合setTimeout以及jquery的相关内容理解。突然想到之前写的&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/org/h5page/h5page.html&#34;&gt;h5页面&lt;/a&gt;里面也是监听了transitionend事件，可以参照这个思路改一改。&lt;/p&gt;
-
-&lt;p&gt;顺便提一句，上面那篇文章提到了强制重绘，有一句话我觉得很好&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;This will work in most browsers, but I’ve had occasions in Android where this hasn’t been enough. The alternative is to either use timeouts, or by toggling a class name.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;就在上个周我就遇到了这个问题，强制重绘在pc上测试没问题，在微信内置浏览器上就报bug，最终解决方案也是使用定时器，&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html&#34;&gt;实现的代码&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;transition.js内容不多，就只有三块，但是却是bootstap js插件非常重要的一环，后面只要用到css过渡的插件都依赖transition.js。&lt;/p&gt;
 </description>
     </item>
     
