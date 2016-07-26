@@ -93,7 +93,10 @@ function Lottery(option){
     creditsInputId:credits,
     animationTimePerRound:1,     //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
     rotateCountAfterAjax:3,
-
+    outerRingColor:"#ff6900",
+    innerRingColor:"#ffa642",
+    pointerColor:"#ffa642",
+    textColor:'#fff',    
   }
   this.options = Object.assign(defaults,option || {});
   //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
@@ -198,12 +201,10 @@ Lottery.prototype = {
     context2.save();
     context2.shadowColor = "rgba(0,0,0,0.5)";
     context2.shadowBlur = 8;
-    this.drawRing(context2,r-9,10,"#ffa642");
+    this.drawRing(context2,r-9,10,options.innerRingColor);
 
-    // drawRing(context2,r-9,10,"#ffa642");
     context2.restore();
-    this.drawRing(context2,r-2,4,"#FF6900");
-    // drawRing(context2,r-2,4,"#FF6900");
+    this.drawRing(context2,r-2,4,options.outerRingColor);
 
     /* 外层指针 */
     context2.save();
@@ -216,7 +217,7 @@ Lottery.prototype = {
     context2.lineTo(0.05*r,-0.8*r);
     context2.lineTo(0.05*r,-r+9);
     context2.closePath();
-    context2.fillStyle = "#ffa642";
+    context2.fillStyle = options.pointerColor;
     context2.fill();
     context2.restore();  
     
@@ -264,7 +265,6 @@ Lottery.prototype = {
 
   },
   drawRing:function(context,radius,lineWidth,strokeStyle){
-// function drawRing(context,radius,lineWidth,strokeStyle){
     context.save();
     context.beginPath();
     context.arc(0,0,radius,0,2*Math.PI,false);
@@ -272,12 +272,29 @@ Lottery.prototype = {
     context.strokeStyle = strokeStyle;
     context.closePath();
     context.stroke();
-    context.restore();  
-
-// }    
+    context.restore();   
   },
   drawText:function(context1){
+    var options = this.options;
+    var lotteris = options.lotteris;
+    var len=lotteris.length;
+    var degPerPart = 2*Math.PI/len;
+    var r = options.w/2;
 
+    context1.save();
+    context1.font = "14px bold sans-serif";
+    context1.textAlign = "center";
+    context1.textBaseline = "middle";
+    context1.fillStyle = options.textColor;
+    context1.shadowColor = "rgba(0,0,0,0.5)";
+    context1.shadowBlur = 8;
+    for(var i=0;i<len;i++){
+      var text = lotteris[i].text;
+      if(text !== undefined){
+        context1.fillText(text,(Math.sin(degPerPart*(i+0.5)))*r*2/3,-Math.cos(degPerPart*(i+0.5))*r*2/3  );
+      }
+    }
+    context1.restore();
   },
   drawImg:function(context1){
 
@@ -309,7 +326,7 @@ Lottery.prototype = {
           // setTimeout(function(){
           //   _thisCanvas.style.cssText = styleStr;
           // },0)
-
+          //上面一个写法和下面的写法表现结果是一致的
           //用requestAnimationFrame的作用是一样的，等重置需要一帧时间，再下一次重绘的时候写入新的样式。
           requestAnimFrame(function(){
             requestAnimFrame(function(){

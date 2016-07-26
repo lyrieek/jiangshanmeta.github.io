@@ -22,10 +22,23 @@
 
 		<script>
 			var lotteryIns = new Lottery({
-				lotteris:[{bgColor:'#88adf6'},{bgColor:'#95ce2a'},{bgColor:'#ffeb4a'},{bgColor:'#ffa642'},{bgColor:'#ff0891'},{bgColor:'#88adf6'},{bgColor:'#53e7ff'},{bgColor:'#ff689f'}],
+				lotteris:[
+					{bgColor:'#88adf6',text:'一等奖'},
+					{bgColor:'#95ce2a',text:'二等奖'},
+					{bgColor:'#ffeb4a',text:'三等奖'},
+					{bgColor:'#ffa642',text:'四等奖'},
+					{bgColor:'#ff0891',text:'五等奖'},
+					{bgColor:'#88adf6',text:'六等奖'},
+					{bgColor:'#53e7ff',text:'七等奖'},
+					{bgColor:'#ff689f',text:'八等奖'}
+				],
+				// textColor:'#fff',
+				// outerRingColor:"#ff6900",
+				// innerRingColor:"#ffa642",
+				// pointerColor:"#ffa642",
 				ajaxUrl:'http://jiangshanmeta.github.io',
 				needCredits:10,
-				creditsInputId:'credits'
+				creditsInputId:'credits',
 			})
 		</script>
 </body>
