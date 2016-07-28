@@ -155,9 +155,25 @@ public function check_inited_for_ajax{
 }
 ```
 
+类似的，对于非ajax请求，可以封装一个类似的函数，导入到404页面
+
+```
+function check_inited_for_href(){
+    $CI =& get_instance();
+    if(!$this->is_inited){
+        $CI->topTyp = "gobacktop";
+        $CI->top_title = "出错啦";
+        echo $CI->load->view('default_page' ,['contents'=>$CI->load->view('common/notFound',[],true)], true);
+        exit();
+    }  
+}
+```
+
+
+
 改动并不多，真的只是做了一点微小的贡献，然而每个model初始化容错只需要一行，看起来好爽啊。
 
-//做一个有代码洁癖的bug开发者真不容易。
+//做一个有代码洁癖的bug开发者真不容易。话说同事都是有N年开发经验是怎么忍受这样的代码的。。。
 
 
 
