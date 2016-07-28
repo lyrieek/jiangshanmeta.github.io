@@ -84,7 +84,7 @@ function Lottery(option){
   if(!option.lotteris || !option.ajaxUrl || !option.needCredits ){
     return;
   }
-  var w = document.documentElement.clientWidth*0.9;
+  var w = Math.min(document.documentElement.clientWidth*0.9,500);
   console.log(w);
   var defaults = {
     warpId:"lotteryWrap",
@@ -144,7 +144,8 @@ Lottery.prototype = {
 
     // 文字区域
     this.textArea = document.createElement("div");
-    this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+0.25*w+"px;height:"+0.25*w+"px;line-height:"+ 0.25*w +"px;left:37.5%;top:37.5%;background:#fff;text-align:center;white-space:nowrap;-webkit-user-select:none;"
+    var textAreaPercent = 0.25;
+    this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+textAreaPercent*w+"px;height:"+textAreaPercent*w+"px;line-height:"+ textAreaPercent*w +"px;left:" + (0.5-textAreaPercent/2)*100 + "%;top:"+(0.5-textAreaPercent/2)*100 +"%;background:#fff;text-align:center;white-space:nowrap;-webkit-user-select:none;"
     this.textArea.innerText = "开始抽奖";
 
     var fragment = document.createDocumentFragment();
