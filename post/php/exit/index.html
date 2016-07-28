@@ -1,0 +1,92 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> php中exit()的一个用法——记一次无聊的封装 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">php中exit()的一个用法——记一次无聊的封装</h1>
+			  <p >Thu, Jul 28, 2016</p>
+			      <p>熟悉最好的编程语言php（手动滑稽）的人应该对于<code>exit()</code>或者<code>die()</code>函数不陌生，根据<a href="http://php.net/manual/zh/function.die.php">手册的说法</a>这两个函数其实是别名关系，功能上是一样的。一般这两个函数是在调试的时候用的比较多，我的一个同事就比较习惯用<code>die()</code>，然而作为前端入行的我显然是更习惯使用<code>return</code>的方式进行调试。其实我对php的最主要调试方法是写两行然后用<code>var_dump()</code>调试，一小步一小步往前推进。对于<code>die()</code>和<code>exit()</code>两个函数，有的人认为出错了用前者，提前退出用后者，我觉得没有太大的必要去区分这一点。</p>
+
+<p>关于<code>die()</code>和<code>exit()</code>两个函数的用法，我觉得这一句话说得很好</p>
+
+<blockquote>
+<p>在设计工具类和工具函数时，die()/exit() 应该严令禁止，因为它们无权决定整个程序的生死。</p>
+</blockquote>
+
+<p>上面这句话其实也反映了这两个函数与<code>return</code>的区别，前者是程序级别的，后者仅仅是函数级别的。</p>
+
+<p>在我们的项目中后端是一个MVC框架(就是CI)，model层会根据前端传过来的各种信息进行初始化，为了容错，controller里经常会有这样的代码</p>
+
+<pre><code>if (!$this-&gt;dataInfo-&gt;is_inited){
+	$jsonRst = -1;
+	$jsonData = array();
+	$jsonData['err']['msg'] ='数据有误';
+	echo $this-&gt;exportData($jsonData,$jsonRst);
+	return false;
+}
+</code></pre>
+
+<p>上面的代码是ajax请求时常用的代码，然而，一个controller里的action里面可能会加载多个model，这样上面的代码就会重复N遍，以至于可能真正的业务部分真的没有几行大部分都是在容错，虽说每次都是复制粘贴，但复制粘贴多了就想着封装这个功能。</p>
+
+<p>需求就有了，我希望能在model层里面封装一个小方法，专门用来检查初始化是否成功，如果初始化失败返回数据错误，controller里的其他代码就不运行了。为什么要单独写一个函数而不是封装在初始化函数中呢？一是因为初始化是初始化、查错是查错，二是因为上面的的代码只适用于ajax返回错误。那<code>return false;</code>能不能满足我的需求？答案是不能，这只是终止这个小方法的运行，controller还会继续，除非手动写ifelse判断，然而这样和没封装似乎也差不了几行。我的解决方案是使用<code>exit()</code>,这样如果初始化失败controller里的代码也不会往下走了。最终封装在model基类里的代码如下：</p>
+
+<pre><code>public function check_inited_for_ajax{
+	$CI =&amp; get_instance();
+	if(!$this-&gt;is_inited){
+		$jsonRst = -1;
+		$jsonData = array();
+		$jsonData['err']['msg'] ='数据有误';
+		echo $CI-&gt;exportData($jsonData,$jsonRst);
+		exit();
+	}
+}
+</code></pre>
+
+<p>类似的，对于非ajax请求，可以封装一个类似的函数，导入到404页面</p>
+
+<pre><code>function check_inited_for_href(){
+    $CI =&amp; get_instance();
+    if(!$this-&gt;is_inited){
+        $CI-&gt;topTyp = &quot;gobacktop&quot;;
+        $CI-&gt;top_title = &quot;出错啦&quot;;
+        echo $CI-&gt;load-&gt;view('default_page' ,['contents'=&gt;$CI-&gt;load-&gt;view('common/notFound',[],true)], true);
+        exit();
+    }  
+}
+</code></pre>
+
+<p>改动并不多，真的只是做了一点微小的贡献，然而每个model初始化容错只需要一行，看起来好爽啊。</p>
+
+<p>//做一个有代码洁癖的bug开发者真不容易。话说同事都是有N年开发经验是怎么忍受这样的代码的。。。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

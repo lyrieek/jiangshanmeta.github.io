@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Php on jsmeta</title>
+    <link>http://jiangshanmeta.github.io/tags/php/</link>
+    <description>Recent content in Php on jsmeta</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 28 Jul 2016 19:00:23 +0800</lastBuildDate>
+    <atom:link href="http://jiangshanmeta.github.io/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>php中exit()的一个用法——记一次无聊的封装</title>
+      <link>http://jiangshanmeta.github.io/post/php/exit/</link>
+      <pubDate>Thu, 28 Jul 2016 19:00:23 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/php/exit/</guid>
+      <description>&lt;p&gt;熟悉最好的编程语言php（手动滑稽）的人应该对于&lt;code&gt;exit()&lt;/code&gt;或者&lt;code&gt;die()&lt;/code&gt;函数不陌生，根据&lt;a href=&#34;http://php.net/manual/zh/function.die.php&#34;&gt;手册的说法&lt;/a&gt;这两个函数其实是别名关系，功能上是一样的。一般这两个函数是在调试的时候用的比较多，我的一个同事就比较习惯用&lt;code&gt;die()&lt;/code&gt;，然而作为前端入行的我显然是更习惯使用&lt;code&gt;return&lt;/code&gt;的方式进行调试。其实我对php的最主要调试方法是写两行然后用&lt;code&gt;var_dump()&lt;/code&gt;调试，一小步一小步往前推进。对于&lt;code&gt;die()&lt;/code&gt;和&lt;code&gt;exit()&lt;/code&gt;两个函数，有的人认为出错了用前者，提前退出用后者，我觉得没有太大的必要去区分这一点。&lt;/p&gt;
+
+&lt;p&gt;关于&lt;code&gt;die()&lt;/code&gt;和&lt;code&gt;exit()&lt;/code&gt;两个函数的用法，我觉得这一句话说得很好&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;在设计工具类和工具函数时，die()/exit() 应该严令禁止，因为它们无权决定整个程序的生死。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;上面这句话其实也反映了这两个函数与&lt;code&gt;return&lt;/code&gt;的区别，前者是程序级别的，后者仅仅是函数级别的。&lt;/p&gt;
+
+&lt;p&gt;在我们的项目中后端是一个MVC框架(就是CI)，model层会根据前端传过来的各种信息进行初始化，为了容错，controller里经常会有这样的代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if (!$this-&amp;gt;dataInfo-&amp;gt;is_inited){
+	$jsonRst = -1;
+	$jsonData = array();
+	$jsonData[&#39;err&#39;][&#39;msg&#39;] =&#39;数据有误&#39;;
+	echo $this-&amp;gt;exportData($jsonData,$jsonRst);
+	return false;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上面的代码是ajax请求时常用的代码，然而，一个controller里的action里面可能会加载多个model，这样上面的代码就会重复N遍，以至于可能真正的业务部分真的没有几行大部分都是在容错，虽说每次都是复制粘贴，但复制粘贴多了就想着封装这个功能。&lt;/p&gt;
+
+&lt;p&gt;需求就有了，我希望能在model层里面封装一个小方法，专门用来检查初始化是否成功，如果初始化失败返回数据错误，controller里的其他代码就不运行了。为什么要单独写一个函数而不是封装在初始化函数中呢？一是因为初始化是初始化、查错是查错，二是因为上面的的代码只适用于ajax返回错误。那&lt;code&gt;return false;&lt;/code&gt;能不能满足我的需求？答案是不能，这只是终止这个小方法的运行，controller还会继续，除非手动写ifelse判断，然而这样和没封装似乎也差不了几行。我的解决方案是使用&lt;code&gt;exit()&lt;/code&gt;,这样如果初始化失败controller里的代码也不会往下走了。最终封装在model基类里的代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function check_inited_for_ajax{
+	$CI =&amp;amp; get_instance();
+	if(!$this-&amp;gt;is_inited){
+		$jsonRst = -1;
+		$jsonData = array();
+		$jsonData[&#39;err&#39;][&#39;msg&#39;] =&#39;数据有误&#39;;
+		echo $CI-&amp;gt;exportData($jsonData,$jsonRst);
+		exit();
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;类似的，对于非ajax请求，可以封装一个类似的函数，导入到404页面&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function check_inited_for_href(){
+    $CI =&amp;amp; get_instance();
+    if(!$this-&amp;gt;is_inited){
+        $CI-&amp;gt;topTyp = &amp;quot;gobacktop&amp;quot;;
+        $CI-&amp;gt;top_title = &amp;quot;出错啦&amp;quot;;
+        echo $CI-&amp;gt;load-&amp;gt;view(&#39;default_page&#39; ,[&#39;contents&#39;=&amp;gt;$CI-&amp;gt;load-&amp;gt;view(&#39;common/notFound&#39;,[],true)], true);
+        exit();
+    }  
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;改动并不多，真的只是做了一点微小的贡献，然而每个model初始化容错只需要一行，看起来好爽啊。&lt;/p&gt;
+
+&lt;p&gt;//做一个有代码洁癖的bug开发者真不容易。话说同事都是有N年开发经验是怎么忍受这样的代码的。。。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
