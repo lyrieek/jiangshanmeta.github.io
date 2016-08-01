@@ -6,8 +6,34 @@
     <description>Recent content in Computer Networking on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 Jul 2016 20:57:58 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 01 Aug 2016 19:40:53 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/computer-networking/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>DHCP</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/dhcp/</link>
+      <pubDate>Mon, 01 Aug 2016 19:40:53 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/dhcp/</guid>
+      <description>&lt;p&gt;在学习传输层的基本知识的时候，知道了传输层实现不同主机应用进程之间的逻辑通信，当时还与网络层比较，网络层实现的是不同主机间的逻辑通信，标记应用进程用端口号，标记主机用IP。严格来说IP标记的接口（主机与物理链路的边界），而不是主机与路由器（换句话说一台主机或者路由器可能有多个接口，对应多个IP），我这里并不严格区分。&lt;/p&gt;
+
+&lt;p&gt;IP地址其实是IP（网际协议）的一部分，对于IP地址，即使是不搞计算机相关领域的人也应该听说过，我们一般写作形如 233.233.233.233 的形式，但这本质上是一个32位的二进制数，只是我们每8位看成一个整体，转换成十进制数字，才有了上面的形式。那一台主机刚接入计算机网络的时候，是如何获得IP地址的呢？&lt;/p&gt;
+
+&lt;p&gt;一个方法是手动设置，在window下可以在如下界面进行设置&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/computernetwork/manualip.jpg&#34; alt=&#34;手动设置ip&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;不过对于广大人民群众（包括我）还是利用 &lt;strong&gt;DHCP&lt;/strong&gt; 动态获取IP地址的。下面的内容是描述如何通过 &lt;strong&gt;DHCP&lt;/strong&gt; 获取一个IP地址。&lt;/p&gt;
+
+&lt;p&gt;首先，DHCP服务器发现。动态获得IP是通过&lt;strong&gt;DHCP服务器&lt;/strong&gt;分配的，对于一台新接入的计算机，显然要先找到这台服务器，那么问题来了，我怎么知道&lt;strong&gt;DHCP服务器&lt;/strong&gt;的IP（毕竟无论如何需要建立主机之间的逻辑通信）？答案是不知道，那就拿个大喇叭广播，我们使用 &lt;code&gt;255.255.255.255&lt;/code&gt; 作为目的地址，这样报文就会交付给同一个子网所有主机，并且此时这台主机没有IP地址，所以源地址是 &lt;code&gt;0.0.0.0&lt;/code&gt;。这时发送的报文称为 &lt;strong&gt;DHCP发现报文&lt;/strong&gt;，顺便说一句DHCP是基于UDP的。&lt;/p&gt;
+
+&lt;p&gt;然后，DHCP服务器提供。广播的 &lt;strong&gt;DHCP发现报文&lt;/strong&gt; 子网内所有主机都会收到，但是只有 &lt;strong&gt;DHCP服务器&lt;/strong&gt; 会去做出响应。响应的报文称为 &lt;strong&gt;DHCP提供报文&lt;/strong&gt;，在这个报文中，源地址是这台服务器的地址，这点毫无疑问，目标地址是 &lt;code&gt;255.255.255.255&lt;/code&gt;，因为请求的主机此时还没有IP地址。那么问题来了，要接入网的主机通过什么知道这条信息是给自己的而不是给其它接入网的主机？通过 &lt;code&gt;transaction id&lt;/code&gt;，在&lt;strong&gt;DHCP发现报文&lt;/strong&gt; 里就包含这一信息，然后在 &lt;strong&gt;DHCP提供报文&lt;/strong&gt; 原样返回&lt;code&gt;transaction id&lt;/code&gt;。&lt;strong&gt;DHCP提供报文&lt;/strong&gt;里还会包含着一个分配到新客户的ip地址。&lt;/p&gt;
+
+&lt;p&gt;随后，DHCP请求。由于一个子网可能会有多个&lt;strong&gt;DHCP服务器&lt;/strong&gt;，所以一条&lt;strong&gt;DHCP发现报文&lt;/strong&gt;可能会对应多条&lt;strong&gt;DHCP提供报文&lt;/strong&gt;，也就可能对应多个推荐ip地址。客户端需要选择一个最终的ip，发送&lt;strong&gt;DHCP请求报文&lt;/strong&gt;，因为可能有多个&lt;strong&gt;DHCP服务器&lt;/strong&gt;，所以采用的目的ip仍然是&lt;code&gt;255.255.255.255&lt;/code&gt;，通知最终结果，便于其他&lt;strong&gt;DHCP服务器&lt;/strong&gt;及时回收发出去的冗余ip地址。&lt;/p&gt;
+
+&lt;p&gt;最后，DHCP服务器用 &lt;strong&gt;DHCP ACK报文&lt;/strong&gt;响应，进行最终确认。这样这台新接入的主机就获得了一个ip地址，同时获得的还有本地DNS服务器地址、网关地址。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>http连接控制</title>

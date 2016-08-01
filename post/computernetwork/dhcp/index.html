@@ -1,0 +1,56 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> DHCP &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">DHCP</h1>
+			  <p >Mon, Aug 1, 2016</p>
+			      <p>在学习传输层的基本知识的时候，知道了传输层实现不同主机应用进程之间的逻辑通信，当时还与网络层比较，网络层实现的是不同主机间的逻辑通信，标记应用进程用端口号，标记主机用IP。严格来说IP标记的接口（主机与物理链路的边界），而不是主机与路由器（换句话说一台主机或者路由器可能有多个接口，对应多个IP），我这里并不严格区分。</p>
+
+<p>IP地址其实是IP（网际协议）的一部分，对于IP地址，即使是不搞计算机相关领域的人也应该听说过，我们一般写作形如 233.233.233.233 的形式，但这本质上是一个32位的二进制数，只是我们每8位看成一个整体，转换成十进制数字，才有了上面的形式。那一台主机刚接入计算机网络的时候，是如何获得IP地址的呢？</p>
+
+<p>一个方法是手动设置，在window下可以在如下界面进行设置</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/computernetwork/manualip.jpg" alt="手动设置ip" /></p>
+
+<p>不过对于广大人民群众（包括我）还是利用 <strong>DHCP</strong> 动态获取IP地址的。下面的内容是描述如何通过 <strong>DHCP</strong> 获取一个IP地址。</p>
+
+<p>首先，DHCP服务器发现。动态获得IP是通过<strong>DHCP服务器</strong>分配的，对于一台新接入的计算机，显然要先找到这台服务器，那么问题来了，我怎么知道<strong>DHCP服务器</strong>的IP（毕竟无论如何需要建立主机之间的逻辑通信）？答案是不知道，那就拿个大喇叭广播，我们使用 <code>255.255.255.255</code> 作为目的地址，这样报文就会交付给同一个子网所有主机，并且此时这台主机没有IP地址，所以源地址是 <code>0.0.0.0</code>。这时发送的报文称为 <strong>DHCP发现报文</strong>，顺便说一句DHCP是基于UDP的。</p>
+
+<p>然后，DHCP服务器提供。广播的 <strong>DHCP发现报文</strong> 子网内所有主机都会收到，但是只有 <strong>DHCP服务器</strong> 会去做出响应。响应的报文称为 <strong>DHCP提供报文</strong>，在这个报文中，源地址是这台服务器的地址，这点毫无疑问，目标地址是 <code>255.255.255.255</code>，因为请求的主机此时还没有IP地址。那么问题来了，要接入网的主机通过什么知道这条信息是给自己的而不是给其它接入网的主机？通过 <code>transaction id</code>，在<strong>DHCP发现报文</strong> 里就包含这一信息，然后在 <strong>DHCP提供报文</strong> 原样返回<code>transaction id</code>。<strong>DHCP提供报文</strong>里还会包含着一个分配到新客户的ip地址。</p>
+
+<p>随后，DHCP请求。由于一个子网可能会有多个<strong>DHCP服务器</strong>，所以一条<strong>DHCP发现报文</strong>可能会对应多条<strong>DHCP提供报文</strong>，也就可能对应多个推荐ip地址。客户端需要选择一个最终的ip，发送<strong>DHCP请求报文</strong>，因为可能有多个<strong>DHCP服务器</strong>，所以采用的目的ip仍然是<code>255.255.255.255</code>，通知最终结果，便于其他<strong>DHCP服务器</strong>及时回收发出去的冗余ip地址。</p>
+
+<p>最后，DHCP服务器用 <strong>DHCP ACK报文</strong>响应，进行最终确认。这样这台新接入的主机就获得了一个ip地址，同时获得的还有本地DNS服务器地址、网关地址。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>
