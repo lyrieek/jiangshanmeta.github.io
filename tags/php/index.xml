@@ -68,6 +68,19 @@
 &lt;p&gt;改动并不多，真的只是做了一点微小的贡献，然而每个model初始化容错只需要一行，看起来好爽啊。&lt;/p&gt;
 
 &lt;p&gt;//做一个有代码洁癖的bug开发者真不容易。话说同事都是有N年开发经验是怎么忍受这样的代码的。。。&lt;/p&gt;
+
+&lt;p&gt;update 2016/08/02&lt;/p&gt;
+
+&lt;p&gt;一个简单地想法是ajax请求的出错信息，直接写死在代码里不是很合适，可以在model基类里面封装一个相关函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function gen_err_msg(){
+	return &#39;数据有误&#39;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可行性上没问题，但是觉得没太大的用处，算是对用户体验的一点改进吧。&lt;/p&gt;
+
+&lt;p&gt;另一个想法是扩大适用范围，不仅仅是在初始化的时候，在model有一些业务逻辑判断，比如常见的权限判断，需要导入到一个类似于404页面的无权限页面，诸如此类都可以封装到model层而不是在controller里手动判断。&lt;/p&gt;
 </description>
     </item>
     
