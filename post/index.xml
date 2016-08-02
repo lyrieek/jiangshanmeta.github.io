@@ -6,8 +6,110 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Aug 2016 19:40:53 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 02 Aug 2016 23:26:56 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>网际协议</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/ip/</link>
+      <pubDate>Tue, 02 Aug 2016 23:26:56 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/ip/</guid>
+      <description>
+
+&lt;p&gt;IPv4协议&lt;/p&gt;
+
+&lt;p&gt;计算机网络的网络层主要功能是&lt;strong&gt;转发&lt;/strong&gt;和&lt;strong&gt;路由&lt;/strong&gt;，转发是将分组从一个输入链路接口转移到合适的输出链路接口的路由器本地动作，路由是指网络范围内的过程，以决定分组从源到目的地所采取的端到端路径。&lt;/p&gt;
+
+&lt;p&gt;合适的输出路径是如何确定的？输出链路是通过查询转发表根据&lt;strong&gt;最长前缀匹配规则&lt;/strong&gt;进行确定的。转发表是根据路由选择协议设定的，并且是动态更新的，换句话说，源和目的地址相同的两个IP报文，可能走不同的路线，因而不能保证先后顺序。&lt;/p&gt;
+
+&lt;p&gt;那这个&lt;strong&gt;最长前缀匹配规则&lt;/strong&gt;又是什么？为了讲清楚这个，首先需要对IP地址有一定的基础了解。&lt;/p&gt;
+
+&lt;h2 id=&#34;ipv4地址:0e7497b6083b31ad5d27a662a672d7d3&#34;&gt;IPv4地址&lt;/h2&gt;
+
+&lt;p&gt;之前我&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;描述了计算机如何获取IP地址&lt;/a&gt;，在那里对IP地址做了最基本的描述。&lt;/p&gt;
+
+&lt;p&gt;IPv4地址是一个32位的二进制数字，为了便于人类阅读，通常我们按照&lt;strong&gt;点分十进制记法&lt;/strong&gt;表示IP地址。一台主机的IP地址不是完全自由分配的，而是要根据其所在的子网进行分配。那么如何表示这个子网？如何表示子网大小？解决方案是将IP地址分为两部分，前面表示网络号，后面的表示主机号，表现为&lt;code&gt;a.b.c.d/x&lt;/code&gt;的形式。比如&lt;code&gt;233.233.233.0/24&lt;/code&gt;，这表示这个这个子网前24位是网络号，后面的8位才能分配给主机（有些特殊的号码不能分配，这个另说）。在window下查看当前所属子网前缀是多少位，可在cmd下输入&lt;code&gt;ipconfig&lt;/code&gt;，可以看到如下内容：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/computernetwork/ipconfig.jpg&#34; alt=&#34;ipconfig&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这显示我所在的子网前24位（子网掩码转换成二进制就是前24位都是1），图中所示的IP地址是&lt;code&gt;192.168.1.12&lt;/code&gt;，这是一个私有地址，全球现在应该有N个这么一个地址，这一点我稍后再说。&lt;/p&gt;
+
+&lt;p&gt;在上古时期，还有A类网址、B类网址、C类网址的说法，从现在的角度来看就是上面说的几个特例而已，A类网址的子网掩码为&lt;code&gt;255.0.0.0&lt;/code&gt;，也就是说前八位为网络号，后24位为主机号，A类网址每个子网很大但是数量上比较少。B类网址子网掩码为&lt;code&gt;255.255.0.0&lt;/code&gt;，前16位为网络号，后16位为主机号，C类网址子网掩码为&lt;code&gt;255.255.255.0&lt;/code&gt;，我当前所属的就是个C网，前24位为网络号，后8位为主机号。C网数量很多但是每个子网的规模较小。其实对于A类网址、B类网址、C类网址，还有IP地址范围的限制，分别对应&lt;code&gt;0.0.0.0&lt;/code&gt;——&lt;code&gt;127.255.255.255&lt;/code&gt;、&lt;code&gt;128.0.0.0&lt;/code&gt;——&lt;code&gt;191.255.255.255&lt;/code&gt;、&lt;code&gt;192.0.0.0&lt;/code&gt;——&lt;code&gt;223.255.255.255&lt;/code&gt;。看到这你可能会问，应该还有空缺的位置啊，其实还有D类网址、E类网址，但是都不能作为公网地址。&lt;/p&gt;
+
+&lt;p&gt;IP地址中还有一些特殊值，先以表格的形式归纳在这里&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;网络号&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;主机号&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;做源&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;做目标&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;全0&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;全0&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;√&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;×&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;在本网内部表示本机&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;全1&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;全1&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;×&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;√&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;本网内广播地址&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;特定值&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;全0&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;×&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;×&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;网络地址，表示一个网络&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;特定值&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;全1&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;×&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;√&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;直接广播地址，对特定网络进行广播&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;127&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;非全0或非全1&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;√&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;√&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;本地环回地址&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;对于前两个，在学习&lt;strong&gt;DHCP&lt;/strong&gt;中已经遇到过了，&lt;code&gt;0.0.0.0&lt;/code&gt;表示本机，只能做源，&lt;code&gt;255.255.255.255&lt;/code&gt;表示本子网内的广播地址。后两个其实可以和前两个类比看，主机号全0表示当前网络，全1表示对这个网络进行广播，从另一个层面上看，不是所有合法数字都可以分配作为主机号，对于我这个C类网络，有8位主机号，并不意味着可以容纳2^8=256个ip，而是2^8-2=254个。最后一个对于搞web开发的人其实很熟悉，大家经常会看到&lt;code&gt;127.0.0.1&lt;/code&gt;就是一个环回地址。&lt;/p&gt;
+
+&lt;p&gt;除了上面说的限制，还有私有地址的概念，上面截图中所示我的ip地址就处于一个私有网络中，对于A类网址、B类网址、C类网址，每一个均有一块作为私有地址，不能作为公网地址使用，C网的对应 &lt;strong&gt;192.168.0&lt;/strong&gt;——&lt;strong&gt;192.168.255&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;既然谈到私有地址的话题的，那我问个问题，为了实现主机到主机的逻辑通信，需要ip标示唯一主机，但是一个私有地址可以对应多台主机，那该怎么办？我们需要把私有地址映射到公有地址上去，这就需要下面要介绍的&lt;strong&gt;NAT&lt;/strong&gt;了。&lt;/p&gt;
+
+&lt;h2 id=&#34;nat:0e7497b6083b31ad5d27a662a672d7d3&#34;&gt;NAT&lt;/h2&gt;
+
+&lt;h2 id=&#34;ipv4报文:0e7497b6083b31ad5d27a662a672d7d3&#34;&gt;IPv4报文&lt;/h2&gt;
+
+&lt;h2 id=&#34;icmp:0e7497b6083b31ad5d27a662a672d7d3&#34;&gt;ICMP&lt;/h2&gt;
+
+&lt;h2 id=&#34;从传输层角度看网络层:0e7497b6083b31ad5d27a662a672d7d3&#34;&gt;从传输层角度看网络层&lt;/h2&gt;
+
+&lt;p&gt;在路由器中还会发生丢包现象，这是因为路由器的缓存空间被耗尽，没有内存存储到达的新分组&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>DHCP</title>
@@ -1042,82 +1144,6 @@
 &lt;h4 id=&#34;sticky-footer:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;sticky footer&lt;/h4&gt;
 
 &lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/stickyfooter/&#34;&gt;总结过sticky footer的实现&lt;/a&gt;,以及&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>bootstrap源码解读——button.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/button/</link>
-      <pubDate>Sun, 26 Jun 2016 20:22:23 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/button/</guid>
-      <description>&lt;p&gt;button.js我个人觉得是属于从一开始就没想明白要做什么。和其他的bootstrap的插件一样，button也能用data的形式调用插件，但是我真心没想明白使用data调用的有什么实际用途。反而我觉得手动调用的对我来说更有实际意义，所以这里只说&lt;a href=&#34;http://v3.bootcss.com/javascript/#buttons-stateful&#34;&gt;button.js改变状态的部分&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;在web应用中免不了用户触发ajax请求，比如提交表单（实际项目中没有用表单的直接提交，而是使用了ajax提交表单），点击加载更多。在ajax过程中我们需要告诉用户正在进行中，需要等待。在实际项目中为了实现这一个需求我们使用了一个插件blockUI,可以自行百度一下，我觉得挺好用的。另一种方案是改变button的状态，把他标记为不可点击。&lt;/p&gt;
-
-&lt;p&gt;整体形式是标准的bootstrap插件的形式，关于如何绑定方法，如何防冲突，这些都在 &lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/alert/&#34;&gt;bootstrap源码解读——alert.js&lt;/a&gt;中分析过了，没有必要去做过多的说明。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;function Plugin(option) {
-  return this.each(function () {
-    var $this   = $(this)
-    var data    = $this.data(&#39;bs.button&#39;)
-    var options = typeof option == &#39;object&#39; &amp;amp;&amp;amp; option
-
-    if (!data) $this.data(&#39;bs.button&#39;, (data = new Button(this, options)))
-
-    if (option == &#39;toggle&#39;) data.toggle()
-    else if (option) data.setState(option)
-  })
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;和alert.js类似，这里也是采用data的形式进行缓存&lt;code&gt;Button&lt;/code&gt;实例，我们不需要去关心&lt;code&gt;toggle&lt;/code&gt;的实现，因为我连应用场景都没想到，我们只需关心调用&lt;code&gt;setState&lt;/code&gt;方法。setState传入的参数其实只有&lt;code&gt;loading&lt;/code&gt;和&lt;code&gt;reset&lt;/code&gt;是有效的。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Button.prototype.setState = function (state) {
-  var d    = &#39;disabled&#39;
-  var $el  = this.$element
-  var val  = $el.is(&#39;input&#39;) ? &#39;val&#39; : &#39;html&#39;
-  var data = $el.data()
-
-  state += &#39;Text&#39;
-
-  if (data.resetText == null) $el.data(&#39;resetText&#39;, $el[val]())
-
-  // push to event loop to allow forms to submit
-  setTimeout($.proxy(function () {
-    $el[val](data[state] == null ? this.options[state] : data[state])
-
-    if (state == &#39;loadingText&#39;) {
-      this.isLoading = true
-      $el.addClass(d).attr(d, d)
-    } else if (this.isLoading) {
-      this.isLoading = false
-      $el.removeClass(d).removeAttr(d)
-    }
-  }, this), 0)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;读起来并不是很难懂，一个要注意的地方是&lt;code&gt;setTimeout&lt;/code&gt;，这个函数一方面会改变&lt;code&gt;this&lt;/code&gt;的指向，我以前也分析过&lt;a href=&#34;http://jiangshanmeta.github.io/post/jsthis/&#34;&gt;javascript的this坑&lt;/a&gt;，另一方面是定时器的原理，不是相隔多长时间后执行，而是相隔多长时间后加入任务队列，这个&lt;a href=&#34;http://jiangshanmeta.github.io/post/browser/&#34;&gt;我以前也提及过&lt;/a&gt;。另一个要注意的点是data的使用，利用data保存button中原来的内容就不说了，很常规的一个写法。比较有趣的是对于加载时显示内容的处理。文档上说加载时保存的信息保存在了&lt;code&gt;data-loading-text&lt;/code&gt;中，但是我们在代码中读取的时候是以&lt;code&gt;loadingText&lt;/code&gt;的形式读写，这就比较有意思了，一个中划线没了，然后一个大小写改变了。查了查MDN找到了答案：&lt;/p&gt;
-
-&lt;p&gt;data-*,*可以被任何符合以下限制的the producton rule of xml names(xml的命名规则)代替：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;名字不能以xml开头，除此之外其他任何情形都可是使用这3个字母；&lt;/li&gt;
-&lt;li&gt;名字不能含有分号；&lt;/li&gt;
-&lt;li&gt;名字不能含有大写字母。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;注意：HTMLElement.dataset是一个 StringMap。一个名叫data-test-value的自定义属性可以通过HTMLElment.dataset.testValue来访问，属性的名字中的中线(U+002D)被挨着它字母的大写字母代替了（驼峰命名）。&lt;/p&gt;
-
-&lt;p&gt;自定义的data 属性名称转化成 DOMStringMap 的键值时会遵循下面的规则：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;前缀  data- 被去除(包括减号)；&lt;/li&gt;
-&lt;li&gt;对于每个在ASCII小写字母 a到 z前面的减号 (U+002D)，减号会被去除，并且字母会转变成对应的大写字母。其他字符（包含其他减号）都不发生变化&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;具体链接: &lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes#attr-data-*&#34;&gt;data-*&lt;/a&gt;,&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLElement/dataset&#34;&gt;dataset&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

@@ -1,0 +1,132 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 网际协议 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">网际协议</h1>
+			  <p >Tue, Aug 2, 2016</p>
+			      
+
+<p>IPv4协议</p>
+
+<p>计算机网络的网络层主要功能是<strong>转发</strong>和<strong>路由</strong>，转发是将分组从一个输入链路接口转移到合适的输出链路接口的路由器本地动作，路由是指网络范围内的过程，以决定分组从源到目的地所采取的端到端路径。</p>
+
+<p>合适的输出路径是如何确定的？输出链路是通过查询转发表根据<strong>最长前缀匹配规则</strong>进行确定的。转发表是根据路由选择协议设定的，并且是动态更新的，换句话说，源和目的地址相同的两个IP报文，可能走不同的路线，因而不能保证先后顺序。</p>
+
+<p>那这个<strong>最长前缀匹配规则</strong>又是什么？为了讲清楚这个，首先需要对IP地址有一定的基础了解。</p>
+
+<h2 id="ipv4地址:0e7497b6083b31ad5d27a662a672d7d3">IPv4地址</h2>
+
+<p>之前我<a href="http://jiangshanmeta.github.io/post/computernetwork/dhcp/">描述了计算机如何获取IP地址</a>，在那里对IP地址做了最基本的描述。</p>
+
+<p>IPv4地址是一个32位的二进制数字，为了便于人类阅读，通常我们按照<strong>点分十进制记法</strong>表示IP地址。一台主机的IP地址不是完全自由分配的，而是要根据其所在的子网进行分配。那么如何表示这个子网？如何表示子网大小？解决方案是将IP地址分为两部分，前面表示网络号，后面的表示主机号，表现为<code>a.b.c.d/x</code>的形式。比如<code>233.233.233.0/24</code>，这表示这个这个子网前24位是网络号，后面的8位才能分配给主机（有些特殊的号码不能分配，这个另说）。在window下查看当前所属子网前缀是多少位，可在cmd下输入<code>ipconfig</code>，可以看到如下内容：</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/computernetwork/ipconfig.jpg" alt="ipconfig" /></p>
+
+<p>这显示我所在的子网前24位（子网掩码转换成二进制就是前24位都是1），图中所示的IP地址是<code>192.168.1.12</code>，这是一个私有地址，全球现在应该有N个这么一个地址，这一点我稍后再说。</p>
+
+<p>在上古时期，还有A类网址、B类网址、C类网址的说法，从现在的角度来看就是上面说的几个特例而已，A类网址的子网掩码为<code>255.0.0.0</code>，也就是说前八位为网络号，后24位为主机号，A类网址每个子网很大但是数量上比较少。B类网址子网掩码为<code>255.255.0.0</code>，前16位为网络号，后16位为主机号，C类网址子网掩码为<code>255.255.255.0</code>，我当前所属的就是个C网，前24位为网络号，后8位为主机号。C网数量很多但是每个子网的规模较小。其实对于A类网址、B类网址、C类网址，还有IP地址范围的限制，分别对应<code>0.0.0.0</code>——<code>127.255.255.255</code>、<code>128.0.0.0</code>——<code>191.255.255.255</code>、<code>192.0.0.0</code>——<code>223.255.255.255</code>。看到这你可能会问，应该还有空缺的位置啊，其实还有D类网址、E类网址，但是都不能作为公网地址。</p>
+
+<p>IP地址中还有一些特殊值，先以表格的形式归纳在这里</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">网络号</th>
+<th align="center">主机号</th>
+<th align="center">做源</th>
+<th align="center">做目标</th>
+<th align="center">用途</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">全0</td>
+<td align="center">全0</td>
+<td align="center">√</td>
+<td align="center">×</td>
+<td align="center">在本网内部表示本机</td>
+</tr>
+
+<tr>
+<td align="center">全1</td>
+<td align="center">全1</td>
+<td align="center">×</td>
+<td align="center">√</td>
+<td align="center">本网内广播地址</td>
+</tr>
+
+<tr>
+<td align="center">特定值</td>
+<td align="center">全0</td>
+<td align="center">×</td>
+<td align="center">×</td>
+<td align="center">网络地址，表示一个网络</td>
+</tr>
+
+<tr>
+<td align="center">特定值</td>
+<td align="center">全1</td>
+<td align="center">×</td>
+<td align="center">√</td>
+<td align="center">直接广播地址，对特定网络进行广播</td>
+</tr>
+
+<tr>
+<td align="center">127</td>
+<td align="center">非全0或非全1</td>
+<td align="center">√</td>
+<td align="center">√</td>
+<td align="center">本地环回地址</td>
+</tr>
+</tbody>
+</table>
+
+<p>对于前两个，在学习<strong>DHCP</strong>中已经遇到过了，<code>0.0.0.0</code>表示本机，只能做源，<code>255.255.255.255</code>表示本子网内的广播地址。后两个其实可以和前两个类比看，主机号全0表示当前网络，全1表示对这个网络进行广播，从另一个层面上看，不是所有合法数字都可以分配作为主机号，对于我这个C类网络，有8位主机号，并不意味着可以容纳2^8=256个ip，而是2^8-2=254个。最后一个对于搞web开发的人其实很熟悉，大家经常会看到<code>127.0.0.1</code>就是一个环回地址。</p>
+
+<p>除了上面说的限制，还有私有地址的概念，上面截图中所示我的ip地址就处于一个私有网络中，对于A类网址、B类网址、C类网址，每一个均有一块作为私有地址，不能作为公网地址使用，C网的对应 <strong>192.168.0</strong>——<strong>192.168.255</strong></p>
+
+<p>既然谈到私有地址的话题的，那我问个问题，为了实现主机到主机的逻辑通信，需要ip标示唯一主机，但是一个私有地址可以对应多台主机，那该怎么办？我们需要把私有地址映射到公有地址上去，这就需要下面要介绍的<strong>NAT</strong>了。</p>
+
+<h2 id="nat:0e7497b6083b31ad5d27a662a672d7d3">NAT</h2>
+
+<h2 id="ipv4报文:0e7497b6083b31ad5d27a662a672d7d3">IPv4报文</h2>
+
+<h2 id="icmp:0e7497b6083b31ad5d27a662a672d7d3">ICMP</h2>
+
+<h2 id="从传输层角度看网络层:0e7497b6083b31ad5d27a662a672d7d3">从传输层角度看网络层</h2>
+
+<p>在路由器中还会发生丢包现象，这是因为路由器的缓存空间被耗尽，没有内存存储到达的新分组</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>
