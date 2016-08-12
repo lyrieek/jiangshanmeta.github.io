@@ -210,6 +210,10 @@
 &lt;h4 id=&#34;sticky-footer:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;sticky footer&lt;/h4&gt;
 
 &lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/stickyfooter/&#34;&gt;总结过sticky footer的实现&lt;/a&gt;,以及&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;update 2016/08/12&lt;/p&gt;
+
+&lt;p&gt;说一个实际用到的场景吧，我们的前端框架是bootstrap，它的栅格系统是实现多列布局的常用工具，我以前&lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/grid/&#34;&gt;讲过它的具体实现&lt;/a&gt;，简单地说是基于浮动布局的。用栅格系统做展示列表的时候，如果每一列的高度不一致（毕竟指望各列图片文字高度一致属于别想了），熟悉浮动的同学应该能脑补出来会出现什么样的悲剧，那我最终的解决方案是使用表格中同一行中单元格等高这一属性解决问题的。&lt;/p&gt;
 </description>
     </item>
     
