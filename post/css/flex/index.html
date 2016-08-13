@@ -1,0 +1,394 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 终于bootstrap满足不了我了——用flex实现一个栅格系统 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">终于bootstrap满足不了我了——用flex实现一个栅格系统</h1>
+			  <p >Sat, Aug 13, 2016</p>
+			      <p>bootstrap样式方面我觉得最重要的就是栅格系统了，然而在实际项目中觉得有些情况它所能提供的满足不了我的需求了。最近感受比较深的就是列表展示页面，每一个列表项对应的图片文字大小所需空间不一致，我的一个解决方案是利用CSS文字强制只显示一行或多行（不知道如何实现的自行百度），然后图片<a href="http://jiangshanmeta.github.io/post/autosquare/">放在一个正方形的盒子里展示</a>，确实是一个解决问题的方法但我觉得不够优雅。其实根本问题出现在bootstrap的栅格系统是基于浮动的，每一个列高度不一致导致布局错乱显然是不可避免的。bootstrap也考虑到了这个问题，他们的解决方案是这样的：</p>
+
+<blockquote>
+<p>建议联合使用 .clearfix 和 响应式工具类。</p>
+</blockquote>
+
+<p>说的没错，只要在每行之间加上一个<code>.clearfix</code>确实能解决问题。但是我显然是动态输出页面的啊，我还要手动写个计数器然后输出这个清除浮动的标签，总觉得略折腾。</p>
+
+<p>那既然问题是不等高造成的做个等高布局怎么样？ 说的就和等高布局好做似的。padding撑出去+margin缩回来方案hack意味太浓，table的同行单元格等高这一属性可以利用但是我还要输出表示行的标签，折腾程度差不多，响应式处理起来更折腾，那似乎就剩下flex了。但是对于flex float又直接失效。</p>
+
+<p>于是我想着干脆用flex模拟一个bootstrap的栅格系统，对于熟悉flex布局和bootstrap的同学这并不难。</p>
+
+<p>首先是container</p>
+
+<pre><code>*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+}
+.flex-container {
+	display:flex;
+	margin-right:auto;
+	margin-left:auto;
+	flex-flow:row wrap;
+	justify-content:flex-start;
+	align-items:stretch;
+}
+@media (min-width: 768px) {
+  .flex-container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .flex-container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .flex-container {
+    width: 1170px;
+  }
+}
+.flex-container-fluid {
+  margin-right: auto;
+  margin-left: auto;
+}
+</code></pre>
+
+<p>然后是每一列的样式设置</p>
+
+<pre><code>.flex-col-xs-12 {
+	flex:0 0 100%;
+}
+.flex-col-xs-11 {
+	flex:0 0 91.66666667%;
+}
+.flex-col-xs-10 {
+	flex:0 0 83.33333333%;
+}
+.flex-col-xs-9 {
+	flex:0 0 75%;
+}
+.flex-col-xs-8 {
+	flex:0 0 66.66666667%;
+}
+.flex-col-xs-7 {
+	flex:0 0 58.33333333%;
+}
+.flex-col-xs-6 {
+	flex:0 0 50%;
+}
+.flex-col-xs-5 {
+	flex:0 0 41.66666667%;
+}
+.flex-col-xs-4 {
+	flex:0 0 33.33333333%;
+}
+.flex-col-xs-3 {
+	flex:0 0 25%;
+}
+.flex-col-xs-2 {
+	flex:0 0 16.66666667%;
+}
+.flex-col-xs-1 {
+	flex:0 0 8.33333333%;
+}
+</code></pre>
+
+<p>接下来是列的响应式处理</p>
+
+<pre><code>@media (min-width: 768px) {
+	.flex-col-sm-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-sm-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-sm-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-sm-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-sm-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-sm-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-sm-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-sm-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-sm-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-sm-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-sm-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-sm-1 {
+		flex:0 0 8.33333333%;
+	}
+}
+
+
+@media (min-width: 992px) {
+	.flex-col-md-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-md-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-md-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-md-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-md-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-md-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-md-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-md-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-md-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-md-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-md-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-md-1 {
+		flex:0 0 8.33333333%;
+	}
+
+}
+
+@media (min-width: 1200px) {
+	.flex-col-lg-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-lg-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-lg-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-lg-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-lg-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-lg-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-lg-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-lg-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-lg-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-lg-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-lg-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-lg-1 {
+		flex:0 0 8.33333333%;
+	}
+
+}
+</code></pre>
+
+<p>列偏移部分，只列出了xs部分，没写响应式部分</p>
+
+<pre><code>.flex-col-xs-offset-12 {
+  margin-left: 100%;
+}
+.flex-col-xs-offset-11 {
+  margin-left: 91.66666667%;
+}
+.flex-col-xs-offset-10 {
+  margin-left: 83.33333333%;
+}
+.flex-col-xs-offset-9 {
+  margin-left: 75%;
+}
+.flex-col-xs-offset-8 {
+  margin-left: 66.66666667%;
+}
+.flex-col-xs-offset-7 {
+  margin-left: 58.33333333%;
+}
+.flex-col-xs-offset-6 {
+  margin-left: 50%;
+}
+.flex-col-xs-offset-5 {
+  margin-left: 41.66666667%;
+}
+.flex-col-xs-offset-4 {
+  margin-left: 33.33333333%;
+}
+.flex-col-xs-offset-3 {
+  margin-left: 25%;
+}
+.flex-col-xs-offset-2 {
+  margin-left: 16.66666667%;
+}
+.flex-col-xs-offset-1 {
+  margin-left: 8.33333333%;
+}
+.flex-col-xs-offset-0 {
+  margin-left: 0;
+}
+</code></pre>
+
+<p>列排序，和bootstrap一样，基于<code>position:relative</code>。</p>
+
+<pre><code>.flex-col-xs-1,
+.flex-col-xs-2,
+.flex-col-xs-3,
+.flex-col-xs-4,
+.flex-col-xs-5,
+.flex-col-xs-6,
+.flex-col-xs-7,
+.flex-col-xs-8,
+.flex-col-xs-9,
+.flex-col-xs-10,
+.flex-col-xs-11,
+.flex-col-xs-12{
+	position:relative;
+}
+
+.flex-col-xs-pull-12 {
+  right: 100%;
+}
+.flex-col-xs-pull-11 {
+  right: 91.66666667%;
+}
+.flex-col-xs-pull-10 {
+  right: 83.33333333%;
+}
+.flex-col-xs-pull-9 {
+  right: 75%;
+}
+.flex-col-xs-pull-8 {
+  right: 66.66666667%;
+}
+.flex-col-xs-pull-7 {
+  right: 58.33333333%;
+}
+.flex-col-xs-pull-6 {
+  right: 50%;
+}
+.flex-col-xs-pull-5 {
+  right: 41.66666667%;
+}
+.flex-col-xs-pull-4 {
+  right: 33.33333333%;
+}
+.flex-col-xs-pull-3 {
+  right: 25%;
+}
+.flex-col-xs-pull-2 {
+  right: 16.66666667%;
+}
+.flex-col-xs-pull-1 {
+  right: 8.33333333%;
+}
+.flex-col-xs-pull-0 {
+  right: auto;
+}
+.flex-col-xs-push-12 {
+  left: 100%;
+}
+.flex-col-xs-push-11 {
+  left: 91.66666667%;
+}
+.flex-col-xs-push-10 {
+  left: 83.33333333%;
+}
+.flex-col-xs-push-9 {
+  left: 75%;
+}
+.flex-col-xs-push-8 {
+  left: 66.66666667%;
+}
+.flex-col-xs-push-7 {
+  left: 58.33333333%;
+}
+.flex-col-xs-push-6 {
+  left: 50%;
+}
+.flex-col-xs-push-5 {
+  left: 41.66666667%;
+}
+.flex-col-xs-push-4 {
+  left: 33.33333333%;
+}
+.flex-col-xs-push-3 {
+  left: 25%;
+}
+.flex-col-xs-push-2 {
+  left: 16.66666667%;
+}
+.flex-col-xs-push-1 {
+  left: 8.33333333%;
+}
+.flex-col-xs-push-0 {
+  left: auto;
+}
+
+</code></pre>
+
+<p>这样一个基于flex的栅格系统就差不多了，包含响应式布局、列偏移、列排序，其实还可以列嵌套，我其实还可以宣称自己基于移动优先的理念之类的。和bootstrap的栅格系统相比，还差点兼容性以及gutter的概念，这个没什么难的，就这样吧。</p>
+
+<p>还有，女神叫我出去浪，我却在这写博客，终于明白为什么我会孤独一生了。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

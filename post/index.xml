@@ -6,8 +6,372 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 02 Aug 2016 23:26:56 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 13 Aug 2016 14:16:46 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>终于bootstrap满足不了我了——用flex实现一个栅格系统</title>
+      <link>http://jiangshanmeta.github.io/post/css/flex/</link>
+      <pubDate>Sat, 13 Aug 2016 14:16:46 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/css/flex/</guid>
+      <description>&lt;p&gt;bootstrap样式方面我觉得最重要的就是栅格系统了，然而在实际项目中觉得有些情况它所能提供的满足不了我的需求了。最近感受比较深的就是列表展示页面，每一个列表项对应的图片文字大小所需空间不一致，我的一个解决方案是利用CSS文字强制只显示一行或多行（不知道如何实现的自行百度），然后图片&lt;a href=&#34;http://jiangshanmeta.github.io/post/autosquare/&#34;&gt;放在一个正方形的盒子里展示&lt;/a&gt;，确实是一个解决问题的方法但我觉得不够优雅。其实根本问题出现在bootstrap的栅格系统是基于浮动的，每一个列高度不一致导致布局错乱显然是不可避免的。bootstrap也考虑到了这个问题，他们的解决方案是这样的：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;建议联合使用 .clearfix 和 响应式工具类。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;说的没错，只要在每行之间加上一个&lt;code&gt;.clearfix&lt;/code&gt;确实能解决问题。但是我显然是动态输出页面的啊，我还要手动写个计数器然后输出这个清除浮动的标签，总觉得略折腾。&lt;/p&gt;
+
+&lt;p&gt;那既然问题是不等高造成的做个等高布局怎么样？ 说的就和等高布局好做似的。padding撑出去+margin缩回来方案hack意味太浓，table的同行单元格等高这一属性可以利用但是我还要输出表示行的标签，折腾程度差不多，响应式处理起来更折腾，那似乎就剩下flex了。但是对于flex float又直接失效。&lt;/p&gt;
+
+&lt;p&gt;于是我想着干脆用flex模拟一个bootstrap的栅格系统，对于熟悉flex布局和bootstrap的同学这并不难。&lt;/p&gt;
+
+&lt;p&gt;首先是container&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+}
+.flex-container {
+	display:flex;
+	margin-right:auto;
+	margin-left:auto;
+	flex-flow:row wrap;
+	justify-content:flex-start;
+	align-items:stretch;
+}
+@media (min-width: 768px) {
+  .flex-container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .flex-container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .flex-container {
+    width: 1170px;
+  }
+}
+.flex-container-fluid {
+  margin-right: auto;
+  margin-left: auto;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后是每一列的样式设置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.flex-col-xs-12 {
+	flex:0 0 100%;
+}
+.flex-col-xs-11 {
+	flex:0 0 91.66666667%;
+}
+.flex-col-xs-10 {
+	flex:0 0 83.33333333%;
+}
+.flex-col-xs-9 {
+	flex:0 0 75%;
+}
+.flex-col-xs-8 {
+	flex:0 0 66.66666667%;
+}
+.flex-col-xs-7 {
+	flex:0 0 58.33333333%;
+}
+.flex-col-xs-6 {
+	flex:0 0 50%;
+}
+.flex-col-xs-5 {
+	flex:0 0 41.66666667%;
+}
+.flex-col-xs-4 {
+	flex:0 0 33.33333333%;
+}
+.flex-col-xs-3 {
+	flex:0 0 25%;
+}
+.flex-col-xs-2 {
+	flex:0 0 16.66666667%;
+}
+.flex-col-xs-1 {
+	flex:0 0 8.33333333%;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;接下来是列的响应式处理&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@media (min-width: 768px) {
+	.flex-col-sm-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-sm-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-sm-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-sm-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-sm-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-sm-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-sm-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-sm-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-sm-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-sm-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-sm-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-sm-1 {
+		flex:0 0 8.33333333%;
+	}
+}
+
+
+@media (min-width: 992px) {
+	.flex-col-md-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-md-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-md-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-md-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-md-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-md-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-md-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-md-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-md-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-md-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-md-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-md-1 {
+		flex:0 0 8.33333333%;
+	}
+
+}
+
+@media (min-width: 1200px) {
+	.flex-col-lg-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-lg-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-lg-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-lg-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-lg-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-lg-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-lg-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-lg-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-lg-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-lg-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-lg-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-lg-1 {
+		flex:0 0 8.33333333%;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;列偏移部分，只列出了xs部分，没写响应式部分&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.flex-col-xs-offset-12 {
+  margin-left: 100%;
+}
+.flex-col-xs-offset-11 {
+  margin-left: 91.66666667%;
+}
+.flex-col-xs-offset-10 {
+  margin-left: 83.33333333%;
+}
+.flex-col-xs-offset-9 {
+  margin-left: 75%;
+}
+.flex-col-xs-offset-8 {
+  margin-left: 66.66666667%;
+}
+.flex-col-xs-offset-7 {
+  margin-left: 58.33333333%;
+}
+.flex-col-xs-offset-6 {
+  margin-left: 50%;
+}
+.flex-col-xs-offset-5 {
+  margin-left: 41.66666667%;
+}
+.flex-col-xs-offset-4 {
+  margin-left: 33.33333333%;
+}
+.flex-col-xs-offset-3 {
+  margin-left: 25%;
+}
+.flex-col-xs-offset-2 {
+  margin-left: 16.66666667%;
+}
+.flex-col-xs-offset-1 {
+  margin-left: 8.33333333%;
+}
+.flex-col-xs-offset-0 {
+  margin-left: 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;列排序，和bootstrap一样，基于&lt;code&gt;position:relative&lt;/code&gt;。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.flex-col-xs-1,
+.flex-col-xs-2,
+.flex-col-xs-3,
+.flex-col-xs-4,
+.flex-col-xs-5,
+.flex-col-xs-6,
+.flex-col-xs-7,
+.flex-col-xs-8,
+.flex-col-xs-9,
+.flex-col-xs-10,
+.flex-col-xs-11,
+.flex-col-xs-12{
+	position:relative;
+}
+
+.flex-col-xs-pull-12 {
+  right: 100%;
+}
+.flex-col-xs-pull-11 {
+  right: 91.66666667%;
+}
+.flex-col-xs-pull-10 {
+  right: 83.33333333%;
+}
+.flex-col-xs-pull-9 {
+  right: 75%;
+}
+.flex-col-xs-pull-8 {
+  right: 66.66666667%;
+}
+.flex-col-xs-pull-7 {
+  right: 58.33333333%;
+}
+.flex-col-xs-pull-6 {
+  right: 50%;
+}
+.flex-col-xs-pull-5 {
+  right: 41.66666667%;
+}
+.flex-col-xs-pull-4 {
+  right: 33.33333333%;
+}
+.flex-col-xs-pull-3 {
+  right: 25%;
+}
+.flex-col-xs-pull-2 {
+  right: 16.66666667%;
+}
+.flex-col-xs-pull-1 {
+  right: 8.33333333%;
+}
+.flex-col-xs-pull-0 {
+  right: auto;
+}
+.flex-col-xs-push-12 {
+  left: 100%;
+}
+.flex-col-xs-push-11 {
+  left: 91.66666667%;
+}
+.flex-col-xs-push-10 {
+  left: 83.33333333%;
+}
+.flex-col-xs-push-9 {
+  left: 75%;
+}
+.flex-col-xs-push-8 {
+  left: 66.66666667%;
+}
+.flex-col-xs-push-7 {
+  left: 58.33333333%;
+}
+.flex-col-xs-push-6 {
+  left: 50%;
+}
+.flex-col-xs-push-5 {
+  left: 41.66666667%;
+}
+.flex-col-xs-push-4 {
+  left: 33.33333333%;
+}
+.flex-col-xs-push-3 {
+  left: 25%;
+}
+.flex-col-xs-push-2 {
+  left: 16.66666667%;
+}
+.flex-col-xs-push-1 {
+  left: 8.33333333%;
+}
+.flex-col-xs-push-0 {
+  left: auto;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样一个基于flex的栅格系统就差不多了，包含响应式布局、列偏移、列排序，其实还可以列嵌套，我其实还可以宣称自己基于移动优先的理念之类的。和bootstrap的栅格系统相比，还差点兼容性以及gutter的概念，这个没什么难的，就这样吧。&lt;/p&gt;
+
+&lt;p&gt;还有，女神叫我出去浪，我却在这写博客，终于明白为什么我会孤独一生了。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>网际协议</title>
@@ -1054,140 +1418,6 @@
 &lt;p&gt;update 2016/07/19&lt;/p&gt;
 
 &lt;p&gt;看到&lt;a href=&#34;http://www.w3cplus.com/css/media-object-vs-flag-object.html&#34;&gt;一篇文章&lt;/a&gt;是讲这一类布局的，还起了一个高大上的名字叫做&lt;strong&gt;媒体对象&lt;/strong&gt;，话说bootstrap里也有类似实现。里面也提到了这种利用table布局的方式。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>table那些事</title>
-      <link>http://jiangshanmeta.github.io/post/table/</link>
-      <pubDate>Mon, 27 Jun 2016 21:09:14 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/table/</guid>
-      <description>
-
-&lt;p&gt;最近我的知乎时间线上出现了这么一个问题:&lt;a href=&#34;https://www.zhihu.com/question/20003535&#34;&gt;网页的 Table 布局和 DIV+CSS 布局从哪里可以看出来？Table 布局已经过时了吗？&lt;/a&gt;，于是便想着总结一下关于table的一些知识点。先声明一下，这里table是指css table，而不是html table，以下所说的可能用html的形式来写，但都是指的css table。&lt;/p&gt;
-
-&lt;h2 id=&#34;基本概念:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;基本概念&lt;/h2&gt;
-
-&lt;h4 id=&#34;关于表格的display值:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;关于表格的display值&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;table                对应html中的&lt;code&gt;&amp;lt;table&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-row            对应html中的&lt;code&gt;&amp;lt;tr&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-cell           对应htnl中的&lt;code&gt;&amp;lt;td&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-row-group      对应html中的&lt;code&gt;&amp;lt;tbody&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-header-group   对应html中的&lt;code&gt;&amp;lt;thead&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-footer-group   对应html中的&lt;code&gt;&amp;lt;tfoot&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-caption        对应html中的&lt;code&gt;&amp;lt;caption&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-column         对应html中的&lt;code&gt;&amp;lt;col&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;table-column-group   对应html中的&lt;code&gt;&amp;lt;colgroup&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;最重要的是前三个属性，而最后两个可以认为没什么用处，因为css将其表模型定义为以行为主，也就是说，它认为web开发者会显式声明行，而列是从单元格行的布局推导出来的。&lt;/p&gt;
-
-&lt;h4 id=&#34;匿名表对象:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;匿名表对象&lt;/h4&gt;
-
-&lt;p&gt;在html的table，有一些嵌套标签即使你不去写，浏览器也会去帮你填充，css的table也有类似的现象，可以将“遗漏的”组件作为匿名对象插入。插入遵循以下规则：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;如果一个table-cell元素的父元素不是table-row元素，则会在该table-cell元素及其父元素之间插入一个匿名table-row对象。所插入的这个对象将包含该table-cell元素的所有连续兄弟。&lt;/li&gt;
-&lt;li&gt;如果一个table-row元素的父元素不是table、table-row-group元素，则会在该table-row元素及其父元素之间插入一个匿名table元素。插入的这个对象将包含该table-row元素的连续兄弟。&lt;/li&gt;
-&lt;li&gt;如果一个table-column元素的父元素不是table、table-column-group元素，则在该table-column元素及其父元素之间插入一个匿名table元素。&lt;/li&gt;
-&lt;li&gt;如果一个table-row-group、table-header-group、table-footer-group、table-column-group或table-caption元素的父元素不是table元素，则会在该元素及其父元素之间插入一个匿名table元素。&lt;/li&gt;
-&lt;li&gt;如果一个table元素的子元素不是table-row-group、table-header-group、table-footer-group、table-row或table-caption元素，则在该table元素及其子元素之间插入一个匿名table-row对象。这个匿名对象将包含该子元素及所有不是table-row-group、table-header-group、table-footer-group、table-row、table-caption元素的连续兄弟&lt;/li&gt;
-&lt;li&gt;如果一个table-row-group、table-header-group、table-footer-group元素的子元素不是table-row对象，则在该元素及其子元素之间插入一个匿名table-row对象。这个匿名对象包含该子元素及其所有非table-row对象的连续兄弟&lt;/li&gt;
-&lt;li&gt;如果一个table-row元素的子元素不是table-cell元素，则在该元素和其子元素之间插入一个匿名table-cell对象。这个匿名对象包含该子元素及其所有非table-cell元素的连续兄弟&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;看起来比较理论，大家自己读读就好。&lt;/p&gt;
-
-&lt;h4 id=&#34;固定布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;固定布局&lt;/h4&gt;
-
-&lt;p&gt;熟悉css属性的人对于&lt;code&gt;table-layout&lt;/code&gt;应该不陌生，这个属性很大程度上影响了table的布局。首先介绍的固定布局，对应的属性值是&lt;code&gt;fixed&lt;/code&gt;。&lt;/p&gt;
-
-&lt;p&gt;要实现固定布局，首先要设定&lt;code&gt;table-layout&lt;/code&gt;为&lt;code&gt;fixed&lt;/code&gt;,这是显然的，但是也是不足的，除此之外还要设定table的宽度，否则会按照自动布局进行。&lt;/p&gt;
-
-&lt;p&gt;具体实现上包括以下步骤：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;width属性不是auto的列元素会根据width值设置该列的宽度。&lt;/li&gt;
-&lt;li&gt;如果一个列的宽度为auto，但是表首行中该列的单元格width不为auto，则根据单元格宽度设置此列宽度。其它行设定的宽度无效。&lt;/li&gt;
-&lt;li&gt;经过前两步，如果列的宽度依然为auto，会自动确定其大小，使其宽度尽可能相等。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;固定布局速度比较快，因为布局不依赖与内容，而是根据表的宽度、列和单元格的width决定。&lt;/p&gt;
-
-&lt;p&gt;上面提到的第三点是table实现等分布局的基础。&lt;/p&gt;
-
-&lt;h4 id=&#34;自动布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;自动布局&lt;/h4&gt;
-
-&lt;p&gt;自动布局是table的默认布局，但是因为要根据内容决定布局，所以布局速度较慢。&lt;/p&gt;
-
-&lt;p&gt;对于自动布局，具体宽度的计算比较复杂，而且对于中英文分割也比较复杂。所以这里就简要介绍一下：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;对于一列的各个单元格，计算最小和最大单元格宽度。&lt;/li&gt;
-&lt;li&gt;对于各列，计算最小和最大列宽&lt;/li&gt;
-&lt;li&gt;计算出表的真正宽度和各列宽度。如果表的&lt;code&gt;width&lt;/code&gt;属性不是auto，则将width属性值与所有列宽之和比较，取较大的作为表的宽度。如果最终宽度大于各列宽度之和，多余宽度各列均分。如果表的&lt;code&gt;width&lt;/code&gt;属性为auto，则将各列宽度之和作为表的宽度。换句话说，表的宽度恰好足够显示其内容，这一点是&lt;strong&gt;不定宽元素水平居中&lt;/strong&gt;的基础。然而，在&lt;code&gt;width&lt;/code&gt;为&lt;code&gt;auto&lt;/code&gt;的情况下，一个表可能会很难看，尤其是中文，有的时候可能发现每一列宽度都很小甚至只能写下一个字然后整个文字就竖起来了。目测bootstrap也是因为这个所以给table一个&lt;code&gt;width:100%&lt;/code&gt;。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;关于height:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;关于height&lt;/h4&gt;
-
-&lt;p&gt;对于web开发者来说，一般很少显式声明一个元素的高度，但是对于table来说，就有点有趣了&lt;/p&gt;
-
-&lt;p&gt;先约定一下页面结构&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;div style=&amp;quot;display:table;height:600px;&amp;quot;&amp;gt;
-    &amp;lt;div style=&amp;quot;display:table-row;&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-    &amp;lt;div style=&amp;quot;display:table-row;&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-    &amp;lt;div style=&amp;quot;display:table-row;&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-&amp;lt;/div&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;如果行高度不限制，三行内容一致，你会发现三行等分了整个表的高度，共同占据了600px的高度，这一点和常规div表现不一致。&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;如果高度不限制，三行内容不一致，那么三行均分剩余高度。看起来上面说的内容一致的是这里的特殊情况。你不觉得和&lt;code&gt;flex&lt;/code&gt;有点像吗，&lt;code&gt;flex-grow&lt;/code&gt;属性就可以分配剩余空间，不过能设置分配系数，比这里强大点。&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/table.html&#34;&gt;在线demo（和上面同一个）&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;//于是，我无意间实现了简单模拟&lt;code&gt;flex-grow&lt;/code&gt;属性。&lt;/p&gt;
-
-&lt;p&gt;如果高度限制了比例，你会发现这里的比例只是参考比例，如果足够放得下，那么就按照这个比例，如果不够放，那么会调整比例使其恰能放开。&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/table.html&#34;&gt;在线demo（依然和上面同一个）&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;在上面的情况延伸一下，如果有一个行高度设为了100%，其它行高度会调整为恰好够填充，而这一行会填充满剩余空间。之前提到过这一点可以用来实现sticky footer，&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;table的用处:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;table的用处&lt;/h2&gt;
-
-&lt;h4 id=&#34;不定宽元素水平居中:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;不定宽元素水平居中&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;.center-table{
-  display:table;
-  margin-left:auto;
-  margin-right:auto;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;原理上面有说，是自动布局&lt;code&gt;width&lt;/code&gt;属性为&lt;code&gt;auto&lt;/code&gt;时&lt;code&gt;display:table&lt;/code&gt;的元素宽度为内容宽度&lt;/p&gt;
-
-&lt;h4 id=&#34;垂直居中:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;垂直居中&lt;/h4&gt;
-
-&lt;p&gt;在&lt;a href=&#34;http://jiangshanmeta.github.io/post/center/&#34;&gt;我的总结&amp;ndash;居中的实现&lt;/a&gt;中提到到过，利用的是&lt;code&gt;vertical-align:middle&lt;/code&gt;。&lt;/p&gt;
-
-&lt;h4 id=&#34;等分布局-多列布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等分布局/多列布局&lt;/h4&gt;
-
-&lt;p&gt;这两类基本布局我更习惯用浮动实现，对于&lt;code&gt;table&lt;/code&gt;实现没有什么特别大的爱好，等分布局需要&lt;code&gt;table-layout:fixed;&lt;/code&gt;这一属性。&lt;/p&gt;
-
-&lt;h4 id=&#34;等高布局:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;等高布局&lt;/h4&gt;
-
-&lt;p&gt;如果不用table，实现等高布局的最简单方式应该是&lt;code&gt;flex&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;还是直接上&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/table/tabletip.html&#34;&gt;demo&lt;/a&gt;吧，我这里实现了图文混排下的等高。&lt;/p&gt;
-
-&lt;h4 id=&#34;sticky-footer:9fb6e0094eeac5ea481f3c3b33e3088c&#34;&gt;sticky footer&lt;/h4&gt;
-
-&lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/stickyfooter/&#34;&gt;总结过sticky footer的实现&lt;/a&gt;,以及&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html&#34;&gt;在线demo&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;update 2016/08/12&lt;/p&gt;
-
-&lt;p&gt;说一个实际用到的场景吧，我们的前端框架是bootstrap，它的栅格系统是实现多列布局的常用工具，我以前&lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/grid/&#34;&gt;讲过它的具体实现&lt;/a&gt;，简单地说是基于浮动布局的。用栅格系统做展示列表的时候，如果每一列的高度不一致（毕竟指望各列图片文字高度一致属于别想了），熟悉浮动的同学应该能脑补出来会出现什么样的悲剧，那我最终的解决方案是使用表格中同一行中单元格等高这一属性解决问题的。&lt;/p&gt;
 </description>
     </item>
     

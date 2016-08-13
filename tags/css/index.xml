@@ -6,8 +6,372 @@
     <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 31 Jul 2016 20:28:36 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 13 Aug 2016 14:16:46 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/css/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>终于bootstrap满足不了我了——用flex实现一个栅格系统</title>
+      <link>http://jiangshanmeta.github.io/post/css/flex/</link>
+      <pubDate>Sat, 13 Aug 2016 14:16:46 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/css/flex/</guid>
+      <description>&lt;p&gt;bootstrap样式方面我觉得最重要的就是栅格系统了，然而在实际项目中觉得有些情况它所能提供的满足不了我的需求了。最近感受比较深的就是列表展示页面，每一个列表项对应的图片文字大小所需空间不一致，我的一个解决方案是利用CSS文字强制只显示一行或多行（不知道如何实现的自行百度），然后图片&lt;a href=&#34;http://jiangshanmeta.github.io/post/autosquare/&#34;&gt;放在一个正方形的盒子里展示&lt;/a&gt;，确实是一个解决问题的方法但我觉得不够优雅。其实根本问题出现在bootstrap的栅格系统是基于浮动的，每一个列高度不一致导致布局错乱显然是不可避免的。bootstrap也考虑到了这个问题，他们的解决方案是这样的：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;建议联合使用 .clearfix 和 响应式工具类。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;说的没错，只要在每行之间加上一个&lt;code&gt;.clearfix&lt;/code&gt;确实能解决问题。但是我显然是动态输出页面的啊，我还要手动写个计数器然后输出这个清除浮动的标签，总觉得略折腾。&lt;/p&gt;
+
+&lt;p&gt;那既然问题是不等高造成的做个等高布局怎么样？ 说的就和等高布局好做似的。padding撑出去+margin缩回来方案hack意味太浓，table的同行单元格等高这一属性可以利用但是我还要输出表示行的标签，折腾程度差不多，响应式处理起来更折腾，那似乎就剩下flex了。但是对于flex float又直接失效。&lt;/p&gt;
+
+&lt;p&gt;于是我想着干脆用flex模拟一个bootstrap的栅格系统，对于熟悉flex布局和bootstrap的同学这并不难。&lt;/p&gt;
+
+&lt;p&gt;首先是container&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+}
+.flex-container {
+	display:flex;
+	margin-right:auto;
+	margin-left:auto;
+	flex-flow:row wrap;
+	justify-content:flex-start;
+	align-items:stretch;
+}
+@media (min-width: 768px) {
+  .flex-container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .flex-container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .flex-container {
+    width: 1170px;
+  }
+}
+.flex-container-fluid {
+  margin-right: auto;
+  margin-left: auto;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后是每一列的样式设置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.flex-col-xs-12 {
+	flex:0 0 100%;
+}
+.flex-col-xs-11 {
+	flex:0 0 91.66666667%;
+}
+.flex-col-xs-10 {
+	flex:0 0 83.33333333%;
+}
+.flex-col-xs-9 {
+	flex:0 0 75%;
+}
+.flex-col-xs-8 {
+	flex:0 0 66.66666667%;
+}
+.flex-col-xs-7 {
+	flex:0 0 58.33333333%;
+}
+.flex-col-xs-6 {
+	flex:0 0 50%;
+}
+.flex-col-xs-5 {
+	flex:0 0 41.66666667%;
+}
+.flex-col-xs-4 {
+	flex:0 0 33.33333333%;
+}
+.flex-col-xs-3 {
+	flex:0 0 25%;
+}
+.flex-col-xs-2 {
+	flex:0 0 16.66666667%;
+}
+.flex-col-xs-1 {
+	flex:0 0 8.33333333%;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;接下来是列的响应式处理&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@media (min-width: 768px) {
+	.flex-col-sm-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-sm-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-sm-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-sm-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-sm-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-sm-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-sm-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-sm-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-sm-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-sm-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-sm-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-sm-1 {
+		flex:0 0 8.33333333%;
+	}
+}
+
+
+@media (min-width: 992px) {
+	.flex-col-md-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-md-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-md-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-md-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-md-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-md-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-md-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-md-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-md-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-md-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-md-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-md-1 {
+		flex:0 0 8.33333333%;
+	}
+
+}
+
+@media (min-width: 1200px) {
+	.flex-col-lg-12 {
+		flex:0 0 100%;
+	}
+	.flex-col-lg-11 {
+		flex:0 0 91.66666667%;
+	}
+	.flex-col-lg-10 {
+		flex:0 0 83.33333333%;
+	}
+	.flex-col-lg-9 {
+		flex:0 0 75%;
+	}
+	.flex-col-lg-8 {
+		flex:0 0 66.66666667%;
+	}
+	.flex-col-lg-7 {
+		flex:0 0 58.33333333%;
+	}
+	.flex-col-lg-6 {
+		flex:0 0 50%;
+	}
+	.flex-col-lg-5 {
+		flex:0 0 41.66666667%;
+	}
+	.flex-col-lg-4 {
+		flex:0 0 33.33333333%;
+	}
+	.flex-col-lg-3 {
+		flex:0 0 25%;
+	}
+	.flex-col-lg-2 {
+		flex:0 0 16.66666667%;
+	}
+	.flex-col-lg-1 {
+		flex:0 0 8.33333333%;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;列偏移部分，只列出了xs部分，没写响应式部分&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.flex-col-xs-offset-12 {
+  margin-left: 100%;
+}
+.flex-col-xs-offset-11 {
+  margin-left: 91.66666667%;
+}
+.flex-col-xs-offset-10 {
+  margin-left: 83.33333333%;
+}
+.flex-col-xs-offset-9 {
+  margin-left: 75%;
+}
+.flex-col-xs-offset-8 {
+  margin-left: 66.66666667%;
+}
+.flex-col-xs-offset-7 {
+  margin-left: 58.33333333%;
+}
+.flex-col-xs-offset-6 {
+  margin-left: 50%;
+}
+.flex-col-xs-offset-5 {
+  margin-left: 41.66666667%;
+}
+.flex-col-xs-offset-4 {
+  margin-left: 33.33333333%;
+}
+.flex-col-xs-offset-3 {
+  margin-left: 25%;
+}
+.flex-col-xs-offset-2 {
+  margin-left: 16.66666667%;
+}
+.flex-col-xs-offset-1 {
+  margin-left: 8.33333333%;
+}
+.flex-col-xs-offset-0 {
+  margin-left: 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;列排序，和bootstrap一样，基于&lt;code&gt;position:relative&lt;/code&gt;。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.flex-col-xs-1,
+.flex-col-xs-2,
+.flex-col-xs-3,
+.flex-col-xs-4,
+.flex-col-xs-5,
+.flex-col-xs-6,
+.flex-col-xs-7,
+.flex-col-xs-8,
+.flex-col-xs-9,
+.flex-col-xs-10,
+.flex-col-xs-11,
+.flex-col-xs-12{
+	position:relative;
+}
+
+.flex-col-xs-pull-12 {
+  right: 100%;
+}
+.flex-col-xs-pull-11 {
+  right: 91.66666667%;
+}
+.flex-col-xs-pull-10 {
+  right: 83.33333333%;
+}
+.flex-col-xs-pull-9 {
+  right: 75%;
+}
+.flex-col-xs-pull-8 {
+  right: 66.66666667%;
+}
+.flex-col-xs-pull-7 {
+  right: 58.33333333%;
+}
+.flex-col-xs-pull-6 {
+  right: 50%;
+}
+.flex-col-xs-pull-5 {
+  right: 41.66666667%;
+}
+.flex-col-xs-pull-4 {
+  right: 33.33333333%;
+}
+.flex-col-xs-pull-3 {
+  right: 25%;
+}
+.flex-col-xs-pull-2 {
+  right: 16.66666667%;
+}
+.flex-col-xs-pull-1 {
+  right: 8.33333333%;
+}
+.flex-col-xs-pull-0 {
+  right: auto;
+}
+.flex-col-xs-push-12 {
+  left: 100%;
+}
+.flex-col-xs-push-11 {
+  left: 91.66666667%;
+}
+.flex-col-xs-push-10 {
+  left: 83.33333333%;
+}
+.flex-col-xs-push-9 {
+  left: 75%;
+}
+.flex-col-xs-push-8 {
+  left: 66.66666667%;
+}
+.flex-col-xs-push-7 {
+  left: 58.33333333%;
+}
+.flex-col-xs-push-6 {
+  left: 50%;
+}
+.flex-col-xs-push-5 {
+  left: 41.66666667%;
+}
+.flex-col-xs-push-4 {
+  left: 33.33333333%;
+}
+.flex-col-xs-push-3 {
+  left: 25%;
+}
+.flex-col-xs-push-2 {
+  left: 16.66666667%;
+}
+.flex-col-xs-push-1 {
+  left: 8.33333333%;
+}
+.flex-col-xs-push-0 {
+  left: auto;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样一个基于flex的栅格系统就差不多了，包含响应式布局、列偏移、列排序，其实还可以列嵌套，我其实还可以宣称自己基于移动优先的理念之类的。和bootstrap的栅格系统相比，还差点兼容性以及gutter的概念，这个没什么难的，就这样吧。&lt;/p&gt;
+
+&lt;p&gt;还有，女神叫我出去浪，我却在这写博客，终于明白为什么我会孤独一生了。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>CSS中一些“奇技淫巧”</title>
@@ -1237,78 +1601,6 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2017/7/10
 慕课网上&lt;a href=&#34;http://t.imooc.com/video/12102&#34;&gt;张鑫旭大神分享了相关内容&lt;/a&gt;，只是他说的是&lt;code&gt;margin&lt;/code&gt;，我这里实现的都是使用&lt;code&gt;padding&lt;/code&gt;。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>两列布局常见方法</title>
-      <link>http://jiangshanmeta.github.io/post/twocolumn/</link>
-      <pubDate>Thu, 12 May 2016 20:10:08 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/twocolumn/</guid>
-      <description>
-
-&lt;p&gt;画页面最开始要想好的就是如何进行布局。两列布局既是一种常见的布局方式，又是多列布局的基础。本文就我所熟悉的两列布局方式进行总结和比较。&lt;/p&gt;
-
-&lt;h2 id=&#34;浮动布局:5a257f88feea4060d9c6a1cf42573807&#34;&gt;浮动布局&lt;/h2&gt;
-
-&lt;p&gt;浮动最初是为文字环绕功能而设计的，然而现在成了基本的布局方式。&lt;/p&gt;
-
-&lt;p&gt;熟悉bootstrap的人都知道，其经典的12列网格设计就是基于浮动所实现的。bootstrap的网格主要的知识点就是浮动+ &lt;code&gt;box-sizing:border-box&lt;/code&gt; + 媒体查询&lt;/p&gt;
-
-&lt;p&gt;浮动所带来的问题是盒子的塌陷，bootstrap的网格布局解决方案是采取百分比进行限制。这样实现的是两列自适应布局，然而，要实现一列定宽一列自适应就比较困难了，所幸CSS支持计算，可以利用&lt;code&gt;calc&lt;/code&gt; 实现两列一列定宽一列自适应的两列布局&lt;/p&gt;
-
-&lt;p&gt;bootstrap采用的是两列均左浮动实现两列布局，那么一列左浮动可不可以？当然可以。只要给右侧足够的&lt;code&gt;margin-left&lt;/code&gt;就行了。知乎首页人和问题的两列布局就是采用的这种布局方式。这种布局方式有什么问题呢？一是&lt;code&gt;margin-left&lt;/code&gt;值是要写死在代码里的，这一点其实还好，因为基本上大的布局不会变，所以基本上不会改。二是如果右侧有清除浮动的元素，会影响布局。当然对于知乎来说不存在这个问题，毕竟只是文字和图片。&lt;/p&gt;
-
-&lt;p&gt;有什么方法解决上面说的第二个问题呢？对第二个列加上一行&lt;code&gt;overflow:hidden;&lt;/code&gt;就好了。原理是形成BFC然后自己就玩自己的去了。&lt;/p&gt;
-
-&lt;p&gt;update 2017/7/10
-上面基本上说的是左侧定宽右侧自适应，如果我想实现右侧定宽左侧自适应，你可能说简单，右侧&lt;code&gt;float:right;&lt;/code&gt;加上一个固定的宽度，左侧&lt;code&gt;margin-right&lt;/code&gt;即可。确实没错，但是这要求右侧定宽区域的html更靠前，而感觉上左侧才应该更靠前。如果我偏要实现左侧靠前呢（一般是处于SEO的考虑），我们可以考虑结合浮动和负值margin&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;div id=&amp;quot;left-wrap&amp;quot;&amp;gt;
-	&amp;lt;div id=&amp;quot;left-cont&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-&amp;lt;/div&amp;gt;
-&amp;lt;div id=&amp;quot;right-cont&amp;quot;&amp;gt;
-&amp;lt;/div&amp;gt;	
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;#left-wrap{
-	float:left;
-	width:100%;
-}
-#left-cont{
-	margin-right:200px; //假设右侧定宽为200px
-}
-#right-cont{
-	float:left;
-	margin-left:-200px;
-}
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;类似的思路，可以实现&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2009/11/%E6%88%91%E7%86%9F%E7%9F%A5%E7%9A%84%E4%B8%89%E7%A7%8D%E4%B8%89%E6%A0%8F%E7%BD%91%E9%A1%B5%E5%AE%BD%E5%BA%A6%E8%87%AA%E9%80%82%E5%BA%94%E5%B8%83%E5%B1%80%E6%96%B9%E6%B3%95/&#34;&gt;左右两侧定宽中间自适应且中间html更靠前的三列布局&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;column:5a257f88feea4060d9c6a1cf42573807&#34;&gt;column&lt;/h2&gt;
-
-&lt;p&gt;coolumn的出现是为了模仿报纸的排版的，如果想要实现文字的两列或者多列布局，应用column布局很轻松，然而，不幸的是，如果想要使用column布局的话，我建议还是放弃这个想法吧，一方面各大浏览器对其支持还不够，需要加私有前缀，另一方面其显示有些问题，具体可见&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/pic/waterfall/waterfall_CSS.html&#34;&gt;column实现的瀑布流效果&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;table:5a257f88feea4060d9c6a1cf42573807&#34;&gt;table&lt;/h2&gt;
-
-&lt;p&gt;这里的table指的可不是HTML中的table，而是&lt;code&gt;display:table;&lt;/code&gt;利用table布局很容易实现两列布局，而且还能顺便实现等高布局。关于table的各种坑，我以后会做一个总结。&lt;a href=&#34;http://jiangshanmeta.github.io/post/table/&#34;&gt;关于table的总结&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;flex:5a257f88feea4060d9c6a1cf42573807&#34;&gt;flex&lt;/h2&gt;
-
-&lt;p&gt;flex确实是布局神器，然而在生产环境下还是注意一下的好，移动端的情况稍微好点，然而在pc端IE10才支持，至少在pc端有替代方案的就用替代方案吧&lt;/p&gt;
-
-&lt;h2 id=&#34;inline-block:5a257f88feea4060d9c6a1cf42573807&#34;&gt;inline-block&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;display:inline-block;&lt;/code&gt;确实是可以实现两列布局，如果两列宽度加起来不够父元素的宽度，那还好说，如果你想两个元素宽度均为50%,你很有可能会发现并没有实现。原因是两列之间有空格，两个50%加上一个空格显然超过100%。解决方案可以是通过那双灵巧的手，写HTML的时候注意空格，然而对于这种缩进会被不经意间手抖改掉，所以你还要写三遍注释告诉别人和自己不要手抖。这么干的人实在是太无聊了。靠谱点的解决方案是设定父元素&lt;code&gt;font-size:0;&lt;/code&gt;，然后两列字体大小该多少是多少，是个靠谱的解决方案。&lt;/p&gt;
-
-&lt;p&gt;总结起来我个人倾向于各种基于浮动的方案。&lt;/p&gt;
-
-&lt;p&gt;update 2016/08/07&lt;/p&gt;
-
-&lt;p&gt;今天写代码的时候发现老板在项目中的某个地方写了一个两列布局，具体实现 竟然是通过&lt;code&gt;display:inline-block&lt;/code&gt;+百分比宽度实现，不过目测我亲爱的CTO应该是发现了有些问题所以两列的百分比之和不是100%，说一下为什么完全不建议使用&lt;code&gt;display:inline-block&lt;/code&gt;进行两列布局，因为html中会有各种各样的空格换行，对于块级元素或者浮动元素，根本不会去理会这些空格，但是对于内联元素或者内联块级元素，空格会合并，注意是合并而不是忽略，所以如果两个内联块级元素想结合百分比宽度进行两列布局，要么向我们的CTO那样让百分比之和不为100%，手动留出这些空格的空间，要么先在两列外部的容器上使用&lt;code&gt;font-size:0&lt;/code&gt;使得消除空格的影响，然后两列重设字体大小消除&lt;code&gt;font-size:0&lt;/code&gt;的影响，无论哪一个我都不觉得优雅。&lt;/p&gt;
 </description>
     </item>
     
