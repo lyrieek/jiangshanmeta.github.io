@@ -85,6 +85,12 @@ this.ul_wrap.addEventListener(&quot;touchend&quot;,function(e){
 <p>//update 2016/6/3
 于是今天的项目中就用到了缓存this</p>
 
+<p>update 2016/08/16</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/this/annoythis.png" alt="又一个this坑" /></p>
+
+<p>又有一个小朋友问我this的问题了，这真的是个坑。上面是她发给我的代码。首先让我吐槽一下这缩进风格，这已经不是tab党和空格党之间的战争了。这段代码看起来应该就是写着自己玩的，那个小朋友说alert弹出来的结果是 <code>[object Window]</code>。顺着代码看是调用getInfo方法，这个方法里面有个立即执行的匿名函数，getInfo返回的是立即执行的匿名函数返回的结果。匿名函数中有个this，这里的this不是她所写的对象<code>myObject</code>，而是指向<code>window</code>，所以toString的结果是<code>[object Window]</code>。</p>
+
 			</div>
 
 

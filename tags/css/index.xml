@@ -6,8 +6,36 @@
     <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 Aug 2016 14:16:46 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 16 Aug 2016 20:03:58 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/css/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>上网的不科学指南</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
+      <pubDate>Tue, 16 Aug 2016 20:03:58 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
+      <description>&lt;p&gt;看计算机网络已经有一段时间了，对于应用层、传输层、网络层、链路层也有了基本的了解。但是感觉自己学的比较零碎，缺乏一个整体的概念，所以想写一篇总结，把这些东西串起来。&lt;/p&gt;
+
+&lt;p&gt;想要上网的话，首先要通过&lt;strong&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;&lt;/strong&gt;获得一个IP地址。&lt;/p&gt;
+
+&lt;p&gt;客户端这里首先生成一个DHCP发现报文，然后把这个报文交给传输层传输层的&lt;code&gt;UDP&lt;/code&gt;，DHCP有固定的源端口号和目的端口号。&lt;code&gt;UDP&lt;/code&gt;封装好之后，交给网络层去处理，网络层的IP报文需要填写目的IP地址和源IP地址，然而目前自身的IP待分配、目的IP地址也未知，这里就需要两个特殊的IP地址了，源IP地址为&lt;code&gt;0.0.0.0&lt;/code&gt;表示本机，目的IP地址为&lt;code&gt;255.255.255.255&lt;/code&gt;表示广播地址。网络层处理完交给数据链路层处理，需要源MAC地址和目的MAC地址，现在连DHCP服务器是谁都不知道怎么确定MAC地址？答案和刚提到的广播IP地址类似，目的MAC地址填上广播MAC地址&lt;code&gt;FF-FF-FF-FF-FF-FF&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;局域网内部的每一台主机都能收到这个报文，但是只有DHCP服务器才会做出响应。对于DHCP服务器，数据自下传递到上层，然后把分配的IP地址、DNS服务器地址、默认网关地址、子网掩码 作为DHCP ACK报文，然后向下逐层封装。形成IP报文的时候目的地址依然为广播地址。在这里说一句无论是DHCP发现报文还是DHCP ACK报文，中间都经过&lt;code&gt;链路层交换机&lt;/code&gt;，链路层交换机会根据源MAC地址和输入链路的接口在交换机表中记录一条记录，作为转发的基础。&lt;/p&gt;
+
+&lt;p&gt;现在我们这台主机获得了自己的IP地址，顺便还有默认DNS服务器地址、默认网关地址、子网掩码。当我们在地址栏中输入一个url的时候，比如 &lt;a href=&#34;http://jiangshanmeta.github.io&#34;&gt;http://jiangshanmeta.github.io&lt;/a&gt; ，就需要通过&lt;code&gt;DNS&lt;/code&gt;服务（至少对于chrome调用DNS不见得一定在输入url然后确认之后，我们没有必要关心这个调用的时机）。DNS服务器地址是在DHCP返回的，有可能和我们的主机在一个子网内，也可能不在一个子网内，这需要结合两者的IP地址和&lt;strong&gt;子网掩码&lt;/strong&gt;判断，通常不要指望在一个子网内。要和子网外部进行通信需要通过网关，我们已经有了默认网关地址（一个IP地址），但是数据链路层需要MAC地址，因而我们需要&lt;code&gt;ARP&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;ARP是根据IP地址返回MAC地址，它也是利用广播，子网内每台主机都会收到ARP报文，但是只有IP地址对应的才会返回MAC地址。通过ARP获得默认网关MAC地址，这样在主机那里各层发送DNS报文所需要的基本信息就有了，DNS交给UDP、UDP交给IP然后交给链路层封装成帧，所形成的数据帧传递到路由器，路由器这里根据由&lt;code&gt;路由协议&lt;/code&gt;（这么复杂的协议我说这么一句话真的好吗）决定的转发表决定转发的输出链路，根据转发表提供的下一跳IP地址利用ARP获得新的目的MAC地址重写数据链路层（在路由器网络层首部和数据链路层都会有一些首部字段被修改，目的MAC地址是每经过一次路由器就修改，但是目的IP地址相一般不会修改，除非是经过了&lt;code&gt;NAT&lt;/code&gt;）。本地DNS服务器获得请求之后，可能&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dns/&#34;&gt;经过一系列请求&lt;/a&gt;，也可能直接根据缓存返回要查询的IP地址。这样我们的主机获得了请求域名的IP地址，对网页的请求的准备工作基本完成了。&lt;/p&gt;
+
+&lt;p&gt;现在需要发起HTTP请求了，以我上面提到的网址为例就是发送一个GET请求，应用层把http报文交给TCP，TCP相比较上面提到的传输层协议UDP，提供可靠传输功能。它需要首先建立连接，然后才能传递上层传来的数据。再往下层的东西上面已经提及了，通过网关出子网，然后经过各种路由转发最终到达目标服务器，目标服务器根据请求的url提供文件，然后又是一层层封装路由转发解封装到达应用层，这样我们得到了请求的文件，比如html，剩下的就是浏览器如何解析返回的数据了，这就是另一个话题了。&lt;/p&gt;
+
+&lt;p&gt;这样我基本上把所学到的计算机网络知识串了起来，包括&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dns/&#34;&gt;DNS&lt;/a&gt;、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/&#34;&gt;http&lt;/a&gt;、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/transportlayer/&#34;&gt;传输层&lt;/a&gt;的&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/&#34;&gt;TCP&lt;/a&gt;和UDP、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;、网络层的&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/ip/&#34;&gt;网际协议&lt;/a&gt;和路由协议、NAT、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/mac/&#34;&gt;链路层MAC地址、ARP协议（这是个跨层的协议）、链路层交换机&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;每一层都有了一定的了解，下面的任务是转入http协议的学习和设计模式的学习了。&lt;/p&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>终于bootstrap满足不了我了——用flex实现一个栅格系统</title>
@@ -1510,97 +1538,6 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2016/07/07
 &lt;a href=&#34;https://css-tricks.com/centering-in-the-unknown/&#34;&gt;伪元素在垂直居中的应用&lt;/a&gt;。这是一篇发布在css-tricks上的文章，显示利用&lt;code&gt;table&lt;/code&gt;+&lt;code&gt;vertical-align:middle&lt;/code&gt;实现了垂直居中。考虑到&lt;code&gt;vertical-align&lt;/code&gt;依赖于&lt;code&gt;table-cell&lt;/code&gt;或&lt;code&gt;inline-block&lt;/code&gt;或&lt;code&gt;inline&lt;/code&gt;，这篇文章又利用&lt;code&gt;inline-block&lt;/code&gt;实现了。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>你真的会用CSS画写正方形吗？</title>
-      <link>http://jiangshanmeta.github.io/post/autosquare/</link>
-      <pubDate>Sat, 14 May 2016 11:26:46 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/autosquare/</guid>
-      <description>
-
-&lt;p&gt;用CSS写一个正方形，对于前端工作者来说是一个再常见不过的需求了，通常情况下，你可能会写出这样的代码：&lt;code&gt;width:200px;height:200px;&lt;/code&gt; 这是最简单的实现了，然而，如果我想要一个300px的正方形呢？或许你会写出如下代码：&lt;code&gt;width:300px;height:300px;&lt;/code&gt; 。那么，如果我想要一个400px的正方形呢？你可能会写出以下代码：&lt;code&gt;width:400px;height:400px;&lt;/code&gt; 同时开始准备和产品以及美术来一场大战。&lt;/p&gt;
-
-&lt;p&gt;显然，一个爱敲键盘的程序员不是好程序员，想偷懒就要对上面的需求进行抽象，然后脑洞大开。上面的需求可以抽象为如何写一个自适应的正方形，这一点其实没什么问题。&lt;/p&gt;
-
-&lt;h2 id=&#34;脑洞大开时间:e010fd746b92c0785d41a89ff0373934&#34;&gt;脑洞大开时间&lt;/h2&gt;
-
-&lt;p&gt;CSS经常被一些大神认为不是一种编程语言，然而，我们可以假装CSS是一门编程语言，就像我可以假装自己有女朋友一样。好了，现在CSS是一门编程语言了，那它会有什么？ &lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，&lt;strong&gt;this&lt;/strong&gt;，一门编程语言没有this你还怎么面向对象编程。如果CSS有this的话，这里就可以这么写了&lt;code&gt;height:this.width&lt;/code&gt;,感觉上挺自然的，以后写CSS会不会要求OOP风格？&lt;/p&gt;
-
-&lt;p&gt;然而，CSS并不支持this，所以脑洞时间结束了，回归现实世界吧&lt;/p&gt;
-
-&lt;h2 id=&#34;回归正常前的瞎折腾阶段:e010fd746b92c0785d41a89ff0373934&#34;&gt;回归正常前的瞎折腾阶段&lt;/h2&gt;
-
-&lt;p&gt;在CSS中，有一些相对单位，比如em，rem，vw，vh之类的，能否用这些做点尝试。&lt;/p&gt;
-
-&lt;p&gt;比如，一个div，宽度是50vw，那么高度也是50vw就好了，算是一种自适应的正方形的实现方案吧。然而，宽高都要基于视口，稍微复杂点的场景就解决不了了，比如，这个div的宽度根本就不是根据视口来的你想怎么办。vw和vh的解决方案由于不够健壮而排出，em 、rem的实现也类似，宽度和高度都要写死 是多少rem/em，大家都有同样的问题，所以也排除了。&lt;/p&gt;
-
-&lt;h2 id=&#34;咦-为什么一定要纠结于设定高度呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;咦，为什么一定要纠结于设定高度呢？&lt;/h2&gt;
-
-&lt;p&gt;对啊，需求是写一个自适应的正方形，谁说一定要在height上折腾，比如，可以用padding撑开这个盒子啊。这一要说一点知识性的东西了，padding值如果取值为百分比，则该百分比是相对于父元素的宽度进行计算的，比那个height的百分比不知道高到哪里去了（height的百分比是相较于父元素的高度的），所以以下代码就可以实现一个响应式的正方形&lt;code&gt;width:25%;padding-bottom:25%;&lt;/code&gt;然而还不够优雅，还是要针对不同的场景写不同的padding-bottom。&lt;/p&gt;
-
-&lt;p&gt;给大家安利一本我最近在看的书 &lt;strong&gt;CSS Secrets&lt;/strong&gt;，其中讲到伪元素能做很多事情。那这里伪元素能做什么呢？伪元素如果是块级元素，其宽度就是父元素宽度（不考虑padding和border），那么伪元素的padding如果为百分比，就是参考于我们正在处理的这个盒子，所以我们有了阶段性的成果：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;.auto-square::before{
-	content:&#39;&#39;;
-	display:block;
-	padding-bottom:100%;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;于是一个自适应的正方形就这么写出来了&lt;/p&gt;
-
-&lt;p&gt;于是，又有新的需求的，还要填内容啊！！&lt;/p&gt;
-
-&lt;h2 id=&#34;在自适应的正方形里如何填内容呢:e010fd746b92c0785d41a89ff0373934&#34;&gt;在自适应的正方形里如何填内容呢？&lt;/h2&gt;
-
-&lt;p&gt;如果按照正常的流填什么内容都会破坏正方形的结构，所以我的解决方案是对内容进行绝对定位定位到正方形里。相应的，CSS代码也要加点东西&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.auto-square{
-	position:relative;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;实战:e010fd746b92c0785d41a89ff0373934&#34;&gt;实战&lt;/h2&gt;
-
-&lt;p&gt;朋友圈里经常有人发个九连拍，每张图所在的盒子就是一个正方形。然而，朋友圈的图片是正方形缩略图，在自己的项目中还要拜托后端处理出一张缩略图来。想想自己也要写后端就觉得干脆用原图然后居中显示得了。&lt;/p&gt;
-
-&lt;p&gt;下面是核心代码&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-CSS&#34;&gt;.auto-square{
-	position:relative;
-}
-.auto-square::before{
-	content:&#39;&#39;;
-	display:block;
-	padding-bottom:100%;
-}
-.center-ab{
-	position:absolute;
-	top:50%;
-	left:50%;
-	-webkit-transform:translate(-50%,-50%);
-	-moz-transform:translate(-50%,-50%);
-	-ms-transform:translate(-50%,-50%);
-	-o-transform:translate(-50%,-50%);
-	transform:translate(-50%,-50%);
-}
-.img-responsive{
-	display:block;
-	max-width:100%;
-	max-height:100%;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;以及一个&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/layout/auto-square.html&#34;&gt;简单地实例&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;update 2016/5/16
-想起来这一方法不仅仅能够实现正方形，也能实现长宽比一定的矩形&lt;/p&gt;
-
-&lt;p&gt;update 2017/7/10
-慕课网上&lt;a href=&#34;http://t.imooc.com/video/12102&#34;&gt;张鑫旭大神分享了相关内容&lt;/a&gt;，只是他说的是&lt;code&gt;margin&lt;/code&gt;，我这里实现的都是使用&lt;code&gt;padding&lt;/code&gt;。&lt;/p&gt;
 </description>
     </item>
     

@@ -6,8 +6,36 @@
     <description>Recent content in Javascript on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 14 Jul 2016 22:56:40 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 16 Aug 2016 20:03:58 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>上网的不科学指南</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
+      <pubDate>Tue, 16 Aug 2016 20:03:58 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
+      <description>&lt;p&gt;看计算机网络已经有一段时间了，对于应用层、传输层、网络层、链路层也有了基本的了解。但是感觉自己学的比较零碎，缺乏一个整体的概念，所以想写一篇总结，把这些东西串起来。&lt;/p&gt;
+
+&lt;p&gt;想要上网的话，首先要通过&lt;strong&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;&lt;/strong&gt;获得一个IP地址。&lt;/p&gt;
+
+&lt;p&gt;客户端这里首先生成一个DHCP发现报文，然后把这个报文交给传输层传输层的&lt;code&gt;UDP&lt;/code&gt;，DHCP有固定的源端口号和目的端口号。&lt;code&gt;UDP&lt;/code&gt;封装好之后，交给网络层去处理，网络层的IP报文需要填写目的IP地址和源IP地址，然而目前自身的IP待分配、目的IP地址也未知，这里就需要两个特殊的IP地址了，源IP地址为&lt;code&gt;0.0.0.0&lt;/code&gt;表示本机，目的IP地址为&lt;code&gt;255.255.255.255&lt;/code&gt;表示广播地址。网络层处理完交给数据链路层处理，需要源MAC地址和目的MAC地址，现在连DHCP服务器是谁都不知道怎么确定MAC地址？答案和刚提到的广播IP地址类似，目的MAC地址填上广播MAC地址&lt;code&gt;FF-FF-FF-FF-FF-FF&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;局域网内部的每一台主机都能收到这个报文，但是只有DHCP服务器才会做出响应。对于DHCP服务器，数据自下传递到上层，然后把分配的IP地址、DNS服务器地址、默认网关地址、子网掩码 作为DHCP ACK报文，然后向下逐层封装。形成IP报文的时候目的地址依然为广播地址。在这里说一句无论是DHCP发现报文还是DHCP ACK报文，中间都经过&lt;code&gt;链路层交换机&lt;/code&gt;，链路层交换机会根据源MAC地址和输入链路的接口在交换机表中记录一条记录，作为转发的基础。&lt;/p&gt;
+
+&lt;p&gt;现在我们这台主机获得了自己的IP地址，顺便还有默认DNS服务器地址、默认网关地址、子网掩码。当我们在地址栏中输入一个url的时候，比如 &lt;a href=&#34;http://jiangshanmeta.github.io&#34;&gt;http://jiangshanmeta.github.io&lt;/a&gt; ，就需要通过&lt;code&gt;DNS&lt;/code&gt;服务（至少对于chrome调用DNS不见得一定在输入url然后确认之后，我们没有必要关心这个调用的时机）。DNS服务器地址是在DHCP返回的，有可能和我们的主机在一个子网内，也可能不在一个子网内，这需要结合两者的IP地址和&lt;strong&gt;子网掩码&lt;/strong&gt;判断，通常不要指望在一个子网内。要和子网外部进行通信需要通过网关，我们已经有了默认网关地址（一个IP地址），但是数据链路层需要MAC地址，因而我们需要&lt;code&gt;ARP&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;ARP是根据IP地址返回MAC地址，它也是利用广播，子网内每台主机都会收到ARP报文，但是只有IP地址对应的才会返回MAC地址。通过ARP获得默认网关MAC地址，这样在主机那里各层发送DNS报文所需要的基本信息就有了，DNS交给UDP、UDP交给IP然后交给链路层封装成帧，所形成的数据帧传递到路由器，路由器这里根据由&lt;code&gt;路由协议&lt;/code&gt;（这么复杂的协议我说这么一句话真的好吗）决定的转发表决定转发的输出链路，根据转发表提供的下一跳IP地址利用ARP获得新的目的MAC地址重写数据链路层（在路由器网络层首部和数据链路层都会有一些首部字段被修改，目的MAC地址是每经过一次路由器就修改，但是目的IP地址相一般不会修改，除非是经过了&lt;code&gt;NAT&lt;/code&gt;）。本地DNS服务器获得请求之后，可能&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dns/&#34;&gt;经过一系列请求&lt;/a&gt;，也可能直接根据缓存返回要查询的IP地址。这样我们的主机获得了请求域名的IP地址，对网页的请求的准备工作基本完成了。&lt;/p&gt;
+
+&lt;p&gt;现在需要发起HTTP请求了，以我上面提到的网址为例就是发送一个GET请求，应用层把http报文交给TCP，TCP相比较上面提到的传输层协议UDP，提供可靠传输功能。它需要首先建立连接，然后才能传递上层传来的数据。再往下层的东西上面已经提及了，通过网关出子网，然后经过各种路由转发最终到达目标服务器，目标服务器根据请求的url提供文件，然后又是一层层封装路由转发解封装到达应用层，这样我们得到了请求的文件，比如html，剩下的就是浏览器如何解析返回的数据了，这就是另一个话题了。&lt;/p&gt;
+
+&lt;p&gt;这样我基本上把所学到的计算机网络知识串了起来，包括&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dns/&#34;&gt;DNS&lt;/a&gt;、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/&#34;&gt;http&lt;/a&gt;、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/transportlayer/&#34;&gt;传输层&lt;/a&gt;的&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/&#34;&gt;TCP&lt;/a&gt;和UDP、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;、网络层的&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/ip/&#34;&gt;网际协议&lt;/a&gt;和路由协议、NAT、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/mac/&#34;&gt;链路层MAC地址、ARP协议（这是个跨层的协议）、链路层交换机&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;每一层都有了一定的了解，下面的任务是转入http协议的学习和设计模式的学习了。&lt;/p&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>bootstrap源码解读——tab.js</title>
@@ -895,6 +923,12 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
 
 &lt;p&gt;//update 2016/6/3
 于是今天的项目中就用到了缓存this&lt;/p&gt;
+
+&lt;p&gt;update 2016/08/16&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/this/annoythis.png&#34; alt=&#34;又一个this坑&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;又有一个小朋友问我this的问题了，这真的是个坑。上面是她发给我的代码。首先让我吐槽一下这缩进风格，这已经不是tab党和空格党之间的战争了。这段代码看起来应该就是写着自己玩的，那个小朋友说alert弹出来的结果是 &lt;code&gt;[object Window]&lt;/code&gt;。顺着代码看是调用getInfo方法，这个方法里面有个立即执行的匿名函数，getInfo返回的是立即执行的匿名函数返回的结果。匿名函数中有个this，这里的this不是她所写的对象&lt;code&gt;myObject&lt;/code&gt;，而是指向&lt;code&gt;window&lt;/code&gt;，所以toString的结果是&lt;code&gt;[object Window]&lt;/code&gt;。&lt;/p&gt;
 </description>
     </item>
     

@@ -363,7 +363,14 @@ pre code {
 .post a:hover{
   color:#000;
 }
-
+@media (max-width: 768px){
+  .post-title{
+    font-size:16px;
+  }
+  .post-date{
+    font-size:14px;
+  }
+}
 
 /* article样式设置 */
 .article-body{

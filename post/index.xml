@@ -6,8 +6,36 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 15 Aug 2016 20:48:45 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 16 Aug 2016 20:03:58 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>上网的不科学指南</title>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
+      <pubDate>Tue, 16 Aug 2016 20:03:58 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
+      <description>&lt;p&gt;看计算机网络已经有一段时间了，对于应用层、传输层、网络层、链路层也有了基本的了解。但是感觉自己学的比较零碎，缺乏一个整体的概念，所以想写一篇总结，把这些东西串起来。&lt;/p&gt;
+
+&lt;p&gt;想要上网的话，首先要通过&lt;strong&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;&lt;/strong&gt;获得一个IP地址。&lt;/p&gt;
+
+&lt;p&gt;客户端这里首先生成一个DHCP发现报文，然后把这个报文交给传输层传输层的&lt;code&gt;UDP&lt;/code&gt;，DHCP有固定的源端口号和目的端口号。&lt;code&gt;UDP&lt;/code&gt;封装好之后，交给网络层去处理，网络层的IP报文需要填写目的IP地址和源IP地址，然而目前自身的IP待分配、目的IP地址也未知，这里就需要两个特殊的IP地址了，源IP地址为&lt;code&gt;0.0.0.0&lt;/code&gt;表示本机，目的IP地址为&lt;code&gt;255.255.255.255&lt;/code&gt;表示广播地址。网络层处理完交给数据链路层处理，需要源MAC地址和目的MAC地址，现在连DHCP服务器是谁都不知道怎么确定MAC地址？答案和刚提到的广播IP地址类似，目的MAC地址填上广播MAC地址&lt;code&gt;FF-FF-FF-FF-FF-FF&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;局域网内部的每一台主机都能收到这个报文，但是只有DHCP服务器才会做出响应。对于DHCP服务器，数据自下传递到上层，然后把分配的IP地址、DNS服务器地址、默认网关地址、子网掩码 作为DHCP ACK报文，然后向下逐层封装。形成IP报文的时候目的地址依然为广播地址。在这里说一句无论是DHCP发现报文还是DHCP ACK报文，中间都经过&lt;code&gt;链路层交换机&lt;/code&gt;，链路层交换机会根据源MAC地址和输入链路的接口在交换机表中记录一条记录，作为转发的基础。&lt;/p&gt;
+
+&lt;p&gt;现在我们这台主机获得了自己的IP地址，顺便还有默认DNS服务器地址、默认网关地址、子网掩码。当我们在地址栏中输入一个url的时候，比如 &lt;a href=&#34;http://jiangshanmeta.github.io&#34;&gt;http://jiangshanmeta.github.io&lt;/a&gt; ，就需要通过&lt;code&gt;DNS&lt;/code&gt;服务（至少对于chrome调用DNS不见得一定在输入url然后确认之后，我们没有必要关心这个调用的时机）。DNS服务器地址是在DHCP返回的，有可能和我们的主机在一个子网内，也可能不在一个子网内，这需要结合两者的IP地址和&lt;strong&gt;子网掩码&lt;/strong&gt;判断，通常不要指望在一个子网内。要和子网外部进行通信需要通过网关，我们已经有了默认网关地址（一个IP地址），但是数据链路层需要MAC地址，因而我们需要&lt;code&gt;ARP&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;ARP是根据IP地址返回MAC地址，它也是利用广播，子网内每台主机都会收到ARP报文，但是只有IP地址对应的才会返回MAC地址。通过ARP获得默认网关MAC地址，这样在主机那里各层发送DNS报文所需要的基本信息就有了，DNS交给UDP、UDP交给IP然后交给链路层封装成帧，所形成的数据帧传递到路由器，路由器这里根据由&lt;code&gt;路由协议&lt;/code&gt;（这么复杂的协议我说这么一句话真的好吗）决定的转发表决定转发的输出链路，根据转发表提供的下一跳IP地址利用ARP获得新的目的MAC地址重写数据链路层（在路由器网络层首部和数据链路层都会有一些首部字段被修改，目的MAC地址是每经过一次路由器就修改，但是目的IP地址相一般不会修改，除非是经过了&lt;code&gt;NAT&lt;/code&gt;）。本地DNS服务器获得请求之后，可能&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dns/&#34;&gt;经过一系列请求&lt;/a&gt;，也可能直接根据缓存返回要查询的IP地址。这样我们的主机获得了请求域名的IP地址，对网页的请求的准备工作基本完成了。&lt;/p&gt;
+
+&lt;p&gt;现在需要发起HTTP请求了，以我上面提到的网址为例就是发送一个GET请求，应用层把http报文交给TCP，TCP相比较上面提到的传输层协议UDP，提供可靠传输功能。它需要首先建立连接，然后才能传递上层传来的数据。再往下层的东西上面已经提及了，通过网关出子网，然后经过各种路由转发最终到达目标服务器，目标服务器根据请求的url提供文件，然后又是一层层封装路由转发解封装到达应用层，这样我们得到了请求的文件，比如html，剩下的就是浏览器如何解析返回的数据了，这就是另一个话题了。&lt;/p&gt;
+
+&lt;p&gt;这样我基本上把所学到的计算机网络知识串了起来，包括&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dns/&#34;&gt;DNS&lt;/a&gt;、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/&#34;&gt;http&lt;/a&gt;、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/transportlayer/&#34;&gt;传输层&lt;/a&gt;的&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/&#34;&gt;TCP&lt;/a&gt;和UDP、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;、网络层的&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/ip/&#34;&gt;网际协议&lt;/a&gt;和路由协议、NAT、&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/mac/&#34;&gt;链路层MAC地址、ARP协议（这是个跨层的协议）、链路层交换机&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;每一层都有了一定的了解，下面的任务是转入http协议的学习和设计模式的学习了。&lt;/p&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>初识链路层</title>
@@ -1382,54 +1410,6 @@
 &lt;p&gt;个人觉得他对&lt;code&gt;opacity:0;&lt;/code&gt;和&lt;code&gt;visibility:hidden&lt;/code&gt;的区别没有说清楚。这时候就要搬出&lt;a href=&#34;http://stackoverflow.com/a/273076&#34;&gt;stackoverflow上的回答&lt;/a&gt;。这两个都是不脱离文档流，但是前者依然响应事件，而后者不响应事件。不过回到这个插件里来，并没有用到&lt;code&gt;visibility&lt;/code&gt;的过渡。&lt;/p&gt;
 
 &lt;p&gt;主体内容差不多就完了，关于手风琴效果的具体实现，以及其他的细节自己去看源码吧。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>一个电商网站的基本实现</title>
-      <link>http://jiangshanmeta.github.io/post/blog/ebussiness/</link>
-      <pubDate>Tue, 05 Jul 2016 20:05:02 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/blog/ebussiness/</guid>
-      <description>&lt;p&gt;最近在做的是一个简易的购物系统，因为并不是主营业务，所以并不像电商网站那样复杂，否则就我一个人做这件事情会崩溃的。虽然只是一个简易版的电商，但是各项功能还是有的。有商品的展示列表，商品的详情展示，购物车功能，订单功能，金流管理。其中支付功能和金流我要处理的并不多，只是在以往基础上添加几个参数写几个if else。其他的就要一个一个慢慢写。&lt;/p&gt;
-
-&lt;p&gt;第一个要实现的是商品的本身。&lt;/p&gt;
-
-&lt;p&gt;关于这些商品，一开始我们是线上部分只做纯展示使用，线下负责具体的业务，所以这个商品表的结构并不困难，一个名称，一段描述，一张图，一个价格范围，这些都是很简单的东西，比较复杂的是商品的分类，于是我们又建了一个商品分类表，商品表里保存着商品分类表里的一个id。这个商品分类表其实不复杂，一个名称，再加上一个enum的基础分类即可，其余字段都是小的辅助。有了商品做商品列表和商品详情页就没什么难的了，就是个纯展示的工作。因为种类本身就不多，连搜索都没加。第一阶段的工作就这样结束了，也没有后面这个小型电商网站什么事。&lt;/p&gt;
-
-&lt;p&gt;后来，后来就开始做了呗。首先要做的是补充商品信息。原来只有一个简单的商品描述，但是型号、颜色之类的都没有去添加。针对这个问题，本来是想和淘宝似的做个正交的分类。然后老板直接说就做一级分类。这数据上的复杂度就直接下来了。一个商品对应多个型号，每个型号有自己的价格，与淘宝不同的是，我们线下有多家实体店，所以每个型号需要对应多个库存。一般来说这种多型号的应该建张商品型号表然后关联起来，然而本来为了偷懒我就建了个array然后多个型号都扔到这个这个array里。最终的后台编辑这个型号是用vue做的。深深感觉我在这里留了的坑。希望后人重构的时候能够淡定。其实还有个坑，是我在数据库的最终保存形式是json而不是一个array。我已经遇到一个坑了。自己挖的坑，含着泪也要踩下去。&lt;/p&gt;
-
-&lt;p&gt;商品的必要信息有了，然后是购物车的实现。&lt;/p&gt;
-
-&lt;p&gt;作为一个穷的只逛淘宝的人，其他的电商网站我还真的不熟悉。淘宝最近实在推app，对于购物车功能要求登录。然而传统的电商是不要求登陆的。于是我们需要本地存储。我们使用的本地存储方案是localStorage。之所以采用这个方案一个很重要的方案是因为同事也在用它做本地存储，当然，从纯技术角度来看localStorage比cookie好用，而且作为移动端项目也不用太过于担心兼容性问题。&lt;/p&gt;
-
-&lt;p&gt;然后是购物车的数据结构。一开始有两个大的方向，一个是在用户本身建一个购物车字段存具体信息，因为我们使用的是mongoDB数据库，可以存一个array，另一个方案是拆一张表出来。于是我就问头其他电商的思路，头说考虑性能还是建张表吧。表的结构不复杂，用户的id，用户基本信息的快照，商品的id，商品型号，商品基本信息快照，商品数量，加入时间。最后一个我是见有的电商购物车保存多少天然后就删掉而预留的字段，目前并没有用到。用户每次想购物车加入商品，就会插入一条记录。&lt;/p&gt;
-
-&lt;p&gt;数据结构约定好了就要实现同步了。其实我的做法是比较投机取巧的，如果是非登录态，添加商品的时候只会快照一些基本信息存到localStorage里，但是如果是在登录态，向购物里添加东西是需要ajax请求的，后端插入数据后返回的数据包含这个购物车记录的id，我就利用有没有这个id判断数据库是否已插入这条数据。遍历post过来的本地数据，如果没购物车id就直接插入一条新的记录，如果有这个id就update一下（可能会修改数量，本身我只支持修改数量，并不支持修改型号），一些安全校验就不说了。但是上面的实现有个问题，一开始我也没有想到，就是一条购物车记录线上有数据，但是用户在非登录态删除了，同步的时候上面的方法并无法识别。我的解决方案是 在处理post过来的数据之前先拿到此时线上购物车的ids 存成一个array（这个时间点很重要），然后处理post过来的数据，把post过来的数据库id也存成一个array，两者比较如果线上有post过来的没有，就说明本地删了数据，要把线上数据也删除。&lt;/p&gt;
-
-&lt;p&gt;其他的就是些增删查改之类的工作了，没什么太大的难度，就是注意同步数据这个问题，顺便感谢vue。&lt;/p&gt;
-
-&lt;p&gt;购物车实现完成之后就是从购物车到订单了。&lt;/p&gt;
-
-&lt;p&gt;从购物车到订单这一步牵扯到的表比较多。购物车表、商品表、订单表，还有一个子订单表。购物车表就不用说了，商品表是因为要查一遍最新的商品信息，拿到最新的价格等信息，用户选中的购物车中的每一条记录都会转化成子订单中的一条记录，同时在订单表中更新。订单表除了子订单这一个字段外，还有一些用户的基本信息，状态、各种时间戳。&lt;/p&gt;
-
-&lt;p&gt;从购物车生成订单后，还需要用户确认。因为业务的需要，有些商品虽然是线上卖，但是要到线下实体店处理（我不会告诉你处理这个写了不少代码），还有有的商品可以邮寄，就有了满多少钱包邮的问题。所以需要用户确认取货方式、去哪家店处理、最终支付金额。在这里用户可以选择删除部分子订单，或者把一些订单里的商品重新放回购物车，或者把订单彻底取消。前两个处理的时候需要考虑订单中商品价格的重新计算、顺带着还有是否达到包邮价格。&lt;/p&gt;
-
-&lt;p&gt;后来同事吐槽我说你见过哪个电商有放回购物车这个功能的？于是我就念了两句诗。不要在乎这些细节，反正我实现了。&lt;/p&gt;
-
-&lt;p&gt;用户确认订单后后进入支付环节。此时，用户依然可以取消订单。支付是用的同事封装好的代码，虽然我也改了几行，毕竟同事写的代码考虑的都是主营业务订单，我们这个小电商系统实际是自己写着玩的。在支付成功的回调函数中，我更新了订单的状态，写入了金流信息。&lt;/p&gt;
-
-&lt;p&gt;现在用户已付款，剩下的就是门店获取订单信息，准备货，就是一些基本的增删查改。&lt;/p&gt;
-
-&lt;p&gt;这个小电商基本上是实现了，但是我的主要工作是实现功能，也就是把js和php写完，换句话说就是样式完全没理，根本没法看。看看是让美术设计一套还是抄一套别的电商的样式。&lt;/p&gt;
-
-&lt;p&gt;基本就这样。写了差不多一个星期，完活，撒花。&lt;/p&gt;
-
-&lt;p&gt;然后就遇到坑了。在商品分类那里，原来是要考虑多家门店多个库存的，后来老板说这样维护起来压力过大，让我在商品分类那里存一个配件id，把这个当成一个配件，然后在库存表里查库存信息。其实写起来并没有什么问题，多查一次表而已。&lt;/p&gt;
-
-&lt;p&gt;update 2016/08/02&lt;/p&gt;
-
-&lt;p&gt;其实这个小电商功能一直没怎么用起来，今天又小修小补了，做了一个直接购买功能。其实是同事闲先加入购物车再购买是在太折腾，让我仿照其他电商网站做一个直接购买功能。仅仅从功能实现角度来看这个问题其实并不复杂，但是我发现我上面预言有坑的地方确实坑到了自己。每次的匹配规格做的太纠结了，当初真的该建一张新表。然而后悔也晚了，数据已经填进去了，现在改就太折腾了，所以还是想着法补救吧。其实现在想做的是把这个规格匹配封装到Model层中，至少不用每次复制粘贴规格匹配了。而且有了&lt;a href=&#34;http://jiangshanmeta.github.io/post/php/exit/&#34;&gt;封装差错检测&lt;/a&gt;的经验这个也做起来很容易，匹配成功就返回必要的数据，匹配不成功就直接报错退出程序。&lt;/p&gt;
 </description>
     </item>
     
