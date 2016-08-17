@@ -130,8 +130,12 @@
   }
 }
 .flex-container-fluid {
-  margin-right: auto;
-  margin-left: auto;
+	display:flex;
+	margin-right:auto;
+	margin-left:auto;
+	flex-flow:row wrap;
+	justify-content:flex-start;
+	align-items:stretch;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -442,6 +446,10 @@
 &lt;p&gt;这样一个基于flex的栅格系统就差不多了，包含响应式布局、列偏移、列排序，其实还可以列嵌套，我其实还可以宣称自己基于移动优先的理念之类的。和bootstrap的栅格系统相比，还差点兼容性以及gutter的概念，这个没什么难的，就这样吧。&lt;/p&gt;
 
 &lt;p&gt;还有，女神叫我出去浪，我却在这写博客，终于明白为什么我会孤独一生了。&lt;/p&gt;
+
+&lt;p&gt;update 2016/08/17&lt;/p&gt;
+
+&lt;p&gt;还是把&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/flexgrid/flexgrid.less&#34;&gt;less文件&lt;/a&gt;  和 &lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/flexgrid/flexgrid.css&#34;&gt;编译出来的CSS文件放到这里吧&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

@@ -141,6 +141,10 @@
 
 &lt;p&gt;&lt;a href=&#34;http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html&#34;&gt;图解SSL/TLS协议&lt;/a&gt;&lt;/p&gt;
 
+&lt;h2 id=&#34;前端:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;前端&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.w3cplus.com/animation/high-performance-animation.html&#34;&gt;高性能的动画&lt;/a&gt;，题目虽然是叫高性能网络，但是可以从浏览器渲染角度来看，深入理解重排、重绘以及 CSS的奇技淫巧是如何提高性能的（影响各个阶段的CSS属性）。&lt;/p&gt;
+
 &lt;h2 id=&#34;工具-库:7c5004fa5e3547b8952a8bdb79e9c4fc&#34;&gt;工具/库&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://verou.me/css3patterns/&#34;&gt;能用渐变实现的图案&lt;/a&gt;&lt;/p&gt;
