@@ -85,7 +85,6 @@ function Lottery(option){
     return;
   }
   var w = Math.min(document.documentElement.clientWidth*0.9,500);
-  console.log(w);
   var defaults = {
     warpId:"lotteryWrap",
     ajaxUrl:"http://jiangshanmeta.github.io",
@@ -132,14 +131,13 @@ Lottery.prototype = {
     this.canvas1 = document.createElement("canvas");
     this.canvas1.width = w;
     this.canvas1.height = w;
-    this.canvas1.classList.add("center-block");
     this.context1 = this.canvas1.getContext('2d');
 
     //canvas2负责绘制装饰性的指针表盘
     this.canvas2 = document.createElement("canvas");
     this.canvas2.width = w;
     this.canvas2.height = w;
-    this.canvas2.style.cssText="position:absolute;top:0;left:0;"+pfx("transform") + ":rotateZ(0deg)";
+    this.canvas2.style.cssText="position:absolute;top:0;left:0;"+pfx("transform") + ":rotate(0deg);will-change:transform;";
     this.context2 = this.canvas2.getContext('2d');
 
     // 文字区域
@@ -310,16 +308,16 @@ Lottery.prototype = {
       var canvas2 = this.canvas2;
       var animationTimePerRound = this.options.animationTimePerRound;
       var styleStr = canvas2.style.cssText;
-      styleStr = styleStr + pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotateZ(360deg);";
+      styleStr = styleStr + pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(360deg);";
       var hasAjaxRest = false;
       var ajaxRest;
-      var transitionendCallback0 = function(e){
+      var transitionendCallback = function(e){
         if(hasAjaxRest){
-          this.removeEventListener(e.type,transitionendCallback0);
+          this.removeEventListener(e.type,transitionendCallback);
           _this.showLotteryRes(ajaxRest);
         }else{
           var styleStr2 = this.style.cssText;
-          styleStr2+= pfx("transition") + ":0s;" + pfx("transform") + ":rotateZ(0deg);";
+          styleStr2+= pfx("transition") + ":0s;" + pfx("transform") + ":rotate(0deg);";
           this.style.cssText = styleStr2;
 
           var _thisCanvas = this;
@@ -339,7 +337,7 @@ Lottery.prototype = {
         }
       }
 
-      canvas2.addEventListener(whichTransitionEvent(),transitionendCallback0);
+      canvas2.addEventListener(whichTransitionEvent(),transitionendCallback);
       canvas2.style.cssText = styleStr;
       
       // 模拟ajax返回值
@@ -376,7 +374,7 @@ Lottery.prototype = {
     //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
     var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1);
     canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
-    canvas2.style[pfx("transform")] = "rotateZ("+  finalRotate +"deg)";
+    canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
 
     document.querySelector("#"+options.creditsInputId).value-=options.needCredits;
 
@@ -387,7 +385,7 @@ Lottery.prototype = {
     this.textArea.innerText = "开始抽奖";
     var canvas2Style = this.canvas2.style;
     var styleStr = canvas2Style.cssText;
-    styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotateZ(0deg);";
+    styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotate(0deg);";
     canvas2Style.cssText = styleStr;
 
   }
