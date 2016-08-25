@@ -6,8 +6,33 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 16 Aug 2016 20:03:58 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 25 Aug 2016 21:07:38 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>重新学习最好的编程语言</title>
+      <link>http://jiangshanmeta.github.io/post/php/relearnphp/</link>
+      <pubDate>Thu, 25 Aug 2016 21:07:38 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/php/relearnphp/</guid>
+      <description>
+
+&lt;p&gt;从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。&lt;/p&gt;
+
+&lt;h2 id=&#34;1-构造函数:960e085aadb29182f9448019a6b3c8f1&#34;&gt;1.构造函数&lt;/h2&gt;
+
+&lt;p&gt;CI框架默认的&lt;code&gt;controller&lt;/code&gt;是welcome，不过业界习惯还是index，我就照着welcome这个&lt;code&gt;controller&lt;/code&gt;写了一个index的&lt;code&gt;controller&lt;/code&gt;,然后就报错了。我说我这种动不动就建个&lt;code&gt;controller&lt;/code&gt;写个几百行的咋建个&lt;code&gt;controller&lt;/code&gt;就报错啊。然后百度了一下有人在博客里说是因为这是CI的保留名称所以会报错，可是项目中明明就有controller名为index的啊。后来我发现根本不是这么回事。&lt;/p&gt;
+
+&lt;p&gt;问题出在&lt;strong&gt;构造函数&lt;/strong&gt;上。在php4的时代，构造函数是和类名同名的函数，但是在php5引入了&lt;code&gt;__construct&lt;/code&gt;的概念作为构造函数，同时为了保证向下兼容所以如果没有找到&lt;code&gt;__construct&lt;/code&gt;就把同名函数作为构造函数。在这里，我的controller名称是index，方法名称也是index，并且没有&lt;code&gt;__construct&lt;/code&gt;所以会把index方法当成构造函数。解决方案也就很明了了：写上构造函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function __construct(){
+	parent::__construct();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;因为继承的基类&lt;code&gt;CI_Controller&lt;/code&gt;里有构造函数，显然不作死的方案是调用基类的构造函数。看了一眼项目里的代码，我们是一个类继承了&lt;code&gt;CI_Controller&lt;/code&gt;，调用了&lt;code&gt;CI_Controller&lt;/code&gt;的构造函数，然后做了一些其他的操作。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>上网的不科学指南</title>
@@ -1292,132 +1317,6 @@
 &lt;h2 id=&#34;indexeddb:5fe4e2fe3590b5bd8669d1961910a370&#34;&gt;indexedDB&lt;/h2&gt;
 
 &lt;p&gt;？？这货出现是为了解决啥？没想明白，难道是出来自high的？？&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>bootstrap源码解读——collapse.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/collapse/</link>
-      <pubDate>Fri, 08 Jul 2016 20:33:24 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/collapse/</guid>
-      <description>&lt;p&gt;最近工作忙，好不容易闲下来身体又出bug了，好久没更新了。接着读bootstrap的代码，今天要说的是collapse.js。这个插件实现的展开与收缩效果。&lt;/p&gt;
-
-&lt;p&gt;先看一下data-api&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$(document).on(&#39;click.bs.collapse.data-api&#39;, &#39;[data-toggle=&amp;quot;collapse&amp;quot;]&#39;, function (e) {
-	var $this   = $(this)
-
-	if (!$this.attr(&#39;data-target&#39;)) e.preventDefault()
-
-	var $target = getTargetFromTrigger($this)
-	var data    = $target.data(&#39;bs.collapse&#39;)
-	var option  = data ? &#39;toggle&#39; : $this.data()
-
-	Plugin.call($target, option)
-})
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;具体绑定的方式和之前分析的alert、button差不多，都是利用事件委托机制。具体的回调函数比较复杂了。collapse.js设定了两种绑定展开收缩对象的形式，一种是通过a标签的&lt;code&gt;href&lt;/code&gt;属性，另一种是通过&lt;code&gt;data-target&lt;/code&gt;属性，并且还封装了一个小函数&lt;code&gt;getTargetFromTrigger&lt;/code&gt;找到对应的绑定元素。如果是通过&lt;code&gt;href&lt;/code&gt;属性指定展开收缩对象的话，需要阻止默认事件，至于阻止的是啥，还用我说嘛。然后的三行就写的比较巧妙了，先获取data上面保存的信息，然后如果之前保存过collapse的实例，给*option*赋值为&amp;rsquo;toggle&amp;rsquo;,如果没有，赋值为一个对象。为什么要返回一个data的对象？一开始我也没想明白，看到插件的具体内容才想明白为什么要加这个，因为这个插件还负责实现手风琴效果，手风琴效果总归需要一个包裹元素吧，这里的实现是通过&lt;code&gt;data-parent&lt;/code&gt;来决定这个包裹元素是谁。如果是最简单的展开收缩效果，option里面的只会有toggle，对于手风琴效果会对一个parent，针对这个parent有一些额外的操作。&lt;/p&gt;
-
-&lt;p&gt;然后是Plugin的实现&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;function Plugin(option) {
-	return this.each(function () {
-	  var $this   = $(this)
-	  var data    = $this.data(&#39;bs.collapse&#39;)
-	  var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == &#39;object&#39; &amp;amp;&amp;amp; option)
-
-	  if (!data &amp;amp;&amp;amp; options.toggle &amp;amp;&amp;amp; /show|hide/.test(option)) options.toggle = false
-	  if (!data) $this.data(&#39;bs.collapse&#39;, (data = new Collapse(this, options)))
-	  if (typeof option == &#39;string&#39;) data[option]()
-	})
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;bootstrap的插件基本上是按照一个模板出来的。在bootstrap插件里第一次见到使用&lt;code&gt;$.extend&lt;/code&gt;方法，使用过jquery的人应该了解这是合并对象用的，原生js的一个实现是&lt;code&gt;Object.assign&lt;/code&gt;，只是有点兼容问题。而且这里重新利用了&lt;strong&gt;toggle&lt;/strong&gt;属性，通过判断是否需要调用toggle方法，看Collapse构造函数就会明白这样会保证如果传入的不是&lt;code&gt;show&lt;/code&gt;或者&lt;code&gt;hide&lt;/code&gt;这两个字符串，就会&lt;strong&gt;toggle&lt;/strong&gt;一次。如果传入的是字符串，会调用相关方法。&lt;/p&gt;
-
-&lt;p&gt;上面说的是写法上的巧妙之处，然而重点是这个展开收缩是如何实现的，在文档上有这么一句&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Collapse requires the transitions plugin to be included in your version of Bootstrap.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;就是说展开收缩效果是通过CSS3过渡实现的，我曾经想过如果用纯CSS实现这种展开收缩效果，但是由于&lt;code&gt;height&lt;/code&gt;无法从&lt;code&gt;auto&lt;/code&gt;过渡到一个具体数字，所以只能用有点hack意味的方案，我最终采用的是过渡&lt;code&gt;transform&lt;/code&gt;的&lt;code&gt;scale&lt;/code&gt;，这样有个问题的别的元素会认为这个元素依然是占据原来的大小。bootstrap的解决方案利用了js。&lt;/p&gt;
-
-&lt;p&gt;当调用&lt;code&gt;show&lt;/code&gt;方法的时候，先做一些隔离，保证此时操作的元素处于hide状态。这时收缩状态的元素含有一个类&lt;code&gt;collapse&lt;/code&gt;，对应内容是&lt;code&gt;display:none&lt;/code&gt;，然后&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;this.$element
-  .removeClass(&#39;collapse&#39;)
-  .addClass(&#39;collapsing&#39;)[dimension](0)
-  .attr(&#39;aria-expanded&#39;, true)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;移除&lt;code&gt;collapse&lt;/code&gt;这个类，这时候元素理应正常显示，这里强行设定高度为0，等一下我再吐槽这个&lt;code&gt;dimension&lt;/code&gt;，顺便吐槽&lt;code&gt;collapsing&lt;/code&gt;这个类。现在这个需要展开的元素高度为0，我们需要确定最终高度，bootstrap的实现我觉得挺巧的&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var scrollSize = $.camelCase([&#39;scroll&#39;, dimension].join(&#39;-&#39;))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;它是利用scrollHeight来确定最终高度的，初始高度、最终高度有了，过渡的最基本的条件就有了。过渡完成后的回调其实也比较有意思&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var complete = function () {
-  this.$element
-    .removeClass(&#39;collapsing&#39;)
-    .addClass(&#39;collapse in&#39;)[dimension](&#39;&#39;)
-  this.transitioning = 0
-  this.$element
-    .trigger(&#39;shown.bs.collapse&#39;)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;移除了&lt;code&gt;collapsing&lt;/code&gt;这个类，添加&lt;code&gt;collapse&lt;/code&gt;和&lt;code&gt;in&lt;/code&gt;两个类，并且把高度设置为默认值。为什么要这么做？因为以后这个展开收缩区域可能会动态添加或者删除内容，此时写死高度就有些不合适了。&lt;/p&gt;
-
-&lt;p&gt;对应的&lt;code&gt;hide&lt;/code&gt;方法基本过程类似，其实只要看明白一个另一个也就差不多了。说一下要说的几点&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;this.$element[dimension](this.$element[dimension]())[0].offsetHeight
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;之前说过，无法实现、&lt;strong&gt;height&lt;/strong&gt;的从&lt;strong&gt;auto&lt;/strong&gt;到一个数值的过渡，我们需要获取元素的具体高度，这里还强行重绘了一次，保证把高度值从auto转换为具体的数值，之前&lt;code&gt;show&lt;/code&gt;方法里其实也强行重绘了一次，是在利用&lt;code&gt;scrollHeight&lt;/code&gt;获得高度的时候。其他的基本上就是&lt;code&gt;show&lt;/code&gt;方法的逆过程了。&lt;/p&gt;
-
-&lt;p&gt;下面开始预告的吐槽&lt;/p&gt;
-
-&lt;p&gt;在上面的解说中，我是直接把&lt;code&gt;dimension&lt;/code&gt;说成是&lt;code&gt;height&lt;/code&gt;，我们还是看代码把&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Collapse.prototype.dimension = function () {
-	var hasWidth = this.$element.hasClass(&#39;width&#39;)
-	return hasWidth ? &#39;width&#39; : &#39;height&#39;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;dimension就是上面几行代码的返回值，水平方向的展开收缩虽然不多见，但也总归是有，但是呢，你看你的控制过渡的类&lt;code&gt;collapsing&lt;/code&gt;的内容&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.collapsing {
-  position: relative;
-  height: 0;
-  overflow: hidden;
-  -webkit-transition-timing-function: ease;
-       -o-transition-timing-function: ease;
-          transition-timing-function: ease;
-  -webkit-transition-duration: .35s;
-       -o-transition-duration: .35s;
-          transition-duration: .35s;
-  -webkit-transition-property: height, visibility;
-       -o-transition-property: height, visibility;
-          transition-property: height, visibility;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;你们写js的和写css的看来不是一个人啊，根本没实现对于宽度过渡的支持啊，你们。。。。&lt;/p&gt;
-
-&lt;p&gt;这其实都是小事，我觉得一个让我很迷惑的问题是为啥&lt;code&gt;visibility&lt;/code&gt;这个属性也能过渡？于是&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2013/05/transition-visibility-show-hide/&#34;&gt;张鑫旭大神又解释过这个问题了&lt;/a&gt;。其中张鑫旭前辈提到了应用场景&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;举个例子，我们要实现淡入淡出效果，显然是需要改变透明度的，但是，元素即使透明度变成0，虽然肉眼看不见，但是，在页面上，元素还是可以点击，还是可以覆盖其他元素的，这显然是有问题的，我们最最希望的是在元素淡出动画结束后，元素可以自动隐藏！&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;个人觉得他对&lt;code&gt;opacity:0;&lt;/code&gt;和&lt;code&gt;visibility:hidden&lt;/code&gt;的区别没有说清楚。这时候就要搬出&lt;a href=&#34;http://stackoverflow.com/a/273076&#34;&gt;stackoverflow上的回答&lt;/a&gt;。这两个都是不脱离文档流，但是前者依然响应事件，而后者不响应事件。不过回到这个插件里来，并没有用到&lt;code&gt;visibility&lt;/code&gt;的过渡。&lt;/p&gt;
-
-&lt;p&gt;主体内容差不多就完了，关于手风琴效果的具体实现，以及其他的细节自己去看源码吧。&lt;/p&gt;
 </description>
     </item>
     

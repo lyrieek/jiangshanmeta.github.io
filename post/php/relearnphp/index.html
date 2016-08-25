@@ -1,0 +1,55 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 重新学习最好的编程语言 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">重新学习最好的编程语言</h1>
+			  <p >Thu, Aug 25, 2016</p>
+			      
+
+<p>从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。</p>
+
+<h2 id="1-构造函数:960e085aadb29182f9448019a6b3c8f1">1.构造函数</h2>
+
+<p>CI框架默认的<code>controller</code>是welcome，不过业界习惯还是index，我就照着welcome这个<code>controller</code>写了一个index的<code>controller</code>,然后就报错了。我说我这种动不动就建个<code>controller</code>写个几百行的咋建个<code>controller</code>就报错啊。然后百度了一下有人在博客里说是因为这是CI的保留名称所以会报错，可是项目中明明就有controller名为index的啊。后来我发现根本不是这么回事。</p>
+
+<p>问题出在<strong>构造函数</strong>上。在php4的时代，构造函数是和类名同名的函数，但是在php5引入了<code>__construct</code>的概念作为构造函数，同时为了保证向下兼容所以如果没有找到<code>__construct</code>就把同名函数作为构造函数。在这里，我的controller名称是index，方法名称也是index，并且没有<code>__construct</code>所以会把index方法当成构造函数。解决方案也就很明了了：写上构造函数</p>
+
+<pre><code>function __construct(){
+	parent::__construct();
+}
+</code></pre>
+
+<p>因为继承的基类<code>CI_Controller</code>里有构造函数，显然不作死的方案是调用基类的构造函数。看了一眼项目里的代码，我们是一个类继承了<code>CI_Controller</code>，调用了<code>CI_Controller</code>的构造函数，然后做了一些其他的操作。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

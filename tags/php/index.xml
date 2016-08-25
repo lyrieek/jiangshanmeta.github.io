@@ -6,8 +6,33 @@
     <description>Recent content in Php on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 Jul 2016 19:00:23 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 25 Aug 2016 21:07:38 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>重新学习最好的编程语言</title>
+      <link>http://jiangshanmeta.github.io/post/php/relearnphp/</link>
+      <pubDate>Thu, 25 Aug 2016 21:07:38 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/php/relearnphp/</guid>
+      <description>
+
+&lt;p&gt;从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。&lt;/p&gt;
+
+&lt;h2 id=&#34;1-构造函数:960e085aadb29182f9448019a6b3c8f1&#34;&gt;1.构造函数&lt;/h2&gt;
+
+&lt;p&gt;CI框架默认的&lt;code&gt;controller&lt;/code&gt;是welcome，不过业界习惯还是index，我就照着welcome这个&lt;code&gt;controller&lt;/code&gt;写了一个index的&lt;code&gt;controller&lt;/code&gt;,然后就报错了。我说我这种动不动就建个&lt;code&gt;controller&lt;/code&gt;写个几百行的咋建个&lt;code&gt;controller&lt;/code&gt;就报错啊。然后百度了一下有人在博客里说是因为这是CI的保留名称所以会报错，可是项目中明明就有controller名为index的啊。后来我发现根本不是这么回事。&lt;/p&gt;
+
+&lt;p&gt;问题出在&lt;strong&gt;构造函数&lt;/strong&gt;上。在php4的时代，构造函数是和类名同名的函数，但是在php5引入了&lt;code&gt;__construct&lt;/code&gt;的概念作为构造函数，同时为了保证向下兼容所以如果没有找到&lt;code&gt;__construct&lt;/code&gt;就把同名函数作为构造函数。在这里，我的controller名称是index，方法名称也是index，并且没有&lt;code&gt;__construct&lt;/code&gt;所以会把index方法当成构造函数。解决方案也就很明了了：写上构造函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function __construct(){
+	parent::__construct();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;因为继承的基类&lt;code&gt;CI_Controller&lt;/code&gt;里有构造函数，显然不作死的方案是调用基类的构造函数。看了一眼项目里的代码，我们是一个类继承了&lt;code&gt;CI_Controller&lt;/code&gt;，调用了&lt;code&gt;CI_Controller&lt;/code&gt;的构造函数，然后做了一些其他的操作。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>php中exit()的一个用法——记一次无聊的封装</title>
