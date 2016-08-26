@@ -44,6 +44,34 @@
 
 <p>因为继承的基类<code>CI_Controller</code>里有构造函数，显然不作死的方案是调用基类的构造函数。看了一眼项目里的代码，我们是一个类继承了<code>CI_Controller</code>，调用了<code>CI_Controller</code>的构造函数，然后做了一些其他的操作。</p>
 
+<h2 id="2-view-template:960e085aadb29182f9448019a6b3c8f1">2.view &amp;&amp; template</h2>
+
+<p>CI是一个MVC框架，最开始我只会画画页面写写js，所以最一开始做的是view层。关于CI的view层<a href="http://codeigniter.org.cn/user_guide/general/views.html">官方文档里已经给出了很好的说明</a>，仅仅从用的角度来说已经足够了。然而如果不对其进行封装很容易做一些重复性的操作，比如说声明对header的加载，声明对footer的加载，而真正业务逻辑对应的页面加载只需要一行，对此我们引入了一个新的类<code>template</code>，把那些header、footer之类的全都放在模板里，在模板里输出真的业务逻辑界面。</p>
+
+<p>下面代码是从项目代码里按照自己的书写习惯稍微改造的，如果不明白其中一些CI的东西可以看上面链接。</p>
+
+<pre><code>class Template{
+	public function __construct(){
+		$this-&gt;templateData = [];
+		$this-&gt;CI = &amp;get_instance();
+	}
+
+	public function set($name,$value){
+		$this-&gt;templateData[$name] = $value;
+	}
+
+	public function load($template,$view,$view_data = array(),$return = FALSE){
+		$this-&gt;set('contents',$this-&gt;CI-&gt;load-&gt;view($view,$view_data,TRUE));
+		return $this-&gt;CI-&gt;load-&gt;view($template,$this-&gt;templateData,$return);
+	}
+}
+</code></pre>
+
+<p>我们把这个类放在<code>application/libraries</code>目录下<code>template.php</code>文件中，并在autoload中的libraries数组中添加<code>template</code>,这样我们就可以愉快的使用<code>template</code>类了，例如以下代码：</p>
+
+<pre><code>$this-&gt;template-&gt;load(&quot;default_page&quot;,&quot;index/index&quot;);
+</code></pre>
+
 			</div>
 
 
