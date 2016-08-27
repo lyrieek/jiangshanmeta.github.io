@@ -37,8 +37,16 @@
 				// innerRingColor:"#ffa642",
 				// pointerColor:"#ffa642",
 				ajaxUrl:'http://jiangshanmeta.github.io',
-				needCredits:10,
-				creditsInputId:'credits',
+				doSthAfterLottery:function(json){
+					alert(json.data.err.msg);
+				},
+				checkCanLottery:function(){
+					// lotteryIns.errMsg = "12345";
+					return true;
+				},
+				doSthAfterAjaxError:function(json){
+			      alert(json.data.err.msg);				
+				},
 			})
 		</script>
 </body>

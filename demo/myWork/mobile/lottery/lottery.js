@@ -81,7 +81,7 @@ window.requestAnimFrame = (function(){
 })();
 
 function Lottery(option){
-  if(!option.lotteris || !option.ajaxUrl || !option.needCredits ){
+  if(!option.lotteris || !option.ajaxUrl ){
     return;
   }
   var w = Math.min(document.documentElement.clientWidth*0.9,500);
@@ -89,13 +89,21 @@ function Lottery(option){
     warpId:"lotteryWrap",
     ajaxUrl:"http://jiangshanmeta.github.io",
     w:w,
-    creditsInputId:credits,
     animationTimePerRound:1,     //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
     rotateCountAfterAjax:3,
     outerRingColor:"#ff6900",
     innerRingColor:"#ffa642",
     pointerColor:"#ffa642",
-    textColor:'#fff',    
+    textColor:'#fff',
+    doSthAfterLottery:function(json){
+
+    },
+    checkCanLottery:function(){
+        return true;
+    },
+    doSthAfterAjaxError:function(json){
+
+    },    
   }
   this.options = Object.assign(defaults,option || {});
   //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
@@ -194,7 +202,6 @@ Lottery.prototype = {
     context2.save();
     
     context2.translate(r,r);
-    //指针和和环的颜色先写死吧。 
 
     /* 外层两个环 阴影 */
     context2.save();
@@ -231,7 +238,7 @@ Lottery.prototype = {
     context2.lineTo(0.05*r,-0.40*r);
     context2.lineTo(0.05*r,-0.25*r);    
     context2.closePath();
-    context2.fillStyle = "#ffa642";
+    context2.fillStyle = options.pointerColor;
     context2.fill();
     context2.restore();  
 
@@ -299,9 +306,10 @@ Lottery.prototype = {
 
   },
   ajaxGetLotteryRes:function(){
-     var hasEnoughCredits = this.checkCredits();
+    var options = this.options;
+     var canLottery = options.checkCanLottery();
      var _this = this;
-     if(hasEnoughCredits){
+     if(canLottery){
       // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
       this.status = 1;
       this.textArea.innerText = "抽奖中";
@@ -344,39 +352,43 @@ Lottery.prototype = {
       setTimeout(function(){
           var rst = Math.floor(Math.random()*_this.options.lotteris.length);
           hasAjaxRest = true;
-          ajaxRest = {data:{index:rst}};
+          //因为可能后端校验禁止参与抽奖
+          if(Math.random()>0.5){
+            ajaxRest = {data:{index:rst,err:{msg:'达成成就：+1s'}},rstno:1};
+          }else{
+            ajaxRest = {data:{err:{msg:'苟利国家生死以'}},rstno:2};
+          }
+          
       },1800)   
       
      }else{
-      alert("积分不足");
+        alert(this.errMsg);
      }
   },
-
-  checkCredits:function(){
-    var options = this.options;
-    var userCredits = document.querySelector("#"+options.creditsInputId).value;
-    if(userCredits>=options.needCredits){
-      return true;
-    }
-    return false;
-  },
   showLotteryRes:function(json){
-    console.log(json.data.index);
+
     var _this = this;
     var options = this.options;
     var canvas2 = this.canvas2;
-    var transitionendCallback1 = function(e){
-      this.removeEventListener(e.type,transitionendCallback1);
-      _this.status = 2;
-      _this.textArea.innerText = "抽奖结束";  
-    }
-    canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
-    //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
-    var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1);
-    canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
-    canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";
 
-    document.querySelector("#"+options.creditsInputId).value-=options.needCredits;
+    if(json.rstno==1){
+      var transitionendCallback1 = function(e){
+        this.removeEventListener(e.type,transitionendCallback1);
+        _this.status = 2;
+        _this.textArea.innerText = "抽奖结束";
+        options.doSthAfterLottery && options.doSthAfterLottery(json);  
+      }
+      canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
+      //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
+      var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1);
+      canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
+      canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";      
+    }else{
+      this.reset(); 
+      options.doSthAfterAjaxError && options.doSthAfterAjaxError(json);
+      
+    }
+
 
 
   },
