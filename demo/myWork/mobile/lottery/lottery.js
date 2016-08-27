@@ -352,18 +352,36 @@ Lottery.prototype = {
       canvas2.addEventListener(whichTransitionEvent(),transitionendCallback);
       canvas2.style.cssText = styleStr;
       
-      // 模拟ajax返回值
-      setTimeout(function(){
-          var rst = Math.floor(Math.random()*_this.options.lotteris.length);
-          hasAjaxRest = true;
-          //因为可能后端校验禁止参与抽奖
-          if(Math.random()>0.5){
-            ajaxRest = {data:{index:rst,err:{msg:'达成成就：+1s'}},rstno:1};
-          }else{
-            ajaxRest = {data:{err:{msg:'苟利国家生死以'}},rstno:2};
+      if(options.ajaxUrl=='http://jiangshanmeta.github.io'){
+        // 模拟ajax返回值
+        setTimeout(function(){
+            var rst = Math.floor(Math.random()*_this.options.lotteris.length);
+            hasAjaxRest = true;
+            //因为可能后端校验禁止参与抽奖
+            if(Math.random()>0.5){
+              ajaxRest = {data:{index:rst,err:{msg:'达成成就：+1s'}},rstno:1};
+            }else{
+              ajaxRest = {data:{err:{msg:'苟利国家生死以'}},rstno:2};
+            }
+            
+        },1800)   
+      }else{
+        //真ajax
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST",options.ajaxUrl,true);
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function(){
+          if(xhr.readyState == 4){
+            if(xhr.status == 200){
+              hasAjaxRest = true;
+              ajaxRest = JSON.parse(xhr.responseText);
+            }
           }
-          
-      },1800)   
+        }
+        xhr.send(null);
+
+      }
+
       
      }else{
         alert(this.errMsg);
