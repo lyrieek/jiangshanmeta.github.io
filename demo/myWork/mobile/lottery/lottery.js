@@ -133,6 +133,10 @@ Lottery.prototype = {
     var w = options.w;
     //外层盒子初始样式设置
     this.wrap = document.querySelector("#"+options.warpId);
+    if(!this.wrap){
+      this.wrap = document.createElement("div");
+      document.body.appendChild(this.wrap);
+    }
     this.wrap.style.cssText += "position:relative;overflow:hidden;margin-left:auto;margin-right:auto;display:table;"
 
     //canvas1负责绘制具体的奖项
