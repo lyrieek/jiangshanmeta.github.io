@@ -17,7 +17,7 @@
       <guid>http://jiangshanmeta.github.io/post/php/relearnphp/</guid>
       <description>
 
-&lt;p&gt;从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。&lt;/p&gt;
+&lt;p&gt;从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI（3.1.0）开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。&lt;/p&gt;
 
 &lt;h2 id=&#34;1-构造函数:960e085aadb29182f9448019a6b3c8f1&#34;&gt;1.构造函数&lt;/h2&gt;
 
@@ -59,6 +59,37 @@
 
 &lt;pre&gt;&lt;code&gt;$this-&amp;gt;template-&amp;gt;load(&amp;quot;default_page&amp;quot;,&amp;quot;index/index&amp;quot;);
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;3-subclass:960e085aadb29182f9448019a6b3c8f1&#34;&gt;3.subclass&lt;/h2&gt;
+
+&lt;p&gt;面向对象一大特征是继承，对于controller里的类也适用。CI官方文档里所讲的controller所继承的都是&lt;code&gt;CI_Controller&lt;/code&gt;，如果需求简单确实足够了，想要封装一层的话可以让这个子类继承自&lt;code&gt;CI_Controller&lt;/code&gt;，在这个类里面进行所需要的封装，controller里的类再继承自这个子类。&lt;/p&gt;
+
+&lt;p&gt;如果熟悉面向对象的话上面所说的实现起来并不复杂，唯一的问题是目录。其实CI已经考虑过这个问题了。把自己封装好的类放到&lt;code&gt;application/core&lt;/code&gt;目录下，文件名称为xxController，然后在&lt;code&gt;application/config/config.php&lt;/code&gt;中找到&lt;code&gt;$config[&#39;subclass_prefix&#39;]&lt;/code&gt;，将其值赋为刚才文件名中的xx，然后你就会发现这个文件会自动被加载（至于具体的子类名称，对于我这种命名困难户显然是选文件名啦）。话说回来，真不嫌麻烦还可以每个controller里手动加载这个文件（何必呢）。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-uri类:960e085aadb29182f9448019a6b3c8f1&#34;&gt;4.URI类&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://codeigniter.org.cn/user_guide/libraries/uri.html&#34;&gt;URI类&lt;/a&gt;可以帮助从URI字符串中获得一些基本的信息，结合项目中所用到的说一下。&lt;/p&gt;
+
+&lt;p&gt;根据CI的路由规则，第一个参数是控制器的名称，第二个参数是方法名，有的时候会用到这两个名称，最开始的时候我是在controller的构造函数手动声明控制器名称是啥，在具体方法里手动声明方法名是啥。看了文档个人觉得可以封装到上面提到的subclass的构造函数中，毕竟用到的还是比较多。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$this-&amp;gt;controller_name = $this-&amp;gt;uri-&amp;gt;segment(1)==null?&#39;index&#39;:$this-&amp;gt;uri-&amp;gt;segment(1);
+$this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;index&#39;:$this-&amp;gt;uri-&amp;gt;segment(2);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;除此之外还用到比较多的是&lt;code&gt;$this-&amp;gt;uri-&amp;gt;uri_string()&lt;/code&gt;，这个主要是用在重定向上（因为样式问题以及兼容性、推广等问题对于手机和PC做了两个子站）。&lt;/p&gt;
+
+&lt;h2 id=&#34;5-mongodb-cimongo:960e085aadb29182f9448019a6b3c8f1&#34;&gt;5.mongoDB &amp;amp;&amp;amp; cimongo&lt;/h2&gt;
+
+&lt;p&gt;WEB开发离不开数据库，没记错的话新手是首推mysql，然后我就点错科技树学了mongoDB。开始连接数据库吧。&lt;/p&gt;
+
+&lt;p&gt;先说个mongoDB的可视化工具&lt;a href=&#34;https://robomongo.org/&#34;&gt;robomongo&lt;/a&gt;，从一开始写后端程序就在用，毕竟图形界面大法好。&lt;/p&gt;
+
+&lt;p&gt;然后说一下用的库&lt;a href=&#34;https://github.com/vesparny/cimongo-codeigniter-mongodb-library&#34;&gt;cimongo-codeigniter-mongodb-library&lt;/a&gt;，目测作者弃坑了。这个库为我们封装了许多操作数据库的方法。我们需要把config目录下的cimongo.php移动到ci项目 application/config目录下，然后把libraries目录下的cimongo文件夹移动到我们的ci项目中application/libraries目录下。迁移过来之后需要进行一些配置操作，打开cimongo.php配置host、port和db，然后和上面的template类一样作为autoload的libraries，这样我们就可以通过&lt;code&gt;$this-&amp;gt;cimongo&lt;/code&gt;操作数据库了。在实际项目中目测是因为觉得这样写比较长在subclass中做了这个操作&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$this-&amp;gt;db = $this-&amp;gt;cimongo;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样的话我们就可以进行数据库操作了，现在可以随手插入两条数据看看了，然而这样操作数据库是比较危险的操作，随后我们需要进行的是在model层对数据操作进行封装。&lt;/p&gt;
 </description>
     </item>
     
