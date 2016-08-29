@@ -122,31 +122,3 @@ bootstrap源码解读——carousel.js
 
 
 
-    function showLotteryByWeight($weightArr,$err_result = false){
-        if(!is_array($weightArr)){
-            return $err_result;
-        }
-        $totalWeight = 0;
-        $newWeightArr = [];
-
-        foreach ($weightArr as $key=>$this_weight) {
-            if(!is_int($this_weight) || $this_weight<=0){
-                return $err_result;
-            }
-            if($key==0){
-                $newWeightArr[] = $this_weight;
-            }else{
-                $newWeightArr[] = $this_weight + $newWeightArr[$key-1];
-            }
-            $totalWeight += $this_weight;
-        }
-
-        $lotteryIndex = rand(0,$totalWeight-1);
-
-        foreach($newWeightArr as $key=>$weight){
-            if($lotteryIndex < $newWeightArr[$key]){
-                return $key;
-            }
-        }
-
-    }

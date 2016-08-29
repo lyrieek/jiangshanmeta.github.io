@@ -90,6 +90,15 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;这样的话我们就可以进行数据库操作了，现在可以随手插入两条数据看看了，然而这样操作数据库是比较危险的操作，随后我们需要进行的是在model层对数据操作进行封装。&lt;/p&gt;
+
+&lt;h2 id=&#34;6-创建类库:960e085aadb29182f9448019a6b3c8f1&#34;&gt;6.创建类库&lt;/h2&gt;
+
+&lt;p&gt;今天遇到一个需求是根据权重产生随机结果，实现起来其实并不复杂，我只是想借着这个引出话题 &lt;a href=&#34;http://codeigniter.org.cn/user_guide/general/creating_libraries.html&#34;&gt;在CI中创建类库&lt;/a&gt;。之前的template类就是这个主题的一个体现，不过那个类我是配置成了自动加载，那现在我有一个&lt;code&gt;Utility&lt;/code&gt;类，我想在需要的时候加载，我应该怎么办&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$this-&amp;gt;load-&amp;gt;library(&#39;Utility&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后这个类就挂在了$CI上面。稍微有点开发经验的人应该对utility这个词不陌生，从此可以收集各种小函数啦（我不生产代码，我只是代码的搬运工）。&lt;/p&gt;
 </description>
     </item>
     
