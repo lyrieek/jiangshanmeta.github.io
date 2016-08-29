@@ -111,7 +111,7 @@ function Lottery(option){
 
   this.imgs = [];
   this.initDOM();
-  this.preLoadImg();
+  // this.preLoadImg();
   this.draw();
   var _this = this;
   this.wrap.addEventListener("click",function(){
@@ -212,8 +212,8 @@ Lottery.prototype = {
     context2.shadowColor = "rgba(0,0,0,0.5)";
     context2.shadowBlur = 8;
     this.drawRing(context2,r-9,10,options.innerRingColor);
-
     context2.restore();
+
     this.drawRing(context2,r-2,4,options.outerRingColor);
 
     /* 外层指针 */
@@ -251,7 +251,6 @@ Lottery.prototype = {
     context1.translate(options.w/2,options.w/2);
     this.drawBg(context1);
     this.drawText(context1);
-
     context1.restore();
     
   },
