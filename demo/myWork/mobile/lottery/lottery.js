@@ -199,24 +199,52 @@ Lottery.prototype = {
     }
   },
   draw:function(){
-    var context1 = this.context1;
+    this.drawRing();
+    this.drawPointer();
+    this.drawBg();
+    this.drawText();
+  },
+  drawRing:function(){
     var context2 = this.context2;
     var options = this.options;
     var r = options.w/2;
+
     context2.save();
-    
     context2.translate(r,r);
 
-    /* 外层两个环 阴影 */
+    // 内环
     context2.save();
+    context2.beginPath();
     context2.shadowColor = "rgba(0,0,0,0.5)";
     context2.shadowBlur = 8;
-    this.drawRing(context2,r-9,10,options.innerRingColor);
+    context2.strokeStyle = options.innerRingColor;
+    context2.lineWidth = 10;
+    context2.arc(0,0,r-9,0,2*Math.PI,false);
+    context2.closePath();
+    context2.stroke();
     context2.restore();
 
-    this.drawRing(context2,r-2,4,options.outerRingColor);
+    // 外环
+    context2.save();
+    context2.beginPath();
+    context2.strokeStyle = options.outerRingColor;
+    context2.lineWidth = 4;
+    context2.arc(0,0,r-2,0,2*Math.PI,false);
+    context2.closePath();
+    context2.stroke();
+    context2.restore();
 
-    /* 外层指针 */
+    context2.restore();
+  },
+  drawPointer:function(){
+    var context2 = this.context2;
+    var options = this.options;
+    var r = options.w/2;
+
+    context2.save();
+    context2.translate(r,r);
+
+     /* 外层指针 */
     context2.save();
     context2.beginPath();
     context2.moveTo(-0.05*r,-r+9);
@@ -230,7 +258,7 @@ Lottery.prototype = {
     context2.fillStyle = options.pointerColor;
     context2.fill();
     context2.restore();  
-    
+
     // 内层指针 
     context2.save();
     context2.beginPath();
@@ -244,22 +272,21 @@ Lottery.prototype = {
     context2.closePath();
     context2.fillStyle = options.pointerColor;
     context2.fill();
-    context2.restore();  
+    context2.restore();
 
-    /* 奖区 */
-    context1.save();
-    context1.translate(options.w/2,options.w/2);
-    this.drawBg(context1);
-    this.drawText(context1);
-    context1.restore();
-    
+    context2.restore();
   },
-  drawBg:function(context1){
+  drawBg:function(){
+    var context1 = this.context1;
     var options = this.options;
     var lotteris = options.lotteris;
     var len=lotteris.length;
     var degPerPart = 2*Math.PI/len;
     var r = options.w/2;
+
+    context1.save();
+    context1.translate(r,r);
+
     for(var i=0;i<len;i++){
       context1.save();
       context1.beginPath();
@@ -272,24 +299,19 @@ Lottery.prototype = {
       context1.restore();
     }
 
+    context1.restore();    
   },
-  drawRing:function(context,radius,lineWidth,strokeStyle){
-    context.save();
-    context.beginPath();
-    context.arc(0,0,radius,0,2*Math.PI,false);
-    context.lineWidth = lineWidth;
-    context.strokeStyle = strokeStyle;
-    context.closePath();
-    context.stroke();
-    context.restore();   
-  },
-  drawText:function(context1){
+  drawText:function(){
+    var context1 = this.context1;
     var options = this.options;
     var lotteris = options.lotteris;
     var len=lotteris.length;
     var degPerPart = 2*Math.PI/len;
     var r = options.w/2;
 
+    context1.save();
+    context1.translate(r,r);
+    
     context1.save();
     context1.font = "14px bold sans-serif";
     context1.textAlign = "center";
@@ -303,8 +325,12 @@ Lottery.prototype = {
         context1.fillText(text,(Math.sin(degPerPart*(i+0.5)))*r*2/3,-Math.cos(degPerPart*(i+0.5))*r*2/3  );
       }
     }
-    context1.restore();
+    context1.restore(); 
+    
+    context1.restore(); 
+
   },
+
   drawImg:function(context1){
 
   },
