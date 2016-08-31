@@ -21,9 +21,9 @@
 		<script>
 			var lotteryIns = new Lottery({
 				lotteris:[
-					{bgColor:'#88adf6',text:'一等奖'},
-					{bgColor:'#95ce2a',text:'二等奖'},
-					{bgColor:'#ffeb4a',text:'三等奖'},
+					{bgColor:'#88adf6',text:'一等奖',textColor:'#ffff00',textPos:3/2},
+					{bgColor:'#95ce2a',text:'二等奖',textColor:'#ff00ff'},
+					{bgColor:'#ffeb4a',text:'三等奖',textColor:'#000000'},
 					{bgColor:'#ffa642',text:'四等奖'},
 					{bgColor:'#ff0891',text:'五等奖'},
 					{bgColor:'#88adf6',text:'六等奖'},
@@ -45,6 +45,9 @@
 				doSthAfterAjaxError:function(json){
 			      alert(json.data.err.msg);				
 				},
+				doSthAfterCannotLottery:function(){
+					// alert(lotteryIns.errMsg);
+				}
 			})
 		</script>
 </body>

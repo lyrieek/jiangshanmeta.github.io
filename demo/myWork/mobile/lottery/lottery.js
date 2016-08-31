@@ -95,16 +95,27 @@ function Lottery(option){
     innerRingColor:"#ffa642",
     pointerColor:"#ffa642",
     textColor:'#fff',
+    textPos:2/3,
     doSthAfterLottery:function(json){
 
     },
     checkCanLottery:function(){
         return true;
     },
+    doSthAfterCannotLottery:function(){
+
+    },
     doSthAfterAjaxError:function(json){
 
     },    
   }
+
+  if(option.textPos&&(option.textPos>=1 || option.textPos<=0)){
+    option.textPos = defaults.textPos;
+  }
+
+
+
   this.options = Object.assign(defaults,option || {});
   //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
   this.status = 0;
@@ -197,6 +208,9 @@ Lottery.prototype = {
 
         }
     }
+  },
+  drawImg:function(context1){
+
   },
   draw:function(){
     this.drawRing();
@@ -311,31 +325,47 @@ Lottery.prototype = {
 
     context1.save();
     context1.translate(r,r);
-    
+
     context1.save();
-    context1.font = "14px bold sans-serif";
     context1.textAlign = "center";
     context1.textBaseline = "middle";
     context1.fillStyle = options.textColor;
+
+    context1.font = "14px bold sans-serif";
     context1.shadowColor = "rgba(0,0,0,0.5)";
     context1.shadowBlur = 8;
+
+
     for(var i=0;i<len;i++){
       var text = lotteris[i].text;
-      if(text !== undefined){
-        context1.fillText(text,(Math.sin(degPerPart*(i+0.5)))*r*2/3,-Math.cos(degPerPart*(i+0.5))*r*2/3  );
+      if(text===undefined){
+        continue;
       }
+
+      context1.save();
+      
+      if(lotteris[i].textColor!==undefined){
+        context1.fillStyle = lotteris[i].textColor;
+      }
+      if(lotteris[i].textPos!==undefined){
+        var textPos = lotteris[i].textPos;
+        if(textPos>=1 || textPos<=0){
+          textPos = options.textPos;
+        }
+      }else{
+        var textPos = options.textPos;
+      }
+      context1.fillText(text,(Math.sin(degPerPart*(i+0.5)))*r*textPos,-Math.cos(degPerPart*(i+0.5))*r*textPos );
+
+      context1.restore();
     }
     context1.restore(); 
-    
+
     context1.restore(); 
-
-  },
-
-  drawImg:function(context1){
 
   },
   ajaxGetLotteryRes:function(){
-    var options = this.options;
+     var options = this.options;
      var canLottery = options.checkCanLottery();
      var _this = this;
      if(canLottery){
@@ -409,7 +439,7 @@ Lottery.prototype = {
 
       
      }else{
-        alert(this.errMsg);
+        options.doSthAfterCannotLottery && options.doSthAfterCannotLottery();
      }
   },
   showLotteryRes:function(json){
