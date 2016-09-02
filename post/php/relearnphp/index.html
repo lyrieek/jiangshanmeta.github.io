@@ -72,7 +72,7 @@
 <pre><code>$this-&gt;template-&gt;load(&quot;default_page&quot;,&quot;index/index&quot;);
 </code></pre>
 
-<h2 id="3-subclass:960e085aadb29182f9448019a6b3c8f1">3.subclass</h2>
+<h2 id="3-my-controller:960e085aadb29182f9448019a6b3c8f1">3.MY_Controller</h2>
 
 <p>面向对象一大特征是继承，对于controller里的类也适用。CI官方文档里所讲的controller所继承的都是<code>CI_Controller</code>，如果需求简单确实足够了，想要封装一层的话可以让这个子类继承自<code>CI_Controller</code>，在这个类里面进行所需要的封装，controller里的类再继承自这个子类。</p>
 
@@ -111,6 +111,15 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 </code></pre>
 
 <p>然后这个类就挂在了$CI上面。稍微有点开发经验的人应该对utility这个词不陌生，从此可以收集各种小函数啦（我不生产代码，我只是代码的搬运工）。</p>
+
+<h2 id="7-field:960e085aadb29182f9448019a6b3c8f1">7.field</h2>
+
+<p>对于从数据库里拿出来的数据，CI并没有做什么别的操作，我们项目中采用了一系列field类，用于对字段进行处理。</p>
+
+<p>首先我们实现了对CI的load的扩展，类似于上面说的MY_Controller,在同一目录下我们可以建立我们的Loader，其命名规则和自己建的controller一致，都是根据<code>application/config/config.php</code>中的<code>$config['subclass_prefix']</code>。这样我们就可以通过
+<code>$this-&gt;load-&gt;field($show_name,$name,$is_must_input=false)</code>加载field对象了。</p>
+
+<p>然后我们需要做的是根据我们对不同字段类型的设定，加载不同的field，进行初始化操作，然后我们就可以在各种field上封装各种方法对数据进行处理啦。</p>
 
 			</div>
 
