@@ -733,35 +733,47 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;声明一下，这里的奇技淫巧是指自己用得少觉得新奇而且有实际应用场景的CSS属性，而不是诸如用CSS画个IE8不支持的IE8图标之类的纯粹为了炫技然而实际没什么用途的黑魔法。&lt;/p&gt;
 
-&lt;h4 id=&#34;currentcolor:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;currentColor&lt;/h4&gt;
+&lt;h4 id=&#34;1-currentcolor:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;1.currentColor&lt;/h4&gt;
 
 &lt;p&gt;这是一个颜色的关键字值，浏览器将对应的值解析为color的值，可以用在border 、box-shadow、background上面。有点像less、sass中的变量。用途的话&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2014/10/currentcolor-css3-powerful-css-keyword/&#34;&gt;张鑫旭大神已经给了几个&lt;/a&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;user-select:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;user-select&lt;/h4&gt;
+&lt;h4 id=&#34;2-user-select:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;2.user-select&lt;/h4&gt;
 
 &lt;p&gt;知乎上有一个作者保留权利，对于这种情况如果用户复制的话会复制一些版权信息。其实现上我猜是监听了copy事件之类的。我觉得知乎可以对这些作者保留权利的内容使用&lt;code&gt;user-select:none;&lt;/code&gt;，这样对于普通用户连选择都做不到。&lt;/p&gt;
 
 &lt;p&gt;不过这个属性兼容性有点差，在&lt;a href=&#34;http://caniuse.com/#search=user-select%3A&#34;&gt;can I use&lt;/a&gt;上查到的信息是目前还是乖乖加上私有前缀吧。&lt;/p&gt;
 
-&lt;h4 id=&#34;selection:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;::selection&lt;/h4&gt;
+&lt;h4 id=&#34;3-selection:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;3.::selection&lt;/h4&gt;
 
 &lt;p&gt;在CSS中伪元素常用的只有&lt;code&gt;::before&lt;/code&gt;和&lt;code&gt;::after&lt;/code&gt;,&lt;code&gt;::selection&lt;/code&gt;就显得比较小众了。浏览器默认的文字选中样式是白字蓝底，说实话真的不好看。这个伪元素就给了我们控制选中状态文字样式的可能性。&lt;/p&gt;
 
 &lt;p&gt;本来以为萌娘百科的黑幕样式会使用这一个选择器，然而他们使用了浏览器的默认选择状态。&lt;/p&gt;
 
-&lt;h4 id=&#34;pointer-events-none:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;pointer-events:none&lt;/h4&gt;
+&lt;h4 id=&#34;4-pointer-events-none:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;4.pointer-events:none&lt;/h4&gt;
 
 &lt;p&gt;这个CSS让js和CSS的边界越来越模糊。想象这么一个场景：要做一个活动页，需要全屏的canvas绘制一些东西，这个canvas相当于一个遮罩层，但是我又想遮罩层下面的元素响应各种事件，尤其是点击事件。想通过js完成这件事目测要写一堆，但是对这个遮罩层使用&lt;code&gt;pointer-events:none&lt;/code&gt;即可让这个遮罩层不响应点击事件。&lt;/p&gt;
 
-&lt;h4 id=&#34;content的attr:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;content的attr&lt;/h4&gt;
+&lt;h4 id=&#34;5-content的attr:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;5.content的attr&lt;/h4&gt;
 
 &lt;p&gt;伪元素大家应该不陌生了，但是伪元素的content属性我一般用的不多，后来发现一篇文章&lt;a href=&#34;http://web.jobbole.com/86079/&#34;&gt;美化加载失败的图片&lt;/a&gt;发现了content属性的一些玩法。我们可以通过attr属性引入一些属性的内容，比如&lt;code&gt;img::after{content:&#39;[&#39;attr(src)&#39;]&#39;}&lt;/code&gt;，这样就能在图片加载不出来的时候把原始图片地址显示出来（虽然我怀疑用户能否理解）。类似的思路，我们可以显示a标签的href属性&lt;code&gt;a::after{content:attr(href)}&lt;/code&gt;。&lt;/p&gt;
 
-&lt;h4 id=&#34;direction:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;direction&lt;/h4&gt;
+&lt;h4 id=&#34;6-direction:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;6.direction&lt;/h4&gt;
 
 &lt;p&gt;这个属性有用的只有两个值：&lt;code&gt;ltr&lt;/code&gt;、&lt;code&gt;rtl&lt;/code&gt;，含义分别是从左向右和从右向左。猜也能猜出来默认值是&lt;code&gt;ltr&lt;/code&gt;。或许你会认为应用&lt;code&gt;rtl&lt;/code&gt;后会改变文字排版变成从右向左排布，然而那是&lt;code&gt;writing-mode&lt;/code&gt;的工作（顺便说一句，目前文字排版的常规模式是从左到右从上到下，除了搞两句古诗词的文艺小清新我觉得没人会闲的改变这种模式）。那么这个&lt;code&gt;direction&lt;/code&gt;改变的是什么的方向？ 改变的是&lt;strong&gt;内联元素块&lt;/strong&gt;的左右顺序，而内联元素块内部的元素是当做一个整体看待。换句话说，&lt;code&gt;direction&lt;/code&gt;属性可以在不改变DOM前后顺序的前提下改变内联元素块的前后顺序，听着好像低配版的flex布局的&lt;code&gt;order&lt;/code&gt;属性。&lt;/p&gt;
 
 &lt;p&gt;干什么用呢？&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2016/03/css-direction-introduction-apply/&#34;&gt;张鑫旭大神提供了例子&lt;/a&gt;，在不改变DOM的情况下添加类名改变弹框组件的按钮顺序。&lt;/p&gt;
+
+&lt;h4 id=&#34;7-padding:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;7.padding&lt;/h4&gt;
+
+&lt;p&gt;关于padding作为前端应该都不陌生，但是padding本身也是具有奇技淫巧的。&lt;/p&gt;
+
+&lt;p&gt;之前我利用padding实现了&lt;a href=&#34;http://jiangshanmeta.github.io/post/autosquare/&#34;&gt;自适应的正方形和长宽比一定的长方形&lt;/a&gt;，今天学了一手新的，结合&lt;code&gt;padding&lt;/code&gt;以及&lt;code&gt;background-clip&lt;/code&gt;绘制图形。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/csstricks/padding.html&#34;&gt;在线demo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;在bootstrap导航条组件中，有一个三道杠的图标，他们的实现是使用三个span元素做的，根据张鑫旭大神的思路，这里使用一个div就完成了。对于这个需求，其实也可以通过伪元素来实现。&lt;/p&gt;
+
+&lt;p&gt;另外还有一些视频进度条的圆环，我结合伪元素、圆角、padding、background-clip也实现了。对于这一需求，也可以通过&lt;code&gt;box-shadow&lt;/code&gt;来实现。&lt;/p&gt;
 </description>
     </item>
     

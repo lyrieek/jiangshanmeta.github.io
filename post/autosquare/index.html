@@ -110,6 +110,22 @@
 <p>update 2017/7/10
 慕课网上<a href="http://t.imooc.com/video/12102">张鑫旭大神分享了相关内容</a>，只是他说的是<code>margin</code>，我这里实现的都是使用<code>padding</code>。</p>
 
+<p>update 2017/9/3</p>
+
+<p>话说我为什么一直局限在矩形的范围内呢？如果我加上<code>border-radius:50%</code>不就是一个圆形了吗？
+<a href="http://jiangshanmeta.github.io/blogdemo/csstricks/padding.html">上demo</a></p>
+
+<pre><code>.auto-circle{
+    border-radius:50%;
+    position:relative;
+}
+.auto-circle::after{
+    content:'';
+    display:block;
+    padding-bottom:100%;
+}
+</code></pre>
+
 			</div>
 
 

@@ -219,6 +219,17 @@ html,body{
 	display:block;
 	padding-bottom:100%;
 }
+	/*自适应圆形*/
+.auto-circle{
+	border-radius:50%;
+	position:relative;
+}
+.auto-circle::after{
+	content:'';
+	display:block;
+	padding-bottom:100%;
+}
+
 	/*椭圆*/
 .ellipse{
 	border-radius:50%;

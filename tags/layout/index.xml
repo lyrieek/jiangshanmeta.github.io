@@ -504,6 +504,22 @@ transform:translate(-50%,-50%);
 
 &lt;p&gt;update 2017/7/10
 慕课网上&lt;a href=&#34;http://t.imooc.com/video/12102&#34;&gt;张鑫旭大神分享了相关内容&lt;/a&gt;，只是他说的是&lt;code&gt;margin&lt;/code&gt;，我这里实现的都是使用&lt;code&gt;padding&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;update 2017/9/3&lt;/p&gt;
+
+&lt;p&gt;话说我为什么一直局限在矩形的范围内呢？如果我加上&lt;code&gt;border-radius:50%&lt;/code&gt;不就是一个圆形了吗？
+&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/csstricks/padding.html&#34;&gt;上demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.auto-circle{
+    border-radius:50%;
+    position:relative;
+}
+.auto-circle::after{
+    content:&#39;&#39;;
+    display:block;
+    padding-bottom:100%;
+}
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
