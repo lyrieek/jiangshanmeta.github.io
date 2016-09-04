@@ -39,16 +39,18 @@
 					alert(json.data.err.msg);
 				},
 				checkCanLottery:function(){
-					// lotteryIns.errMsg = "12345";
+					lotteryIns.errMsg = "12345";
 					return true;
 				},
 				doSthAfterAjaxError:function(json){
 			      alert(json.data.err.msg);				
 				},
 				doSthAfterCannotLottery:function(){
-					// alert(lotteryIns.errMsg);
-				}
+					alert(lotteryIns.errMsg);
+				},
 			})
+
+
 		</script>
 </body>
 </html>

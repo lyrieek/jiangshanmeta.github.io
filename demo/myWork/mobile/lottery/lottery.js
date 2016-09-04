@@ -114,31 +114,20 @@ function Lottery(option){
     option.textPos = defaults.textPos;
   }
 
-
-
-  this.options = Object.assign(defaults,option || {});
+  this.options = Object.assign({},defaults,option || {});
   //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
   this.status = 0;
-
   this.imgs = [];
-  this.initDOM();
-  // this.preLoadImg();
-  this.draw();
-  var _this = this;
-  this.wrap.addEventListener("click",function(){
-    //没开始抽奖的时候点击，说明要抽奖
-    if(_this.status===0){
-      _this.ajaxGetLotteryRes();
-    }else if(_this.status===2){
-      //此时抽奖结束,点击应该是重置
-      _this.reset();
-    }
-    //剩下的情况是抽奖中，当然什么也不做默默等待后端返回结果
-  },false);
+  this.initDOM().draw();
+
+  //我希望把这些实例属性隐藏掉，而原型方法可以暴露
+  var dummpConstructedFunc = function(){};
+  dummpConstructedFunc.prototype = Object.create(Lottery.prototype);
+  return new dummpConstructedFunc();
 }
 
 Lottery.prototype = {
-  construct:Lottery,
+  constructor:Lottery,
   initDOM:function(){
     var options = this.options;
     var w = options.w;
@@ -148,6 +137,17 @@ Lottery.prototype = {
       this.wrap = document.createElement("div");
       document.body.appendChild(this.wrap);
     }
+    var _this = this;
+    this.wrap.addEventListener("click",function(){
+      //没开始抽奖的时候点击，说明要抽奖
+      if(_this.status===0){
+        _this.ajaxGetLotteryRes();
+      }else if(_this.status===2){
+        //此时抽奖结束,点击应该是重置
+        _this.reset();
+      }
+      //剩下的情况是抽奖中，当然什么也不做默默等待后端返回结果
+    },false);
     this.wrap.style.cssText += "position:relative;overflow:hidden;margin-left:auto;margin-right:auto;display:table;"
 
     //canvas1负责绘制具体的奖项
@@ -174,7 +174,11 @@ Lottery.prototype = {
     fragment.appendChild(this.canvas2);
     fragment.appendChild(this.textArea);
     this.wrap.appendChild(fragment);
+
+    return this;
   },
+
+  // 目前没用
   preLoadImg:function(){
     var _this = this;
     
@@ -208,15 +212,15 @@ Lottery.prototype = {
 
         }
     }
-  },
-  drawImg:function(context1){
 
+    return this;
+  },
+  drawImg:function(){
+
+    return this;
   },
   draw:function(){
-    this.drawRing();
-    this.drawPointer();
-    this.drawBg();
-    this.drawText();
+    return this.drawRing().drawPointer().drawBg().drawText();
   },
   drawRing:function(){
     var context2 = this.context2;
@@ -249,6 +253,8 @@ Lottery.prototype = {
     context2.restore();
 
     context2.restore();
+
+    return this;
   },
   drawPointer:function(){
     var context2 = this.context2;
@@ -289,6 +295,8 @@ Lottery.prototype = {
     context2.restore();
 
     context2.restore();
+
+    return this;
   },
   drawBg:function(){
     var context1 = this.context1;
@@ -313,7 +321,9 @@ Lottery.prototype = {
       context1.restore();
     }
 
-    context1.restore();    
+    context1.restore();
+
+    return this;    
   },
   drawText:function(){
     var context1 = this.context1;
@@ -363,6 +373,7 @@ Lottery.prototype = {
 
     context1.restore(); 
 
+    return this;
   },
   ajaxGetLotteryRes:function(){
      var options = this.options;
@@ -430,6 +441,8 @@ Lottery.prototype = {
             if(xhr.status == 200){
               hasAjaxRest = true;
               ajaxRest = JSON.parse(xhr.responseText);
+            }else{
+              _this.reset();
             }
           }
         }
@@ -476,7 +489,7 @@ Lottery.prototype = {
     var styleStr = canvas2Style.cssText;
     styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotate(0deg);";
     canvas2Style.cssText = styleStr;
-
+    return this;
   }
 
 }
