@@ -1,0 +1,110 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> javascript中的继承 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">javascript中的继承</h1>
+			  <p >Sun, Sep 4, 2016</p>
+			      <p>发现自己空中楼阁折腾得太多，一些基础反而没打牢，这里重新学习一下js的面向对象。其实js的面向对象算是一种很奇特的实现，以前只会写js，觉得其他编程语言也差不多，接触了其他的语言才发现js才是那个特例啊。这里就对比着php和js说明。为了便于说明先上两段代码：</p>
+
+<pre><code class="language-php">class Person{
+	public function __construct($name=''){
+		$this-&gt;name = $name;
+	}
+
+	public function genName(){
+		return $this-&gt;name;
+	}
+
+}
+</code></pre>
+
+<p>php中的类</p>
+
+<pre><code>function Person(name){
+	this.name = name;
+}
+
+Person.prototype.genName = function(){
+	returrn this.name;
+}
+</code></pre>
+
+<p>js中的构造函数及prototype</p>
+
+<p>在使用new关键字的时候，两端代码其实功能是一致的，都会生成一个实例，实例具有<code>name</code>这一属性和<code>genName</code>这一方法。在javascript中没有类的概念，所以用构造函数结合prototype模拟类。在第二段代码中，因为<code>genName</code>这一方法是每个实例所共享的，不需要再每个实例上都实现一遍，所以放在了构造函数的prototype上。其实js的构造函数，确实是只起到了php中的构造函数<code>__construct(){}</code>的作用，而php类中的其他方法，则对应js的prototype的方法。</p>
+
+<p>在php中的继承是这样的：</p>
+
+<pre><code>class Kid extends Person{
+	public function __construct($name='',$age=1){
+		parent::construct($name);
+		$this-&gt;age = $age;
+	}
+
+	public function genAge(){
+		returrn $this-&gt;age;
+	}
+}
+</code></pre>
+
+<p>在javascript中要模拟php中的继承，需要模拟在构造函数和prototype两个地方分别模拟（毕竟这两者结合起来才像个类）。</p>
+
+<p>首先我们要实现构造函数的模拟：</p>
+
+<pre><code>function Kid(name,age){
+	Person.call(this,name);
+	this.age = age;
+}
+</code></pre>
+
+<p>然后我们要实现对于基类中的方法的继承，这一点是通过原型链实现的。</p>
+
+<pre><code>Kid.prototype = Object.create(Person.prototype);
+Kid.prototype.constructor = Kid;
+</code></pre>
+
+<p>最后我们要实现的是对于子类方法的扩展。</p>
+
+<pre><code>Kid.prototype.genAge = function(){
+	return this.age;
+}
+</code></pre>
+
+<p>这样对于js的<code>Kid</code>，我们使用new操作得到的实例，含有<code>name</code>和<code>age</code>两个属性，含有<code>genName</code>和<code>genAge</code>两个方法，与php的Kid类通过new生成的实例一样。</p>
+
+<p>到现在，我们模拟了php的继承，在javascript中实现了继承。</p>
+
+<p>以前看<strong>javascript高级程序设计</strong>对于继承的讲解，总觉得云里雾里，现在和其它编程语言的继承相比较，才逐渐明白js的继承为什么要这么折腾。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

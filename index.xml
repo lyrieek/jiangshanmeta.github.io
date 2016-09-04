@@ -6,8 +6,88 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 25 Aug 2016 21:07:38 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 04 Sep 2016 20:29:27 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>javascript中的继承</title>
+      <link>http://jiangshanmeta.github.io/post/js/extend/</link>
+      <pubDate>Sun, 04 Sep 2016 20:29:27 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/js/extend/</guid>
+      <description>&lt;p&gt;发现自己空中楼阁折腾得太多，一些基础反而没打牢，这里重新学习一下js的面向对象。其实js的面向对象算是一种很奇特的实现，以前只会写js，觉得其他编程语言也差不多，接触了其他的语言才发现js才是那个特例啊。这里就对比着php和js说明。为了便于说明先上两段代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;class Person{
+	public function __construct($name=&#39;&#39;){
+		$this-&amp;gt;name = $name;
+	}
+
+	public function genName(){
+		return $this-&amp;gt;name;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;php中的类&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Person(name){
+	this.name = name;
+}
+
+Person.prototype.genName = function(){
+	returrn this.name;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;js中的构造函数及prototype&lt;/p&gt;
+
+&lt;p&gt;在使用new关键字的时候，两端代码其实功能是一致的，都会生成一个实例，实例具有&lt;code&gt;name&lt;/code&gt;这一属性和&lt;code&gt;genName&lt;/code&gt;这一方法。在javascript中没有类的概念，所以用构造函数结合prototype模拟类。在第二段代码中，因为&lt;code&gt;genName&lt;/code&gt;这一方法是每个实例所共享的，不需要再每个实例上都实现一遍，所以放在了构造函数的prototype上。其实js的构造函数，确实是只起到了php中的构造函数&lt;code&gt;__construct(){}&lt;/code&gt;的作用，而php类中的其他方法，则对应js的prototype的方法。&lt;/p&gt;
+
+&lt;p&gt;在php中的继承是这样的：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class Kid extends Person{
+	public function __construct($name=&#39;&#39;,$age=1){
+		parent::construct($name);
+		$this-&amp;gt;age = $age;
+	}
+
+	public function genAge(){
+		returrn $this-&amp;gt;age;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在javascript中要模拟php中的继承，需要模拟在构造函数和prototype两个地方分别模拟（毕竟这两者结合起来才像个类）。&lt;/p&gt;
+
+&lt;p&gt;首先我们要实现构造函数的模拟：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Kid(name,age){
+	Person.call(this,name);
+	this.age = age;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后我们要实现对于基类中的方法的继承，这一点是通过原型链实现的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Kid.prototype = Object.create(Person.prototype);
+Kid.prototype.constructor = Kid;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最后我们要实现的是对于子类方法的扩展。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Kid.prototype.genAge = function(){
+	return this.age;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样对于js的&lt;code&gt;Kid&lt;/code&gt;，我们使用new操作得到的实例，含有&lt;code&gt;name&lt;/code&gt;和&lt;code&gt;age&lt;/code&gt;两个属性，含有&lt;code&gt;genName&lt;/code&gt;和&lt;code&gt;genAge&lt;/code&gt;两个方法，与php的Kid类通过new生成的实例一样。&lt;/p&gt;
+
+&lt;p&gt;到现在，我们模拟了php的继承，在javascript中实现了继承。&lt;/p&gt;
+
+&lt;p&gt;以前看&lt;strong&gt;javascript高级程序设计&lt;/strong&gt;对于继承的讲解，总觉得云里雾里，现在和其它编程语言的继承相比较，才逐渐明白js的继承为什么要这么折腾。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>重新学习最好的编程语言</title>
@@ -1368,44 +1448,6 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 &lt;p&gt;为什么数组的长度是固定。。。。为什么数组内部元素要是一个类型。。。&lt;/p&gt;
 
 &lt;p&gt;没有代码，因为真的不需要代码。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>本地存储的一些比较</title>
-      <link>http://jiangshanmeta.github.io/post/blog/storage/</link>
-      <pubDate>Sat, 09 Jul 2016 23:45:02 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/blog/storage/</guid>
-      <description>
-
-&lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/blog/ebussiness/&#34;&gt;最近的项目中使用了localStorage实现了本地购物车&lt;/a&gt;，借着这个机会总结一下各种本地存储。还有，发现以往过于关注API层面的东西了，反而对API是为了解决什么忽视了。&lt;/p&gt;
-
-&lt;h2 id=&#34;cookie:5fe4e2fe3590b5bd8669d1961910a370&#34;&gt;cookie&lt;/h2&gt;
-
-&lt;p&gt;cookie应该是最早的本地存储，本来今天不想谈API的东西，但是cookie的api设计的简直反人类。&lt;/p&gt;
-
-&lt;p&gt;cookie的一个很重要的应用是用来判断用户是谁（登录功能）。因为http是无状态协议，无法根据之前的状态进行本次的请求处理。在登录成功后后端返回的报文中会设定包含用户登录信息的cookie，以后请求的时候会在请求头信息中包含cookie。&lt;/p&gt;
-
-&lt;p&gt;cookie在每次http请求中都是默认自带的，这点有好处也有坏处。好处是不用手动把cookie信息写入报文，并且一般后端语言也会默认支持对cookie的读取，比如php的&lt;code&gt;$_COOKIE&lt;/code&gt;，坏处是不管用不用得到都会一股脑传过去，虽然对于现在的网络环境而言这并不是什么太大的问题。cookie还有一个缺点是大小限制为4k，复杂点的web应用应该就不够用了。&lt;/p&gt;
-
-&lt;p&gt;最近在看http相关的东西，发现还有个&lt;code&gt;httponly&lt;/code&gt;属性，我觉得挺好的，以前是以一个纯前端的角度去看cookie，因为js无法控制&lt;code&gt;httponly&lt;/code&gt;的cookie，所以没见过有人提。这个属性很好的提升了cookie的安全性。&lt;/p&gt;
-
-&lt;h2 id=&#34;localstorage:5fe4e2fe3590b5bd8669d1961910a370&#34;&gt;localStorage&lt;/h2&gt;
-
-&lt;p&gt;最近的项目中是要做一个购物车，因而使用了localStorage，相比较于cookie，它的存储空间更大，并且没有过期时间的概念，也就是说除非手动删除它会一直保存。&lt;/p&gt;
-
-&lt;p&gt;和cookie还有一点不同就是需要自己手动向后端提交localStorage的内容，服务器端无法直接访问localStorage。确实可以减少网络传输。。毕竟设计的最大存储比cookie大多了，要是和cookie似的自动写到报文里每次请求估计最大的内容就是localStorage了吧。&lt;/p&gt;
-
-&lt;p&gt;对于我的购物车功能，我觉得写得最折腾的就是同步本地数据和线上数据，每一次增删查改之后都要拿一份线上数据处理后然后返回给前端，前端再更新页面和更新localStorage。&lt;/p&gt;
-
-&lt;h2 id=&#34;sessionstorage:5fe4e2fe3590b5bd8669d1961910a370&#34;&gt;sessionStorage&lt;/h2&gt;
-
-&lt;p&gt;这是为了会话控制而存在的，看起来和localStorage很像但是生命周期短得多，如果关了网页重开就没了，开一个新的tab也不会有当前的sessionStorage。&lt;/p&gt;
-
-&lt;h2 id=&#34;indexeddb:5fe4e2fe3590b5bd8669d1961910a370&#34;&gt;indexedDB&lt;/h2&gt;
-
-&lt;p&gt;？？这货出现是为了解决啥？没想明白，难道是出来自high的？？&lt;/p&gt;
 </description>
     </item>
     
