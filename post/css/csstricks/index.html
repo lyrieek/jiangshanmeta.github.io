@@ -55,6 +55,8 @@
 
 <p>伪元素大家应该不陌生了，但是伪元素的content属性我一般用的不多，后来发现一篇文章<a href="http://web.jobbole.com/86079/">美化加载失败的图片</a>发现了content属性的一些玩法。我们可以通过attr属性引入一些属性的内容，比如<code>img::after{content:'['attr(src)']'}</code>，这样就能在图片加载不出来的时候把原始图片地址显示出来（虽然我怀疑用户能否理解）。类似的思路，我们可以显示a标签的href属性<code>a::after{content:attr(href)}</code>。</p>
 
+<p>今天发现了一个<a href="http://codepen.io/airen/pen/jrNBKp">attr结合data的一个demo</a></p>
+
 <h4 id="6-direction:153eaa3ceec693de6b0bebfe9dc213fa">6.direction</h4>
 
 <p>这个属性有用的只有两个值：<code>ltr</code>、<code>rtl</code>，含义分别是从左向右和从右向左。猜也能猜出来默认值是<code>ltr</code>。或许你会认为应用<code>rtl</code>后会改变文字排版变成从右向左排布，然而那是<code>writing-mode</code>的工作（顺便说一句，目前文字排版的常规模式是从左到右从上到下，除了搞两句古诗词的文艺小清新我觉得没人会闲的改变这种模式）。那么这个<code>direction</code>改变的是什么的方向？ 改变的是<strong>内联元素块</strong>的左右顺序，而内联元素块内部的元素是当做一个整体看待。换句话说，<code>direction</code>属性可以在不改变DOM前后顺序的前提下改变内联元素块的前后顺序，听着好像低配版的flex布局的<code>order</code>属性。</p>

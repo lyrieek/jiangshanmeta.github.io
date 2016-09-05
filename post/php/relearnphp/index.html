@@ -121,6 +121,18 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>然后我们需要做的是根据我们对不同字段类型的设定，加载不同的field，进行初始化操作，然后我们就可以在各种field上封装各种方法对数据进行处理啦。</p>
 
+<h2 id="8-链式调用:960e085aadb29182f9448019a6b3c8f1">8.链式调用</h2>
+
+<p>最早接触链式调用是在使用jQuery的时候，其实我觉得使用链式调用能使代码看起来更紧凑一点，除此之外看不出来有什么好处。</p>
+
+<p>要实现链式调用技术上也并不复杂，最核心的就是<code>return $this;</code>这一句话。</p>
+
+<p>很不幸的是在工作项目中除了引用的第三方库中实现过链式调用，我们的后端代码中真心没有自行实现过链式调用，都是使用别人提供的链式调用。</p>
+
+<p>目前也就发现在model层实现链式调用有点用处，这也提醒我以后一些操作封装在model层，而不是仅仅在controller层实现功能就完了。公司代码里有的没有返回值直接添加 <code>return $this;</code>就好了，但是有的。。想改就要改一大堆东西，有的甚至都挂在<code>$this</code>上了还要手动返回一次。历史包袱这种东西真心纠结。</p>
+
+<p>因为有的代码从controller层迁移到了model层，一些controller里的return在model层就要转化为exit，这个<a href="http://jiangshanmeta.github.io/post/php/exit/">已经有了一些经验</a>。</p>
+
 			</div>
 
 

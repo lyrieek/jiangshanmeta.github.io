@@ -188,6 +188,18 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 &lt;code&gt;$this-&amp;gt;load-&amp;gt;field($show_name,$name,$is_must_input=false)&lt;/code&gt;加载field对象了。&lt;/p&gt;
 
 &lt;p&gt;然后我们需要做的是根据我们对不同字段类型的设定，加载不同的field，进行初始化操作，然后我们就可以在各种field上封装各种方法对数据进行处理啦。&lt;/p&gt;
+
+&lt;h2 id=&#34;8-链式调用:960e085aadb29182f9448019a6b3c8f1&#34;&gt;8.链式调用&lt;/h2&gt;
+
+&lt;p&gt;最早接触链式调用是在使用jQuery的时候，其实我觉得使用链式调用能使代码看起来更紧凑一点，除此之外看不出来有什么好处。&lt;/p&gt;
+
+&lt;p&gt;要实现链式调用技术上也并不复杂，最核心的就是&lt;code&gt;return $this;&lt;/code&gt;这一句话。&lt;/p&gt;
+
+&lt;p&gt;很不幸的是在工作项目中除了引用的第三方库中实现过链式调用，我们的后端代码中真心没有自行实现过链式调用，都是使用别人提供的链式调用。&lt;/p&gt;
+
+&lt;p&gt;目前也就发现在model层实现链式调用有点用处，这也提醒我以后一些操作封装在model层，而不是仅仅在controller层实现功能就完了。公司代码里有的没有返回值直接添加 &lt;code&gt;return $this;&lt;/code&gt;就好了，但是有的。。想改就要改一大堆东西，有的甚至都挂在&lt;code&gt;$this&lt;/code&gt;上了还要手动返回一次。历史包袱这种东西真心纠结。&lt;/p&gt;
+
+&lt;p&gt;因为有的代码从controller层迁移到了model层，一些controller里的return在model层就要转化为exit，这个&lt;a href=&#34;http://jiangshanmeta.github.io/post/php/exit/&#34;&gt;已经有了一些经验&lt;/a&gt;。&lt;/p&gt;
 </description>
     </item>
     
@@ -836,6 +848,8 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 &lt;h4 id=&#34;5-content的attr:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;5.content的attr&lt;/h4&gt;
 
 &lt;p&gt;伪元素大家应该不陌生了，但是伪元素的content属性我一般用的不多，后来发现一篇文章&lt;a href=&#34;http://web.jobbole.com/86079/&#34;&gt;美化加载失败的图片&lt;/a&gt;发现了content属性的一些玩法。我们可以通过attr属性引入一些属性的内容，比如&lt;code&gt;img::after{content:&#39;[&#39;attr(src)&#39;]&#39;}&lt;/code&gt;，这样就能在图片加载不出来的时候把原始图片地址显示出来（虽然我怀疑用户能否理解）。类似的思路，我们可以显示a标签的href属性&lt;code&gt;a::after{content:attr(href)}&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;今天发现了一个&lt;a href=&#34;http://codepen.io/airen/pen/jrNBKp&#34;&gt;attr结合data的一个demo&lt;/a&gt;&lt;/p&gt;
 
 &lt;h4 id=&#34;6-direction:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;6.direction&lt;/h4&gt;
 
