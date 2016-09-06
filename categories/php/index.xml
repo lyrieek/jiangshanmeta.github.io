@@ -66,6 +66,8 @@
 
 &lt;p&gt;如果熟悉面向对象的话上面所说的实现起来并不复杂，唯一的问题是目录。其实CI已经考虑过这个问题了。把自己封装好的类放到&lt;code&gt;application/core&lt;/code&gt;目录下，文件名称为xxController，然后在&lt;code&gt;application/config/config.php&lt;/code&gt;中找到&lt;code&gt;$config[&#39;subclass_prefix&#39;]&lt;/code&gt;，将其值赋为刚才文件名中的xx，然后你就会发现这个文件会自动被加载（至于具体的子类名称，对于我这种命名困难户显然是选文件名啦）。话说回来，真不嫌麻烦还可以每个controller里手动加载这个文件（何必呢）。&lt;/p&gt;
 
+&lt;p&gt;&lt;a href=&#34;http://codeigniter.org.cn/user_guide/general/core_classes.html&#34;&gt;扩展核心系统类&lt;/a&gt;&lt;/p&gt;
+
 &lt;h2 id=&#34;4-uri类:960e085aadb29182f9448019a6b3c8f1&#34;&gt;4.URI类&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://codeigniter.org.cn/user_guide/libraries/uri.html&#34;&gt;URI类&lt;/a&gt;可以帮助从URI字符串中获得一些基本的信息，结合项目中所用到的说一下。&lt;/p&gt;
@@ -104,8 +106,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;对于从数据库里拿出来的数据，CI并没有做什么别的操作，我们项目中采用了一系列field类，用于对字段进行处理。&lt;/p&gt;
 
-&lt;p&gt;首先我们实现了对CI的load的扩展，类似于上面说的MY_Controller,在同一目录下我们可以建立我们的Loader，其命名规则和自己建的controller一致，都是根据&lt;code&gt;application/config/config.php&lt;/code&gt;中的&lt;code&gt;$config[&#39;subclass_prefix&#39;]&lt;/code&gt;。这样我们就可以通过
-&lt;code&gt;$this-&amp;gt;load-&amp;gt;field($show_name,$name,$is_must_input=false)&lt;/code&gt;加载field对象了。&lt;/p&gt;
+&lt;p&gt;首先我们实现了对CI的load的扩展，类似于上面说的MY_Controller,在同一目录下我们可以建立我们的Loader，其命名规则和自己建的controller一致，都是根据&lt;code&gt;application/config/config.php&lt;/code&gt;中的&lt;code&gt;$config[&#39;subclass_prefix&#39;]&lt;/code&gt;。这样我们就可以通过&lt;code&gt;$this-&amp;gt;load-&amp;gt;field($show_name,$name,$is_must_input=false)&lt;/code&gt;加载field对象了。&lt;/p&gt;
 
 &lt;p&gt;然后我们需要做的是根据我们对不同字段类型的设定，加载不同的field，进行初始化操作，然后我们就可以在各种field上封装各种方法对数据进行处理啦。&lt;/p&gt;
 
@@ -120,6 +121,45 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 &lt;p&gt;目前也就发现在model层实现链式调用有点用处，这也提醒我以后一些操作封装在model层，而不是仅仅在controller层实现功能就完了。公司代码里有的没有返回值直接添加 &lt;code&gt;return $this;&lt;/code&gt;就好了，但是有的。。想改就要改一大堆东西，有的甚至都挂在&lt;code&gt;$this&lt;/code&gt;上了还要手动返回一次。历史包袱这种东西真心纠结。&lt;/p&gt;
 
 &lt;p&gt;因为有的代码从controller层迁移到了model层，一些controller里的return在model层就要转化为exit，这个&lt;a href=&#34;http://jiangshanmeta.github.io/post/php/exit/&#34;&gt;已经有了一些经验&lt;/a&gt;。&lt;/p&gt;
+
+&lt;h2 id=&#34;9-protected:960e085aadb29182f9448019a6b3c8f1&#34;&gt;9.protected&lt;/h2&gt;
+
+&lt;p&gt;javascript没有类的概念，因而也没有private、protected、public的概念，但是在php中有啊，在平时的开发中public和private用的比较多，但是真的没找到&lt;code&gt;protected&lt;/code&gt;的使用痕迹（第三封库的不算），但其实我觉得这个概念很好用啊。&lt;/p&gt;
+
+&lt;p&gt;在controller层，写多了就会发现有一些业务上的通用小函数，最开始可能就只在一个controller里面用，显然封装成private就已经足够了，随着业务逻辑的复杂，这样的小函数可能会复制粘贴多次，显然应该向基类里进行封装，最合适的关键词就是&lt;code&gt;protected&lt;/code&gt;。封装到上面提到的&lt;strong&gt;MY_Controller&lt;/strong&gt;里面其实也不是很合适，个人认为那里适合放一些对CI框架的封装及操作，属于框架扩展层面的，而不应该存放业务逻辑。因此我个人认为应该写个专门的类继承&lt;strong&gt;MY_Controller&lt;/strong&gt;，里面放这些业务逻辑通用代码，都是protected的，然后具体的业务类都继承这个类。&lt;/p&gt;
+
+&lt;p&gt;在model层，本身就有一些变量只应该内部使用，比如表名之类的，开发工作中的model层这些变量基本没有被限制过，都是暴露出去的，只有一些私有方法。sign&lt;/p&gt;
+
+&lt;h2 id=&#34;10-get:960e085aadb29182f9448019a6b3c8f1&#34;&gt;10.__get()&lt;/h2&gt;
+
+&lt;p&gt;为啥我会提到这个，这是个悲伤的故事。&lt;/p&gt;
+
+&lt;p&gt;上面说到利用&lt;code&gt;protected&lt;/code&gt;的概念改写了一些公司对CI封装的代码，在controller层其实没什么问题，在model层有些问题，因为有些情况下还是会需要访问极个别被保护起来的变量，为了实现这个需求一个方案是在业务model类里面重新设定这些变量的修饰词，但这样就可以修改这些变量了，另一个方案是仅仅给这些变量读的权限，于是我就想到了魔术方法&lt;code&gt;__get()&lt;/code&gt;，然后我就在model层基类写下了以下代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function __get($name){
+	if(in_array($name,[&#39;tableName&#39;])) {
+		return $this-&amp;gt;$name;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;到这里逻辑上没什么问题，然后我就去测试了，然后就报错了。直接说原因：我封装的model层基类继承自&lt;code&gt;CI_Model&lt;/code&gt;，在这个类里面有如下代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function __get($key){
+	return get_instance()-&amp;gt;$key;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;看代码就差不多明白了吧，同时通过这段代码，CI实现了在model层调用&lt;code&gt;CodeIgniter&lt;/code&gt;的属性和方法。所以修改后的代码是这样的：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function __get($name){
+    if(in_array($name, [&#39;is_inited&#39;])){
+        return $this-&amp;gt;$name;
+    }else{
+        return parent::__get($name);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
