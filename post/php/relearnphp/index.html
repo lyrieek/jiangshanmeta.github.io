@@ -165,13 +165,19 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 <p>看代码就差不多明白了吧，同时通过这段代码，CI实现了在model层调用<code>CodeIgniter</code>的属性和方法。所以修改后的代码是这样的：</p>
 
 <pre><code>public function __get($name){
-    if(in_array($name, ['is_inited'])){
-        return $this-&gt;$name;
-    }else{
-        return parent::__get($name);
-    }
+	if(in_array($name, ['is_inited'])){
+		return $this-&gt;$name;
+	}else{
+		return parent::__get($name);
+	}
 }
 </code></pre>
+
+<h2 id="11-final:960e085aadb29182f9448019a6b3c8f1">11.final</h2>
+
+<p>之所以会提及这个关键词也是很偶然的，今天老板吐槽一个同事经常重载诸如<code>insert_db</code>之类的基础函数，然后就谈到了稍微大型的项目就不会让每个人都接触整个项目代码了，很有可能一个人只负责几个controller或者model，基类整体就是只暴露可以调用的方法，内部实现根本看不到，那问题就是如何防止重载基础函数，老板说跑脚本检测之类的，但是最简单的实现就是在想要防止重载的方法加上<code>final</code>修饰词，能用语言本身解决的问题还需要跑脚本之类的折腾吗。</p>
+
+<p>之所以要重载是因为想做些额外的事情，那在使用final关键词的情况下解决如何做这些额外的事情？答案是使用<strong>钩子函数</strong>。</p>
 
 			</div>
 

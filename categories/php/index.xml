@@ -153,13 +153,19 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 &lt;p&gt;看代码就差不多明白了吧，同时通过这段代码，CI实现了在model层调用&lt;code&gt;CodeIgniter&lt;/code&gt;的属性和方法。所以修改后的代码是这样的：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;public function __get($name){
-    if(in_array($name, [&#39;is_inited&#39;])){
-        return $this-&amp;gt;$name;
-    }else{
-        return parent::__get($name);
-    }
+	if(in_array($name, [&#39;is_inited&#39;])){
+		return $this-&amp;gt;$name;
+	}else{
+		return parent::__get($name);
+	}
 }
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;11-final:960e085aadb29182f9448019a6b3c8f1&#34;&gt;11.final&lt;/h2&gt;
+
+&lt;p&gt;之所以会提及这个关键词也是很偶然的，今天老板吐槽一个同事经常重载诸如&lt;code&gt;insert_db&lt;/code&gt;之类的基础函数，然后就谈到了稍微大型的项目就不会让每个人都接触整个项目代码了，很有可能一个人只负责几个controller或者model，基类整体就是只暴露可以调用的方法，内部实现根本看不到，那问题就是如何防止重载基础函数，老板说跑脚本检测之类的，但是最简单的实现就是在想要防止重载的方法加上&lt;code&gt;final&lt;/code&gt;修饰词，能用语言本身解决的问题还需要跑脚本之类的折腾吗。&lt;/p&gt;
+
+&lt;p&gt;之所以要重载是因为想做些额外的事情，那在使用final关键词的情况下解决如何做这些额外的事情？答案是使用&lt;strong&gt;钩子函数&lt;/strong&gt;。&lt;/p&gt;
 </description>
     </item>
     
