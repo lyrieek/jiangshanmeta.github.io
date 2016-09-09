@@ -179,6 +179,10 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>之所以要重载是因为想做些额外的事情，那在使用final关键词的情况下解决如何做这些额外的事情？答案是使用<strong>钩子函数</strong>。</p>
 
+<h2 id="12-model:960e085aadb29182f9448019a6b3c8f1">12.model</h2>
+
+<p>根据CI的文档，model层是用来负责和数据库打交道的，在我们的项目中，把model分成了两类，一类是record_model,负责处理一条数据，另一类是list_model，负责处理多条数据，record_model是list_model的基础。这两个类都是继承自CI_model，作为对CI的进一步封装，这两个类上封装了一系列方法，用于对数据进行加载和处理，同时作为业务类的基础。由于一些历史原因，里面有许多方法封装的并不是很合适以至于，所以我要各种修修补补。</p>
+
 			</div>
 
 

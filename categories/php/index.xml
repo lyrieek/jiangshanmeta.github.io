@@ -166,6 +166,10 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 &lt;p&gt;之所以会提及这个关键词也是很偶然的，今天老板吐槽一个同事经常重载诸如&lt;code&gt;insert_db&lt;/code&gt;之类的基础函数，然后就谈到了稍微大型的项目就不会让每个人都接触整个项目代码了，很有可能一个人只负责几个controller或者model，基类整体就是只暴露可以调用的方法，内部实现根本看不到，那问题就是如何防止重载基础函数，老板说跑脚本检测之类的，但是最简单的实现就是在想要防止重载的方法加上&lt;code&gt;final&lt;/code&gt;修饰词，能用语言本身解决的问题还需要跑脚本之类的折腾吗。&lt;/p&gt;
 
 &lt;p&gt;之所以要重载是因为想做些额外的事情，那在使用final关键词的情况下解决如何做这些额外的事情？答案是使用&lt;strong&gt;钩子函数&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;h2 id=&#34;12-model:960e085aadb29182f9448019a6b3c8f1&#34;&gt;12.model&lt;/h2&gt;
+
+&lt;p&gt;根据CI的文档，model层是用来负责和数据库打交道的，在我们的项目中，把model分成了两类，一类是record_model,负责处理一条数据，另一类是list_model，负责处理多条数据，record_model是list_model的基础。这两个类都是继承自CI_model，作为对CI的进一步封装，这两个类上封装了一系列方法，用于对数据进行加载和处理，同时作为业务类的基础。由于一些历史原因，里面有许多方法封装的并不是很合适以至于，所以我要各种修修补补。&lt;/p&gt;
 </description>
     </item>
     
