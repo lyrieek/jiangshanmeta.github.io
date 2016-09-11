@@ -183,6 +183,36 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>根据CI的文档，model层是用来负责和数据库打交道的，在我们的项目中，把model分成了两类，一类是record_model,负责处理一条数据，另一类是list_model，负责处理多条数据，record_model是list_model的基础。这两个类都是继承自CI_model，作为对CI的进一步封装，这两个类上封装了一系列方法，用于对数据进行加载和处理，同时作为业务类的基础。由于一些历史原因，里面有许多方法封装的并不是很合适以至于，所以我要各种修修补补。</p>
 
+<h2 id="13-改变应用路径:960e085aadb29182f9448019a6b3c8f1">13.改变应用路径</h2>
+
+<p>在CI中原始的项目代码是放在<code>application</code>目录下，而<code>index.php</code>和该目录同级，出于安全及复杂应用的考虑，我们可以考虑改变入口文件<code>index.php</code>的位置及项目代码目录的名称。
+比如说我们把原来的application目录修改为app_user，在和该目录同级建立一个www_user目录，把入口文件放到该目录下，
+为此，我们需要再index.php中进行如下设置：</p>
+
+<pre><code>$application_folder = getcwd().'/../app_user';
+$system_path = '../system';
+</code></pre>
+
+<h2 id="14-辅助函数:960e085aadb29182f9448019a6b3c8f1">14.辅助函数</h2>
+
+<p>CI提供了一些使用面向过程写的辅助函数，我扩展的是url_helper，毕竟web开发离不开url的处理。首先是对这个文件的自动加载，在autoload文件中的<code>autoload['helper']</code>数组中添加一项<code>url</code>这样就能自动加载了。</p>
+
+<p>然后是添加我的扩展</p>
+
+<pre><code>if ( ! function_exists('static_url'))
+{
+	function static_url($uri = '')
+	{
+		$CI =&amp; get_instance();
+		return $CI-&gt;config-&gt;static_url($uri);
+	}
+}
+</code></pre>
+
+<p>这个函数的目标是处理对本地文件的引用路径（比如js、css还有图片）。</p>
+
+<p>具体实现是在<strong>system/core/config.php</strong>中。</p>
+
 			</div>
 
 
