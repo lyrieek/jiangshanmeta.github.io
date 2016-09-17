@@ -95,7 +95,7 @@
 
 <p>上面筛选的是用户年龄大于等于10且小于等于30的</p>
 
-<p>常见的运算符还有 $gt、$lt、$ne、$in、$nin</p>
+<p>常见的运算符还有 $gt、$lt、$ne、$in、$nin、$gte、$lte</p>
 
 <h4 id="or:e26229a1d4143975e4d61b9e4403a9c5">or</h4>
 
@@ -117,6 +117,13 @@
 </code></pre>
 
 <p>mongoDB中存的array是一个有序array</p>
+
+<h4 id="and:e26229a1d4143975e4d61b9e4403a9c5">and</h4>
+
+<p>在查询时，逗号连接的表达式默认关系为and，但是看同事写的复杂查询的代码经常首先写个<code>$and</code>，然后其他条件向这个大and里面放，一直没用到过太复杂的查询，所以就没管，最近遇到了，<a href="https://docs.mongodb.com/manual/reference/operator/query/and/">文档上是这么说的</a>：</p>
+
+<pre><code>Using an explicit AND with the $and operator is necessary when the same field or operator has to be specified in multiple expressions.
+</code></pre>
 
 <h2 id="改数据:e26229a1d4143975e4d61b9e4403a9c5">改数据</h2>
 
@@ -140,6 +147,15 @@
 </code></pre>
 
 <p>这样跳过一条限制查询结果只有一条，得到的是第二条，对于写代码的明明是第一条</p>
+
+<h2 id="sort:e26229a1d4143975e4d61b9e4403a9c5">sort</h2>
+
+<p>sort用来对数据进行排序</p>
+
+<pre><code>db.users.find().sort({age:1})
+</code></pre>
+
+<p>按照age字段升序排列</p>
 
 			</div>
 

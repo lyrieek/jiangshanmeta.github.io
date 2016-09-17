@@ -83,7 +83,7 @@
 
 &lt;p&gt;上面筛选的是用户年龄大于等于10且小于等于30的&lt;/p&gt;
 
-&lt;p&gt;常见的运算符还有 $gt、$lt、$ne、$in、$nin&lt;/p&gt;
+&lt;p&gt;常见的运算符还有 $gt、$lt、$ne、$in、$nin、$gte、$lte&lt;/p&gt;
 
 &lt;h4 id=&#34;or:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;or&lt;/h4&gt;
 
@@ -105,6 +105,13 @@
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;mongoDB中存的array是一个有序array&lt;/p&gt;
+
+&lt;h4 id=&#34;and:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;and&lt;/h4&gt;
+
+&lt;p&gt;在查询时，逗号连接的表达式默认关系为and，但是看同事写的复杂查询的代码经常首先写个&lt;code&gt;$and&lt;/code&gt;，然后其他条件向这个大and里面放，一直没用到过太复杂的查询，所以就没管，最近遇到了，&lt;a href=&#34;https://docs.mongodb.com/manual/reference/operator/query/and/&#34;&gt;文档上是这么说的&lt;/a&gt;：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Using an explicit AND with the $and operator is necessary when the same field or operator has to be specified in multiple expressions.
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;改数据:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;改数据&lt;/h2&gt;
 
@@ -128,6 +135,15 @@
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;这样跳过一条限制查询结果只有一条，得到的是第二条，对于写代码的明明是第一条&lt;/p&gt;
+
+&lt;h2 id=&#34;sort:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;sort&lt;/h2&gt;
+
+&lt;p&gt;sort用来对数据进行排序&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;db.users.find().sort({age:1})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;按照age字段升序排列&lt;/p&gt;
 </description>
     </item>
     
