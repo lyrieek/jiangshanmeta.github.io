@@ -213,6 +213,35 @@ $system_path = '../system';
 
 <p>具体实现是在<strong>system/core/config.php</strong>中。</p>
 
+<h2 id="15-static:960e085aadb29182f9448019a6b3c8f1">15.static</h2>
+
+<p>在使用CI的时候，经常会调用<code>get_instance</code>这个函数，看一下具体实现：</p>
+
+<pre><code>function &amp;get_instance()
+{
+	return CI_Controller::get_instance();
+}
+</code></pre>
+
+<p>看来在CI_Controller上有一个静态方法<code>get_instance</code>，我们再去找CI_Controller的相关代码</p>
+
+<pre><code>public static function &amp;get_instance()
+{
+	return self::$instance;
+}
+</code></pre>
+
+<p>看起来CI_Controller里面有一个受保护的的静态成员<code>$instance</code>,再去找它</p>
+
+<pre><code>private static $instance;
+public function __construct()
+{
+	self::$instance =&amp; $this;
+}
+</code></pre>
+
+<p>那结果很显然，这个静态私有变量保存着对controller实例的引用。</p>
+
 			</div>
 
 

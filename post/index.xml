@@ -280,6 +280,35 @@ $system_path = &#39;../system&#39;;
 &lt;p&gt;这个函数的目标是处理对本地文件的引用路径（比如js、css还有图片）。&lt;/p&gt;
 
 &lt;p&gt;具体实现是在&lt;strong&gt;system/core/config.php&lt;/strong&gt;中。&lt;/p&gt;
+
+&lt;h2 id=&#34;15-static:960e085aadb29182f9448019a6b3c8f1&#34;&gt;15.static&lt;/h2&gt;
+
+&lt;p&gt;在使用CI的时候，经常会调用&lt;code&gt;get_instance&lt;/code&gt;这个函数，看一下具体实现：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function &amp;amp;get_instance()
+{
+	return CI_Controller::get_instance();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;看来在CI_Controller上有一个静态方法&lt;code&gt;get_instance&lt;/code&gt;，我们再去找CI_Controller的相关代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public static function &amp;amp;get_instance()
+{
+	return self::$instance;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;看起来CI_Controller里面有一个受保护的的静态成员&lt;code&gt;$instance&lt;/code&gt;,再去找它&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private static $instance;
+public function __construct()
+{
+	self::$instance =&amp;amp; $this;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;那结果很显然，这个静态私有变量保存着对controller实例的引用。&lt;/p&gt;
 </description>
     </item>
     
