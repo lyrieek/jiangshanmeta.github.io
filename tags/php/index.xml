@@ -6,8 +6,91 @@
     <description>Recent content in Php on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 25 Aug 2016 21:07:38 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 18 Sep 2016 15:42:17 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>单例模式</title>
+      <link>http://jiangshanmeta.github.io/post/php/single/</link>
+      <pubDate>Sun, 18 Sep 2016 15:42:17 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/php/single/</guid>
+      <description>&lt;p&gt;重新学习最好的编程语言的时候看到了&lt;code&gt;static&lt;/code&gt;关键字，于是就想到了可以用这个做单例模式。单例模式的作用是保证一个类最多只有一个实例对象。这里不仅讲php中如何实现单例模式，还顺便说一下在js中如何实现单例模式。&lt;/p&gt;
+
+&lt;p&gt;首先讲一下在php中如何实现单例模式&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class Person{
+	private static $instance = null;
+	private function __construct($name){
+		$this-&amp;gt;name = $name;
+	}
+
+	public function gen_name(){
+		var_dump($this-&amp;gt;name);
+	}
+
+	public static function get_instance($name){
+		if(!(self::$instance instanceof self)){
+			self::$instance = new self($name);
+		}
+		return self::$instance;
+	}
+
+}
+
+$a = Person::get_instance(&#39;a&#39;);
+$b = Person::get_instance(&#39;b&#39;);
+$a-&amp;gt;gen_name();  // a
+$b-&amp;gt;gen_name();	 // a
+
+var_dump($a===$b); // true
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先我们把构造函数&lt;code&gt;__construct()&lt;/code&gt;加上修饰词&lt;code&gt;private&lt;/code&gt;，这样在外部使用&lt;code&gt;new&lt;/code&gt;关键字实例化一个对象就会报错。然后我们添加一个私有的静态变量&lt;code&gt;$instance&lt;/code&gt;，用来缓存实例化的对象。静态方法&lt;code&gt;get_instance&lt;/code&gt;用来提供单例实例对象。首先判断&lt;code&gt;$instance&lt;/code&gt;有没有缓存的实例，如果有就返回这个缓存的实例对象，如果没有就手动new一个实例对象然后缓存返回该对象。单例模式在php中的实现并不复杂。&lt;/p&gt;
+
+&lt;p&gt;对于js实现上稍微有点复杂，因为js没有&lt;code&gt;static&lt;/code&gt;关键词，但是我们可以模拟它。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var Person = (function(){
+	var instance = null;
+
+	return function(name){
+		// 安全模式，保证是使用new关键字
+		if(! (this instanceof Person)){
+			return new Person(name);
+		}
+
+		// 还没有创建实例对象，需要创建并缓存
+		if(!(instance instanceof Person)){
+			this.name = name;
+
+			instance = this;
+		}
+		return instance
+	}
+})();
+
+var a = Person(&#39;a&#39;);
+var b = new Person(&#39;b&#39;);
+console.log(a.name); // a
+console.log(b.name); // b
+console.log(a===b);  // true
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在js中实现单例模式的原理类似，只是使用闭包存了一个变量&lt;code&gt;instance&lt;/code&gt;用来缓存实例对象。顺便说一句在这里被js的操作符优先级给坑了一下，默默加括号。&lt;/p&gt;
+
+&lt;p&gt;其实单例模式的核心是保证最多只有一个实例对象，对于灵活的js其实还有一种更简单粗暴的方法，就是直接暴露一个对象，根本不给你new的机会。&lt;/p&gt;
+
+&lt;p&gt;比如在我们的项目中有这样的一段代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var AlertPlug = {
+	alert:function(){},
+	close:function(){},
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这就是使用单例模式的一个例子。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>重新学习最好的编程语言</title>

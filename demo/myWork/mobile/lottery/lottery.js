@@ -149,21 +149,20 @@ var Lottery = (function(){
     }
 
     //安全模式，保证是使用new关键字返回一个新的实例
-    if(this instanceof Lottery){
-      this.options = Object.assign({},defaults,option || {});
-      //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
-      this.status = 0;
-      this.imgs = [];
-      this.initDOM().draw();
-
-      //我希望把这些实例属性隐藏掉，而原型方法可以暴露
-      var dummpConstructedFunc = function(){};
-      dummpConstructedFunc.prototype = Object.create(Lottery.prototype);
-      return new dummpConstructedFunc();
-
-    }else{
-      return new Lottery(option);
+    if(!(this instanceof Lottery)){
+        return new Lottery(option);
     }
+
+    this.options = Object.assign({},defaults,option || {});
+    //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
+    this.status = 0;
+    this.imgs = [];
+    this.initDOM().draw();
+
+    //我希望把这些实例属性隐藏掉，而原型方法可以暴露
+    var dummpConstructedFunc = function(){};
+    dummpConstructedFunc.prototype = Object.create(Lottery.prototype);
+    return new dummpConstructedFunc();
 
   }
 
