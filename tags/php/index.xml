@@ -89,6 +89,38 @@ console.log(a===b);  // true
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;这就是使用单例模式的一个例子。&lt;/p&gt;
+
+&lt;p&gt;update 2016/09/21&lt;/p&gt;
+
+&lt;p&gt;上面的js虽然实现了但是模式，但是有一个很严重的问题，就是如果我们想在Person原型上添加一些方法，这些方法由于作用域的原因是无法获取到闭包内的静态私有变量，对于以后的扩展是很不利的。我们可以这样修改：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(function(window){
+	var instance = null;
+	var otherStaticPrivateVar = null;
+
+	function Person(name){
+		// 安全模式，保证是使用new关键字
+		if(! (this instanceof Person)){
+			return new Person(name);
+		}
+
+		// 还没有创建实例对象，需要创建并缓存
+		if(!(instance instanceof Person)){
+			this.name = name;
+
+			instance = this;
+		}
+		return instance
+	}
+
+	Person.prototype.logOtherStaticPrivateVar=function(){
+		console.log(otherStaticPrivateVar);
+	}
+	window.Person = Person;
+})(window);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最终的结果依然是向全局暴露一个构造函数。&lt;/p&gt;
 </description>
     </item>
     
