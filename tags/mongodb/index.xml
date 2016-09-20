@@ -120,6 +120,8 @@
 
 &lt;p&gt;第一个参数是筛选条件，第二个参数是含义是把 age设为55 把gender设为female 把tech设为[&amp;lsquo;php&amp;rsquo;,&amp;lsquo;mongodb&amp;rsquo;,&amp;lsquo;javascript&amp;rsquo;]，最后一个参数的意思是更新多条数据&lt;/p&gt;
 
+&lt;p&gt;第二个参数中的&lt;code&gt;$set&lt;/code&gt;是把相应字段的相应值设定为传入的值，如果不加&lt;code&gt;$set&lt;/code&gt;，相当于完全重写查询出来的结果。除了&lt;code&gt;$set&lt;/code&gt;，还有几个常用的操作：&lt;code&gt;$inc&lt;/code&gt;、&lt;code&gt;$push&lt;/code&gt;、&lt;code&gt;$pull&lt;/code&gt;。&lt;code&gt;$inc&lt;/code&gt;的含义是根据传入的值对相应字段增加/减少，一般是为了应对高并发的情况。&lt;code&gt;$push&lt;/code&gt;和&lt;code&gt;$pull&lt;/code&gt;应对的情形是字段是一个array，向这个array中添加或者删除数据。与&lt;code&gt;$push&lt;/code&gt;操作类似的是&lt;code&gt;$addToSet&lt;/code&gt;，两者的不同是后者保证了数组中数据的唯一性，前者不关心唯一性只管向数组中添加数据。&lt;/p&gt;
+
 &lt;h2 id=&#34;删除数据:e26229a1d4143975e4d61b9e4403a9c5&#34;&gt;删除数据&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt;db.users.remove({age:33},1);

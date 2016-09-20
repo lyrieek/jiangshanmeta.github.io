@@ -242,6 +242,12 @@ public function __construct()
 
 <p>那结果很显然，这个静态私有变量保存着对controller实例的引用。</p>
 
+<h2 id="16-spl-autoload-register:960e085aadb29182f9448019a6b3c8f1">16.spl_autoload_register</h2>
+
+<p>这个函数其实不是CI中使用的，而是项目中对CI进行扩展的时候使用的，其作用相当于是对于<code>__autoload</code>的加强版。其实稍微大点的项目用得到，小项目用<code>__autoload</code>就行了。</p>
+
+<p>我们用它做了什么？在CI中，如果要加载并实例化某个类并挂到CI上，我们需要使用load方法，但是有的时候我们只想使用这个类的实例，并不想挂到CI指针上，比如说在一个model中加载另一个model，我们该怎么办？一个方法是需要的时候手动include或者require，当然这样比较累，另一种方法就是__autoload啦。最终的结果是我们可以使用new关键字实例化一个model而不需要手动加载文件。</p>
+
 			</div>
 
 

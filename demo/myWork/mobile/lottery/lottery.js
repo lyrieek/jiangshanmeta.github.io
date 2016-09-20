@@ -138,6 +138,7 @@ var Lottery = (function(){
 
     },    
   }
+  var wrapIdPool = [];
   return function(option){
     if(!option.lotteris || !option.ajaxUrl ){
       return;
@@ -157,6 +158,21 @@ var Lottery = (function(){
     //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
     this.status = 0;
     this.imgs = [];
+
+    // 做一点安全，防止一个wrapId下面有多个抽奖区
+    this.wrap = document.querySelector("#"+this.options.warpId);
+    if(!this.wrap){
+      this.wrap = document.createElement("div");
+      document.body.appendChild(this.wrap);
+    }else{
+      if(wrapIdPool.indexOf(this.options.warpId)>-1){
+        console.error('Lottery wrapId repeated');
+        return;
+      }else{
+        wrapIdPool.push(this.options.warpId);
+      }
+    }
+
     this.initDOM().draw();
 
     //我希望把这些实例属性隐藏掉，而原型方法可以暴露
@@ -176,11 +192,7 @@ Lottery.prototype = {
     var options = this.options;
     var w = options.w;
     //外层盒子初始样式设置
-    this.wrap = document.querySelector("#"+options.warpId);
-    if(!this.wrap){
-      this.wrap = document.createElement("div");
-      document.body.appendChild(this.wrap);
-    }
+
     var _this = this;
     this.wrap.addEventListener("click",function(){
       //没开始抽奖的时候点击，说明要抽奖
@@ -218,48 +230,6 @@ Lottery.prototype = {
     fragment.appendChild(this.canvas2);
     fragment.appendChild(this.textArea);
     this.wrap.appendChild(fragment);
-
-    return this;
-  },
-
-  // 目前没用
-  preLoadImg:function(){
-    var _this = this;
-    
-    var lotteris = this.options.lotteris;
-    for(var i=0,len=lotteris.length;i<len;i++){
-        var src = lotteris[i].src;
-        if(src){
-            var flag = false;
-            for(var j=0,imglen = this.imgs.length;j<imglen;j++){
-              if(this.imgs[j].src = src){
-                flag =true;
-                break;
-              }
-            }
-
-            if(!flag){
-              this.imgs.push({src:src,status:0});
-              var img = new Image();
-              img.onload = function(){
-                src = this.src;
-                imgs = _this.imgs;
-                for(var k=0,imglen=imgs.length;k<imglen;k++){
-                  if(imgs[k].src==src){
-                    imgs[k].status=1;
-                  }
-                }
-                _this.drawImg(src);
-              }
-              img.src = src;
-            }
-
-        }
-    }
-
-    return this;
-  },
-  drawImg:function(){
 
     return this;
   },

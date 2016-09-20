@@ -132,6 +132,8 @@
 
 <p>第一个参数是筛选条件，第二个参数是含义是把 age设为55 把gender设为female 把tech设为[&lsquo;php&rsquo;,&lsquo;mongodb&rsquo;,&lsquo;javascript&rsquo;]，最后一个参数的意思是更新多条数据</p>
 
+<p>第二个参数中的<code>$set</code>是把相应字段的相应值设定为传入的值，如果不加<code>$set</code>，相当于完全重写查询出来的结果。除了<code>$set</code>，还有几个常用的操作：<code>$inc</code>、<code>$push</code>、<code>$pull</code>。<code>$inc</code>的含义是根据传入的值对相应字段增加/减少，一般是为了应对高并发的情况。<code>$push</code>和<code>$pull</code>应对的情形是字段是一个array，向这个array中添加或者删除数据。与<code>$push</code>操作类似的是<code>$addToSet</code>，两者的不同是后者保证了数组中数据的唯一性，前者不关心唯一性只管向数组中添加数据。</p>
+
 <h2 id="删除数据:e26229a1d4143975e4d61b9e4403a9c5">删除数据</h2>
 
 <pre><code>db.users.remove({age:33},1);

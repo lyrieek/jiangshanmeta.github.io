@@ -13,7 +13,7 @@ class Login{
 		$onlineId = $this->save_online_info($uid);
 		$cookieCont = $this->encode_cookie($uid,$onlineId);
 
-		set_cookie($this->cookieName,$cookieCont,time()+$this->CI->config->item('login_expire'));
+		set_cookie($this->cookieName,$cookieCont,$this->CI->config->item('login_expire'));
 	}
 
 	private function encode_cookie($uid,$onlineId){
