@@ -124,6 +124,9 @@ window.requestAnimFrame = (function(){
     pointerColor:"#ffa642",
     textColor:'#fff',
     textPos:2/3,
+    textFontSize:14,
+    textLineHeight:1.4,
+    startDeg:0,
     doSthAfterLottery:function(json){
 
     },
@@ -135,9 +138,19 @@ window.requestAnimFrame = (function(){
     },
     doSthAfterAjaxError:function(json){
 
-    },    
+    },
+
   }
   var wrapIdPool = [];
+
+  function deg2rad(angle){
+    return Math.PI*angle/180;
+  }
+
+  function rad2deg(angle){
+    return angle*180/Math.PI;
+  }
+
   function Lottery(option){
     if(!option.lotteris || !option.ajaxUrl ){
       return;
@@ -148,12 +161,15 @@ window.requestAnimFrame = (function(){
       option.textPos = defaults.textPos;
     }
 
+
+
     //安全模式，保证是使用new关键字返回一个新的实例
     if(!(this instanceof Lottery)){
         return new Lottery(option);
     }
 
     this.options = Object.assign({},defaults,option || {});
+    this.options.startDeg = deg2rad(this.options.startDeg);
     //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
     this.status = 0;
     this.imgs = [];
@@ -315,6 +331,7 @@ window.requestAnimFrame = (function(){
       var len=lotteris.length;
       var degPerPart = 2*Math.PI/len;
       var r = options.w/2;
+      var startDeg = options.startDeg;
 
       context1.save();
       context1.translate(r,r);
@@ -323,8 +340,10 @@ window.requestAnimFrame = (function(){
         context1.save();
         context1.beginPath();
         context1.moveTo(0,0);
-        context1.lineTo(Math.sin(i*degPerPart)*r,-Math.cos(i*degPerPart)*r);
-        context1.arc(0,0,r,(i*degPerPart)-Math.PI/2,(i+1)*degPerPart-Math.PI/2,false)
+        var finalDeg = i*degPerPart+startDeg
+
+        context1.lineTo(Math.sin(finalDeg)*r,-Math.cos(finalDeg)*r);
+        context1.arc(0,0,r,finalDeg-Math.PI/2,finalDeg+degPerPart-Math.PI/2,false)
         context1.closePath();
         context1.fillStyle = lotteris[i].bgColor;
         context1.fill();
@@ -342,7 +361,7 @@ window.requestAnimFrame = (function(){
       var len=lotteris.length;
       var degPerPart = 2*Math.PI/len;
       var r = options.w/2;
-
+      var startDeg = options.startDeg;
       context1.save();
       context1.translate(r,r);
 
@@ -350,8 +369,10 @@ window.requestAnimFrame = (function(){
       context1.textAlign = "center";
       context1.textBaseline = "middle";
       context1.fillStyle = options.textColor;
-
-      context1.font = "14px bold sans-serif";
+      var fontSize = options.textFontSize;
+      var lineHeight = options.textLineHeight;
+      var realLineHeight = fontSize*lineHeight;
+      context1.font = fontSize+"px bold sans-serif";
       context1.shadowColor = "rgba(0,0,0,0.5)";
       context1.shadowBlur = 8;
 
@@ -375,7 +396,19 @@ window.requestAnimFrame = (function(){
         }else{
           var textPos = options.textPos;
         }
-        context1.fillText(text,(Math.sin(degPerPart*(i+0.5)))*r*textPos,-Math.cos(degPerPart*(i+0.5))*r*textPos );
+        var finalDeg = degPerPart*(i+0.5)+startDeg;
+
+        var textArr = text.split("\n");
+        var centerPos = r*textPos;
+
+        if(textArr.length==1){
+          context1.fillText(text,(Math.sin(finalDeg))*centerPos,-Math.cos(finalDeg)*centerPos);
+        }else{
+          var startTextPos = centerPos + realLineHeight*(textArr.length-1)/(2*Math.cos(finalDeg));
+          for(var j=0,textLen=textArr.length;j<textLen;j++){
+            context1.fillText(textArr[j],Math.sin(finalDeg)*centerPos,-Math.cos(finalDeg)*(startTextPos-j*realLineHeight/Math.cos(finalDeg)) );
+          }
+        }
 
         context1.restore();
       }
@@ -466,10 +499,10 @@ window.requestAnimFrame = (function(){
        }
     },
     showLotteryRes:function(json){
-
       var _this = this;
       var options = this.options;
       var canvas2 = this.canvas2;
+      var startDeg = rad2deg(options.startDeg);
 
       if(json.rstno==1){
         var transitionendCallback1 = function(e){
@@ -480,7 +513,7 @@ window.requestAnimFrame = (function(){
         }
         canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
         //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
-        var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1);
+        var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1)+startDeg;
         canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
         canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";      
       }else{
