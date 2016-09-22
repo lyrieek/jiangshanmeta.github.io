@@ -401,13 +401,9 @@ window.requestAnimFrame = (function(){
         var textArr = text.split("\n");
         var centerPos = r*textPos;
 
-        if(textArr.length==1){
-          context1.fillText(text,(Math.sin(finalDeg))*centerPos,-Math.cos(finalDeg)*centerPos);
-        }else{
-          var startTextPos = centerPos + realLineHeight*(textArr.length-1)/(2*Math.cos(finalDeg));
-          for(var j=0,textLen=textArr.length;j<textLen;j++){
-            context1.fillText(textArr[j],Math.sin(finalDeg)*centerPos,-Math.cos(finalDeg)*(startTextPos-j*realLineHeight/Math.cos(finalDeg)) );
-          }
+        var startTextPos = centerPos + realLineHeight*(textArr.length-1)/(2*Math.cos(finalDeg));
+        for(var j=0,textLen=textArr.length;j<textLen;j++){
+          context1.fillText(textArr[j],Math.sin(finalDeg)*centerPos,-Math.cos(finalDeg)*(startTextPos-j*realLineHeight/Math.cos(finalDeg)) );
         }
 
         context1.restore();
