@@ -112,11 +112,19 @@ var deepAssign = (function(){
       }
     }
 
-    if (!hasOwnProperty.call(to, key) || gettype(val)!=='object') {
+    if(gettype(val)==='object' || gettype(val)==='array'){
+      if(!hasOwnProperty.call(to, key)){
+        if(gettype(val)==='array'){
+          to[key] = [];
+        }else{
+          to[key] = {};
+        }
+      }
+      to[key] = assign(to[key],from[key]);
+    }else{
       to[key] = val;
-    } else {
-      to[key] = assign(Object(to[key]), from[key]);
     }
+
   }
   function assign(to, from) {
     if (to === from) {
@@ -239,6 +247,7 @@ window.requestAnimFrame = (function(){
 
   function Lottery(option){
     if(!option || !option.lotteris || !option.ajaxUrl ){
+      console.error('missing parameter');
       return;
     }
 
