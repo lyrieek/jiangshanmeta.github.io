@@ -85,6 +85,81 @@ var pfx = (function () {
     };
 })();
 
+// https://github.com/sindresorhus/deep-assign/blob/master/index.js
+var deepAssign = (function(){
+  var gettype = function(obj){
+    return Object.prototype.toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
+  }
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
+  var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+  function toObject(val) {
+    if (val === null || val === undefined) {
+      throw new TypeError('Cannot convert undefined or null to object');
+    }
+
+    return Object(val);
+  }
+  function assignKey(to, from, key) {
+    var val = from[key];
+
+    if (val === undefined || val === null) {
+      return;
+    }
+
+    if (hasOwnProperty.call(to, key)) {
+      if (to[key] === undefined || to[key] === null) {
+        throw new TypeError('Cannot convert undefined or null to object (' + key + ')');
+      }
+    }
+
+    if (!hasOwnProperty.call(to, key) || gettype(val)!=='object') {
+      to[key] = val;
+    } else {
+      to[key] = assign(Object(to[key]), from[key]);
+    }
+  }
+  function assign(to, from) {
+    if (to === from) {
+      return to;
+    }
+
+    from = Object(from);
+
+    for (var key in from) {
+      if (hasOwnProperty.call(from, key)) {
+        assignKey(to, from, key);
+      }
+    }
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(from);
+
+      for (var i = 0; i < symbols.length; i++) {
+        if (propIsEnumerable.call(from, symbols[i])) {
+          assignKey(to, from, symbols[i]);
+        }
+      }
+    }
+
+    return to;
+  }
+
+  return function(target){
+    target = toObject(target);
+
+    for (var s = 1; s < arguments.length; s++) {
+      assign(target, arguments[s]);
+    }
+
+    return target;        
+  }
+
+
+})();
+
+
+
+
 function whichTransitionEvent(){  
     var t;  
     var el = document.createElement('p');  
@@ -112,21 +187,32 @@ window.requestAnimFrame = (function(){
 
 //利用闭包，把defaults隐藏而不是每次都声明一次
 (function(window){
-  var w = Math.min(document.documentElement.clientWidth*0.9,500);
   var defaults = {
-    warpId:"lotteryWrap",
     ajaxUrl:"http://jiangshanmeta.github.io",
-    w:w,
-    animationTimePerRound:1,     //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
-    rotateCountAfterAjax:3,
-    outerRingColor:"#ff6900",
-    innerRingColor:"#ffa642",
-    pointerColor:"#ffa642",
-    textColor:'#fff',
-    textPos:2/3,
-    textFontSize:14,
-    textLineHeight:1.4,
-    startDeg:0,
+    DOM:{
+      wrap:'lotteryWrap',
+      w:Math.min(document.documentElement.clientWidth*0.9,500),
+      outerRingColor:"#ff6900",
+      innerRingColor:"#ffa642",
+      pointerColor:"#ffa642",
+      startDeg:0,
+    },
+    animation:{
+      timePerRound:1,
+      rotateCountAfterAjax:3,  //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
+    },
+    text:{
+      color:"#fff",
+      pos:2/3,
+      fontSize:14,
+      lineHeight:1.4,
+    },
+    msg:{
+      ready:'开始抽奖',
+      doing:'抽奖中',
+      done:'抽奖结束',
+    },
+
     doSthAfterLottery:function(json){
 
     },
@@ -152,29 +238,25 @@ window.requestAnimFrame = (function(){
   }
 
   function Lottery(option){
-    if(!option.lotteris || !option.ajaxUrl ){
+    if(!option || !option.lotteris || !option.ajaxUrl ){
       return;
     }
-
-
-    if(option.textPos&&(option.textPos>=1 || option.textPos<=0)){
-      option.textPos = defaults.textPos;
-    }
-
-
 
     //安全模式，保证是使用new关键字返回一个新的实例
     if(!(this instanceof Lottery)){
         return new Lottery(option);
     }
 
-    this.options = Object.assign({},defaults,option || {});
-    this.options.startDeg = deg2rad(this.options.startDeg);
+    this.options = deepAssign({},defaults,option);
+    // 对合并之后的数据进行处理
+    if(this.options.text.pos>=1 || this.options.text.pos<=0){
+      this.options.text.pos = defaults.text.pos;
+    }
+    this.options.DOM.startDeg = deg2rad(this.options.DOM.startDeg);
+
     //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
     this.status = 0;
     this.imgs = [];
-
-
 
     this.initDOM().draw();
 
@@ -190,19 +272,21 @@ window.requestAnimFrame = (function(){
     constructor:Lottery,
     initDOM:function(){
       var options = this.options;
-      var w = options.w;
+      var DOM = options.DOM;
+      var wrapId = DOM.wrapId;
+      var w = DOM.w;
       //外层盒子初始样式设置
       // 做一点安全，防止一个wrapId下面有多个抽奖区
-      this.wrap = document.querySelector("#"+options.warpId);
+      this.wrap = document.querySelector("#"+wrapId);
       if(!this.wrap){
         this.wrap = document.createElement("div");
         document.body.appendChild(this.wrap);
       }else{
-        if(wrapIdPool.indexOf(this.options.warpId)>-1){
+        if(wrapIdPool.indexOf(wrapId)>-1){
           console.error('Lottery wrapId repeated');
           return;
         }else{
-          wrapIdPool.push(this.options.warpId);
+          wrapIdPool.push(wrapId);
         }
       }
       var _this = this;
@@ -235,7 +319,7 @@ window.requestAnimFrame = (function(){
       this.textArea = document.createElement("div");
       var textAreaPercent = 0.25;
       this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+textAreaPercent*w+"px;height:"+textAreaPercent*w+"px;line-height:"+ textAreaPercent*w +"px;left:" + (0.5-textAreaPercent/2)*100 + "%;top:"+(0.5-textAreaPercent/2)*100 +"%;background:#fff;text-align:center;white-space:nowrap;-webkit-user-select:none;"
-      this.textArea.innerText = "开始抽奖";
+      this.textArea.innerText = options.msg.ready;
 
       var fragment = document.createDocumentFragment();
       fragment.appendChild(this.canvas1);
@@ -251,7 +335,8 @@ window.requestAnimFrame = (function(){
     drawRing:function(){
       var context2 = this.context2;
       var options = this.options;
-      var r = options.w/2;
+      var DOM = options.DOM;
+      var r = DOM.w/2;
 
       context2.save();
       context2.translate(r,r);
@@ -261,7 +346,7 @@ window.requestAnimFrame = (function(){
       context2.beginPath();
       context2.shadowColor = "rgba(0,0,0,0.5)";
       context2.shadowBlur = 8;
-      context2.strokeStyle = options.innerRingColor;
+      context2.strokeStyle = DOM.innerRingColor;
       context2.lineWidth = 10;
       context2.arc(0,0,r-9,0,2*Math.PI,false);
       context2.closePath();
@@ -271,7 +356,7 @@ window.requestAnimFrame = (function(){
       // 外环
       context2.save();
       context2.beginPath();
-      context2.strokeStyle = options.outerRingColor;
+      context2.strokeStyle = DOM.outerRingColor;
       context2.lineWidth = 4;
       context2.arc(0,0,r-2,0,2*Math.PI,false);
       context2.closePath();
@@ -285,7 +370,8 @@ window.requestAnimFrame = (function(){
     drawPointer:function(){
       var context2 = this.context2;
       var options = this.options;
-      var r = options.w/2;
+      var DOM = options.DOM;
+      var r = DOM.w/2;
 
       context2.save();
       context2.translate(r,r);
@@ -301,7 +387,7 @@ window.requestAnimFrame = (function(){
       context2.lineTo(0.05*r,-0.8*r);
       context2.lineTo(0.05*r,-r+9);
       context2.closePath();
-      context2.fillStyle = options.pointerColor;
+      context2.fillStyle = DOM.pointerColor;
       context2.fill();
       context2.restore();  
 
@@ -316,7 +402,7 @@ window.requestAnimFrame = (function(){
       context2.lineTo(0.05*r,-0.40*r);
       context2.lineTo(0.05*r,-0.25*r);    
       context2.closePath();
-      context2.fillStyle = options.pointerColor;
+      context2.fillStyle = DOM.pointerColor;
       context2.fill();
       context2.restore();
 
@@ -327,11 +413,12 @@ window.requestAnimFrame = (function(){
     drawBg:function(){
       var context1 = this.context1;
       var options = this.options;
+      var DOM = options.DOM;
       var lotteris = options.lotteris;
       var len=lotteris.length;
       var degPerPart = 2*Math.PI/len;
-      var r = options.w/2;
-      var startDeg = options.startDeg;
+      var r = DOM.w/2;
+      var startDeg = DOM.startDeg;
 
       context1.save();
       context1.translate(r,r);
@@ -340,7 +427,7 @@ window.requestAnimFrame = (function(){
         context1.save();
         context1.beginPath();
         context1.moveTo(0,0);
-        var finalDeg = i*degPerPart+startDeg
+        var finalDeg = i*degPerPart+startDeg;
 
         context1.lineTo(Math.sin(finalDeg)*r,-Math.cos(finalDeg)*r);
         context1.arc(0,0,r,finalDeg-Math.PI/2,finalDeg+degPerPart-Math.PI/2,false)
@@ -357,20 +444,23 @@ window.requestAnimFrame = (function(){
     drawText:function(){
       var context1 = this.context1;
       var options = this.options;
+      var DOM = options.DOM;
       var lotteris = options.lotteris;
+      var optionText = options.text;
       var len=lotteris.length;
       var degPerPart = 2*Math.PI/len;
-      var r = options.w/2;
-      var startDeg = options.startDeg;
+      var r = DOM.w/2;
+      var startDeg = DOM.startDeg;
+
       context1.save();
       context1.translate(r,r);
 
       context1.save();
       context1.textAlign = "center";
       context1.textBaseline = "middle";
-      context1.fillStyle = options.textColor;
-      var fontSize = options.textFontSize;
-      var lineHeight = options.textLineHeight;
+      context1.fillStyle = optionText.color;
+      var fontSize = optionText.fontSize;
+      var lineHeight = optionText.lineHeight;
       var realLineHeight = fontSize*lineHeight;
       context1.font = fontSize+"px bold sans-serif";
       context1.shadowColor = "rgba(0,0,0,0.5)";
@@ -391,10 +481,10 @@ window.requestAnimFrame = (function(){
         if(lotteris[i].textPos!==undefined){
           var textPos = lotteris[i].textPos;
           if(textPos>=1 || textPos<=0){
-            textPos = options.textPos;
+            textPos = optionText.pos;
           }
         }else{
-          var textPos = options.textPos;
+          var textPos = optionText.pos;
         }
         var finalDeg = degPerPart*(i+0.5)+startDeg;
 
@@ -421,9 +511,9 @@ window.requestAnimFrame = (function(){
        if(canLottery){
         // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
         this.status = 1;
-        this.textArea.innerText = "抽奖中";
+        this.textArea.innerText = options.msg.doing;
         var canvas2 = this.canvas2;
-        var animationTimePerRound = this.options.animationTimePerRound;
+        var animationTimePerRound = options.animation.timePerRound;
         var styleStr = canvas2.style.cssText;
         styleStr = styleStr + pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(360deg);";
         var hasAjaxRest = false;
@@ -498,18 +588,18 @@ window.requestAnimFrame = (function(){
       var _this = this;
       var options = this.options;
       var canvas2 = this.canvas2;
-      var startDeg = rad2deg(options.startDeg);
+      var startDeg = rad2deg(options.DOM.startDeg);
 
       if(json.rstno==1){
         var transitionendCallback1 = function(e){
           this.removeEventListener(e.type,transitionendCallback1);
           _this.status = 2;
-          _this.textArea.innerText = "抽奖结束";
+          _this.textArea.innerText = options.msg.done;
           options.doSthAfterLottery && options.doSthAfterLottery(json);  
         }
         canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
         //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
-        var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.rotateCountAfterAjax+1)+startDeg;
+        var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.animation.rotateCountAfterAjax+1)+startDeg;
         canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
         canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";      
       }else{
@@ -523,7 +613,7 @@ window.requestAnimFrame = (function(){
     },
     reset:function(){
       this.status = 0;
-      this.textArea.innerText = "开始抽奖";
+      this.textArea.innerText = this.options.msg.ready;
       var canvas2Style = this.canvas2.style;
       var styleStr = canvas2Style.cssText;
       styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotate(0deg);";
