@@ -248,6 +248,10 @@ public function __construct()
 
 <p>我们用它做了什么？在CI中，如果要加载并实例化某个类并挂到CI上，我们需要使用load方法，但是有的时候我们只想使用这个类的实例，并不想挂到CI指针上，比如说在一个model中加载另一个model，我们该怎么办？一个方法是需要的时候手动include或者require，当然这样比较累，另一种方法就是__autoload啦。最终的结果是我们可以使用new关键字实例化一个model而不需要手动加载文件。</p>
 
+<h2 id="17-date:960e085aadb29182f9448019a6b3c8f1">17.date</h2>
+
+<p>之所以说它是因为出了一个小bug，我想要处理时间戳显示时间，然后第一个参数填了<code>'Y-m-d h:i'</code>,然后就出bug了，因为这里的h是指12小时制。这个函数常用的其实就那么几个参数。<a href="http://php.net/manual/zh/function.date.php">手册</a></p>
+
 			</div>
 
 
