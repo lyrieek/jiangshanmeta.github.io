@@ -252,6 +252,10 @@ public function __construct()
 
 <p>之所以说它是因为出了一个小bug，我想要处理时间戳显示时间，然后第一个参数填了<code>'Y-m-d h:i'</code>,然后就出bug了，因为这里的h是指12小时制。这个函数常用的其实就那么几个参数。<a href="http://php.net/manual/zh/function.date.php">手册</a></p>
 
+<h2 id="18-json-decode:960e085aadb29182f9448019a6b3c8f1">18.json_decode</h2>
+
+<p>一般来说<code>json_decode</code>用到的很少，主要用到的是<code>json_encode</code>。以前不知道前端如何向后端传递复杂数据类型，然后就前端转成json然后给后端，后端decode，然后当时也不知道还有第二个参数所以后端以对象的语法访问。后来看其他人的代码，知道在jquery中可以传递数组和对象然后jquery格式化。    今天在看jquery如何实现序列化，突然想到了这个话题。</p>
+
 			</div>
 
 
