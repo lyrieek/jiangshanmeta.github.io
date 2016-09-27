@@ -60,12 +60,27 @@ if (typeof Object.create != 'function') {
   })();
 }
 
+// 基于jquery的camelcase修改，仅仅是将中划线删除然后将后面的第一个字母大写
+var camelCase = (function(){
+  var rdashAlpha = /-([a-z])/g;
+  var fcamelCase = function( all, letter ) {
+    return letter.toUpperCase();
+  };
+  return function(str){
+    return str.replace(rdashAlpha,fcamelCase);
+  }
+
+})();
+
 //impress.js
 var pfx = (function () {
+  // 看jq的camelcase发现为啥prefixes里面其他前缀都是首字母大写而ie的是首字母小写，举例说明：WebkitTransform msTransform ie自身的bug
+  // 原来的代码里其实没处理带有中划线的名称。
     var style = document.createElement('dummy').style,
         prefixes = 'Webkit Moz O ms Khtml'.split(' '),
         memory = {};
     return function ( prop ) {
+        prop = camelCase(prop);
         if ( typeof memory[ prop ] === "undefined" ) {
             //实现一个ucfirst
             var ucProp  = ucfirst(prop),
