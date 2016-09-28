@@ -216,8 +216,12 @@ window.requestAnimFrame = (function(){
       wrap:'lotteryWrap',
       w:Math.min(document.documentElement.clientWidth*0.9,500),
       outerRingColor:"#ff6900",
+      outerRingWidth:4,
       innerRingColor:"#ffa642",
+      innerRingWidth:10,
       pointerColor:"#ffa642",
+      shadowColor:"rgba(0,0,0,0.5)",
+      shadowBlur:8,
       startDeg:0,
     },
     animation:{
@@ -229,11 +233,14 @@ window.requestAnimFrame = (function(){
       pos:2/3,
       fontSize:14,
       lineHeight:1.4,
+      shadowColor:"rgba(0,0,0,0.5)",
+      shadowBlur:8,
     },
     msg:{
       ready:'开始抽奖',
       doing:'抽奖中',
       done:'抽奖结束',
+      css:"box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);background:#fff;",
     },
 
     doSthAfterLottery:function(json){
@@ -342,7 +349,7 @@ window.requestAnimFrame = (function(){
       // 文字区域
       this.textArea = document.createElement("div");
       var textAreaPercent = 0.25;
-      this.textArea.style.cssText = "position:absolute;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,0.5),inset 0 0 10px rgba(0,0,0,0.5);width:"+textAreaPercent*w+"px;height:"+textAreaPercent*w+"px;line-height:"+ textAreaPercent*w +"px;left:" + (0.5-textAreaPercent/2)*100 + "%;top:"+(0.5-textAreaPercent/2)*100 +"%;background:#fff;text-align:center;white-space:nowrap;-webkit-user-select:none;"
+      this.textArea.style.cssText = "position:absolute;border-radius:50%;width:"+textAreaPercent*w+"px;height:"+textAreaPercent*w+"px;line-height:"+ textAreaPercent*w +"px;left:" + (0.5-textAreaPercent/2)*100 + "%;top:"+(0.5-textAreaPercent/2)*100 +"%;text-align:center;white-space:nowrap;-webkit-user-select:none;" + options.msg.css;
       this.textArea.innerText = options.msg.ready;
 
       var fragment = document.createDocumentFragment();
@@ -365,14 +372,16 @@ window.requestAnimFrame = (function(){
       context2.save();
       context2.translate(r,r);
 
+      var outerRingWidth = DOM.outerRingWidth;
+      var innerRingWidth = DOM.innerRingWidth;
       // 内环
       context2.save();
       context2.beginPath();
-      context2.shadowColor = "rgba(0,0,0,0.5)";
-      context2.shadowBlur = 8;
+      context2.shadowColor = DOM.shadowColor;
+      context2.shadowBlur = DOM.shadowBlur;
       context2.strokeStyle = DOM.innerRingColor;
-      context2.lineWidth = 10;
-      context2.arc(0,0,r-9,0,2*Math.PI,false);
+      context2.lineWidth = innerRingWidth;
+      context2.arc(0,0,r-(outerRingWidth+innerRingWidth/2),0,2*Math.PI,false);
       context2.closePath();
       context2.stroke();
       context2.restore();
@@ -381,8 +390,8 @@ window.requestAnimFrame = (function(){
       context2.save();
       context2.beginPath();
       context2.strokeStyle = DOM.outerRingColor;
-      context2.lineWidth = 4;
-      context2.arc(0,0,r-2,0,2*Math.PI,false);
+      context2.lineWidth = outerRingWidth;
+      context2.arc(0,0,r-outerRingWidth/2,0,2*Math.PI,false);
       context2.closePath();
       context2.stroke();
       context2.restore();
@@ -487,8 +496,8 @@ window.requestAnimFrame = (function(){
       var lineHeight = optionText.lineHeight;
       var realLineHeight = fontSize*lineHeight;
       context1.font = fontSize+"px bold sans-serif";
-      context1.shadowColor = "rgba(0,0,0,0.5)";
-      context1.shadowBlur = 8;
+      context1.shadowColor = optionText.shadowColor;
+      context1.shadowBlur = optionText.shadowBlur;
 
 
       for(var i=0;i<len;i++){
