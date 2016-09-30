@@ -512,7 +512,7 @@ window.requestAnimFrame = (function(){
         }
         var finalDeg = degPerPart*(i+0.5)+startDeg;
 
-        var textArr = text.split("\n");
+        var textArr = text.split('\n');
         var centerPos = r*textPos;
 
         var startTextPos = centerPos + realLineHeight*(textArr.length-1)/(2*Math.cos(finalDeg));
