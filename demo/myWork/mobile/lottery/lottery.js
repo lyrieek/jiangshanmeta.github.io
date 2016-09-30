@@ -547,8 +547,7 @@ window.requestAnimFrame = (function(){
         this.textArea.innerText = options.msg.doing;
         var canvas2 = this.canvas2;
         var animationTimePerRound = options.animation.timePerRound;
-        // var styleStr = canvas2.style.cssText;
-        // styleStr = styleStr + pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(360deg);";
+
         var hasAjaxRest = false;
         var ajaxRest;
         var transitionendCallback = function(e){
@@ -559,8 +558,6 @@ window.requestAnimFrame = (function(){
             var oldcss = this.style.cssText;
             this.style[pfx('transition')] = "0s";
             this.style[pfx("transform")] = "rotate(0deg)";
-            // styleStr2+= pfx("transition") + ":0s;" + pfx("transform") + ":rotate(0deg);";
-            // this.style.cssText = styleStr2;
 
             var _thisCanvas = this;
             // 你猜为什么要写在setTimeout中呢。为了强制渲染啊。
@@ -655,9 +652,6 @@ window.requestAnimFrame = (function(){
       canvas2Style[pfx('transition')] = "0s";
       canvas2Style[pfx('transform')] = "rotate(0deg)";
 
-      // var styleStr = canvas2Style.cssText;
-      // styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotate(0deg);";
-      // canvas2Style.cssText = styleStr;
       return this;
     }
 
