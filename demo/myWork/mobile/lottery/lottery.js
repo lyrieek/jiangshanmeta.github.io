@@ -343,9 +343,9 @@ window.requestAnimFrame = (function(){
       this.canvas2 = document.createElement("canvas");
       this.canvas2.width = w;
       this.canvas2.height = w;
-      this.canvas2.style.cssText="position:absolute;top:0;left:0;"+pfx("transform") + ":rotate(0deg);will-change:transform;";
+      this.canvas2.style.cssText="position:absolute;top:0;left:0;"+"will-change:transform;";
+      this.canvas2.style[pfx('transform')] = "rotate(0deg)";
       this.context2 = this.canvas2.getContext('2d');
-
       // 文字区域
       this.textArea = document.createElement("div");
       var textAreaPercent = 0.25;
@@ -547,8 +547,8 @@ window.requestAnimFrame = (function(){
         this.textArea.innerText = options.msg.doing;
         var canvas2 = this.canvas2;
         var animationTimePerRound = options.animation.timePerRound;
-        var styleStr = canvas2.style.cssText;
-        styleStr = styleStr + pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(360deg);";
+        // var styleStr = canvas2.style.cssText;
+        // styleStr = styleStr + pfx('transition') +":all " + animationTimePerRound  +"s linear;" + pfx("transform") + ":rotate(360deg);";
         var hasAjaxRest = false;
         var ajaxRest;
         var transitionendCallback = function(e){
@@ -556,9 +556,11 @@ window.requestAnimFrame = (function(){
             this.removeEventListener(e.type,transitionendCallback);
             _this.showLotteryRes(ajaxRest);
           }else{
-            var styleStr2 = this.style.cssText;
-            styleStr2+= pfx("transition") + ":0s;" + pfx("transform") + ":rotate(0deg);";
-            this.style.cssText = styleStr2;
+            var oldcss = this.style.cssText;
+            this.style[pfx('transition')] = "0s";
+            this.style[pfx("transform")] = "rotate(0deg)";
+            // styleStr2+= pfx("transition") + ":0s;" + pfx("transform") + ":rotate(0deg);";
+            // this.style.cssText = styleStr2;
 
             var _thisCanvas = this;
             // 你猜为什么要写在setTimeout中呢。为了强制渲染啊。
@@ -569,7 +571,7 @@ window.requestAnimFrame = (function(){
             //用requestAnimationFrame的作用是一样的，等重置需要一帧时间，再下一次重绘的时候写入新的样式。
             requestAnimFrame(function(){
               requestAnimFrame(function(){
-                _thisCanvas.style.cssText = styleStr;
+                _thisCanvas.style.cssText = oldcss;
               })
                
             });
@@ -578,7 +580,9 @@ window.requestAnimFrame = (function(){
         }
 
         canvas2.addEventListener(whichTransitionEvent(),transitionendCallback);
-        canvas2.style.cssText = styleStr;
+        canvas2.style[pfx('transition')] = "all "+ animationTimePerRound + "s linear";
+        canvas2.style[pfx('transform')] = "rotate(360deg)";
+        // canvas2.style.cssText = styleStr;
         
         if(options.ajaxUrl=='http://jiangshanmeta.github.io'){
           // 模拟ajax返回值
@@ -648,9 +652,12 @@ window.requestAnimFrame = (function(){
       this.status = 0;
       this.textArea.innerText = this.options.msg.ready;
       var canvas2Style = this.canvas2.style;
-      var styleStr = canvas2Style.cssText;
-      styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotate(0deg);";
-      canvas2Style.cssText = styleStr;
+      canvas2Style[pfx('transition')] = "0s";
+      canvas2Style[pfx('transform')] = "rotate(0deg)";
+
+      // var styleStr = canvas2Style.cssText;
+      // styleStr += pfx("transition")+":0s;"+pfx("transform") + ":rotate(0deg);";
+      // canvas2Style.cssText = styleStr;
       return this;
     }
 
