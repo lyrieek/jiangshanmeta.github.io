@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>一个控制animation的小玩具</title>
+		<link rel="stylesheet" href="../../org/org/css/animate.css">
+		<script src="animate.js"></script>
+		<style>
+			.btn{
+				display:inline-block;
+				padding:6px 12px;
+				font-size:14px;
+				font-weight:bold;
+				line-height:1.4;
+				text-align:center;
+				white-space:nowrap;
+				vertical-align:middle;
+				cursor:pointer;
+				-webkit-user-select:none;
+				user-select:none;
+				border:1px solid transparent;
+				border-radius:4px;
+			}
+			.btn-info{
+				color:#fff;
+				background-color:#31b0d5;
+				border-color:#269abc;
+			}
+			.btn-success{
+				color:#fff;
+				background-color:#449d44;
+				border-color:#398439;
+			}
+			.btn-warning{
+				color:#fff;
+				background-color:#ec971f;
+				border-color:#d58512;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="abc" style="width:200px;height:200px;background-color:yellowgreen;margin-left:auto;margin-right:auto;"></div>
+
+		<div style="fint-size:14px;text-indent:2em;margin-top:50px;line-height:1.4;">
+			因为通常css动画的控制不是那么灵活，我稍微进行了一下封装，代码本身其实并不复杂，算上各种辅助性的函数也才不到两百行。
+		</div>
+	
+		<div style="position:fixed;width:100%;bottom:0;left:0;display:table;table-layout:fixed;text-align:center;">
+			<div style="display:table-cell">
+				<button onclick="run()" type="button" class="btn btn-info">开始</button>
+			</div>
+			<div style="display:table-cell">
+				<button onclick="pause()" type="button" class="btn btn-warning">暂停</button>
+			</div>
+			<div style="display:table-cell">
+				<button onclick="rightnow()" type="button" class="btn btn-success">立即开始</button>
+			</div>
+		</div>
+
+		<script>
+
+			var callback= function(e){
+
+			}
+			var ins = Animate({
+				selector:"#abc",
+				name:'tada',
+				duration:"2s",
+				delay:"3s",
+
+			}).one(function(e){
+				console.log('使用one绑定的事件触发');
+				ins.set({
+					name:"hinge",
+					delay:"0s",
+					duration:'3s',
+					mode:'none',
+				}).run().one(function(){
+					ins.repeat();
+				});					
+			}).on(function(){
+				console.log("使用on绑定的事件触发");
+			})
+
+			function run(){
+				ins.run();
+			}	
+			function pause(){
+				ins.pause();
+			}
+			function rightnow(){
+				ins.rightnow();
+			}
+
+		</script>
+	</body>
+</html>
