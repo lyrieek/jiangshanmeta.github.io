@@ -99,12 +99,12 @@ var pfx = (function () {
         return memory[ prop ];
     };
 })();
-
+function gettype(obj){
+  return Object.prototype.toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
+}
 // https://github.com/sindresorhus/deep-assign/blob/master/index.js
 var deepAssign = (function(){
-  var gettype = function(obj){
-    return Object.prototype.toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
-  }
+
   var hasOwnProperty = Object.prototype.hasOwnProperty;
   var propIsEnumerable = Object.prototype.propertyIsEnumerable;
   function toObject(val) {
@@ -215,18 +215,15 @@ window.requestAnimFrame = (function(){
     DOM:{
       wrap:'lotteryWrap',
       w:Math.min(document.documentElement.clientWidth*0.9,500),
-      outerRingColor:"#ff6900",
-      outerRingWidth:4,
-      innerRingColor:"#ffa642",
-      innerRingWidth:10,
+      rings:[{color:'#ff6900','width':4},{color:'#ffa642',width:10,shadowColor:'rgba(0,0,0,0.5)',shadowBlur:8}],
       pointerColor:"#ffa642",
-      shadowColor:"rgba(0,0,0,0.5)",
-      shadowBlur:8,
       startDeg:0,
     },
     animation:{
       timePerRound:1,
       rotateCountAfterAjax:3,  //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
+      area:'decoratio',
+      timeAfterAjax:'7s',
     },
     text:{
       color:"#fff",
@@ -337,13 +334,16 @@ window.requestAnimFrame = (function(){
       this.canvas1 = document.createElement("canvas");
       this.canvas1.width = w;
       this.canvas1.height = w;
+      this.canvas1.style.cssText="will-change:transform;";
+      this.canvas1.style[pfx('transform')] = "rotate(0deg)";
+
       this.context1 = this.canvas1.getContext('2d');
 
       //canvas2负责绘制装饰性的指针表盘
       this.canvas2 = document.createElement("canvas");
       this.canvas2.width = w;
       this.canvas2.height = w;
-      this.canvas2.style.cssText="position:absolute;top:0;left:0;"+"will-change:transform;";
+      this.canvas2.style.cssText="position:absolute;top:0;left:0;will-change:transform;";
       this.canvas2.style[pfx('transform')] = "rotate(0deg)";
       this.context2 = this.canvas2.getContext('2d');
       // 文字区域
@@ -372,29 +372,30 @@ window.requestAnimFrame = (function(){
       context2.save();
       context2.translate(r,r);
 
-      var outerRingWidth = DOM.outerRingWidth;
-      var innerRingWidth = DOM.innerRingWidth;
-      // 内环
-      context2.save();
-      context2.beginPath();
-      context2.shadowColor = DOM.shadowColor;
-      context2.shadowBlur = DOM.shadowBlur;
-      context2.strokeStyle = DOM.innerRingColor;
-      context2.lineWidth = innerRingWidth;
-      context2.arc(0,0,r-(outerRingWidth+innerRingWidth/2),0,2*Math.PI,false);
-      context2.closePath();
-      context2.stroke();
-      context2.restore();
-
-      // 外环
-      context2.save();
-      context2.beginPath();
-      context2.strokeStyle = DOM.outerRingColor;
-      context2.lineWidth = outerRingWidth;
-      context2.arc(0,0,r-outerRingWidth/2,0,2*Math.PI,false);
-      context2.closePath();
-      context2.stroke();
-      context2.restore();
+      var totalWidth = 0;
+      var rings = DOM.rings;
+      if(gettype(rings)!='array'){
+        console.error('parameter for rings must be array');
+        return this;
+      }
+      for(var i=0;i<rings.length;i++){
+        var thisring = rings[i];
+        context2.save();
+        context2.beginPath();
+        context2.strokeStyle = thisring.color;
+        context2.lineWidth = thisring.width;
+        if(thisring.shadowColor){
+          context2.shadowColor = thisring.shadowColor;
+        }
+        if(thisring.shadowBlur){
+          context2.shadowBlur = thisring.shadowBlur;
+        }
+        context2.arc(0,0,r-(totalWidth+thisring.width/2),0,2*Math.PI,false);
+        context2.closePath();
+        context2.stroke();
+        context2.restore();
+        totalWidth+= thisring.width;
+      }
 
       context2.restore();
 
@@ -484,7 +485,7 @@ window.requestAnimFrame = (function(){
       var degPerPart = 2*Math.PI/len;
       var r = DOM.w/2;
       var startDeg = DOM.startDeg;
-
+      var animateArea = options.animation.area;
       context1.save();
       context1.translate(r,r);
 
@@ -507,7 +508,7 @@ window.requestAnimFrame = (function(){
         }
 
         context1.save();
-        
+
         if(lotteris[i].textColor!==undefined){
           context1.fillStyle = lotteris[i].textColor;
         }
@@ -519,14 +520,20 @@ window.requestAnimFrame = (function(){
         }else{
           var textPos = optionText.pos;
         }
-        var finalDeg = degPerPart*(i+0.5)+startDeg;
+        
+        if(animateArea=='decoration'){
+          var finalDeg = degPerPart*(i+0.5)+startDeg;
+        }else{
+          var finalDeg = 0;
+          context1.rotate((i+0.5)*degPerPart+startDeg);
+        }
 
         var textArr = text.split('\n');
         var centerPos = r*textPos;
 
         var startTextPos = centerPos + realLineHeight*(textArr.length-1)/(2*Math.cos(finalDeg));
         for(var j=0,textLen=textArr.length;j<textLen;j++){
-          context1.fillText(textArr[j],Math.sin(finalDeg)*centerPos,-Math.cos(finalDeg)*(startTextPos-j*realLineHeight/Math.cos(finalDeg)) );
+            context1.fillText(textArr[j],Math.sin(finalDeg)*centerPos,-Math.cos(finalDeg)*(startTextPos-j*realLineHeight/Math.cos(finalDeg)) );
         }
 
         context1.restore();
@@ -545,7 +552,14 @@ window.requestAnimFrame = (function(){
         // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
         this.status = 1;
         this.textArea.innerText = options.msg.doing;
-        var canvas2 = this.canvas2;
+        var animateArea = options.animation.area;
+        if(animateArea=='decoration'){
+          var canvas = this.canvas2;
+        }else{
+          var canvas = this.canvas1;
+        }
+
+        
         var animationTimePerRound = options.animation.timePerRound;
 
         var hasAjaxRest = false;
@@ -576,11 +590,10 @@ window.requestAnimFrame = (function(){
           }
         }
 
-        canvas2.addEventListener(whichTransitionEvent(),transitionendCallback);
-        canvas2.style[pfx('transition')] = "all "+ animationTimePerRound + "s linear";
-        canvas2.style[pfx('transform')] = "rotate(360deg)";
-        // canvas2.style.cssText = styleStr;
-        
+        canvas.addEventListener(whichTransitionEvent(),transitionendCallback);
+        canvas.style[pfx('transition')] = "all "+ animationTimePerRound + "s linear";
+        canvas.style[pfx('transform')] = "rotate(360deg)";
+
         if(options.ajaxUrl=='http://jiangshanmeta.github.io'){
           // 模拟ajax返回值
           setTimeout(function(){
@@ -621,7 +634,13 @@ window.requestAnimFrame = (function(){
     showLotteryRes:function(json){
       var _this = this;
       var options = this.options;
-      var canvas2 = this.canvas2;
+      var animateArea = options.animation.area;
+      if(animateArea=='decoration'){
+        var canvas = this.canvas2;
+      }else{
+        var canvas = this.canvas1;
+      }
+
       var startDeg = rad2deg(options.DOM.startDeg);
 
       if(json.rstno==1){
@@ -631,11 +650,16 @@ window.requestAnimFrame = (function(){
           _this.textArea.innerText = options.msg.done;
           options.doSthAfterLottery && options.doSthAfterLottery(json);  
         }
-        canvas2.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
+        canvas.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
         //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
-        var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.animation.rotateCountAfterAjax+1)+startDeg;
-        canvas2.style[pfx("transition")] = "all 7s cubic-bezier(0.33,0.5,0.66,0.83)";
-        canvas2.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";      
+        if(animateArea=='decoration'){
+          var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.animation.rotateCountAfterAjax+1)+startDeg;
+        }else{
+          var finalRotate = 360-(json.data.index+0.5)*360/options.lotteris.length+360*(options.animation.rotateCountAfterAjax+1)-startDeg;
+        }
+        
+        canvas.style[pfx("transition")] = "all "+ options.animation.timeAfterAjax + " cubic-bezier(0.33,0.5,0.66,0.83)";
+        canvas.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";      
       }else{
         this.reset(); 
         options.doSthAfterAjaxError && options.doSthAfterAjaxError(json);
@@ -648,9 +672,15 @@ window.requestAnimFrame = (function(){
     reset:function(){
       this.status = 0;
       this.textArea.innerText = this.options.msg.ready;
-      var canvas2Style = this.canvas2.style;
-      canvas2Style[pfx('transition')] = "0s";
-      canvas2Style[pfx('transform')] = "rotate(0deg)";
+      var animateArea = this.options.animation.area;
+      if(animateArea=='decoration'){
+        var canvasStyle = this.canvas2.style;
+      }else{
+        var canvasStyle = this.canvas1.style;
+      }
+      
+      canvasStyle[pfx('transition')] = "0s";
+      canvasStyle[pfx('transform')] = "rotate(0deg)";
 
       return this;
     }

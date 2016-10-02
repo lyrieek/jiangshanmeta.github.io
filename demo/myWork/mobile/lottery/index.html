@@ -30,16 +30,11 @@
 					{bgColor:'#53e7ff',text:'七等奖\n续一秒'},
 					{bgColor:'#ff689f',text:'八等奖\n续一秒'}
 				],
-				startDeg:-45,
-				// text:{
-				// 	color:'#000',
-				// },
-				// textFontSize:14,
-				// textLineHeight:1.4,
-				// textColor:'#fff',
-				// outerRingColor:"#ff6900",
-				// innerRingColor:"#ffa642",
-				// pointerColor:"#ffa642",
+				DOM:{
+					// startDeg:-10,
+				},
+				
+
 				ajaxUrl:'http://jiangshanmeta.github.io',
 				doSthAfterLottery:function(json){
 					alert(json.data.err.msg);
