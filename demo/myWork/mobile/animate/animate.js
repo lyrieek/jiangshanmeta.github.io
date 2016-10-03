@@ -61,8 +61,44 @@
 	            return animations[t];  
 	        }  
 	    }  	
-
 	})();
+
+	var animationstartEvent = (function(){
+	    var t;  
+	    var el = document.createElement('p');  
+	    var animations = {  
+	      'animation':'animationstart',  
+	      'OAnimation':'oAnimationStart',  
+	      'MozAnimation':'mozAnimationStart',  
+	      'WebkitAnimation':'webkitAnimationStart',  
+	      'MsAnimation':'msAnimationStart'  
+	    }  
+	    for(t in animations){  
+	        if( el.style[t] !== undefined ){  
+	            return animations[t];  
+	        }  
+	    }  	
+	})();
+
+	var animationiterationEvent = (function(){
+	    var t;  
+	    var el = document.createElement('p');  
+	    var animations = {  
+	      'animation':'animationiteration',  
+	      'OAnimation':'oAnimationIteration',  
+	      'MozAnimation':'mozAnimationIteration',  
+	      'WebkitAnimation':'webkitAnimationIteration',  
+	      'MsAnimation':'msAnimationIteration'  
+	    }  
+	    for(t in animations){  
+	        if( el.style[t] !== undefined ){  
+	            return animations[t];  
+	        }  
+	    }  	
+	})();
+
+
+
 	var animationName = pfx('animationName');
 	var animationDuration = pfx('animationDuration');
 	var animationTimingFunction = pfx('animationTimingFunction');
@@ -71,6 +107,28 @@
 	var animationFillMode = pfx('animationFillMode');
 	var animationIterationCount = pfx('animationIterationCount');
 	var animationDirection = pfx("animationDirection");
+
+
+	var _mapEventTyp = function(typ){
+		var eventTyp;
+		switch(typ){
+			case 'start':
+				eventTyp = animationstartEvent;
+				break;
+			case 'end':
+				eventTyp = animationendEvent;
+				break;
+			case 'iteration':
+				eventTyp = animationiterationEvent;
+				break;
+			default: 
+				eventTyp = animationendEvent;
+				break;
+		}	
+		return eventTyp;	
+
+
+	}
 
 	function Animate(opt){
 		if(!(this instanceof Animate)){
@@ -158,20 +216,29 @@
 			this.run();
 			return this;
 		},
-		one:function(fn){
+		one:function(typ,fn){
+			var _this = this;
 			if(typeof fn == 'function'){
 				var eventHandler = function(e){
-					this.removeEventListener(animationendEvent,eventHandler,false);
+					_this.off(typ,eventHandler);
+					// this.removeEventListener(animationendEvent,eventHandler,false);
 					fn(e);
 				};
-				this.ele.addEventListener(animationendEvent,eventHandler,false);			
+				this.on(typ,eventHandler);
+				// this.ele.addEventListener(animationendEvent,eventHandler,false);			
 			}
 			return this;
 		},
-		on:function(fn){
+		on:function(typ,fn){
+			var eventTyp = _mapEventTyp(typ);
 			if(typeof fn == 'function'){
-				this.ele.addEventListener(animationendEvent,fn,false);	
+				this.ele.addEventListener(eventTyp,fn,false);	
 			}
+			return this;
+		},
+		off:function(typ,fn){
+			var eventTyp = _mapEventTyp(typ);
+			this.ele.removeEventListener(eventTyp,fn,false);
 			return this;
 		}
 	}

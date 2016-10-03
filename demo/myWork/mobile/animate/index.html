@@ -37,6 +37,11 @@
 				background-color:#ec971f;
 				border-color:#d58512;
 			}
+			.btn-danger{
+				color:#fff;
+				background-color:#d9534f;
+				border-color:#d43f3a;
+			}
 		</style>
 	</head>
 	<body>
@@ -56,6 +61,10 @@
 			<div style="display:table-cell">
 				<button onclick="rightnow()" type="button" class="btn btn-success">立即开始</button>
 			</div>
+			<div style="display:table-cell">
+				<button onclick="repeat()" type="button" class="btn btn-danger">repeat</button>
+			</div>
+
 		</div>
 
 		<script>
@@ -69,18 +78,23 @@
 				duration:"2s",
 				delay:"3s",
 
-			}).one(function(e){
-				console.log('使用one绑定的事件触发');
+			}).one('start',function(e){
+				console.log('使用one绑定的start事件触发');
+			
+			}).one("end",function(e){
+				var eventHandler = function(e){
+					ins.off('iteration',eventHandler);
+					console.log('iteration');
+				}
 				ins.set({
 					name:"hinge",
 					delay:"0s",
 					duration:'3s',
 					mode:'none',
-				}).run().one(function(){
-					ins.repeat();
-				});					
-			}).on(function(){
-				console.log("使用on绑定的事件触发");
+					count:5,
+				}).run().on('iteration',eventHandler);		
+
+
 			})
 
 			function run(){
@@ -91,6 +105,9 @@
 			}
 			function rightnow(){
 				ins.rightnow();
+			}
+			function repeat(){
+				ins.repeat();
 			}
 
 		</script>
