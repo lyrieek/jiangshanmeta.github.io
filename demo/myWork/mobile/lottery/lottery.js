@@ -232,6 +232,7 @@ window.requestAnimFrame = (function(){
       lineHeight:1.4,
       shadowColor:"rgba(0,0,0,0.5)",
       shadowBlur:8,
+      separator:"\n",
     },
     msg:{
       ready:'开始抽奖',
@@ -499,7 +500,7 @@ window.requestAnimFrame = (function(){
       context1.font = fontSize+"px bold sans-serif";
       context1.shadowColor = optionText.shadowColor;
       context1.shadowBlur = optionText.shadowBlur;
-
+      var separator = optionText.separator;
 
       for(var i=0;i<len;i++){
         var text = lotteris[i].text;
@@ -528,7 +529,7 @@ window.requestAnimFrame = (function(){
           context1.rotate((i+0.5)*degPerPart+startDeg);
         }
 
-        var textArr = text.split('\n');
+        var textArr = text.split(separator);
         var centerPos = r*textPos;
 
         var startTextPos = centerPos + realLineHeight*(textArr.length-1)/(2*Math.cos(finalDeg));

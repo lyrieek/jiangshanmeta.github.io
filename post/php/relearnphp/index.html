@@ -256,6 +256,10 @@ public function __construct()
 
 <p>一般来说<code>json_decode</code>用到的很少，主要用到的是<code>json_encode</code>。以前不知道前端如何向后端传递复杂数据类型，然后就前端转成json然后给后端，后端decode，然后当时也不知道还有第二个参数所以后端以对象的语法访问。后来看其他人的代码，知道在jquery中可以传递数组和对象然后jquery格式化。    今天在看jquery如何实现序列化，突然想到了这个话题。</p>
 
+<h2 id="19-json-encode-转义:960e085aadb29182f9448019a6b3c8f1">19.json_encode 转义</h2>
+
+<p>在写<a href="http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html">抽奖效果</a>的时候遇到一个需求，对于奖项进行换行显示，因为canvas本身不支持文字换行，所以我们最开始约定使用\n作为分隔符，人工进行换行处理。然而最开始并不能正常进行分割，一开始以为是中文的问题，然后查了查<a href="http://php.net/manual/zh/function.json-encode.php">发现<code>json_encode</code>有第二个参数（通过json_encode传递奖项array）</a>，对中文不转义之后发现依然无法正常显示，然后就猜是转义的问题。确实有转义的问题但不仅仅是转义的问题，因为在单引号下，json_encode的结果无法正常分割但是直接php输出这一子项的结果可以正常分割，双引号下json_encode的结果可以分割但是直接输出的结果直接报错。总之，为啥当初用\n这种符号分割呢。</p>
+
 			</div>
 
 
