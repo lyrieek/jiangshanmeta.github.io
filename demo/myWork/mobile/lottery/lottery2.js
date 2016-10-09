@@ -1,50 +1,35 @@
-//php.js
-function ucfirst (str) {
-  str += ''
-  var f = str.charAt(0)
-    .toUpperCase()
-  return f + str.substr(1)
+// 第一版转盘的具体动画是通过css3实现的，虽然实现了但有些小问题，所以准备具体的动画也采用canvas实现
+
+// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+if (typeof Object.create != 'function') {
+  Object.create = (function() {
+    function Temp() {}
+    var hasOwn = Object.prototype.hasOwnProperty;
+
+    return function (O) {
+      if (typeof O != 'object') {
+        throw TypeError('Object prototype may only be an Object or null');
+      }
+
+      Temp.prototype = O;
+      var obj = new Temp();
+      Temp.prototype = null; 
+
+      if (arguments.length > 1) {
+
+        var Properties = Object(arguments[1]);
+        for (var prop in Properties) {
+          if (hasOwn.call(Properties, prop)) {
+            obj[prop] = Properties[prop];
+          }
+        }
+      }
+
+      return obj;
+    };
+  })();
 }
 
-// 基于jquery的camelcase修改，仅仅是将中划线删除然后将后面的第一个字母大写
-var camelCase = (function(){
-  var rdashAlpha = /-([a-z])/g;
-  var fcamelCase = function( all, letter ) {
-    return letter.toUpperCase();
-  };
-  return function(str){
-    return str.replace(rdashAlpha,fcamelCase);
-  }
-
-})();
-
-//impress.js
-var pfx = (function () {
-  // 看jq的camelcase发现为啥prefixes里面其他前缀都是首字母大写而ie的是首字母小写，举例说明：WebkitTransform msTransform ie自身的bug
-  // 原来的代码里其实没处理带有中划线的名称。
-    var style = document.createElement('dummy').style,
-        prefixes = 'Webkit Moz O ms Khtml'.split(' '),
-        memory = {};
-    return function ( prop ) {
-        prop = camelCase(prop);
-        if ( typeof memory[ prop ] === "undefined" ) {
-            //实现一个ucfirst
-            var ucProp  = ucfirst(prop),
-            //拿到前缀化的属性名
-                props   = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
-            
-            memory[ prop ] = null;
-            for ( var i in props ) {
-                if ( style[ props[i] ] !== undefined ) {
-                    memory[ prop ] = props[i];
-                    break;
-                }
-            }
-        }
-        
-        return memory[ prop ];
-    };
-})();
 function gettype(obj){
   return Object.prototype.toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
 }
@@ -126,25 +111,6 @@ var deepAssign = (function(){
 
 })();
 
-
-
-
-function whichTransitionEvent(){  
-    var t;  
-    var el = document.createElement('p');  
-    var transitions = {  
-      'transition':'transitionend',  
-      'OTransition':'oTransitionEnd',  
-      'MozTransition':'mozTransitionEnd',  
-      'WebkitTransition':'webkitTransitionEnd',  
-      'MsTransition':'msTransitionEnd'  
-    }  
-    for(t in transitions){  
-        if( el.style[t] !== undefined ){  
-            return transitions[t];  
-        }  
-    }  
-}
 window.requestAnimFrame = (function(){
   return  window.requestAnimationFrame       ||
           window.webkitRequestAnimationFrame ||
@@ -156,6 +122,16 @@ window.requestAnimFrame = (function(){
 
 //利用闭包，把defaults隐藏而不是每次都声明一次
 (function(window){
+  var easing = {
+    linear:function(p){
+      return p;
+    },
+    uniformDeceleration:function(p){
+      return -p*p + 2*p;
+    },
+  }
+
+
   var defaults = {
     ajaxUrl:"http://jiangshanmeta.github.io",
     DOM:{
@@ -168,7 +144,7 @@ window.requestAnimFrame = (function(){
     animation:{
       timePerRound:1,
       rotateCountAfterAjax:3,  //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
-      area:'decoration',
+      area:'decoratio',
       timeAfterAjax:7,
     },
     text:{
@@ -281,17 +257,13 @@ window.requestAnimFrame = (function(){
       this.canvas1 = document.createElement("canvas");
       this.canvas1.width = w;
       this.canvas1.height = w;
-      this.canvas1.style.cssText="will-change:transform;";
-      this.canvas1.style[pfx('transform')] = "rotate(0deg)";
-
       this.context1 = this.canvas1.getContext('2d');
 
       //canvas2负责绘制装饰性的指针表盘
       this.canvas2 = document.createElement("canvas");
       this.canvas2.width = w;
       this.canvas2.height = w;
-      this.canvas2.style.cssText="position:absolute;top:0;left:0;will-change:transform;";
-      this.canvas2.style[pfx('transform')] = "rotate(0deg)";
+      this.canvas2.style.cssText="position:absolute;top:0;left:0;";
       this.context2 = this.canvas2.getContext('2d');
       // 文字区域
       this.textArea = document.createElement("div");
@@ -348,7 +320,7 @@ window.requestAnimFrame = (function(){
 
       return this;
     },
-    drawPointer:function(){
+    drawPointer:function(deg){
       var context2 = this.context2;
       var options = this.options;
       var DOM = options.DOM;
@@ -356,7 +328,9 @@ window.requestAnimFrame = (function(){
 
       context2.save();
       context2.translate(r,r);
-
+      deg = deg || 0;
+      
+      context2.rotate(deg);
        /* 外层指针 */
       context2.save();
       context2.beginPath();
@@ -391,7 +365,7 @@ window.requestAnimFrame = (function(){
 
       return this;
     },
-    drawBg:function(){
+    drawBg:function(deg){
       var context1 = this.context1;
       var options = this.options;
       var DOM = options.DOM;
@@ -403,7 +377,8 @@ window.requestAnimFrame = (function(){
 
       context1.save();
       context1.translate(r,r);
-
+      deg = deg || 0;
+      context1.rotate(deg);
       for(var i=0;i<len;i++){
         context1.save();
         context1.beginPath();
@@ -422,7 +397,7 @@ window.requestAnimFrame = (function(){
 
       return this;    
     },
-    drawText:function(){
+    drawText:function(deg){
       var context1 = this.context1;
       var options = this.options;
       var DOM = options.DOM;
@@ -435,7 +410,8 @@ window.requestAnimFrame = (function(){
       var animateArea = options.animation.area;
       context1.save();
       context1.translate(r,r);
-
+      deg = deg || 0;
+      context1.rotate(deg);
       context1.save();
       context1.textAlign = "center";
       context1.textBaseline = "middle";
@@ -495,51 +471,48 @@ window.requestAnimFrame = (function(){
        var options = this.options;
        var canLottery = options.checkCanLottery();
        var _this = this;
+
        if(canLottery){
         // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
         this.status = 1;
         this.textArea.innerText = options.msg.doing;
         var animateArea = options.animation.area;
         if(animateArea=='decoration'){
-          var canvas = this.canvas2;
+          var context = this.context2;
         }else{
-          var canvas = this.canvas1;
+          var context = this.context1;
         }
-
-        
-        var animationTimePerRound = options.animation.timePerRound;
-
+        // 转换为毫秒
+        var animationTimePerRound = options.animation.timePerRound*1000;
+        var w = options.DOM.w;
         var hasAjaxRest = false;
         var ajaxRest;
-        var transitionendCallback = function(e){
-          if(hasAjaxRest){
-            this.removeEventListener(e.type,transitionendCallback);
+        var startTS = Date.now();
+        var render = function(){
+          var curTS = Date.now();
+          var progress = (curTS-startTS)/animationTimePerRound;
+          var curRotate = easing.linear(progress)*2*Math.PI;
+          context.clearRect(0,0,w,w);
+
+          if(progress>=1){
+            curRotate = 2*Math.PI;
+          }
+          if(animateArea=='decoration'){
+            _this.drawRing().drawPointer(curRotate);
+          }else{
+            _this.drawBg(curRotate).drawText(curRotate);
+          }
+          if(hasAjaxRest && progress>=1){
             _this.showLotteryRes(ajaxRest);
           }else{
-            var oldcss = this.style.cssText;
-            this.style[pfx('transition')] = "0s";
-            this.style[pfx("transform")] = "rotate(0deg)";
-
-            var _thisCanvas = this;
-            // 你猜为什么要写在setTimeout中呢。为了强制渲染啊。
-            // setTimeout(function(){
-            //   _thisCanvas.style.cssText = styleStr;
-            // },0)
-            //上面一个写法和下面的写法表现结果是一致的
-            //用requestAnimationFrame的作用是一样的，等重置需要一帧时间，再下一次重绘的时候写入新的样式。
-            requestAnimFrame(function(){
-              requestAnimFrame(function(){
-                _thisCanvas.style.cssText = oldcss;
-              })
-               
-            });
-
+            if(curRotate==2*Math.PI){
+              startTS = Date.now();
+            }
+            requestAnimFrame(render)
           }
-        }
 
-        canvas.addEventListener(whichTransitionEvent(),transitionendCallback);
-        canvas.style[pfx('transition')] = "all "+ animationTimePerRound + "s linear";
-        canvas.style[pfx('transform')] = "rotate(360deg)";
+        }
+        requestAnimFrame(render);
 
         if(options.ajaxUrl=='http://jiangshanmeta.github.io'){
           // 模拟ajax返回值
@@ -579,34 +552,51 @@ window.requestAnimFrame = (function(){
        }
     },
     showLotteryRes:function(json){
+      console.log(json);
       var _this = this;
       var options = this.options;
       var animateArea = options.animation.area;
       if(animateArea=='decoration'){
-        var canvas = this.canvas2;
+        var context = this.context2;
       }else{
-        var canvas = this.canvas1;
+        var context = this.context1;
       }
 
       var startDeg = rad2deg(options.DOM.startDeg);
-
+      var w = options.DOM.w;
       if(json.rstno==1){
-        var transitionendCallback1 = function(e){
-          this.removeEventListener(e.type,transitionendCallback1);
-          _this.status = 2;
-          _this.textArea.innerText = options.msg.done;
-          options.doSthAfterLottery && options.doSthAfterLottery(json);  
-        }
-        canvas.addEventListener(whichTransitionEvent(),transitionendCallback1,false);
-        //这里要+1是因为在改变过渡效果的时候，ajax过程中最后的那一圈也算上了
+        // 角度
         if(animateArea=='decoration'){
-          var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.animation.rotateCountAfterAjax+1)+startDeg;
+          var finalRotate = (json.data.index+0.5)*360/options.lotteris.length+360*(options.animation.rotateCountAfterAjax)+startDeg;
         }else{
           var finalRotate = 360-(json.data.index+0.5)*360/options.lotteris.length+360*(options.animation.rotateCountAfterAjax+1)-startDeg;
         }
-        
-        canvas.style[pfx("transition")] = "all "+ options.animation.timeAfterAjax + "s cubic-bezier(0.33,0.5,0.66,0.83)";
-        canvas.style[pfx("transform")] = "rotate("+  finalRotate +"deg)";      
+        // 转换成毫秒
+        var duration = options.animation.timeAfterAjax*1000;
+
+        var finalRotateRag = deg2rad(finalRotate);
+
+        var startTS = Date.now();
+        var render = function(){
+          var curTS = Date.now();
+          var progress = (curTS-startTS)/duration;
+          curRotate = easing.uniformDeceleration(progress)*finalRotateRag;
+          if(progress<1){
+            context.clearRect(0,0,w,w);
+            if(animateArea=='decoration'){
+                _this.drawRing().drawPointer(curRotate);
+            }else{
+                _this.drawBg(curRotate).drawText(curRotate);
+            }
+            
+            requestAnimFrame(render);
+          }else{
+            _this.status = 2;
+            _this.textArea.innerText = options.msg.done;
+            options.doSthAfterLottery && options.doSthAfterLottery(json); 
+          }
+        }
+        requestAnimFrame(render);
       }else{
         this.reset(); 
         options.doSthAfterAjaxError && options.doSthAfterAjaxError(json);
@@ -620,14 +610,16 @@ window.requestAnimFrame = (function(){
       this.status = 0;
       this.textArea.innerText = this.options.msg.ready;
       var animateArea = this.options.animation.area;
+      var w = this.options.DOM.w;
       if(animateArea=='decoration'){
-        var canvasStyle = this.canvas2.style;
+        this.context2.clearRect(0,0,w,w);
+        this.drawRing().drawPointer();
       }else{
-        var canvasStyle = this.canvas1.style;
+        this.context1.clearRect(0,0,w,w);
+        this.drawBg().drawText();
       }
       
-      canvasStyle[pfx('transition')] = "0s";
-      canvasStyle[pfx('transform')] = "rotate(0deg)";
+
 
       return this;
     }
