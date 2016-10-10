@@ -6,8 +6,55 @@
     <description>Recent content in Javascript on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 04 Sep 2016 20:29:27 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 10 Oct 2016 20:05:11 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/categories/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>观察者模式的一次实践</title>
+      <link>http://jiangshanmeta.github.io/post/js/observer/</link>
+      <pubDate>Mon, 10 Oct 2016 20:05:11 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/js/observer/</guid>
+      <description>&lt;p&gt;观察者模式是用来解除对象间的耦合同时保证对象间数据通信的一种设计模式，要实现对象间通信数据首先要订阅某个主题，然后监听某个主题发布信息。听起来云里雾里但是前端都见过其中的一个典型例子，就是事件，首先通过&lt;code&gt;addEventListener&lt;/code&gt;订阅事件，然后等待用户触发事件或者脚本触发事件，这时就发布了主题，此时各个对象执行相应的回调。&lt;/p&gt;
+
+&lt;p&gt;我也实现了一个简单的观察者模式( &lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/jsdesignpattern/observer.js&#34;&gt;点击下载源码&lt;/a&gt; )：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var Observer = (function(){
+	var _message = {};
+	return {
+		register:function(typ,fn){
+			if(!_message[typ]){
+				_message[typ] = [];
+			}
+			_message[typ].push(fn);
+			return this;
+		},
+		publish:function(typ,data){
+			if(_message[typ]){
+				for(var i=0,len=_message[typ].length;i&amp;lt;len;i++){
+					_message[typ][i](data);
+				}
+			}
+			return this;
+		},
+		remove:function(typ,fn){
+			if(_message[typ]){
+				for(var i=0,len=_message[typ].length;i&amp;lt;len;i++){
+					_message[typ][i] ==fn &amp;amp;&amp;amp; _message[typ].splice(i,1);
+				}
+			}
+
+			return this;
+		}
+	}
+})();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个实现是希望将对象之间的通信通过这一个对象进行，这个实现说实话只适用于小型的项目。&lt;/p&gt;
+
+&lt;p&gt;我应用它的场景是这样的：多个对象都有选择地址这么一个操作，在选择地址中有一项是添加地址，然而添加地址这一操作对应一个新的对象，在添加地址对象完成添加后，需要通知其他选择地址对象新的地址array。最开始的实现是判断那几个选择地址的对象存不存在，如果存在就把数据传过去，每多一次引用就要多一个判断。然后我就使用观察者模式改写，更新地址array的时候发布一个更新地址主题。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>javascript中的继承</title>
