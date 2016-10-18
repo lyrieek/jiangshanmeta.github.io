@@ -368,6 +368,31 @@ public function __construct()
 &lt;h2 id=&#34;19-json-encode-转义:960e085aadb29182f9448019a6b3c8f1&#34;&gt;19.json_encode 转义&lt;/h2&gt;
 
 &lt;p&gt;在写&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html&#34;&gt;抽奖效果&lt;/a&gt;的时候遇到一个需求，对于奖项进行换行显示，因为canvas本身不支持文字换行，所以我们最开始约定使用\n作为分隔符，人工进行换行处理。然而最开始并不能正常进行分割，一开始以为是中文的问题，然后查了查&lt;a href=&#34;http://php.net/manual/zh/function.json-encode.php&#34;&gt;发现&lt;code&gt;json_encode&lt;/code&gt;有第二个参数（通过json_encode传递奖项array）&lt;/a&gt;，对中文不转义之后发现依然无法正常显示，然后就猜是转义的问题。确实有转义的问题但不仅仅是转义的问题，因为在单引号下，json_encode的结果无法正常分割但是直接php输出这一子项的结果可以正常分割，双引号下json_encode的结果可以分割但是直接输出的结果直接报错。总之，为啥当初用\n这种符号分割呢。&lt;/p&gt;
+
+&lt;h2 id=&#34;20-变量作用域:960e085aadb29182f9448019a6b3c8f1&#34;&gt;20.变量作用域&lt;/h2&gt;
+
+&lt;p&gt;之所以会提及这个问题是因为看CI源码时遇到了这么一段：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function &amp;amp;get_config(Array $replace = array())
+{
+	static $config;
+	if (empty($config))
+	{
+		$file_path = APPPATH.&#39;config/config.php&#39;;
+		$found = FALSE;
+		if (file_exists($file_path))
+		{
+			$found = TRUE;
+			require($file_path);
+		}
+	}
+	return $config;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个函数首先声明了一个静态局部变量&lt;code&gt;$config&lt;/code&gt;，然后如果这个变量为空就去加载对应文件，文件中有一个名为&lt;code&gt;$config&lt;/code&gt;的变量。觉得这里写的比较巧妙，如果直接加在这个文件，就会设立一个全局变量&lt;code&gt;$config&lt;/code&gt;，容易被修改或者覆盖，这里将其转化为局部静态变量，从而起到了保护的作用，类似于js的闭包。&lt;/p&gt;
+
+&lt;p&gt;说起作用域，js和php还是有点差异的，比如js局部变量没有会沿着作用域链向上查找，而在php中在局部想要访问全局变量需要手动添加&lt;code&gt;global&lt;/code&gt;关键字。php中的静态变量和js中闭包中的变量很类似。写php面向对象惯了反而对作用域关注的少了。&lt;/p&gt;
 </description>
     </item>
     
