@@ -285,6 +285,10 @@ public function __construct()
 
 <p>说起作用域，js和php还是有点差异的，比如js局部变量没有会沿着作用域链向上查找，而在php中在局部想要访问全局变量需要手动添加<code>global</code>关键字。php中的静态变量和js中闭包中的变量很类似。写php面向对象惯了反而对作用域关注的少了。</p>
 
+<h2 id="21-server:960e085aadb29182f9448019a6b3c8f1">21.$_SERVER</h2>
+
+<p>以前一直不明白CI是如何根据url确定需要初始化的controller是哪个、调用的方法是哪个、以及参数。看CI源码就明白了，在超全局变量<code>$_SERVER</code>保存着请求的url，通过<code>CI_Router</code>和<code>CI_URI</code>两个类进行字符串处理就可以得到controller、method以及参数。</p>
+
 			</div>
 
 
