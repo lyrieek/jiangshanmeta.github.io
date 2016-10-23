@@ -6,8 +6,76 @@
     <description>Recent content in Mongodb on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 27 May 2016 20:42:40 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 23 Oct 2016 20:20:18 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>mongodb的复杂查询和聚合</title>
+      <link>http://jiangshanmeta.github.io/post/mongodb/aggregate/</link>
+      <pubDate>Sun, 23 Oct 2016 20:20:18 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/mongodb/aggregate/</guid>
+      <description>
+
+&lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/&#34;&gt;总结过mongodb常用的增删查改&lt;/a&gt;，随着使用的深入自己的工作不在局限在简单地增删查改上，还处理一部分的统计性工作。统计所需要的查询条件就比较复杂了，而mongodb的聚合又是mongodb的一个很大的话题了。这里算是对工作中遇到的一些情况进行总结吧。因为平时都是通过php操作数据库，所以下面的代码都是php，不过并不影响我想表达的。&lt;/p&gt;
+
+&lt;h2 id=&#34;1-限制数组长度查询:233b6dd901ca06898e3895bff0f956d4&#34;&gt;1.限制数组长度查询&lt;/h2&gt;
+
+&lt;p&gt;mongodb可以存储数组，我遇到的一个需求是筛选出数组长度大于某个值的。首先想到的是使用&lt;code&gt;$size&lt;/code&gt;，但是&lt;code&gt;$size&lt;/code&gt;不支持&lt;code&gt;$gt&lt;/code&gt;这样的操作，仅支持等于某个长度。&lt;/p&gt;
+
+&lt;p&gt;最终的解决方案是查询数组中第N个元素是否存在，比如限制field字段数组中至少有一个元素，则where条件如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;fiele.0&#39;=&amp;gt;[&#39;$exists&#39;=&amp;gt;true]]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;2.$addToSet在聚合中的使用&lt;/h2&gt;
+
+&lt;p&gt;需求场景是这样的：在流水表里有一些数据是进货记录，每条这样的数据都包含店铺id和供应商id，现在需要拿出每家供应商所供货的店铺。暴力的做法是拿出数据来在php处理（写起来并不复杂），然而用聚合实现更简单。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$this-&amp;gt;db-&amp;gt;clear();
+$match = [
+	&#39;$match&#39;=&amp;gt;[
+		&#39;typ&#39;=&amp;gt;1
+	]
+];
+$group = [
+	&#39;$group&#39;=&amp;gt;[
+		&#39;_id&#39;=&amp;gt;&#39;$supplier&#39;,
+		&#39;orgs&#39;=&amp;gt;[&#39;$addToSet&#39;=&amp;gt;&#39;$orgId&#39;]
+	]
+];
+$rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bPeijianFlow&#39;,[$match,$group]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上面是实现代码，首先在&lt;code&gt;bPeijianFlow&lt;/code&gt;这张表中只有typ为1的才是进货记录，据此筛选，然后我们要根据供应商id进行聚合，所以聚合中的&lt;code&gt;_id&lt;/code&gt;是&lt;code&gt;$supplier&lt;/code&gt;，因为一个供应商对一家店可能多次供货，但我们仅需保留一次门店id，所以采用&lt;code&gt;$addToSet&lt;/code&gt;而不是&lt;code&gt;$push&lt;/code&gt;，把每家供应商供货的店铺id保存到&lt;code&gt;orgs&lt;/code&gt;这个数组中。&lt;/p&gt;
+
+&lt;h2 id=&#34;3-根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;3.根据多个字段进行聚合&lt;/h2&gt;
+
+&lt;p&gt;上面的聚合仅仅是根据供应商一个字段进行，我遇到的场景是这样的：有一张用户考试的表，存储着用户id，考试类型，需要根据用户和考试类型进行聚合，拿到每个用户每个考试类型通过（通过是在筛选处理的）的次数。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$match = array(
+    &#39;$match&#39;=&amp;gt;[
+        &#39;status&#39;=&amp;gt;2,
+    ],
+);
+$group = array(
+    &#39;$group&#39;=&amp;gt;[
+        &#39;_id&#39;=&amp;gt;array(&#39;adminuserId&#39;=&amp;gt;&#39;$adminuserId&#39;,&#39;typ&#39;=&amp;gt;&#39;$typ&#39;),
+        &#39;count&#39;=&amp;gt;array(&#39;$sum&#39;=&amp;gt;1),
+        &#39;name&#39;=&amp;gt;array(&#39;$first&#39;=&amp;gt;&#39;$uName&#39;),
+        &#39;orgId&#39;=&amp;gt;array(&#39;$first&#39;=&amp;gt;&#39;$orgId&#39;),
+    ]
+
+);
+
+$rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;aExam&#39;,[$match,$group]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先是筛选通过的考试，用status为2表示，然后是进行聚合，聚合是根据&lt;code&gt;adminuserId&lt;/code&gt;和&lt;code&gt;typ&lt;/code&gt;两个字段来的，所以&lt;code&gt;_id&lt;/code&gt;是一个array，而不是上面那个聚合的string，&lt;code&gt;&#39;count&#39;=&amp;gt;array(&#39;$sum&#39;=&amp;gt;1),&lt;/code&gt;是用来统计数量的，剩下的两行是用来做展示数据用的。&lt;/p&gt;
+
+&lt;p&gt;目前比较好的例子就这么几个，有了再更&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>mongoDB的增删查改</title>

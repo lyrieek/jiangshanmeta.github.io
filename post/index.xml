@@ -6,8 +6,76 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 10 Oct 2016 20:05:11 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 23 Oct 2016 20:20:18 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>mongodb的复杂查询和聚合</title>
+      <link>http://jiangshanmeta.github.io/post/mongodb/aggregate/</link>
+      <pubDate>Sun, 23 Oct 2016 20:20:18 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/mongodb/aggregate/</guid>
+      <description>
+
+&lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/&#34;&gt;总结过mongodb常用的增删查改&lt;/a&gt;，随着使用的深入自己的工作不在局限在简单地增删查改上，还处理一部分的统计性工作。统计所需要的查询条件就比较复杂了，而mongodb的聚合又是mongodb的一个很大的话题了。这里算是对工作中遇到的一些情况进行总结吧。因为平时都是通过php操作数据库，所以下面的代码都是php，不过并不影响我想表达的。&lt;/p&gt;
+
+&lt;h2 id=&#34;1-限制数组长度查询:233b6dd901ca06898e3895bff0f956d4&#34;&gt;1.限制数组长度查询&lt;/h2&gt;
+
+&lt;p&gt;mongodb可以存储数组，我遇到的一个需求是筛选出数组长度大于某个值的。首先想到的是使用&lt;code&gt;$size&lt;/code&gt;，但是&lt;code&gt;$size&lt;/code&gt;不支持&lt;code&gt;$gt&lt;/code&gt;这样的操作，仅支持等于某个长度。&lt;/p&gt;
+
+&lt;p&gt;最终的解决方案是查询数组中第N个元素是否存在，比如限制field字段数组中至少有一个元素，则where条件如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;fiele.0&#39;=&amp;gt;[&#39;$exists&#39;=&amp;gt;true]]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;2.$addToSet在聚合中的使用&lt;/h2&gt;
+
+&lt;p&gt;需求场景是这样的：在流水表里有一些数据是进货记录，每条这样的数据都包含店铺id和供应商id，现在需要拿出每家供应商所供货的店铺。暴力的做法是拿出数据来在php处理（写起来并不复杂），然而用聚合实现更简单。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$this-&amp;gt;db-&amp;gt;clear();
+$match = [
+	&#39;$match&#39;=&amp;gt;[
+		&#39;typ&#39;=&amp;gt;1
+	]
+];
+$group = [
+	&#39;$group&#39;=&amp;gt;[
+		&#39;_id&#39;=&amp;gt;&#39;$supplier&#39;,
+		&#39;orgs&#39;=&amp;gt;[&#39;$addToSet&#39;=&amp;gt;&#39;$orgId&#39;]
+	]
+];
+$rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bPeijianFlow&#39;,[$match,$group]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上面是实现代码，首先在&lt;code&gt;bPeijianFlow&lt;/code&gt;这张表中只有typ为1的才是进货记录，据此筛选，然后我们要根据供应商id进行聚合，所以聚合中的&lt;code&gt;_id&lt;/code&gt;是&lt;code&gt;$supplier&lt;/code&gt;，因为一个供应商对一家店可能多次供货，但我们仅需保留一次门店id，所以采用&lt;code&gt;$addToSet&lt;/code&gt;而不是&lt;code&gt;$push&lt;/code&gt;，把每家供应商供货的店铺id保存到&lt;code&gt;orgs&lt;/code&gt;这个数组中。&lt;/p&gt;
+
+&lt;h2 id=&#34;3-根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;3.根据多个字段进行聚合&lt;/h2&gt;
+
+&lt;p&gt;上面的聚合仅仅是根据供应商一个字段进行，我遇到的场景是这样的：有一张用户考试的表，存储着用户id，考试类型，需要根据用户和考试类型进行聚合，拿到每个用户每个考试类型通过（通过是在筛选处理的）的次数。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$match = array(
+    &#39;$match&#39;=&amp;gt;[
+        &#39;status&#39;=&amp;gt;2,
+    ],
+);
+$group = array(
+    &#39;$group&#39;=&amp;gt;[
+        &#39;_id&#39;=&amp;gt;array(&#39;adminuserId&#39;=&amp;gt;&#39;$adminuserId&#39;,&#39;typ&#39;=&amp;gt;&#39;$typ&#39;),
+        &#39;count&#39;=&amp;gt;array(&#39;$sum&#39;=&amp;gt;1),
+        &#39;name&#39;=&amp;gt;array(&#39;$first&#39;=&amp;gt;&#39;$uName&#39;),
+        &#39;orgId&#39;=&amp;gt;array(&#39;$first&#39;=&amp;gt;&#39;$orgId&#39;),
+    ]
+
+);
+
+$rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;aExam&#39;,[$match,$group]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先是筛选通过的考试，用status为2表示，然后是进行聚合，聚合是根据&lt;code&gt;adminuserId&lt;/code&gt;和&lt;code&gt;typ&lt;/code&gt;两个字段来的，所以&lt;code&gt;_id&lt;/code&gt;是一个array，而不是上面那个聚合的string，&lt;code&gt;&#39;count&#39;=&amp;gt;array(&#39;$sum&#39;=&amp;gt;1),&lt;/code&gt;是用来统计数量的，剩下的两行是用来做展示数据用的。&lt;/p&gt;
+
+&lt;p&gt;目前比较好的例子就这么几个，有了再更&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>观察者模式的一次实践</title>
@@ -1582,65 +1650,6 @@ public function __construct()
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;代码语言是最好的编程语言php（大雾。作用是重定向，这里默认的重定向状态码就是302，虽然严格来说用303更好。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>DNS原理入门</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/dns/</link>
-      <pubDate>Sun, 17 Jul 2016 00:43:18 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/dns/</guid>
-      <description>&lt;p&gt;作为半路出发搞web开发的，计算机网络的知识很薄弱，我可不想一辈子写写页面做做增删查改就完了，要提高一下自己的知识水平。光看书也不行，把自己学到的讲出来，这样能够加深理解。&lt;/p&gt;
-
-&lt;p&gt;一般的介绍计算机网络会从OSI模型或者TCP/IP模型开始介绍，虽然目前有个整体的概念但是理解还是不深，所以我想放到最后说。首先要说的应用层的DNS。DNS基本不会被用户手动使用，但是会被其他应用层程序调用，因为DNS的主要作用是将主机名映射到IP地址。为什么需要这么做？因为不同端系统之间的通信需要IP地址来帮助寻找目标主机。&lt;/p&gt;
-
-&lt;p&gt;除了将主机名映射到IP地址这个作用外，DNS还有以下功能：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;主机别名&lt;/li&gt;
-&lt;li&gt;邮件服务器别名&lt;/li&gt;
-&lt;li&gt;负载分配。这一点需要说一说，对于一些大站，为了性能优化会部署在多个服务器上。此时一个主机名就会对应多个IP地址。用户请求的时候DNS服务器返回的不是一个IP，而是一组，但是在每次响应时会循环地址次序。在客户端根据返回的IP发起请求的时候通常会先请求排在前面的IP地址，于是便实现了负载分配。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;整体掌握DNS的功能后，然后我们要看的是DNS查询的过程。&lt;/p&gt;
-
-&lt;p&gt;处于种种原因（大家可以自行想象），DNS采取了分布式、分层次的数据库。DNS服务器大体分为三种类型：根DNS服务器、顶级域DNS服务器、权威DNS服务器。还有一个本地DNS服务器，通常本地DNS服务器是由ISP提供的，相当于是我们DNS查询的一个代理，并且还起到缓存的作用。&lt;/p&gt;
-
-&lt;p&gt;我们要进行DNS查询，首先是查询本地hosts，如果有结果就直接返回IP，这就是为什么本地开发要改hosts。一般的用户是不会配置本地hosts的，不考虑浏览器缓存的话会向本地DNS服务器查询（其实是应用程序如浏览器的缓存优先级更高）。其实也不见得是向本地DNS服务器请求，因为可以设置DNS服务器IP，然而对于一般用户本地DNS服务器地址是接入网的时候就分配好的。通用过程是DNS服务器先向根DNS服务器请求，根DNS服务器会返回顶级域DNS服务器的地址，然后本地DNS服务器据此地址请求顶级域DNS服务器，顶级域DNS服务器返回权威DNS服务器的地址。本地DNS服务器再向权威DNS服务器请求，最终由权威DNS返回查询主机的IP。其实这只是一个简化模型，因为返回的可能不是下一层DNS服务器地址，而是一个中间DNS服务器地址。&lt;/p&gt;
-
-&lt;p&gt;要获得一个主机到IP的映射本地DNS服务器至少要发起三次请求，接受三次回复，如果每次都重复此过程其实是比较昂贵的，所以就有了DNS缓存，通常本地DNS服务器会起到这么一个作用。在查询过程中，会先判断本地缓存有没有相关信息，再进行操作。DNS缓存也会有过期时间的概念，这点不难理解，毕竟互联网是一个动态的网络。&lt;/p&gt;
-
-&lt;p&gt;最终本地DNS服务器向端系统返回IP。换句话说，对于客户端来说，直接发生作用的只有本地DNS服务器，向其他各级DNS服务器请求是本地DNS服务器帮助我们完成的。&lt;/p&gt;
-
-&lt;p&gt;这里还会有 &lt;strong&gt;递归查询&lt;/strong&gt;、&lt;strong&gt;迭代查询&lt;/strong&gt;的概念，理解了上述过程，这两个概念理解起来就没什么难度了。&lt;/p&gt;
-
-&lt;p&gt;DNS协议运行在传输层的UDP协议之上。&lt;/p&gt;
-
-&lt;p&gt;DNS查询基本过程了解了，我们要看一下DNS记录的内容。DNS记录的格式如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;(Name,Value,Type,TTL)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;TTL是生存时间，Name和Value的含义决定于Type&lt;/p&gt;
-
-&lt;p&gt;如果Type是&lt;code&gt;A&lt;/code&gt;，则Name是主机名，Value是主机名对应IP地址&lt;/p&gt;
-
-&lt;p&gt;如果Type是&lt;code&gt;NS&lt;/code&gt;，则Name是域，Value是知道如何获得该域权威DNS服务器的&lt;strong&gt;主机名&lt;/strong&gt;，注意Value是一个主机名，不是IP&lt;/p&gt;
-
-&lt;p&gt;如果Type是&lt;code&gt;CNAME&lt;/code&gt;，则Name是别名，Value是规范主机名。这就是为什么DNS会提供别名服务&lt;/p&gt;
-
-&lt;p&gt;如果Type是&lt;code&gt;MX&lt;/code&gt;，则Name是邮件服务系统的主机名，Value是别名。这就是为什么DNS会提供邮件服务器别名服务&lt;/p&gt;
-
-&lt;p&gt;至于DNS报文，我目前认为没有太多值得在这里去说的。&lt;/p&gt;
-
-&lt;p&gt;DNS的功能、DNS查询过程、DNS记录和报文相关的内容就说到这里吧。&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;参考资料&lt;/em&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;James F. Kurose， Keith W. Ross. 计算机网络-自顶向下方法（原书第6版）. 机械工业出版社. 2014.&lt;/li&gt;
-&lt;/ol&gt;
 </description>
     </item>
     
