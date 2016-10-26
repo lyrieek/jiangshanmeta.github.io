@@ -151,6 +151,65 @@ $data['daodianTwiceUserCount'] = count($rst['result']);
 
 <p>第一次聚合也是根据用户id(crmId)进行聚合，得到每个用户订单数量，到这里和第一个场景的操作一样，然后再向下操作不是聚合而是进行筛选，我们要筛选出订单数量大于等于2的。</p>
 
+<h2 id="5-project的使用:233b6dd901ca06898e3895bff0f956d4">5. $.project的使用</h2>
+
+<p>在同事的聚合代码里发现了这么一段：</p>
+
+<pre><code>$match = array(
+    '$match'=&gt; [
+        'storeId'=&gt;$this-&gt;store,
+        'counter'=&gt;['$gt'=&gt;0]
+    ]
+);
+$project = array(
+    '$project'=&gt;[
+        'typ'=&gt;1,
+        'counter'=&gt;1 ,
+        'total'=&gt;['$multiply'=&gt;['$counter','$chengben']]
+    ]
+);
+$group = array(
+    '$group'=&gt;[
+        '_id'=&gt;'$typ', 
+        &quot;counter&quot;=&gt;['$sum'=&gt; '$counter'],
+        &quot;totalPrice&quot;=&gt;['$sum'=&gt; '$total']
+    ]
+);
+$sort = ['$sort'=&gt;['_id'=&gt;1]];
+$rst = $this-&gt;db-&gt;aggregate('sPeijianinstore',[$match,$project,$group,$sort]);
+</code></pre>
+
+<p>用聚合也有一段时间了match和group很熟悉，但是那个project是个啥？查了一下<a href="https://docs.mongodb.com/manual/reference/operator/aggregation/project/">官方文档</a>发现这里的<code>$project</code>很接近mysql的<code>select</code>，选择需要返回的字段，并能对字段进行运算作为新字段返回。
+那解释一下上面project代码的含义：返回typ字段和counter字段（_id字段是默认返回的），然后创建并返回一个新的字段total，这个新字段是由counter字段和chengben字段相乘得到的。</p>
+
+<p>那个<code>$multiply</code>就是相乘的意思，<a href="https://docs.mongodb.com/manual/reference/operator/aggregation-arithmetic/">mongodb支持多种常见的运算</a>，四则运算、指数对数运算、幂运算、取整都支持。</p>
+
+<h2 id="6-比较两个字段:233b6dd901ca06898e3895bff0f956d4">6.比较两个字段</h2>
+
+<p>需求场景是这样的：有x、y两个字段，需要x&gt;y的数据。如果在mysql里这个需求实现起来其实很简单，但是mongodb&hellip;&hellip;</p>
+
+<p>以前对于这样的需求都是在php里进行筛选而不是在数据库里进行筛选，有了上面的<code>$project</code>这个实现起来终于有点希望了</p>
+
+<p>下面一段代码是在<a href="https://segmentfault.com/q/1010000003034113">segmentfault</a>上找的，是mongo shell的代码</p>
+
+<pre><code>db.collection.aggregate(
+    [  
+      {
+        $project : {
+           _id: '$name',
+           val: { $subtract : [ &quot;$x&quot;, &quot;$y&quot; ] }，
+           x: '$x',
+           y: '$y'
+        }
+      },
+      {$match: {val: {$gt: 0}}},
+      {$sort: { val: -1 }}
+   ]
+)
+</code></pre>
+
+<p>实际使用的时候为了性能优化可以先match一遍做个初筛，然后进行project判断字段间的关系进行筛选，然后执行聚合之类的操作。</p>
+
 			</div>
 
 

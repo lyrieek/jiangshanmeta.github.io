@@ -138,6 +138,65 @@ $data[&#39;daodianTwiceUserCount&#39;] = count($rst[&#39;result&#39;]);
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;第一次聚合也是根据用户id(crmId)进行聚合，得到每个用户订单数量，到这里和第一个场景的操作一样，然后再向下操作不是聚合而是进行筛选，我们要筛选出订单数量大于等于2的。&lt;/p&gt;
+
+&lt;h2 id=&#34;5-project的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;5. $.project的使用&lt;/h2&gt;
+
+&lt;p&gt;在同事的聚合代码里发现了这么一段：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$match = array(
+    &#39;$match&#39;=&amp;gt; [
+        &#39;storeId&#39;=&amp;gt;$this-&amp;gt;store,
+        &#39;counter&#39;=&amp;gt;[&#39;$gt&#39;=&amp;gt;0]
+    ]
+);
+$project = array(
+    &#39;$project&#39;=&amp;gt;[
+        &#39;typ&#39;=&amp;gt;1,
+        &#39;counter&#39;=&amp;gt;1 ,
+        &#39;total&#39;=&amp;gt;[&#39;$multiply&#39;=&amp;gt;[&#39;$counter&#39;,&#39;$chengben&#39;]]
+    ]
+);
+$group = array(
+    &#39;$group&#39;=&amp;gt;[
+        &#39;_id&#39;=&amp;gt;&#39;$typ&#39;, 
+        &amp;quot;counter&amp;quot;=&amp;gt;[&#39;$sum&#39;=&amp;gt; &#39;$counter&#39;],
+        &amp;quot;totalPrice&amp;quot;=&amp;gt;[&#39;$sum&#39;=&amp;gt; &#39;$total&#39;]
+    ]
+);
+$sort = [&#39;$sort&#39;=&amp;gt;[&#39;_id&#39;=&amp;gt;1]];
+$rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;sPeijianinstore&#39;,[$match,$project,$group,$sort]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;用聚合也有一段时间了match和group很熟悉，但是那个project是个啥？查了一下&lt;a href=&#34;https://docs.mongodb.com/manual/reference/operator/aggregation/project/&#34;&gt;官方文档&lt;/a&gt;发现这里的&lt;code&gt;$project&lt;/code&gt;很接近mysql的&lt;code&gt;select&lt;/code&gt;，选择需要返回的字段，并能对字段进行运算作为新字段返回。
+那解释一下上面project代码的含义：返回typ字段和counter字段（_id字段是默认返回的），然后创建并返回一个新的字段total，这个新字段是由counter字段和chengben字段相乘得到的。&lt;/p&gt;
+
+&lt;p&gt;那个&lt;code&gt;$multiply&lt;/code&gt;就是相乘的意思，&lt;a href=&#34;https://docs.mongodb.com/manual/reference/operator/aggregation-arithmetic/&#34;&gt;mongodb支持多种常见的运算&lt;/a&gt;，四则运算、指数对数运算、幂运算、取整都支持。&lt;/p&gt;
+
+&lt;h2 id=&#34;6-比较两个字段:233b6dd901ca06898e3895bff0f956d4&#34;&gt;6.比较两个字段&lt;/h2&gt;
+
+&lt;p&gt;需求场景是这样的：有x、y两个字段，需要x&amp;gt;y的数据。如果在mysql里这个需求实现起来其实很简单，但是mongodb&amp;hellip;&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;以前对于这样的需求都是在php里进行筛选而不是在数据库里进行筛选，有了上面的&lt;code&gt;$project&lt;/code&gt;这个实现起来终于有点希望了&lt;/p&gt;
+
+&lt;p&gt;下面一段代码是在&lt;a href=&#34;https://segmentfault.com/q/1010000003034113&#34;&gt;segmentfault&lt;/a&gt;上找的，是mongo shell的代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;db.collection.aggregate(
+    [  
+      {
+        $project : {
+           _id: &#39;$name&#39;,
+           val: { $subtract : [ &amp;quot;$x&amp;quot;, &amp;quot;$y&amp;quot; ] }，
+           x: &#39;$x&#39;,
+           y: &#39;$y&#39;
+        }
+      },
+      {$match: {val: {$gt: 0}}},
+      {$sort: { val: -1 }}
+   ]
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;实际使用的时候为了性能优化可以先match一遍做个初筛，然后进行project判断字段间的关系进行筛选，然后执行聚合之类的操作。&lt;/p&gt;
 </description>
     </item>
     
