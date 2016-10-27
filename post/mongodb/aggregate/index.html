@@ -210,6 +210,27 @@ $rst = $this-&gt;db-&gt;aggregate('sPeijianinstore',[$match,$project,$group,$sor
 
 <p>实际使用的时候为了性能优化可以先match一遍做个初筛，然后进行project判断字段间的关系进行筛选，然后执行聚合之类的操作。</p>
 
+<h2 id="7-没有-id的聚合:233b6dd901ca06898e3895bff0f956d4">7.没有_id的聚合</h2>
+
+<p>group的时候通常会有<code>_id</code>表示按照什么聚合，可以按照一个字段，也可以按照多个字段，上面都有例子，但是有的时候我们并不需要这个聚合的字段，比如如下场景：在订单表中快照出本月的营业额。显然我们只需要筛选出来本月的订单，然后把金额字段加起来就结束了，不需要根据哪个字段聚合。但是group的时候<code>_id</code>不填还不行，还好mongodb支持填<code>null</code>。一下是代码示例：</p>
+
+<pre><code>$this-&gt;db-&gt;clear();
+$match = [
+    '$match'=&gt;[
+        'status'=&gt;['$gte'=&gt;20],
+        'userpayTS'=&gt;['$gte'=&gt;$startTS,'$lt'=&gt;$endTS],
+    ],
+];
+$group = [
+    '$group'=&gt;[
+        '_id'=&gt;null,
+        'sum'=&gt;['$sum'=&gt;'$totalprice'],
+        'count'=&gt;['$sum'=&gt;1],
+    ]
+];
+$rst = $this-&gt;db-&gt;aggregate('bJingpinbook', [$match,$group]);
+</code></pre>
+
 			</div>
 
 

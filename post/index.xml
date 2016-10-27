@@ -197,6 +197,27 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;sPeijianinstore&#39;,[$match,$pro
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;实际使用的时候为了性能优化可以先match一遍做个初筛，然后进行project判断字段间的关系进行筛选，然后执行聚合之类的操作。&lt;/p&gt;
+
+&lt;h2 id=&#34;7-没有-id的聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;7.没有_id的聚合&lt;/h2&gt;
+
+&lt;p&gt;group的时候通常会有&lt;code&gt;_id&lt;/code&gt;表示按照什么聚合，可以按照一个字段，也可以按照多个字段，上面都有例子，但是有的时候我们并不需要这个聚合的字段，比如如下场景：在订单表中快照出本月的营业额。显然我们只需要筛选出来本月的订单，然后把金额字段加起来就结束了，不需要根据哪个字段聚合。但是group的时候&lt;code&gt;_id&lt;/code&gt;不填还不行，还好mongodb支持填&lt;code&gt;null&lt;/code&gt;。一下是代码示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$this-&amp;gt;db-&amp;gt;clear();
+$match = [
+    &#39;$match&#39;=&amp;gt;[
+        &#39;status&#39;=&amp;gt;[&#39;$gte&#39;=&amp;gt;20],
+        &#39;userpayTS&#39;=&amp;gt;[&#39;$gte&#39;=&amp;gt;$startTS,&#39;$lt&#39;=&amp;gt;$endTS],
+    ],
+];
+$group = [
+    &#39;$group&#39;=&amp;gt;[
+        &#39;_id&#39;=&amp;gt;null,
+        &#39;sum&#39;=&amp;gt;[&#39;$sum&#39;=&amp;gt;&#39;$totalprice&#39;],
+        &#39;count&#39;=&amp;gt;[&#39;$sum&#39;=&amp;gt;1],
+    ]
+];
+$rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bJingpinbook&#39;, [$match,$group]);
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
