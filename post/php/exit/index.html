@@ -77,22 +77,26 @@
 }
 </code></pre>
 
-<p>改动并不多，真的只是做了一点微小的贡献，然而每个model初始化容错只需要一行，看起来好爽啊。</p>
+<p>在我们的项目中有一个Template类，是对CI的load-&gt;view进行的封装，通常想要加载一个页面是这样写的：</p>
 
-<p>//做一个有代码洁癖的bug开发者真不容易。话说同事都是有N年开发经验是怎么忍受这样的代码的。。。</p>
-
-<p>update 2016/08/02</p>
-
-<p>一个简单地想法是ajax请求的出错信息，直接写死在代码里不是很合适，可以在model基类里面封装一个相关函数</p>
-
-<pre><code>public function gen_err_msg(){
-	return '数据有误';
-}
+<pre><code>$this-&gt;template-&gt;load('default_page', 'activity/showLottery');
 </code></pre>
 
-<p>可行性上没问题，但是觉得没太大的用处，算是对用户体验的一点改进吧。</p>
+<p>最开始想在加载404页面的时候使用这个类，但一直无法输出页面，当时对于CI的理解还很浅，所以上面的<code>check_inited_for_href</code>方法输出页面那一行写的很难读，现在明白默认条件下是在output类进行输出页面的，输出页面这个动作在controller执行完成后，但是如果初始化失败就在controller里退出脚本了，显然不会输出页面。</p>
 
-<p>另一个想法是扩大适用范围，不仅仅是在初始化的时候，在model有一些业务逻辑判断，比如常见的权限判断，需要导入到一个类似于404页面的无权限页面，诸如此类都可以封装到model层而不是在controller里手动判断。</p>
+<p>修改后的代码如下：</p>
+
+<pre><code>public function check_inited_for_href(){
+    $CI =&amp; get_instance();
+    if(!$this-&gt;is_inited){
+        $CI-&gt;topTyp = &quot;gobacktop&quot;;
+        $CI-&gt;top_title = &quot;出错啦&quot;;
+        echo $CI-&gt;template-&gt;load('default_page', 'common/404','',TRUE);
+        exit();
+    }
+    return $this;       
+}
+</code></pre>
 
 			</div>
 
