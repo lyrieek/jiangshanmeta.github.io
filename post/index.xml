@@ -6,8 +6,104 @@
     <description>Recent content in Posts on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 23 Oct 2016 20:20:18 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 05 Nov 2016 19:39:38 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>21天并不能精通CI</title>
+      <link>http://jiangshanmeta.github.io/post/php/ci/</link>
+      <pubDate>Sat, 05 Nov 2016 19:39:38 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/php/ci/</guid>
+      <description>
+
+&lt;p&gt;CI是一个MVC的php框架，平时使用的多了所以开始阅读其源码，在这里做个记录。&lt;/p&gt;
+
+&lt;h2 id=&#34;整体流程:4148907b28e52bc7301c1249655cea8c&#34;&gt;整体流程&lt;/h2&gt;
+
+&lt;p&gt;要了解一个框架，首先要做的就了解程序的流程。&lt;/p&gt;
+
+&lt;p&gt;一般而言，我们请求的是index.php文件，在这个文件中主要定义了三个文件目录：CI系统文件目录、应用程序文件目录、界面层文件目录，然后加载了CodeIgniter.php这一文件，该文件规定了程序的主要逻辑。&lt;/p&gt;
+
+&lt;p&gt;在CodeIgniter.php中，首先加载了一些定义好的工具全局函数和变量，然后是基准测试类、钩子类、Config类，到这里都是一些辅助性的东西，接下来的加载URI类和路由类，前者对请求的url进行各种处理得到各段参数，后者对URI类的处理结果根据路由规则进行处理，到这里我们拿到了controller名、method名以及参数。根据路由类的处理结果，我们拿到controller实例，并调用相应的方法（大部分工作就是实现controller里的各种方法），如果需要输出页面的话一般是通过Output类进行。&lt;/p&gt;
+
+&lt;p&gt;基本流程就是这样，下面具体展开来看。&lt;/p&gt;
+
+&lt;h2 id=&#34;index-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;index.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;common-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Common.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;benchmark-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Benchmark.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;hooks-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Hooks.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;config-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Config.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;controller-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Controller.php&lt;/h2&gt;
+
+&lt;p&gt;虽然想按照执行顺序写但是还是先写Controller吧，毕竟controller是日常写的比较多的部分。controller的基类并不复杂：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class CI_Controller {
+	private static $instance;
+	public function __construct()
+	{
+		self::$instance =&amp;amp; $this;
+		foreach (is_loaded() as $var =&amp;gt; $class)
+		{
+			$this-&amp;gt;$var =&amp;amp; load_class($class);
+		}
+
+		$this-&amp;gt;load =&amp;amp; load_class(&#39;Loader&#39;, &#39;core&#39;);
+		$this-&amp;gt;load-&amp;gt;initialize();
+		log_message(&#39;info&#39;, &#39;Controller Class Initialized&#39;);
+	}
+
+	public static function &amp;amp;get_instance()
+	{
+		return self::$instance;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有一个静态私有变量&lt;code&gt;$instance&lt;/code&gt;用来存放实例化的controller，静态方法&lt;code&gt;get_instance&lt;/code&gt;是用来获取这个实例化的controller，在构造函数中，首先&lt;code&gt;self::$instance =&amp;amp; $this;&lt;/code&gt;把形成的实例存储在静态私有变量&lt;code&gt;$instance&lt;/code&gt;中，然后把通过&lt;code&gt;load_class&lt;/code&gt;这一函数实例化的类挂到controller上面，这样我们就可以在controller内通过&lt;code&gt;$this&lt;/code&gt;访问这些类了。&lt;/p&gt;
+
+&lt;p&gt;在CodeIgniter.php文件中一个有关的函数是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function &amp;amp;get_instance()
+{
+	return CI_Controller::get_instance();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;model-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Model.php&lt;/h2&gt;
+
+&lt;p&gt;Model也是业务逻辑经常要实现的，我们看一下model的基类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class CI_Model {
+
+	public function __construct()
+	{
+		log_message(&#39;info&#39;, &#39;Model Class Initialized&#39;);
+	}
+
+	public function __get($key)
+	{
+		return get_instance()-&amp;gt;$key;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CI_Model就这么简短，比较有意思的是对于魔术方法&lt;code&gt;__get&lt;/code&gt;的使用，这里利用了get_instance这一函数，当model层没有所查询的变量时就从超级对象CI那里获取。&lt;/p&gt;
+
+&lt;h2 id=&#34;uri-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;URI.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;router-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Router.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;loader-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Loader.php&lt;/h2&gt;
+</description>
+    </item>
     
     <item>
       <title>mongodb的复杂查询和聚合</title>
@@ -1631,173 +1727,6 @@ public function __construct()
 &lt;p&gt;这里这篇文章并没有深入去描述传输层，只是简单地描述了传输层的功能、多路复用/多路分用的概念、UDP报文及应用、可靠传输需要的辅助字段、TCP连接过程/拆除过程、TCP可靠传输、TCP流量控制以及TCP拥塞控制。&lt;/p&gt;
 
 &lt;p&gt;因为目前是以WEB开发的角度看待传输层，这些基本的描述性的东西对于我也应该足够了，或许以后会遇到socket编程吧，当然这是后话了。既然是从WEB开发的角度，我所熟悉的是应用层，传输层更像是一个API，最近我会写一篇文章，从应用层角度看待传输层。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>http方法和状态码</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</link>
-      <pubDate>Sun, 17 Jul 2016 20:44:32 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</guid>
-      <description>
-
-&lt;p&gt;http协议是web开发的基础，然而内容太多，即使是入门级的内容也不是一两篇文章能总结好的。这里就先总结一下http方法和状态码。&lt;/p&gt;
-
-&lt;h2 id=&#34;http方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;http方法&lt;/h2&gt;
-
-&lt;h4 id=&#34;get方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;GET方法&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;GET&lt;/code&gt;方法通常用来向服务器请求某个资源。一般打开某个网页就是使用&lt;code&gt;GET&lt;/code&gt;方法。&lt;/p&gt;
-
-&lt;h4 id=&#34;post方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;POST方法&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;POST&lt;/code&gt;方法是用来向服务器输入数据的。有的表单提交就是采用&lt;code&gt;POST&lt;/code&gt;方法，不过随着现在业务逻辑的复杂化，应该很少有人会直接使用这种方法提交表单，而是采用&lt;code&gt;ajax&lt;/code&gt;提交表单内容。&lt;/p&gt;
-
-&lt;h4 id=&#34;head方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;HEAD方法&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;HEAD&lt;/code&gt;方法和&lt;code&gt;GET&lt;/code&gt;方法很类似，但是服务器在响应中只会返回首部，而不会返回主体部分。&lt;/p&gt;
-
-&lt;h4 id=&#34;put方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;PUT方法&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;PUT&lt;/code&gt;方法用于向服务器写入文档。&lt;code&gt;PUT&lt;/code&gt;方法的语义是让服务器用请求的主体部分来创建一个由所请求URL命名的新文档，或者，如果那个URL已经存在，就用这个主体替代它。&lt;/p&gt;
-
-&lt;p&gt;因为&lt;code&gt;PUT&lt;/code&gt;方法允许对内容进行修改，对于WEB服务器，原则上应该需要用户登录确认身份。&lt;/p&gt;
-
-&lt;h4 id=&#34;delete方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;DELETE方法&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;DELETE&lt;/code&gt;方法是与&lt;code&gt;PUT&lt;/code&gt;方法相反的方法，它用来删除文件。&lt;/p&gt;
-
-&lt;h4 id=&#34;options方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;OPTIONS方法&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;OPTIONS&lt;/code&gt;方法请求服务器告知其支持的各种功能。可以询问服务器通常支持哪些方法，或者对某些特殊资源支持哪些方法。&lt;/p&gt;
-
-&lt;h4 id=&#34;trace方法:299e9942cf324699ed9e60279b71ca7a&#34;&gt;TRACE方法&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;TRACE&lt;/code&gt;方法允许客户端在最终将请求发送给服务器时，看看它变成了什么样子。服务器会在响应主体中携带它收到的原始请求报文。&lt;/p&gt;
-
-&lt;h2 id=&#34;http状态码和原因短语:299e9942cf324699ed9e60279b71ca7a&#34;&gt;http状态码和原因短语&lt;/h2&gt;
-
-&lt;p&gt;http状态码为客户端提供了一种理解事务处理结果的便捷方式。原因短语一般是为了方便人类理解而存在的。&lt;/p&gt;
-
-&lt;h3 id=&#34;100-199-信息性状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;100-199 信息性状态码&lt;/h3&gt;
-
-&lt;h4 id=&#34;101-switching-protocols:299e9942cf324699ed9e60279b71ca7a&#34;&gt;101 Switching Protocols&lt;/h4&gt;
-
-&lt;p&gt;服务器正在根据客户端的指定，将协议切换成Update首部所列的首部。&lt;/p&gt;
-
-&lt;h3 id=&#34;200-299-成功状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;200-299 成功状态码&lt;/h3&gt;
-
-&lt;h4 id=&#34;200-ok:299e9942cf324699ed9e60279b71ca7a&#34;&gt;200 OK&lt;/h4&gt;
-
-&lt;p&gt;表示从客户端发来的请求在服务器端正常处理了。在响应实体中包含了所请求的资源。&lt;/p&gt;
-
-&lt;h4 id=&#34;204-no-content:299e9942cf324699ed9e60279b71ca7a&#34;&gt;204 No Content&lt;/h4&gt;
-
-&lt;p&gt;表示客户端发来的请求在服务器端得到正常处理，但是在响应报文中不含实体的主体部分。大家可以看一下知乎专栏写文章那个页面，应该是监听输入事件然后发起ajax请求保存文章内容，然后返回的状态码就是204。虽然我个人认为知乎的这个保存设计不是很好。&lt;/p&gt;
-
-&lt;h4 id=&#34;206-partical-content:299e9942cf324699ed9e60279b71ca7a&#34;&gt;206 Partical Content&lt;/h4&gt;
-
-&lt;p&gt;成功执行了一个Range请求。206响应中必须包含&lt;code&gt;Content-Range&lt;/code&gt;、&lt;code&gt;Date&lt;/code&gt;、&lt;code&gt;ETag&lt;/code&gt;或&lt;code&gt;Content-Location&lt;/code&gt;首部。&lt;/p&gt;
-
-&lt;h3 id=&#34;300-399-重定向状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;300-399 重定向状态码&lt;/h3&gt;
-
-&lt;h4 id=&#34;301-moved-permanently:299e9942cf324699ed9e60279b71ca7a&#34;&gt;301 Moved Permanently&lt;/h4&gt;
-
-&lt;p&gt;永久重定向。表示请求的资源已经被分配了新的URL，响应的&lt;code&gt;Location&lt;/code&gt;首部字段包含资源现在所处的URL。&lt;/p&gt;
-
-&lt;h4 id=&#34;302-found-303-see-other-307-temporary-redirect:299e9942cf324699ed9e60279b71ca7a&#34;&gt;302 Found、303 See Other、307 Temporary Redirect&lt;/h4&gt;
-
-&lt;p&gt;这三个状态码表示临时重定向 ，功能差不多，但是有些许差异，而且还牵扯到http/1.0和http/1.1版本问题。&lt;/p&gt;
-
-&lt;p&gt;在http/1.0中，如果发送的是POST请求，服务器返回302，则需要向用户确认是否重发、重发依然是POST请求。&lt;/p&gt;
-
-&lt;p&gt;在http/1.1中，浏览器对于302，其实是按照303处理的，即POST请求会转换为GET请求然后重发。&lt;/p&gt;
-
-&lt;p&gt;在http/1.1中，浏览器对待307，其实和http/1.0中的302一致，不改变请求状态。&lt;/p&gt;
-
-&lt;p&gt;换句话说对于&lt;code&gt;GET&lt;/code&gt;请求这几个没什么区别，对于&lt;code&gt;POST&lt;/code&gt;请求，正常人会希望重定向为一个新的&lt;code&gt;POST&lt;/code&gt;请求，会采用307状态码。然而有应用场景？&lt;/p&gt;
-
-&lt;p&gt;可以参考&lt;a href=&#34;http://www.cnblogs.com/cswuyg/p/3871976.html&#34;&gt;这篇文章&lt;/a&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;304-not-modified:299e9942cf324699ed9e60279b71ca7a&#34;&gt;304 Not Modified&lt;/h4&gt;
-
-&lt;p&gt;客户端可以在请求首部中包含条件请求首部，如果不满足条件的话就返回304。带有这个状态码的响应不应该包含实体的主体部分。&lt;/p&gt;
-
-&lt;h3 id=&#34;400-499-客户端错误状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;400-499 客户端错误状态码&lt;/h3&gt;
-
-&lt;h4 id=&#34;400-bad-request:299e9942cf324699ed9e60279b71ca7a&#34;&gt;400 Bad Request&lt;/h4&gt;
-
-&lt;p&gt;表示请求报文有语法错误&lt;/p&gt;
-
-&lt;h4 id=&#34;403-forbidden:299e9942cf324699ed9e60279b71ca7a&#34;&gt;403 Forbidden&lt;/h4&gt;
-
-&lt;p&gt;表示请求被服务器拒绝了。如果服务器想说明为什么拒绝请求，可在响应主体对原因进行说明。然而，通常情况下因为不想说明为什么拒绝才用这个状态码，所以我至今不明白为什么有那么两天mongodb中文网给我403。&lt;/p&gt;
-
-&lt;h4 id=&#34;404-not-found:299e9942cf324699ed9e60279b71ca7a&#34;&gt;404 Not Found&lt;/h4&gt;
-
-&lt;p&gt;这个就太熟悉了，服务器找不到所请求的url。&lt;/p&gt;
-
-&lt;h3 id=&#34;500-599-服务器错误状态码:299e9942cf324699ed9e60279b71ca7a&#34;&gt;500-599 服务器错误状态码&lt;/h3&gt;
-
-&lt;h4 id=&#34;500-internal-server-error:299e9942cf324699ed9e60279b71ca7a&#34;&gt;500 Internal Server Error&lt;/h4&gt;
-
-&lt;p&gt;在开发中，我的本地数据库连的同事的，然而有的时候连不上，就会报500。&lt;/p&gt;
-
-&lt;h4 id=&#34;503-service-unavailable:299e9942cf324699ed9e60279b71ca7a&#34;&gt;503 Service Unavailable&lt;/h4&gt;
-
-&lt;p&gt;服务器现在无法为请求提供服务，但将来可以。偶尔见到维护的时候用过这个状态码。&lt;/p&gt;
-
-&lt;h2 id=&#34;请求行与响应行:299e9942cf324699ed9e60279b71ca7a&#34;&gt;请求行与响应行&lt;/h2&gt;
-
-&lt;p&gt;请求行的语法如下&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;method&amp;gt;&amp;lt;request-URL&amp;gt;&amp;lt;version&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;举个例子，请求知乎首页的请求行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GET / HTTP/1.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;响应行的语法如下&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;version&amp;gt;&amp;lt;status&amp;gt;&amp;lt;reason-phrase&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;请求知乎首页响应行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;HTTP/1.1 200 OK
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;请求行和响应行需要方法、url、版本、状态码和状态短语。方法、状态码状态短语上面说过了，版本对于现代浏览器是http/1.1。url就不说了。&lt;/p&gt;
-
-&lt;p&gt;update 2016/07/19&lt;/p&gt;
-
-&lt;p&gt;既然提到了状态码，引用一段项目中的相关函数&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;if ( ! function_exists(&#39;redirect&#39;))
-{
-    function redirect($uri = &#39;&#39;, $method = &#39;location&#39;, $http_response_code = 302)
-    {
-        if ( ! preg_match(&#39;#^https?://#i&#39;, $uri))
-        {
-            $uri = site_url($uri);
-        }
-
-        switch($method)
-        {
-            case &#39;refresh&#39;  : header(&amp;quot;Refresh:0;url=&amp;quot;.$uri);
-                break;
-            default         : header(&amp;quot;Location: &amp;quot;.$uri, TRUE, $http_response_code);
-                break;
-        }
-        exit;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;代码语言是最好的编程语言php（大雾。作用是重定向，这里默认的重定向状态码就是302，虽然严格来说用303更好。&lt;/p&gt;
 </description>
     </item>
     

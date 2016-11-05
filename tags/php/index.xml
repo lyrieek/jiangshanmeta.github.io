@@ -6,8 +6,104 @@
     <description>Recent content in Php on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 18 Sep 2016 15:42:17 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 05 Nov 2016 19:39:38 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>21天并不能精通CI</title>
+      <link>http://jiangshanmeta.github.io/post/php/ci/</link>
+      <pubDate>Sat, 05 Nov 2016 19:39:38 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/php/ci/</guid>
+      <description>
+
+&lt;p&gt;CI是一个MVC的php框架，平时使用的多了所以开始阅读其源码，在这里做个记录。&lt;/p&gt;
+
+&lt;h2 id=&#34;整体流程:4148907b28e52bc7301c1249655cea8c&#34;&gt;整体流程&lt;/h2&gt;
+
+&lt;p&gt;要了解一个框架，首先要做的就了解程序的流程。&lt;/p&gt;
+
+&lt;p&gt;一般而言，我们请求的是index.php文件，在这个文件中主要定义了三个文件目录：CI系统文件目录、应用程序文件目录、界面层文件目录，然后加载了CodeIgniter.php这一文件，该文件规定了程序的主要逻辑。&lt;/p&gt;
+
+&lt;p&gt;在CodeIgniter.php中，首先加载了一些定义好的工具全局函数和变量，然后是基准测试类、钩子类、Config类，到这里都是一些辅助性的东西，接下来的加载URI类和路由类，前者对请求的url进行各种处理得到各段参数，后者对URI类的处理结果根据路由规则进行处理，到这里我们拿到了controller名、method名以及参数。根据路由类的处理结果，我们拿到controller实例，并调用相应的方法（大部分工作就是实现controller里的各种方法），如果需要输出页面的话一般是通过Output类进行。&lt;/p&gt;
+
+&lt;p&gt;基本流程就是这样，下面具体展开来看。&lt;/p&gt;
+
+&lt;h2 id=&#34;index-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;index.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;common-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Common.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;benchmark-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Benchmark.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;hooks-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Hooks.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;config-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Config.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;controller-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Controller.php&lt;/h2&gt;
+
+&lt;p&gt;虽然想按照执行顺序写但是还是先写Controller吧，毕竟controller是日常写的比较多的部分。controller的基类并不复杂：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class CI_Controller {
+	private static $instance;
+	public function __construct()
+	{
+		self::$instance =&amp;amp; $this;
+		foreach (is_loaded() as $var =&amp;gt; $class)
+		{
+			$this-&amp;gt;$var =&amp;amp; load_class($class);
+		}
+
+		$this-&amp;gt;load =&amp;amp; load_class(&#39;Loader&#39;, &#39;core&#39;);
+		$this-&amp;gt;load-&amp;gt;initialize();
+		log_message(&#39;info&#39;, &#39;Controller Class Initialized&#39;);
+	}
+
+	public static function &amp;amp;get_instance()
+	{
+		return self::$instance;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有一个静态私有变量&lt;code&gt;$instance&lt;/code&gt;用来存放实例化的controller，静态方法&lt;code&gt;get_instance&lt;/code&gt;是用来获取这个实例化的controller，在构造函数中，首先&lt;code&gt;self::$instance =&amp;amp; $this;&lt;/code&gt;把形成的实例存储在静态私有变量&lt;code&gt;$instance&lt;/code&gt;中，然后把通过&lt;code&gt;load_class&lt;/code&gt;这一函数实例化的类挂到controller上面，这样我们就可以在controller内通过&lt;code&gt;$this&lt;/code&gt;访问这些类了。&lt;/p&gt;
+
+&lt;p&gt;在CodeIgniter.php文件中一个有关的函数是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function &amp;amp;get_instance()
+{
+	return CI_Controller::get_instance();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;model-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Model.php&lt;/h2&gt;
+
+&lt;p&gt;Model也是业务逻辑经常要实现的，我们看一下model的基类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class CI_Model {
+
+	public function __construct()
+	{
+		log_message(&#39;info&#39;, &#39;Model Class Initialized&#39;);
+	}
+
+	public function __get($key)
+	{
+		return get_instance()-&amp;gt;$key;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CI_Model就这么简短，比较有意思的是对于魔术方法&lt;code&gt;__get&lt;/code&gt;的使用，这里利用了get_instance这一函数，当model层没有所查询的变量时就从超级对象CI那里获取。&lt;/p&gt;
+
+&lt;h2 id=&#34;uri-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;URI.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;router-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Router.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;loader-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Loader.php&lt;/h2&gt;
+</description>
+    </item>
     
     <item>
       <title>单例模式</title>

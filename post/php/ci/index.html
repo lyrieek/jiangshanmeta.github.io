@@ -1,0 +1,126 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 21天并不能精通CI &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">21天并不能精通CI</h1>
+			  <p >Sat, Nov 5, 2016</p>
+			      
+
+<p>CI是一个MVC的php框架，平时使用的多了所以开始阅读其源码，在这里做个记录。</p>
+
+<h2 id="整体流程:4148907b28e52bc7301c1249655cea8c">整体流程</h2>
+
+<p>要了解一个框架，首先要做的就了解程序的流程。</p>
+
+<p>一般而言，我们请求的是index.php文件，在这个文件中主要定义了三个文件目录：CI系统文件目录、应用程序文件目录、界面层文件目录，然后加载了CodeIgniter.php这一文件，该文件规定了程序的主要逻辑。</p>
+
+<p>在CodeIgniter.php中，首先加载了一些定义好的工具全局函数和变量，然后是基准测试类、钩子类、Config类，到这里都是一些辅助性的东西，接下来的加载URI类和路由类，前者对请求的url进行各种处理得到各段参数，后者对URI类的处理结果根据路由规则进行处理，到这里我们拿到了controller名、method名以及参数。根据路由类的处理结果，我们拿到controller实例，并调用相应的方法（大部分工作就是实现controller里的各种方法），如果需要输出页面的话一般是通过Output类进行。</p>
+
+<p>基本流程就是这样，下面具体展开来看。</p>
+
+<h2 id="index-php:4148907b28e52bc7301c1249655cea8c">index.php</h2>
+
+<h2 id="common-php:4148907b28e52bc7301c1249655cea8c">Common.php</h2>
+
+<h2 id="benchmark-php:4148907b28e52bc7301c1249655cea8c">Benchmark.php</h2>
+
+<h2 id="hooks-php:4148907b28e52bc7301c1249655cea8c">Hooks.php</h2>
+
+<h2 id="config-php:4148907b28e52bc7301c1249655cea8c">Config.php</h2>
+
+<h2 id="controller-php:4148907b28e52bc7301c1249655cea8c">Controller.php</h2>
+
+<p>虽然想按照执行顺序写但是还是先写Controller吧，毕竟controller是日常写的比较多的部分。controller的基类并不复杂：</p>
+
+<pre><code>class CI_Controller {
+	private static $instance;
+	public function __construct()
+	{
+		self::$instance =&amp; $this;
+		foreach (is_loaded() as $var =&gt; $class)
+		{
+			$this-&gt;$var =&amp; load_class($class);
+		}
+
+		$this-&gt;load =&amp; load_class('Loader', 'core');
+		$this-&gt;load-&gt;initialize();
+		log_message('info', 'Controller Class Initialized');
+	}
+
+	public static function &amp;get_instance()
+	{
+		return self::$instance;
+	}
+
+}
+</code></pre>
+
+<p>有一个静态私有变量<code>$instance</code>用来存放实例化的controller，静态方法<code>get_instance</code>是用来获取这个实例化的controller，在构造函数中，首先<code>self::$instance =&amp; $this;</code>把形成的实例存储在静态私有变量<code>$instance</code>中，然后把通过<code>load_class</code>这一函数实例化的类挂到controller上面，这样我们就可以在controller内通过<code>$this</code>访问这些类了。</p>
+
+<p>在CodeIgniter.php文件中一个有关的函数是</p>
+
+<pre><code>function &amp;get_instance()
+{
+	return CI_Controller::get_instance();
+}
+</code></pre>
+
+<h2 id="model-php:4148907b28e52bc7301c1249655cea8c">Model.php</h2>
+
+<p>Model也是业务逻辑经常要实现的，我们看一下model的基类：</p>
+
+<pre><code>class CI_Model {
+
+	public function __construct()
+	{
+		log_message('info', 'Model Class Initialized');
+	}
+
+	public function __get($key)
+	{
+		return get_instance()-&gt;$key;
+	}
+
+}
+</code></pre>
+
+<p>CI_Model就这么简短，比较有意思的是对于魔术方法<code>__get</code>的使用，这里利用了get_instance这一函数，当model层没有所查询的变量时就从超级对象CI那里获取。</p>
+
+<h2 id="uri-php:4148907b28e52bc7301c1249655cea8c">URI.php</h2>
+
+<h2 id="router-php:4148907b28e52bc7301c1249655cea8c">Router.php</h2>
+
+<h2 id="loader-php:4148907b28e52bc7301c1249655cea8c">Loader.php</h2>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>
