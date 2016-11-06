@@ -37,84 +37,112 @@
 
 &lt;p&gt;这个文件包含一些CI封装好的全局函数，先说一部分吧。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-is_php```是用来判断当前php版本的，其实就是对```version_compare```这一系统函数的封装，不过在函数内部有一个静态局部变量```_is_php```用来缓存判断的结果(js就只能默默地靠闭包实现这一功能)。&#34;&gt;
-```get_config```主要是用来获取应用项目中的config文件并保存在静态局部变量```config```中，还可以根据传入的值对```$config```进行补充。
+&lt;p&gt;1.&lt;code&gt;is_php&lt;/code&gt;是用来判断当前php版本的，其实就是对&lt;code&gt;version_compare&lt;/code&gt;这一系统函数的封装，不过在函数内部有一个静态局部变量&lt;code&gt;_is_php&lt;/code&gt;用来缓存判断的结果(js就只能默默地靠闭包实现这一功能)。&lt;/p&gt;
 
-```config_item```是用来获取某个具体的配置的，在实现上首先有一个局部静态变量```_config```，然后```$_config[0] =&amp;amp; get_config();```，这样局部静态变量```_config```保存了对config的引用，这里之所以用一个数组注释里说的很清楚：静态变量无法保存引用，所以用了数组。
+&lt;p&gt;2.&lt;code&gt;get_config&lt;/code&gt;主要是用来获取应用项目中的config文件并保存在静态局部变量&lt;code&gt;config&lt;/code&gt;中，还可以根据传入的值对&lt;code&gt;$config&lt;/code&gt;进行补充。&lt;/p&gt;
 
-```load_class```这个很重要，用来加载并且实例化一些系统类，由于CI扩展性强的特点，这里会判断有没有我们自行扩展的子类然后再实例化，实例化的类会缓存在一个静态局部变量中，用来实现单例。
+&lt;p&gt;3.&lt;code&gt;config_item&lt;/code&gt;是用来获取某个具体的配置的，在实现上首先有一个局部静态变量&lt;code&gt;_config&lt;/code&gt;，然后&lt;code&gt;$_config[0] =&amp;amp; get_config();&lt;/code&gt;，这样局部静态变量&lt;code&gt;_config&lt;/code&gt;保存了对config的引用，这里之所以用一个数组注释里说的很清楚：静态变量无法保存引用，所以用了数组。&lt;/p&gt;
 
-```is_loaded```是和上面的```load_class```函数配合使用的，用来追踪那些实例化的系统类的，这个函数一个是在```load_class```中用到，还有是在controller的基类的构造函数使用，用来把实例化的系统类挂到controller上。
+&lt;p&gt;4.&lt;code&gt;load_class&lt;/code&gt;这个很重要，用来加载并且实例化一些系统类，由于CI扩展性强的特点，这里会判断有没有我们自行扩展的子类然后再实例化，实例化的类会缓存在一个静态局部变量中，用来实现单例。&lt;/p&gt;
 
+&lt;p&gt;5.&lt;code&gt;is_loaded&lt;/code&gt;是和上面的&lt;code&gt;load_class&lt;/code&gt;函数配合使用的，用来追踪那些实例化的系统类的，这个函数一个是在&lt;code&gt;load_class&lt;/code&gt;中用到，还有是在controller的基类的构造函数使用，用来把实例化的系统类挂到controller上。&lt;/p&gt;
 
+&lt;h2 id=&#34;benchmark-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Benchmark.php&lt;/h2&gt;
 
+&lt;p&gt;Benchmark类是用来测试执行时间和使用内存的。&lt;/p&gt;
 
-## Benchmark.php
+&lt;p&gt;对于内存的使用的测试Benckmark类仅仅是返回了一个特殊的字符串，然后在Output类中这个字符串被替换为真正的内存消耗。&lt;/p&gt;
 
-## Hooks.php
+&lt;p&gt;对于执行时间的测试原理其实很简单就是打时间戳。在CodeIgniter.php有几个默认的打时间戳的位置，比如Benchmark实例化成功后、controller的方法被调用后，对应打时间戳的方法是&lt;code&gt;mark&lt;/code&gt;，还有一个和测试时间有关的方法是&lt;code&gt;elapsed_time&lt;/code&gt;，它的作用是返回两点间的时间。既然是两个点，如果终点不传就返回起点到当前的时间，如果起点不传返回特殊字符串，经Output类处理最终是从开始运行CI到输出到浏览器的总时间。&lt;/p&gt;
 
-## Config.php
+&lt;h2 id=&#34;hooks-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Hooks.php&lt;/h2&gt;
 
-## Controller.php
+&lt;p&gt;钩子为我们提供了在不改变核心代码的同时扩展核心代码的可能。对于Hooks类CI默认是禁用的，我们可以修改配置文件启用Hooks类。当启用时，会加载应用代码中的钩子函数。调用钩子函数时是这样的:&lt;/p&gt;
 
-虽然想按照执行顺序写但是还是先写Controller吧，毕竟controller是日常写的比较多的部分。controller的基类并不复杂：
+&lt;pre&gt;&lt;code&gt;$EXT-&amp;gt;call_hook(&#39;pre_system&#39;);
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;class CI_Controller {
-    private static $instance;
-    public function __construct()
-    {
-        self::$instance =&amp;amp; $this;
-        foreach (is_loaded() as $var =&amp;gt; $class)
-        {
-            $this-&amp;gt;$var =&amp;amp; load_class($class);
-        }&lt;/p&gt;
+&lt;p&gt;我们还是看一下源代码吧：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;    $this-&amp;gt;load =&amp;amp; load_class(&#39;Loader&#39;, &#39;core&#39;);
-    $this-&amp;gt;load-&amp;gt;initialize();
-    log_message(&#39;info&#39;, &#39;Controller Class Initialized&#39;);
-}
-
-public static function &amp;amp;get_instance()
+&lt;pre&gt;&lt;code&gt;public function call_hook($which = &#39;&#39;)
 {
-    return self::$instance;
-}
-&lt;/code&gt;&lt;/pre&gt;
+  if ( ! $this-&amp;gt;enabled OR ! isset($this-&amp;gt;hooks[$which])){
+	return FALSE;
+  }
 
-&lt;p&gt;}&lt;/p&gt;
+  if (is_array($this-&amp;gt;hooks[$which]) &amp;amp;&amp;amp; ! isset($this-&amp;gt;hooks[$which][&#39;function&#39;])){
+	foreach ($this-&amp;gt;hooks[$which] as $val){
+		$this-&amp;gt;_run_hook($val);
+	}
+  }else{
+		$this-&amp;gt;_run_hook($this-&amp;gt;hooks[$which]);
+  }
 
-&lt;pre&gt;&lt;code&gt;有一个静态私有变量```$instance```用来存放实例化的controller，静态方法```get_instance```是用来获取这个实例化的controller，在构造函数中，首先```self::$instance =&amp;amp; $this;```把形成的实例存储在静态私有变量```$instance```中，然后把通过```load_class```这一函数实例化的类挂到controller上面，这样我们就可以在controller内通过```$this```访问这些类了。
-
-在CodeIgniter.php文件中一个有关的函数是
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;function &amp;amp;get_instance()
-{
-    return CI_Controller::get_instance();
-}&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;
-## Model.php
-
-Model也是业务逻辑经常要实现的，我们看一下model的基类：
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;class CI_Model {&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public function __construct()
-{
-    log_message(&#39;info&#39;, &#39;Model Class Initialized&#39;);
-}
-
-public function __get($key)
-{
-    return get_instance()-&amp;gt;$key;
+  return TRUE;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;}
-```&lt;/p&gt;
+&lt;p&gt;首先是判断有没有启用钩子、有没有在调用钩子函数的地方挂钩子，该退出的就退出。然后判断这个挂钩子的地方是挂了一个脚本还是多个脚本（一维数组还是二维数组），最终执行每一个脚本的是受保护的&lt;code&gt;_run_hook&lt;/code&gt;方法。&lt;/p&gt;
+
+&lt;p&gt;这个&lt;code&gt;_run_hook&lt;/code&gt;方法支持的还是挺多的，支持匿名函数、支持调用已有实例的方法、支持面向过程的函数、也支持自行实例化一个类然后调用相应的方法（还实现了对这个实例的缓存）。&lt;/p&gt;
+
+&lt;h2 id=&#34;config-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Config.php&lt;/h2&gt;
+
+&lt;h2 id=&#34;controller-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Controller.php&lt;/h2&gt;
+
+&lt;p&gt;虽然想按照执行顺序写但是还是先写Controller吧，毕竟controller是日常写的比较多的部分。controller的基类并不复杂：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class CI_Controller {
+	private static $instance;
+	public function __construct()
+	{
+		self::$instance =&amp;amp; $this;
+		foreach (is_loaded() as $var =&amp;gt; $class)
+		{
+			$this-&amp;gt;$var =&amp;amp; load_class($class);
+		}
+
+		$this-&amp;gt;load =&amp;amp; load_class(&#39;Loader&#39;, &#39;core&#39;);
+		$this-&amp;gt;load-&amp;gt;initialize();
+		log_message(&#39;info&#39;, &#39;Controller Class Initialized&#39;);
+	}
+
+	public static function &amp;amp;get_instance()
+	{
+		return self::$instance;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有一个静态私有变量&lt;code&gt;$instance&lt;/code&gt;用来存放实例化的controller，静态方法&lt;code&gt;get_instance&lt;/code&gt;是用来获取这个实例化的controller，在构造函数中，首先&lt;code&gt;self::$instance =&amp;amp; $this;&lt;/code&gt;把形成的实例存储在静态私有变量&lt;code&gt;$instance&lt;/code&gt;中，然后把通过&lt;code&gt;load_class&lt;/code&gt;这一函数实例化的类挂到controller上面，这样我们就可以在controller内通过&lt;code&gt;$this&lt;/code&gt;访问这些类了。&lt;/p&gt;
+
+&lt;p&gt;在CodeIgniter.php文件中一个有关的函数是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function &amp;amp;get_instance()
+{
+	return CI_Controller::get_instance();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;model-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Model.php&lt;/h2&gt;
+
+&lt;p&gt;Model也是业务逻辑经常要实现的，我们看一下model的基类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class CI_Model {
+
+	public function __construct()
+	{
+		log_message(&#39;info&#39;, &#39;Model Class Initialized&#39;);
+	}
+
+	public function __get($key)
+	{
+		return get_instance()-&amp;gt;$key;
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;CI_Model就这么简短，比较有意思的是对于魔术方法&lt;code&gt;__get&lt;/code&gt;的使用，这里利用了get_instance这一函数，当model层没有所查询的变量时就从超级对象CI那里获取。&lt;/p&gt;
 
