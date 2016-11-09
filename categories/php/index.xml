@@ -88,6 +88,15 @@
 
 &lt;h2 id=&#34;config-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Config.php&lt;/h2&gt;
 
+&lt;p&gt;config类是用来处理各种config文件的，在构造函数中有如下代码:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$this-&amp;gt;config =&amp;amp; get_config();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;你可能会问，为啥还要单独实现一个全局函数来获取config呢，为啥不在这个类里实现呢？原因是当我们需要实例化config类的时候(load_class函数)，我们需要判断有没有用户自行扩展的config子类，这时候已经需要加载config了，就这样。&lt;/p&gt;
+
+&lt;p&gt;一些公共方法比如&lt;code&gt;set_item&lt;/code&gt;、&lt;code&gt;item&lt;/code&gt;、&lt;code&gt;slash_item&lt;/code&gt;都是对具体的config项目进行处理。而&lt;code&gt;load&lt;/code&gt;方法是用来加载一个配置文件的，在Loader类的自动加载调用过这个函数。&lt;/p&gt;
+
 &lt;h2 id=&#34;controller-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Controller.php&lt;/h2&gt;
 
 &lt;p&gt;虽然想按照执行顺序写但是还是先写Controller吧，毕竟controller是日常写的比较多的部分。controller的基类并不复杂：&lt;/p&gt;

@@ -100,6 +100,15 @@
 
 <h2 id="config-php:4148907b28e52bc7301c1249655cea8c">Config.php</h2>
 
+<p>config类是用来处理各种config文件的，在构造函数中有如下代码:</p>
+
+<pre><code>$this-&gt;config =&amp; get_config();
+</code></pre>
+
+<p>你可能会问，为啥还要单独实现一个全局函数来获取config呢，为啥不在这个类里实现呢？原因是当我们需要实例化config类的时候(load_class函数)，我们需要判断有没有用户自行扩展的config子类，这时候已经需要加载config了，就这样。</p>
+
+<p>一些公共方法比如<code>set_item</code>、<code>item</code>、<code>slash_item</code>都是对具体的config项目进行处理。而<code>load</code>方法是用来加载一个配置文件的，在Loader类的自动加载调用过这个函数。</p>
+
 <h2 id="controller-php:4148907b28e52bc7301c1249655cea8c">Controller.php</h2>
 
 <p>虽然想按照执行顺序写但是还是先写Controller吧，毕竟controller是日常写的比较多的部分。controller的基类并不复杂：</p>
