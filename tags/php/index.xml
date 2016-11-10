@@ -160,6 +160,43 @@
 &lt;h2 id=&#34;router-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Router.php&lt;/h2&gt;
 
 &lt;h2 id=&#34;loader-php:4148907b28e52bc7301c1249655cea8c&#34;&gt;Loader.php&lt;/h2&gt;
+
+&lt;p&gt;加载器类是一个功能丰富的类，它负责加载MVC中的Model和View，并且还加载library和helper。&lt;/p&gt;
+
+&lt;h4 id=&#34;加载model:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载model&lt;/h4&gt;
+
+&lt;p&gt;加载model对应的是&lt;code&gt;model&lt;/code&gt;方法，这个方法有三个参数，有意思的是第一个参数，我们看下文档对第一个参数的说明：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;$model (mixed) &amp;ndash; Model name or an array containing multiple models&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;第一个参数可以是一个model名，也可以是一个索引数组其中每一项是model名，还可以是关联数组，其中键为model名、值位挂在controller上的显示名。我们看下是如何实现的：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if (empty($model))
+{
+	return $this;
+}
+elseif (is_array($model))
+{
+	foreach ($model as $key =&amp;gt; $value)
+	{
+		is_int($key) ? $this-&amp;gt;model($value, &#39;&#39;, $db_conn) : $this-&amp;gt;model($key, $value, $db_conn);
+	}
+
+	return $this;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，加载多个model最终转换为一个一个model的加载。&lt;/p&gt;
+
+&lt;p&gt;然后所做的是根据传入的参数获得路径和model名，保证CI_model这个基类被加载，如果有扩展的子类还要保证扩展的子类被加载，最终拿到model的实例并挂到controller上。&lt;/p&gt;
+
+&lt;h4 id=&#34;加载helper:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载helper&lt;/h4&gt;
+
+&lt;h4 id=&#34;加载library:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载library&lt;/h4&gt;
+
+&lt;h4 id=&#34;加载view:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载view&lt;/h4&gt;
 </description>
     </item>
     
