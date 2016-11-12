@@ -265,6 +265,12 @@ window.requestAnimFrame = (function(){
       this.canvas2.height = w;
       this.canvas2.style.cssText="position:absolute;top:0;left:0;";
       this.context2 = this.canvas2.getContext('2d');
+
+      this.canvas3 = document.createElement("canvas");
+      this.canvas3.width = w;
+      this.canvas3.height = w;
+      this.canvas3.style.display = "none";
+
       // 文字区域
       this.textArea = document.createElement("div");
       var textAreaPercent = 0.25;
@@ -275,6 +281,7 @@ window.requestAnimFrame = (function(){
       fragment.appendChild(this.canvas1);
       fragment.appendChild(this.canvas2);
       fragment.appendChild(this.textArea);
+      fragment.appendChild(this.canvas3);
       this.wrap.appendChild(fragment);
 
       return this;
