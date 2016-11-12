@@ -194,6 +194,8 @@ elseif (is_array($model))
 
 &lt;h4 id=&#34;加载helper:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载helper&lt;/h4&gt;
 
+&lt;p&gt;加载helper其实要比加载model更简单，因为helper都是面向过程的写法，只要保证文件被include进来就行，无所谓什么基类子类之类的，不过CI在这里把subclass的概念强加在了文件名称规范上了，虽说如此CI也做了兼容处理允许在应用代码的help文件不包含subclass前缀。具体的看代码吧。&lt;/p&gt;
+
 &lt;h4 id=&#34;加载library:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载library&lt;/h4&gt;
 
 &lt;h4 id=&#34;加载view:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载view&lt;/h4&gt;
