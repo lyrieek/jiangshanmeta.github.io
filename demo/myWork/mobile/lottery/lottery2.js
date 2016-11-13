@@ -209,7 +209,7 @@ window.requestAnimFrame = (function(){
     this.status = 0;
     this.imgs = [];
 
-    this.initDOM().draw();
+    this.initDOM().cache().drawLottery().drawDecoration();
 
     //我希望把这些实例属性隐藏掉，而原型方法可以暴露
     var dummpConstructedFunc = function(){};
@@ -266,10 +266,17 @@ window.requestAnimFrame = (function(){
       this.canvas2.style.cssText="position:absolute;top:0;left:0;";
       this.context2 = this.canvas2.getContext('2d');
 
+      // canvas3用来缓存具体的奖项
       this.canvas3 = document.createElement("canvas");
       this.canvas3.width = w;
       this.canvas3.height = w;
       this.canvas3.style.display = "none";
+
+      // canvas4用来缓存那些装饰性的表盘指针
+      this.canvas4 = document.createElement("canvas");
+      this.canvas4.width = w;
+      this.canvas4.height = w;
+      this.canvas4.style.display = "none";      
 
       // 文字区域
       this.textArea = document.createElement("div");
@@ -282,98 +289,19 @@ window.requestAnimFrame = (function(){
       fragment.appendChild(this.canvas2);
       fragment.appendChild(this.textArea);
       fragment.appendChild(this.canvas3);
+      fragment.appendChild(this.canvas4);
       this.wrap.appendChild(fragment);
 
       return this;
     },
-    draw:function(){
-      return this.drawRing().drawPointer().drawBg().drawText();
-    },
-    drawRing:function(){
-      var context2 = this.context2;
-      var options = this.options;
-      var DOM = options.DOM;
-      var r = DOM.w/2;
-
-      context2.save();
-      context2.translate(r,r);
-
-      var totalWidth = 0;
-      var rings = DOM.rings;
-      if(gettype(rings)!='array'){
-        console.error('parameter for rings must be array');
-        return this;
-      }
-      for(var i=0;i<rings.length;i++){
-        var thisring = rings[i];
-        context2.save();
-        context2.beginPath();
-        context2.strokeStyle = thisring.color;
-        context2.lineWidth = thisring.width;
-        if(thisring.shadowColor){
-          context2.shadowColor = thisring.shadowColor;
-        }
-        if(thisring.shadowBlur){
-          context2.shadowBlur = thisring.shadowBlur;
-        }
-        context2.arc(0,0,r-(totalWidth+thisring.width/2),0,2*Math.PI,false);
-        context2.closePath();
-        context2.stroke();
-        context2.restore();
-        totalWidth+= thisring.width;
-      }
-
-      context2.restore();
-
+    cache:function(){
+      this.cacheLottery().cacheDecoration();
       return this;
     },
-    drawPointer:function(deg){
-      var context2 = this.context2;
-      var options = this.options;
-      var DOM = options.DOM;
-      var r = DOM.w/2;
-
-      context2.save();
-      context2.translate(r,r);
-      deg = deg || 0;
-      
-      context2.rotate(deg);
-       /* 外层指针 */
-      context2.save();
-      context2.beginPath();
-      context2.moveTo(-0.05*r,-r+9);
-      context2.lineTo(-0.05*r,-0.8*r);
-      context2.lineTo(-0.12*r,-0.8*r);
-      context2.lineTo(0,-0.7*r);   
-      context2.lineTo(0.12*r,-0.8*r);
-      context2.lineTo(0.05*r,-0.8*r);
-      context2.lineTo(0.05*r,-r+9);
-      context2.closePath();
-      context2.fillStyle = DOM.pointerColor;
-      context2.fill();
-      context2.restore();  
-
-      // 内层指针 
-      context2.save();
-      context2.beginPath();
-      context2.moveTo(-0.05*r,-0.25*r);
-      context2.lineTo(-0.05*r,-0.40*r);
-      context2.lineTo(-0.12*r,-0.40*r);
-      context2.lineTo(0,-0.50*r);   
-      context2.lineTo(0.12*r,-0.40*r);
-      context2.lineTo(0.05*r,-0.40*r);
-      context2.lineTo(0.05*r,-0.25*r);    
-      context2.closePath();
-      context2.fillStyle = DOM.pointerColor;
-      context2.fill();
-      context2.restore();
-
-      context2.restore();
-
-      return this;
-    },
-    drawBg:function(deg){
-      var context1 = this.context1;
+    cacheLottery:function(){
+      // 将奖项的文字描述和其对应的背景缓存起来，避免requestAnmi的时候大量调用canvasAPI
+      var context = this.canvas3.getContext('2d');
+      // 缓存背景
       var options = this.options;
       var DOM = options.DOM;
       var lotteris = options.lotteris;
@@ -382,53 +310,41 @@ window.requestAnimFrame = (function(){
       var r = DOM.w/2;
       var startDeg = DOM.startDeg;
 
-      context1.save();
-      context1.translate(r,r);
-      deg = deg || 0;
-      context1.rotate(deg);
+      context.save();
+      context.translate(r,r);
       for(var i=0;i<len;i++){
-        context1.save();
-        context1.beginPath();
-        context1.moveTo(0,0);
+        context.save();
+        context.beginPath();
+        context.moveTo(0,0);
         var finalDeg = i*degPerPart+startDeg;
 
-        context1.lineTo(Math.sin(finalDeg)*r,-Math.cos(finalDeg)*r);
-        context1.arc(0,0,r,finalDeg-Math.PI/2,finalDeg+degPerPart-Math.PI/2,false)
-        context1.closePath();
-        context1.fillStyle = lotteris[i].bgColor;
-        context1.fill();
-        context1.restore();
+        context.lineTo(Math.sin(finalDeg)*r,-Math.cos(finalDeg)*r);
+        context.arc(0,0,r,finalDeg-Math.PI/2,finalDeg+degPerPart-Math.PI/2,false)
+        context.closePath();
+        context.fillStyle = lotteris[i].bgColor;
+        context.fill();
+        context.restore();
       }
 
-      context1.restore();
+      context.restore();      
 
-      return this;    
-    },
-    drawText:function(deg){
-      var context1 = this.context1;
-      var options = this.options;
-      var DOM = options.DOM;
-      var lotteris = options.lotteris;
+      // 缓存文字
       var optionText = options.text;
-      var len=lotteris.length;
-      var degPerPart = 2*Math.PI/len;
-      var r = DOM.w/2;
-      var startDeg = DOM.startDeg;
+
       var animateArea = options.animation.area;
-      context1.save();
-      context1.translate(r,r);
-      deg = deg || 0;
-      context1.rotate(deg);
-      context1.save();
-      context1.textAlign = "center";
-      context1.textBaseline = "middle";
-      context1.fillStyle = optionText.color;
+      context.save();
+      context.translate(r,r);
+
+      context.save();
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillStyle = optionText.color;
       var fontSize = optionText.fontSize;
       var lineHeight = optionText.lineHeight;
       var realLineHeight = fontSize*lineHeight;
-      context1.font = fontSize+"px bold sans-serif";
-      context1.shadowColor = optionText.shadowColor;
-      context1.shadowBlur = optionText.shadowBlur;
+      context.font = fontSize+"px bold sans-serif";
+      context.shadowColor = optionText.shadowColor;
+      context.shadowBlur = optionText.shadowBlur;
       var separator = optionText.separator;
 
       for(var i=0;i<len;i++){
@@ -437,10 +353,10 @@ window.requestAnimFrame = (function(){
           continue;
         }
 
-        context1.save();
+        context.save();
 
         if(lotteris[i].textColor!==undefined){
-          context1.fillStyle = lotteris[i].textColor;
+          context.fillStyle = lotteris[i].textColor;
         }
         if(lotteris[i].textPos!==undefined){
           var textPos = lotteris[i].textPos;
@@ -455,7 +371,7 @@ window.requestAnimFrame = (function(){
           var finalDeg = degPerPart*(i+0.5)+startDeg;
         }else{
           var finalDeg = 0;
-          context1.rotate((i+0.5)*degPerPart+startDeg);
+          context.rotate((i+0.5)*degPerPart+startDeg);
         }
 
         var textArr = text.split(separator);
@@ -463,15 +379,121 @@ window.requestAnimFrame = (function(){
 
         var startTextPos = centerPos + realLineHeight*(textArr.length-1)/(2*Math.cos(finalDeg));
         for(var j=0,textLen=textArr.length;j<textLen;j++){
-            context1.fillText(textArr[j],Math.sin(finalDeg)*centerPos,-Math.cos(finalDeg)*(startTextPos-j*realLineHeight/Math.cos(finalDeg)) );
+            context.fillText(textArr[j],Math.sin(finalDeg)*centerPos,-Math.cos(finalDeg)*(startTextPos-j*realLineHeight/Math.cos(finalDeg)) );
         }
 
-        context1.restore();
+        context.restore();
       }
-      context1.restore(); 
+      context.restore(); 
 
-      context1.restore(); 
+      context.restore(); 
 
+      return this;
+    },
+    cacheDecoration:function(){
+      var context = this.canvas4.getContext('2d');
+
+      var options = this.options;
+      var DOM = options.DOM;
+      var r = DOM.w/2;
+      // 缓存绘制的环
+      context.save();
+      context.translate(r,r);
+
+      var totalWidth = 0;
+      var rings = DOM.rings;
+      if(gettype(rings)!='array'){
+        console.error('parameter for rings must be array');
+        return this;
+      }
+      for(var i=0;i<rings.length;i++){
+        var thisring = rings[i];
+        context.save();
+        context.beginPath();
+        context.strokeStyle = thisring.color;
+        context.lineWidth = thisring.width;
+        if(thisring.shadowColor){
+          context.shadowColor = thisring.shadowColor;
+        }
+        if(thisring.shadowBlur){
+          context.shadowBlur = thisring.shadowBlur;
+        }
+        context.arc(0,0,r-(totalWidth+thisring.width/2),0,2*Math.PI,false);
+        context.closePath();
+        context.stroke();
+        context.restore();
+        totalWidth+= thisring.width;
+      }
+
+      context.restore();
+
+
+      // 缓存绘制的指针
+      context.save();
+      context.translate(r,r);
+       /* 外层指针 */
+      context.save();
+      context.beginPath();
+      context.moveTo(-0.05*r,-r+9);
+      context.lineTo(-0.05*r,-0.8*r);
+      context.lineTo(-0.12*r,-0.8*r);
+      context.lineTo(0,-0.7*r);   
+      context.lineTo(0.12*r,-0.8*r);
+      context.lineTo(0.05*r,-0.8*r);
+      context.lineTo(0.05*r,-r+9);
+      context.closePath();
+      context.fillStyle = DOM.pointerColor;
+      context.fill();
+      context.restore();  
+
+      // 内层指针 
+      context.save();
+      context.beginPath();
+      context.moveTo(-0.05*r,-0.25*r);
+      context.lineTo(-0.05*r,-0.40*r);
+      context.lineTo(-0.12*r,-0.40*r);
+      context.lineTo(0,-0.50*r);   
+      context.lineTo(0.12*r,-0.40*r);
+      context.lineTo(0.05*r,-0.40*r);
+      context.lineTo(0.05*r,-0.25*r);    
+      context.closePath();
+      context.fillStyle = DOM.pointerColor;
+      context.fill();
+      context.restore();
+
+      context.restore();
+
+      return this;
+    },
+    drawLottery:function(deg){
+      var context = this.context1;
+      var image = this.canvas3;
+
+      var options = this.options;
+      var DOM = options.DOM;
+      var r = DOM.w/2;
+
+      deg = deg || 0;
+      context.save();
+      context.translate(r,r);
+      context.rotate(deg);
+      context.drawImage(image,-r,-r);
+      context.restore();
+      return this;
+    },
+    drawDecoration:function(deg){
+      var options = this.options;
+      var DOM = options.DOM;
+      var r = DOM.w/2;
+
+      var context = this.context2;
+      var image = this.canvas4;
+      deg = deg || 0;
+      context.save();
+      context.translate(r,r);
+      context.rotate(deg);
+      context.drawImage(image,-r,-r);
+      context.restore();
       return this;
     },
     ajaxGetLotteryRes:function(){
@@ -505,9 +527,9 @@ window.requestAnimFrame = (function(){
             curRotate = 2*Math.PI;
           }
           if(animateArea=='decoration'){
-            _this.drawRing().drawPointer(curRotate);
+            _this.drawDecoration(curRotate);
           }else{
-            _this.drawBg(curRotate).drawText(curRotate);
+            _this.drawLottery(curRotate);
           }
           if(hasAjaxRest && progress>=1){
             _this.showLotteryRes(ajaxRest);
@@ -591,9 +613,9 @@ window.requestAnimFrame = (function(){
           if(progress<1){
             context.clearRect(0,0,w,w);
             if(animateArea=='decoration'){
-                _this.drawRing().drawPointer(curRotate);
+                _this.drawDecoration(curRotate);
             }else{
-                _this.drawBg(curRotate).drawText(curRotate);
+                _this.drawLottery(curRotate);
             }
             
             requestAnimFrame(render);
@@ -620,10 +642,10 @@ window.requestAnimFrame = (function(){
       var w = this.options.DOM.w;
       if(animateArea=='decoration'){
         this.context2.clearRect(0,0,w,w);
-        this.drawRing().drawPointer();
+        this.drawDecoration();
       }else{
         this.context1.clearRect(0,0,w,w);
-        this.drawBg().drawText();
+        this.drawLottery();
       }
       
 
