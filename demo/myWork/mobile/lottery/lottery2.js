@@ -144,7 +144,7 @@ window.requestAnimFrame = (function(){
     animation:{
       timePerRound:1,
       rotateCountAfterAjax:3,  //animationTimePerRound是指在 抽奖动画中匀速转动时没转一圈所需要的时间
-      area:'decoratio',
+      area:'lottery',
       timeAfterAjax:7,
     },
     text:{
@@ -520,12 +520,13 @@ window.requestAnimFrame = (function(){
         var render = function(){
           var curTS = Date.now();
           var progress = (curTS-startTS)/animationTimePerRound;
+          if(progress>=1){
+            progress = 1;
+          }
+
           var curRotate = easing.linear(progress)*2*Math.PI;
           context.clearRect(0,0,w,w);
 
-          if(progress>=1){
-            curRotate = 2*Math.PI;
-          }
           if(animateArea=='decoration'){
             _this.drawDecoration(curRotate);
           }else{
@@ -534,7 +535,7 @@ window.requestAnimFrame = (function(){
           if(hasAjaxRest && progress>=1){
             _this.showLotteryRes(ajaxRest);
           }else{
-            if(curRotate==2*Math.PI){
+            if(progress>=1){
               startTS = Date.now();
             }
             requestAnimFrame(render)
@@ -627,9 +628,10 @@ window.requestAnimFrame = (function(){
         }
         requestAnimFrame(render);
       }else{
-        this.reset(); 
-        options.doSthAfterAjaxError && options.doSthAfterAjaxError(json);
-        
+        this.reset();
+        setTimeout(function(){
+          options.doSthAfterAjaxError && options.doSthAfterAjaxError(json);
+        },0); 
       }
 
 
