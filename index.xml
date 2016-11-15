@@ -198,7 +198,29 @@ elseif (is_array($model))
 
 &lt;h4 id=&#34;加载library:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载library&lt;/h4&gt;
 
+&lt;p&gt;加载library的核心逻辑和加载一个model的差不多，都是加载文件实例化一个类最后挂在CI上面，只是多了一些if else。这是因为model的话必须是&lt;code&gt;CI_Model&lt;/code&gt;的子类，而library可不一定，library可以是对CI的library的拓展(即子类)，我们还何以在应用代码里来个和系统library同名文件直接取代掉系统的library，我们还可以在应用代码里自行写一个新的类，而且实例化model的时候没有参数，但是library的有。&lt;/p&gt;
+
 &lt;h4 id=&#34;加载view:4148907b28e52bc7301c1249655cea8c&#34;&gt;加载view&lt;/h4&gt;
+
+&lt;p&gt;加载view有三个参数，第一个是view层文件的地址，既然已经到这里了加载一个文件已经是见的多了，不多说了，然后第二个参数是一个关联数组，用于存放我们要从controller层传递给view层的数据，在view层我们使用传递过来的数据的时候这个关联数组就像被打散了一样，我一直没想清楚ci是如何实现的，知道我看了源码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;extract($this-&amp;gt;_ci_cached_vars);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在对传进来的数据进行一定的清洗合并之后，使用&lt;code&gt;extract&lt;/code&gt;这个函数实现打散一个关联数组。这里还一个问题，在我们的项目中一般是把数据挂在controller上，然后在view层通过&lt;code&gt;$this&lt;/code&gt;来访问，那就有问题了，加载view层的时候，&lt;code&gt;$this&lt;/code&gt;指向的是加载器而不是controller，那我们是如何获得controller上的变量的？其实类似的问题我们在model层也遇到过，model层是通过魔术方法&lt;code&gt;__get&lt;/code&gt;获得挂在controller上的变量的，然而加载器这里处理的太暴力的：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; foreach (get_object_vars($_ci_CI) as $_ci_key =&amp;gt; $_ci_var)
+{
+	if ( ! isset($this-&amp;gt;$_ci_key))
+	{
+		$this-&amp;gt;$_ci_key =&amp;amp; $_ci_CI-&amp;gt;$_ci_key;
+ 	}
+} 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有代码有真相，这里是把controller上的变量直接全挂到了加载器上，不得不佩服作者的脑洞，其实我一直很好奇作者为啥不和model用同样的代码。&lt;/p&gt;
+
+&lt;p&gt;最后一个参数是控制直接返回一个字符串还是把它交给output类处理，在默认条件下是交给output类。在这里作者为了性能上的考虑使用了输出缓存。&lt;/p&gt;
 </description>
     </item>
     
