@@ -167,9 +167,13 @@
 
 <p>CI_Model就这么简短，比较有意思的是对于魔术方法<code>__get</code>的使用，这里利用了get_instance这一函数，当model层没有所查询的变量时就从超级对象CI那里获取。</p>
 
-<h2 id="uri-php:4148907b28e52bc7301c1249655cea8c">URI.php</h2>
+<h2 id="uri-php-router-php:4148907b28e52bc7301c1249655cea8c">URI.php Router.php</h2>
 
-<h2 id="router-php:4148907b28e52bc7301c1249655cea8c">Router.php</h2>
+<p>这两个文件综合决定了请求的controller和method以及参数。</p>
+
+<p>URI类主要是处理请求的URL，对超全局变量<code>$_SERVER</code>里的数据进行各种处理，并且处理一些服务器的兼容问题，具体的代码注释可以参照<a href="http://blog.csdn.net/Zhihua_W/article/details/52872407">CI框架源码解析八之地址解析类文件URI.php</a></p>
+
+<p>Router类处理的是路由规则，如果使用默认的路由规则的话这个类基本上不做什么(除了赋默认值)，最终的controller和method名会挂在这个类上，以供CodeIgniter.php这个文件调用，并且对URI实例进行丰富，获得URI的<code>rsegment</code>属性就是在这里填入数据的。关于代码解读可以参考<a href="http://blog.csdn.net/Zhihua_W/article/details/52918664">CI框架源码解析九之路由类文件Router.php</a></p>
 
 <h2 id="loader-php:4148907b28e52bc7301c1249655cea8c">Loader.php</h2>
 
@@ -233,6 +237,12 @@ elseif (is_array($model))
 <p>有代码有真相，这里是把controller上的变量直接全挂到了加载器上，不得不佩服作者的脑洞，其实我一直很好奇作者为啥不和model用同样的代码。</p>
 
 <p>最后一个参数是控制直接返回一个字符串还是把它交给output类处理，在默认条件下是交给output类。在这里作者为了性能上的考虑使用了输出缓存。</p>
+
+<p>++++++++++++++++分割线++++++++++++++++++++</p>
+
+<p><em>到这里CI最主要的基本上完了，这里没提的几个类包括Lang、UTF8、Input、Security，前两个我认为对于常规的开发没有去看的必要，后两个虽然常用，但是有大量的正则表达式我实在是不想看，先告一段落吧。下面的主要任务是看CI封装的一些library和helper。</em></p>
+
+<p>++++++++++++++++分割线++++++++++++++++++++</p>
 
 			</div>
 
