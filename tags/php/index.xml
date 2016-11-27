@@ -231,6 +231,8 @@ elseif (is_array($model))
 &lt;p&gt;&lt;em&gt;到这里CI最主要的基本上完了，这里没提的几个类包括Lang、UTF8、Input、Security，前两个我认为对于常规的开发没有去看的必要，后两个虽然常用，但是有大量的正则表达式我实在是不想看，先告一段落吧。下面的主要任务是看CI封装的一些library和helper。&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;++++++++++++++++分割线++++++++++++++++++++&lt;/p&gt;
+
+&lt;p&gt;CI的helper大体看了几个自己感兴趣的，最大的收获是给CI发现了一个bug然后让作者修掉了。其实php提供的系统函数已经够多了，足以支持一般开发。&lt;/p&gt;
 </description>
     </item>
     
@@ -622,6 +624,10 @@ public function __construct()
 &lt;h2 id=&#34;21-server:960e085aadb29182f9448019a6b3c8f1&#34;&gt;21.$_SERVER&lt;/h2&gt;
 
 &lt;p&gt;以前一直不明白CI是如何根据url确定需要初始化的controller是哪个、调用的方法是哪个、以及参数。看CI源码就明白了，在超全局变量&lt;code&gt;$_SERVER&lt;/code&gt;保存着请求的url，通过&lt;code&gt;CI_Router&lt;/code&gt;和&lt;code&gt;CI_URI&lt;/code&gt;两个类进行字符串处理就可以得到controller、method以及参数。&lt;/p&gt;
+
+&lt;h2 id=&#34;22-魔术常量:960e085aadb29182f9448019a6b3c8f1&#34;&gt;22.魔术常量&lt;/h2&gt;
+
+&lt;p&gt;之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：&lt;code&gt;__FILE__&lt;/code&gt;、&lt;code&gt;__DIR__&lt;/code&gt;，可以看到都是和文件路径相关的。我觉得可能会用到的有&lt;code&gt;__FUNCTION__&lt;/code&gt;和&lt;code&gt;__CLASS__&lt;/code&gt;,后者可以被系统函数&lt;code&gt;get_class&lt;/code&gt;一定程度上取代。&lt;/p&gt;
 </description>
     </item>
     

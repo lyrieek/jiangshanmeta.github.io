@@ -289,6 +289,10 @@ public function __construct()
 
 <p>以前一直不明白CI是如何根据url确定需要初始化的controller是哪个、调用的方法是哪个、以及参数。看CI源码就明白了，在超全局变量<code>$_SERVER</code>保存着请求的url，通过<code>CI_Router</code>和<code>CI_URI</code>两个类进行字符串处理就可以得到controller、method以及参数。</p>
 
+<h2 id="22-魔术常量:960e085aadb29182f9448019a6b3c8f1">22.魔术常量</h2>
+
+<p>之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：<code>__FILE__</code>、<code>__DIR__</code>，可以看到都是和文件路径相关的。我觉得可能会用到的有<code>__FUNCTION__</code>和<code>__CLASS__</code>,后者可以被系统函数<code>get_class</code>一定程度上取代。</p>
+
 			</div>
 
 
