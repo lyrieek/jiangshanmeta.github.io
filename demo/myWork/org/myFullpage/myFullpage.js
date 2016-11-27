@@ -205,15 +205,7 @@
 					direction = 1;
 					goByDirection();
 				})		
-				// $(document).hammer().on("swipedown swiperight",function(){
-				// 	direction = -1;
-				// 	console.log("1");
-				// 	goByDirection();
-				// })
-				// $(document).hammer().on("swipeup swipeleft",function(){
-				// 	direction = 1;
-				// 	goByDirection();
-				// })
+
 			}
 			var resize;
 			$(window).on("resize",function(){
