@@ -674,10 +674,10 @@ $.event.special.bsTransitionEnd = {
     
     <item>
       <title>百度Touch.js代码解读</title>
-      <link>http://jiangshanmeta.github.io/post/touchjs/</link>
+      <link>http://jiangshanmeta.github.io/post/js/touchjs/</link>
       <pubDate>Mon, 06 Jun 2016 20:46:09 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/touchjs/</guid>
+      <guid>http://jiangshanmeta.github.io/post/js/touchjs/</guid>
       <description>
 
 &lt;p&gt;在移动端各种手势事件很常见，然而不幸的是原生的js只提供了touchstart、touchmove、touchend、touchcancel这么几个事件的。所以我们需要手势库帮助我们判断手势。&lt;a href=&#34;https://github.com/Clouda-team/touch.code.baidu.com&#34;&gt;百度的touch&lt;/a&gt;是其中一个例子。之所以选择它是因为在之前的hammer我连文档都读不下去，中文文档实在是太有诱惑力了。然而hammer推荐的比例挺高的，还是抽空去看看吧。&lt;/p&gt;
@@ -989,10 +989,10 @@ utils.getPCevts = function(evt) {
     
     <item>
       <title>JavaScript的this坑</title>
-      <link>http://jiangshanmeta.github.io/post/jsthis/</link>
+      <link>http://jiangshanmeta.github.io/post/js/jsthis/</link>
       <pubDate>Thu, 02 Jun 2016 21:36:26 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/jsthis/</guid>
+      <guid>http://jiangshanmeta.github.io/post/js/jsthis/</guid>
       <description>&lt;p&gt;JavaScript有许多坑，一个典型的代表就是this，动不动this的指向就变了。&lt;/p&gt;
 
 &lt;p&gt;我也不想扯太多理论性的东西，那些是属于看着明白看完就忘的。我想干脆找个例子去说一下吧。今天在某个前端群里看到有人问相关问题。干脆就借用别人遇到的问题说一下吧。&lt;/p&gt;

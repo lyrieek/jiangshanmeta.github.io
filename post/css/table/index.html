@@ -1,0 +1,164 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> table那些事 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">table那些事</h1>
+			  <p >Mon, Jun 27, 2016</p>
+			      
+
+<p>最近我的知乎时间线上出现了这么一个问题:<a href="https://www.zhihu.com/question/20003535">网页的 Table 布局和 DIV+CSS 布局从哪里可以看出来？Table 布局已经过时了吗？</a>，于是便想着总结一下关于table的一些知识点。先声明一下，这里table是指css table，而不是html table，以下所说的可能用html的形式来写，但都是指的css table。</p>
+
+<h2 id="基本概念:9fb6e0094eeac5ea481f3c3b33e3088c">基本概念</h2>
+
+<h4 id="关于表格的display值:9fb6e0094eeac5ea481f3c3b33e3088c">关于表格的display值</h4>
+
+<ol>
+<li>table                对应html中的<code>&lt;table&gt;</code></li>
+<li>table-row            对应html中的<code>&lt;tr&gt;</code></li>
+<li>table-cell           对应htnl中的<code>&lt;td&gt;</code></li>
+<li>table-row-group      对应html中的<code>&lt;tbody&gt;</code></li>
+<li>table-header-group   对应html中的<code>&lt;thead&gt;</code></li>
+<li>table-footer-group   对应html中的<code>&lt;tfoot&gt;</code></li>
+<li>table-caption        对应html中的<code>&lt;caption&gt;</code></li>
+<li>table-column         对应html中的<code>&lt;col&gt;</code></li>
+<li>table-column-group   对应html中的<code>&lt;colgroup&gt;</code></li>
+</ol>
+
+<p>最重要的是前三个属性，而最后两个可以认为没什么用处，因为css将其表模型定义为以行为主，也就是说，它认为web开发者会显式声明行，而列是从单元格行的布局推导出来的。</p>
+
+<h4 id="匿名表对象:9fb6e0094eeac5ea481f3c3b33e3088c">匿名表对象</h4>
+
+<p>在html的table，有一些嵌套标签即使你不去写，浏览器也会去帮你填充，css的table也有类似的现象，可以将“遗漏的”组件作为匿名对象插入。插入遵循以下规则：</p>
+
+<ol>
+<li>如果一个table-cell元素的父元素不是table-row元素，则会在该table-cell元素及其父元素之间插入一个匿名table-row对象。所插入的这个对象将包含该table-cell元素的所有连续兄弟。</li>
+<li>如果一个table-row元素的父元素不是table、table-row-group元素，则会在该table-row元素及其父元素之间插入一个匿名table元素。插入的这个对象将包含该table-row元素的连续兄弟。</li>
+<li>如果一个table-column元素的父元素不是table、table-column-group元素，则在该table-column元素及其父元素之间插入一个匿名table元素。</li>
+<li>如果一个table-row-group、table-header-group、table-footer-group、table-column-group或table-caption元素的父元素不是table元素，则会在该元素及其父元素之间插入一个匿名table元素。</li>
+<li>如果一个table元素的子元素不是table-row-group、table-header-group、table-footer-group、table-row或table-caption元素，则在该table元素及其子元素之间插入一个匿名table-row对象。这个匿名对象将包含该子元素及所有不是table-row-group、table-header-group、table-footer-group、table-row、table-caption元素的连续兄弟</li>
+<li>如果一个table-row-group、table-header-group、table-footer-group元素的子元素不是table-row对象，则在该元素及其子元素之间插入一个匿名table-row对象。这个匿名对象包含该子元素及其所有非table-row对象的连续兄弟</li>
+<li>如果一个table-row元素的子元素不是table-cell元素，则在该元素和其子元素之间插入一个匿名table-cell对象。这个匿名对象包含该子元素及其所有非table-cell元素的连续兄弟</li>
+</ol>
+
+<p>看起来比较理论，大家自己读读就好。</p>
+
+<h4 id="固定布局:9fb6e0094eeac5ea481f3c3b33e3088c">固定布局</h4>
+
+<p>熟悉css属性的人对于<code>table-layout</code>应该不陌生，这个属性很大程度上影响了table的布局。首先介绍的固定布局，对应的属性值是<code>fixed</code>。</p>
+
+<p>要实现固定布局，首先要设定<code>table-layout</code>为<code>fixed</code>,这是显然的，但是也是不足的，除此之外还要设定table的宽度，否则会按照自动布局进行。</p>
+
+<p>具体实现上包括以下步骤：</p>
+
+<ol>
+<li>width属性不是auto的列元素会根据width值设置该列的宽度。</li>
+<li>如果一个列的宽度为auto，但是表首行中该列的单元格width不为auto，则根据单元格宽度设置此列宽度。其它行设定的宽度无效。</li>
+<li>经过前两步，如果列的宽度依然为auto，会自动确定其大小，使其宽度尽可能相等。</li>
+</ol>
+
+<p>固定布局速度比较快，因为布局不依赖与内容，而是根据表的宽度、列和单元格的width决定。</p>
+
+<p>上面提到的第三点是table实现等分布局的基础。</p>
+
+<h4 id="自动布局:9fb6e0094eeac5ea481f3c3b33e3088c">自动布局</h4>
+
+<p>自动布局是table的默认布局，但是因为要根据内容决定布局，所以布局速度较慢。</p>
+
+<p>对于自动布局，具体宽度的计算比较复杂，而且对于中英文分割也比较复杂。所以这里就简要介绍一下：</p>
+
+<ol>
+<li>对于一列的各个单元格，计算最小和最大单元格宽度。</li>
+<li>对于各列，计算最小和最大列宽</li>
+<li>计算出表的真正宽度和各列宽度。如果表的<code>width</code>属性不是auto，则将width属性值与所有列宽之和比较，取较大的作为表的宽度。如果最终宽度大于各列宽度之和，多余宽度各列均分。如果表的<code>width</code>属性为auto，则将各列宽度之和作为表的宽度。换句话说，表的宽度恰好足够显示其内容，这一点是<strong>不定宽元素水平居中</strong>的基础。然而，在<code>width</code>为<code>auto</code>的情况下，一个表可能会很难看，尤其是中文，有的时候可能发现每一列宽度都很小甚至只能写下一个字然后整个文字就竖起来了。目测bootstrap也是因为这个所以给table一个<code>width:100%</code>。</li>
+</ol>
+
+<h4 id="关于height:9fb6e0094eeac5ea481f3c3b33e3088c">关于height</h4>
+
+<p>对于web开发者来说，一般很少显式声明一个元素的高度，但是对于table来说，就有点有趣了</p>
+
+<p>先约定一下页面结构</p>
+
+<pre><code>&lt;div style=&quot;display:table;height:600px;&quot;&gt;
+    &lt;div style=&quot;display:table-row;&quot;&gt;&lt;/div&gt;
+    &lt;div style=&quot;display:table-row;&quot;&gt;&lt;/div&gt;
+    &lt;div style=&quot;display:table-row;&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>如果行高度不限制，三行内容一致，你会发现三行等分了整个表的高度，共同占据了600px的高度，这一点和常规div表现不一致。<a href="http://jiangshanmeta.github.io/blogdemo/table/table.html">在线demo</a></p>
+
+<p>如果高度不限制，三行内容不一致，那么三行均分剩余高度。看起来上面说的内容一致的是这里的特殊情况。你不觉得和<code>flex</code>有点像吗，<code>flex-grow</code>属性就可以分配剩余空间，不过能设置分配系数，比这里强大点。<a href="http://jiangshanmeta.github.io/blogdemo/table/table.html">在线demo（和上面同一个）</a></p>
+
+<p>//于是，我无意间实现了简单模拟<code>flex-grow</code>属性。</p>
+
+<p>如果高度限制了比例，你会发现这里的比例只是参考比例，如果足够放得下，那么就按照这个比例，如果不够放，那么会调整比例使其恰能放开。<a href="http://jiangshanmeta.github.io/blogdemo/table/table.html">在线demo（依然和上面同一个）</a></p>
+
+<p>在上面的情况延伸一下，如果有一个行高度设为了100%，其它行高度会调整为恰好够填充，而这一行会填充满剩余空间。之前提到过这一点可以用来实现sticky footer，<a href="http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html">在线demo</a></p>
+
+<h2 id="table的用处:9fb6e0094eeac5ea481f3c3b33e3088c">table的用处</h2>
+
+<h4 id="不定宽元素水平居中:9fb6e0094eeac5ea481f3c3b33e3088c">不定宽元素水平居中</h4>
+
+<pre><code>.center-table{
+  display:table;
+  margin-left:auto;
+  margin-right:auto;
+}
+</code></pre>
+
+<p>原理上面有说，是自动布局<code>width</code>属性为<code>auto</code>时<code>display:table</code>的元素宽度为内容宽度</p>
+
+<h4 id="垂直居中:9fb6e0094eeac5ea481f3c3b33e3088c">垂直居中</h4>
+
+<p>在<a href="http://jiangshanmeta.github.io/post/center/">我的总结&ndash;居中的实现</a>中提到到过，利用的是<code>vertical-align:middle</code>。</p>
+
+<h4 id="等分布局-多列布局:9fb6e0094eeac5ea481f3c3b33e3088c">等分布局/多列布局</h4>
+
+<p>这两类基本布局我更习惯用浮动实现，对于<code>table</code>实现没有什么特别大的爱好，等分布局需要<code>table-layout:fixed;</code>这一属性。</p>
+
+<h4 id="等高布局:9fb6e0094eeac5ea481f3c3b33e3088c">等高布局</h4>
+
+<p>如果不用table，实现等高布局的最简单方式应该是<code>flex</code></p>
+
+<p>还是直接上<a href="http://jiangshanmeta.github.io/blogdemo/table/tabletip.html">demo</a>吧，我这里实现了图文混排下的等高。</p>
+
+<h4 id="sticky-footer:9fb6e0094eeac5ea481f3c3b33e3088c">sticky footer</h4>
+
+<p>之前<a href="http://jiangshanmeta.github.io/post/stickyfooter/">总结过sticky footer的实现</a>,以及<a href="http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html">在线demo</a></p>
+
+<p>update 2016/08/12</p>
+
+<p>说一个实际用到的场景吧，我们的前端框架是bootstrap，它的栅格系统是实现多列布局的常用工具，我以前<a href="http://jiangshanmeta.github.io/post/bootstrap/grid/">讲过它的具体实现</a>，简单地说是基于浮动布局的。用栅格系统做展示列表的时候，如果每一列的高度不一致（毕竟指望各列图片文字高度一致属于别想了），熟悉浮动的同学应该能脑补出来会出现什么样的悲剧，那我最终的解决方案是使用表格中同一行中单元格等高这一属性解决问题的。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

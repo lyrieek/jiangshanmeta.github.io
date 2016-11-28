@@ -674,10 +674,10 @@ $.event.special.bsTransitionEnd = {
     
     <item>
       <title>百度Touch.js代码解读</title>
-      <link>http://jiangshanmeta.github.io/post/touchjs/</link>
+      <link>http://jiangshanmeta.github.io/post/js/touchjs/</link>
       <pubDate>Mon, 06 Jun 2016 20:46:09 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/touchjs/</guid>
+      <guid>http://jiangshanmeta.github.io/post/js/touchjs/</guid>
       <description>
 
 &lt;p&gt;在移动端各种手势事件很常见，然而不幸的是原生的js只提供了touchstart、touchmove、touchend、touchcancel这么几个事件的。所以我们需要手势库帮助我们判断手势。&lt;a href=&#34;https://github.com/Clouda-team/touch.code.baidu.com&#34;&gt;百度的touch&lt;/a&gt;是其中一个例子。之所以选择它是因为在之前的hammer我连文档都读不下去，中文文档实在是太有诱惑力了。然而hammer推荐的比例挺高的，还是抽空去看看吧。&lt;/p&gt;
@@ -989,10 +989,10 @@ utils.getPCevts = function(evt) {
     
     <item>
       <title>JavaScript的this坑</title>
-      <link>http://jiangshanmeta.github.io/post/jsthis/</link>
+      <link>http://jiangshanmeta.github.io/post/js/jsthis/</link>
       <pubDate>Thu, 02 Jun 2016 21:36:26 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/jsthis/</guid>
+      <guid>http://jiangshanmeta.github.io/post/js/jsthis/</guid>
       <description>&lt;p&gt;JavaScript有许多坑，一个典型的代表就是this，动不动this的指向就变了。&lt;/p&gt;
 
 &lt;p&gt;我也不想扯太多理论性的东西，那些是属于看着明白看完就忘的。我想干脆找个例子去说一下吧。今天在某个前端群里看到有人问相关问题。干脆就借用别人遇到的问题说一下吧。&lt;/p&gt;
@@ -1061,10 +1061,10 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
     
     <item>
       <title>前端需要知道的WEB知识（1）</title>
-      <link>http://jiangshanmeta.github.io/post/browser1/</link>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/browser1/</link>
       <pubDate>Mon, 23 May 2016 21:49:52 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/browser1/</guid>
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser1/</guid>
       <description>&lt;p&gt;之前无意间触发了一个bug，让我开始接触浏览器相关的知识。搞web开发的如果不了解浏览器的基本知识，不了解一个网页是如何形成的，以及如何展示的，基本上也就到天花板了。&lt;/p&gt;
 
 &lt;p&gt;今天并不想从发起一个http请求开始讲起，战线会拉的太长。就从web服务器返回页面开始讲起吧。&lt;/p&gt;
@@ -1145,10 +1145,10 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
     
     <item>
       <title>一个bug引发的血案—浏览器基本渲染</title>
-      <link>http://jiangshanmeta.github.io/post/browser/</link>
+      <link>http://jiangshanmeta.github.io/post/computernetwork/browser/</link>
       <pubDate>Sun, 22 May 2016 17:05:41 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/browser/</guid>
+      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser/</guid>
       <description>&lt;p&gt;作为全知乎写bug水平第0的人，最近我又写了一个bug。&lt;/p&gt;
 
 &lt;p&gt;当时的需求是这样的：用js和CSS3画一个时钟，能动的那种。很早很早之前，我用&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/canvas/canvasWatch.html&#34;&gt;canvas实现过这个需求&lt;/a&gt;,然而canvas毕竟需要各种写js，而且实现上也需要大量的计算，于是我就想能不能用尽可能少的js结合CSS实现。&lt;/p&gt;

@@ -1,0 +1,112 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 如何将页脚固定在页面底部 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">如何将页脚固定在页面底部</h1>
+			  <p >Fri, Jun 24, 2016</p>
+			      
+
+<p>在一个网页中通常会有页脚的设置。如果页面内容较少，看起来页脚就像是浮了起来，在浏览器的下面还有一块白色，显得非常难看。我不会告诉你我最近看到的新鲜的页面里还有这种问题，都是同行，给人个面子，不给链接了。那么如何解决这一问题呢？</p>
+
+<h2 id="javascript方案:57c3c18f56fe86510d201aa293fed882">javascript方案</h2>
+
+<p>不难，请自行百度。然而我总是想能用css解决的绝对不用js。先约定一下页面结构：</p>
+
+<pre><code>&lt;body&gt;
+	&lt;header id=&quot;header&quot;&gt;
+
+	&lt;/header &gt;
+	&lt;main id=&quot;header&quot;&gt;
+
+	&lt;/main&gt;
+	&lt;footer id=&quot;footer&quot;&gt;
+
+	&lt;/footer&gt;
+&lt;/body&gt;
+</code></pre>
+
+<p>公共的样式设置</p>
+
+<pre><code>*{
+	margin:0;
+	padding:0;
+}
+</code></pre>
+
+<h2 id="table方案:57c3c18f56fe86510d201aa293fed882">table方案</h2>
+
+<p>这里所说的table并不是说html table，而是css table。在css的display属性中，有一堆关于table的值，比如<code>table</code>,<code>table-row</code>,<code>table-cell</code>。这些值可以帮助我们像表格一样布局而不使用html table。这里用到的是<code>table</code>和<code>table-row</code>两个值。</p>
+
+<p>我们可以把整个body视为一个table，然后header、main、footer三部分视为table-row。并且让main占据100%高度。可能你觉得很奇怪如果main高度设为100%，那么header和footer的高度岂不是零了？但是table有许多神奇的特性，header和footer会正常显示。这里的header和footer的高度会变成恰能放下内容的高度，main占据剩余空间。因为table的话无论是宽度还是高度计算都比较复杂，web开发者所设置的width或者height都是参考值。</p>
+
+<p>这样你会发现依然没有实现固定在底部。因为body的高度现在是由内容决定的，我们要设置body的最小高度设为视口高度。可以采用100vh这么一个方案，如果担心兼容性问题，可以把高度设为百分比。</p>
+
+<p>代码如下：</p>
+
+<pre><code>body{
+	display:table;
+	width:100%;
+	min-height:100vh;
+}
+#main{
+	display:table-row;
+	height:100%;
+}
+</code></pre>
+
+<p>在线demo：<a href="http://jiangshanmeta.github.io/blogdemo/stickyfooter/table.html">固定在底部的页脚——table方案</a></p>
+
+<h2 id="flex方案:57c3c18f56fe86510d201aa293fed882">flex方案</h2>
+
+<p>flex作为布局神器，基本上你想到的用flex都能做。这里所需要的是两个属性<code>flex-direction</code>和<code>flex-grow</code>。我们需要把body作为 flex盒子，并把flex盒子方向设为column，把我们的主体内容的扩展属性设为1，header和footer不扩展，这样就会让主体内容自动填充空余部分。</p>
+
+<p>代码如下</p>
+
+<pre><code>body{
+	display:flex;
+	flex-direction:column;
+	min-height:100vh;
+}
+#main{
+	flex-grow:1;
+}
+</code></pre>
+
+<p>在线demo：<a href="http://jiangshanmeta.github.io/blogdemo/stickyfooter/flex.html">固定在底部的页脚——flex方案</a></p>
+
+<h2 id="总结:57c3c18f56fe86510d201aa293fed882">总结</h2>
+
+<p>关于如何实现固定在底部的页脚，其实也有许多方案，但是有各种各样的问题，比如footer的高度必须是固定的。我上面所说的两种纯CSS方案都不需要固定footer的高度，基本上可以直接拿到生产环境里用。另外，关于css table的使用自己还需要多多学习，希望近期能够写篇总结。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

@@ -1,0 +1,99 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 关于CSS3 transition 的几个小tip &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">关于CSS3 transition 的几个小tip</h1>
+			  <p >Tue, Jun 21, 2016</p>
+			      
+
+<p>关于CSS3的transition一般写过一阵的基本玩法也都会了，这里收集一些transition的小细节</p>
+
+<h2 id="关于伪元素的过渡:fe079bb6a643aa02f488f646a5d5f38e">关于伪元素的过渡</h2>
+
+<p><a href="http://jiangshanmeta.github.io/post/pseudo/">之前总结过伪元素的一些应用</a>，但是没有提及如何使用伪元素进行过渡。
+直接修改伪元素的属性或者给伪元素添加类名都是很折腾的。常见的改变伪元素的方案是给其父元素添加类名或者利用父元素的伪类。提到伪类，那么能否直接对伪元素本身应用伪类？比如:hover，希望伪元素hover的时候状态改变。然而尝试的结果是否定的。目前对其父元素添加类名或者伪类是对伪元素应用过渡的最简单可行的方法。</p>
+
+<p><a href="http://jiangshanmeta.github.io/blogdemo/transitiontip/pseudo.html">在线demo</a></p>
+
+<h2 id="模拟input宽度的改变:fe079bb6a643aa02f488f646a5d5f38e">模拟input宽度的改变</h2>
+
+<p>如果想利用硬件加速，避免重绘，我们一般要避免width、height、margin之类的属性过渡。然而，有的时候我们确实需要宽度变化的过渡，比如输入框在获取焦点的时候变长，失去焦点后宽度又恢复原状。<a href="http://t.imooc.com/learn/42">慕课网一个美化表单案例</a>就提到了这么一种需求。想实现这一需求可以使用width、padding属性的过渡实现，但是免不了大量的重绘，从前端性能优化的角度来看实现地并不优雅。</p>
+
+<p>其实换一种思路，我们不见得让输入框真的变长，只要是输入框看起来变长了就行，毕竟我们的目的是加一个动画效果提升用户体验。于是就有了这么一个障眼法：</p>
+
+<pre><code class="language-HTML">&lt;div class=&quot;clipped&quot; &gt;
+	&lt;input type=&quot;text&quot;&gt;
+	&lt;div class=&quot;clip&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+</code></pre>
+
+<pre><code class="language-CSS">.clipped{
+	position:relative;
+	width:154px;
+}
+.clipped .clip{
+	position:absolute;
+	right:0;
+	top:0;
+	width:50px;
+	height:25px;
+	border:2px solid #ccc;
+	border-left:0;
+	border-radius:4px;
+	/*pointer-events:none;*/
+	z-index:-1;
+	transition:0.4s linear;
+}
+.clipped input{
+	width:150px;
+	height:25px;
+	border:2px solid #ccc;
+	border-radius:4px;
+	border-right:0px;
+	
+}
+.clipped input:focus{
+	outline:none;
+	
+}
+.clipped input:focus ~.clip{
+	transform:translate3d(40px,0,0);
+}
+</code></pre>
+
+<p><a href="http://jiangshanmeta.github.io/blogdemo/transitiontip/clipping.html">在线demo</a>
+基本原理是一个绝对定位的div，定位到输入框的右边，模拟输入框右边的样子，input框获得焦点的时候把这个div transform。具体的看代码。如果可以的话想用伪元素实现这个div，然而input并不支持伪元素。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

@@ -1,0 +1,102 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 深入理解贝塞尔曲线之如何实现匀加/减速动画 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">深入理解贝塞尔曲线之如何实现匀加/减速动画</h1>
+			  <p >Tue, Jun 14, 2016</p>
+			      
+
+<p>如果要实现web动画，通常有三个方式，第一是使用gif图，第二是使用CSS3中的transition和animation，第三是使用javascript。gif图一般交给美术去制作，不需要coding，js实现web动画是一个比较成熟的方案了，它的特点是兼容性好，能控制的动画效果多，适合制作复杂的动画效果。随着CSS3的浏览器支持程度越来越高，使用CSS3写web动画也成为一个流行的方式。</p>
+
+<p>为了控制动画进行过程，CSS3为我们提供了缓动函数，分别为transition-timing-function和animition-timing-function (以下统称timing-function),通常用的是几个关键字属性：linear、ease、ease-in、ease-out、ease-in-out。</p>
+
+<p>linear是线性动画；ease是默认的动画效果，特点是先快后慢，时间50%的时候已经完成80%的动画效果了；ease-in是动画进行过程中一直加速；ease-out是动画进行过程中一直减速；ease-in-out和ease很相似，都是先加速后减速，但是时间50%的时候完成动画的50%；一般来说，如果没太大的追求这些关键字就足够了。有这种想法的可以直接点击右上角的那个X了。</p>
+
+<p>稍微高级一点的玩法是使用cubic-bezier,通过指定贝塞尔曲线的两个控制点控制缓动函数。其实三次贝塞尔曲线有四个控制点，然而对于CSS来说第一个控制点是(0,0)，第四个控制点是(1,1)，所以留给我们操作的只有两个控制点了。而且这两个控制点也是有限制的，横坐标∈[0,1]，纵坐标可以大于1。上面几个关键字其实是预定义好的贝塞尔曲线。</p>
+
+<p>这个贝塞尔曲线就是我们今天的主角。原始需求是：实现匀加/减速动画。最一开始的想法是使用js控制，好像也没什么难度，会高中物理的就能解决。后来我就想能不能用CSS实现这一效果，毕竟我的一个原则是能用CSS实现的绝对不用js。</p>
+
+<p>先上图</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/beziercurve.jpg" alt="贝塞尔曲线的物理含义" /></p>
+
+<p>用这张图说明一下对应的物理含义。横轴是时间进度，纵轴是动画进度。有高中物理水平的就能看得出来这不就是 *路程-时间曲线*嘛。所以曲线一阶导数的物理含义就是速度，二阶导数的物理含义就是加速度。想要实现匀加/减速动画，只要使二阶导数是一个不为零的常数就好了。</p>
+
+<h4 id="前方高能预警-大量数学出没-请做好战斗准备:eec53d87b272616feb247dfa262869de">前方高能预警，大量数学出没，请做好战斗准备</h4>
+
+<p>三次贝塞尔曲线公式</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/cubicbezier.jpg" alt="三次贝塞尔曲线公式" /></p>
+
+<p>由于CSS的限制 P0为(0,0)，P3为(1,1)将其带入方程并展开，可以得到对x,y方向的两个方程</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/equation1.jpg" alt="x,y方向的两个方程" /></p>
+
+<p>我们得到的是两个参数方程。要想得到y对x的二阶导数，需要下面的公式</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/derivative.jpg" alt="参数方程二阶导数公式" /></p>
+
+<p>看不懂过程就不要在乎这些细节了，公式推导里有一步我应该曾经明白但我现在不明白。直接看结论，我们需要两个参数方程对t的一阶导数和二阶导数</p>
+
+<p>于是便有了下面的几个式子</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/equation2.jpg" alt="一阶导数和二阶导数" /></p>
+
+<p>带入不明觉厉的公式，我们可以观察到，分母最高次项是六次，而分子最高次项是三次，要使结果为一个常数，六次项的系数要为零</p>
+
+<p>于是我们得到了第一个公式</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/equation3.jpg" alt="第一个公式" /></p>
+
+<p>将第一个公式带入二阶导数中，我们会发现分母最高次项为3，分子最高此项为2，和上面类似的思路，我们可以得到第二个公式</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/equation4.jpg" alt="第二个公式" /></p>
+
+<p>两个方程联立我们可以解得</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/equation5.jpg" alt="第一个结论" /></p>
+
+<p>这样分母就是一个常数了，分子还有一个一次项，所以</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/equation6.jpg" alt="第二个结论" /></p>
+
+<p>同时</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/equation7.jpg" alt="第三个结论" /></p>
+
+<p>注意到</p>
+
+<p><img src="http://jiangshanmeta.github.io/blogimg/webanimation/conclusion.jpg" alt="第四个结论" /></p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

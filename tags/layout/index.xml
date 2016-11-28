@@ -188,10 +188,10 @@ padding-left: 15px;
     
     <item>
       <title>结构与样式相分离之CSS图形</title>
-      <link>http://jiangshanmeta.github.io/post/cssshape/</link>
+      <link>http://jiangshanmeta.github.io/post/css/cssshape/</link>
       <pubDate>Sun, 29 May 2016 18:19:27 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/cssshape/</guid>
+      <guid>http://jiangshanmeta.github.io/post/css/cssshape/</guid>
       <description>&lt;p&gt;做前端的应该都听说过“结构与样式相分离”这一句话。最简单的理解是HTML负责结构，CSS负责样式。然而，自己在实际项目中并没有很好地应用这句话，经常为了实现某个特殊样式加上一堆div。&lt;/p&gt;
 
 &lt;p&gt;比如说之前实现的一个效果&lt;/p&gt;
@@ -279,10 +279,10 @@ padding-left: 15px;
     
     <item>
       <title>居中的常见实现</title>
-      <link>http://jiangshanmeta.github.io/post/center/</link>
+      <link>http://jiangshanmeta.github.io/post/css/center/</link>
       <pubDate>Mon, 16 May 2016 21:26:45 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/center/</guid>
+      <guid>http://jiangshanmeta.github.io/post/css/center/</guid>
       <description>
 
 &lt;p&gt;约定HTML结构&lt;/p&gt;
@@ -418,10 +418,10 @@ transform:translate(-50%,-50%);
     
     <item>
       <title>你真的会用CSS画写正方形吗？</title>
-      <link>http://jiangshanmeta.github.io/post/autosquare/</link>
+      <link>http://jiangshanmeta.github.io/post/css/autosquare/</link>
       <pubDate>Sat, 14 May 2016 11:26:46 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/autosquare/</guid>
+      <guid>http://jiangshanmeta.github.io/post/css/autosquare/</guid>
       <description>
 
 &lt;p&gt;用CSS写一个正方形，对于前端工作者来说是一个再常见不过的需求了，通常情况下，你可能会写出这样的代码：&lt;code&gt;width:200px;height:200px;&lt;/code&gt; 这是最简单的实现了，然而，如果我想要一个300px的正方形呢？或许你会写出如下代码：&lt;code&gt;width:300px;height:300px;&lt;/code&gt; 。那么，如果我想要一个400px的正方形呢？你可能会写出以下代码：&lt;code&gt;width:400px;height:400px;&lt;/code&gt; 同时开始准备和产品以及美术来一场大战。&lt;/p&gt;
@@ -525,10 +525,10 @@ transform:translate(-50%,-50%);
     
     <item>
       <title>两列布局常见方法</title>
-      <link>http://jiangshanmeta.github.io/post/twocolumn/</link>
+      <link>http://jiangshanmeta.github.io/post/css/twocolumn/</link>
       <pubDate>Thu, 12 May 2016 20:10:08 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/twocolumn/</guid>
+      <guid>http://jiangshanmeta.github.io/post/css/twocolumn/</guid>
       <description>
 
 &lt;p&gt;画页面最开始要想好的就是如何进行布局。两列布局既是一种常见的布局方式，又是多列布局的基础。本文就我所熟悉的两列布局方式进行总结和比较。&lt;/p&gt;

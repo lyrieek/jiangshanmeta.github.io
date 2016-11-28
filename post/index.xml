@@ -967,6 +967,10 @@ public function __construct()
 &lt;h2 id=&#34;22-魔术常量:960e085aadb29182f9448019a6b3c8f1&#34;&gt;22.魔术常量&lt;/h2&gt;
 
 &lt;p&gt;之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：&lt;code&gt;__FILE__&lt;/code&gt;、&lt;code&gt;__DIR__&lt;/code&gt;，可以看到都是和文件路径相关的。我觉得可能会用到的有&lt;code&gt;__FUNCTION__&lt;/code&gt;和&lt;code&gt;__CLASS__&lt;/code&gt;,后者可以被系统函数&lt;code&gt;get_class&lt;/code&gt;一定程度上取代。&lt;/p&gt;
+
+&lt;h2 id=&#34;23-func-get-args-func-get-arg-func-num-args:960e085aadb29182f9448019a6b3c8f1&#34;&gt;23.func_get_args  func_get_arg  func_num_args&lt;/h2&gt;
+
+&lt;p&gt;在js中有个arguments,通过这个类数组可以找到函数的参数，题目中的三个函数所起到的作用和js的arguments差不多。&lt;/p&gt;
 </description>
     </item>
     
