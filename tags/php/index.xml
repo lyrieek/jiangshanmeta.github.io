@@ -233,6 +233,17 @@ elseif (is_array($model))
 &lt;p&gt;++++++++++++++++分割线++++++++++++++++++++&lt;/p&gt;
 
 &lt;p&gt;CI的helper大体看了几个自己感兴趣的，最大的收获是给CI发现了一个bug然后让作者修掉了。其实php提供的系统函数已经够多了，足以支持一般开发。&lt;/p&gt;
+
+&lt;p&gt;library看了ua类，从代码的角度没有什么难以理解的，其中有一段值得学习一下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;foreach (array(&#39;_set_robot&#39;, &#39;_set_browser&#39;, &#39;_set_mobile&#39;) as $function)
+{
+    if ($this-&amp;gt;$function() === TRUE)
+    {
+        break;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
@@ -578,6 +589,10 @@ public function __construct()
 
 &lt;p&gt;那结果很显然，这个静态私有变量保存着对controller实例的引用。&lt;/p&gt;
 
+&lt;p&gt;最近想优化点代码，遇到了这么一个需求：父类非静态方法中访问子类的静态属性。如果是父类非静态方法访问父类静态/非静态属性，或者子类非静态方法访问父类/子类的静态/非静态属性，或者父类非静态方法访问子类非静态属性，这些都好说，唯独父类非静态方法访问子类静态属性比较折腾。&lt;/p&gt;
+
+&lt;p&gt;最终的解决方案是利用了下面提到的&lt;code&gt;get_class&lt;/code&gt;方法，在父类的非静态方法中，使用&lt;code&gt;get_class($this)&lt;/code&gt; (我想你应该明白为什么我会一直强调非静态方法了吧)，拿到子类的类名之后获取其静态属性就没什么难度了吧。&lt;/p&gt;
+
 &lt;h2 id=&#34;16-spl-autoload-register:960e085aadb29182f9448019a6b3c8f1&#34;&gt;16.spl_autoload_register&lt;/h2&gt;
 
 &lt;p&gt;这个函数其实不是CI中使用的，而是项目中对CI进行扩展的时候使用的，其作用相当于是对于&lt;code&gt;__autoload&lt;/code&gt;的加强版。其实稍微大点的项目用得到，小项目用&lt;code&gt;__autoload&lt;/code&gt;就行了。&lt;/p&gt;
@@ -627,7 +642,7 @@ public function __construct()
 
 &lt;h2 id=&#34;22-魔术常量:960e085aadb29182f9448019a6b3c8f1&#34;&gt;22.魔术常量&lt;/h2&gt;
 
-&lt;p&gt;之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：&lt;code&gt;__FILE__&lt;/code&gt;、&lt;code&gt;__DIR__&lt;/code&gt;，可以看到都是和文件路径相关的。我觉得可能会用到的有&lt;code&gt;__FUNCTION__&lt;/code&gt;和&lt;code&gt;__CLASS__&lt;/code&gt;,后者可以被系统函数&lt;code&gt;get_class&lt;/code&gt;一定程度上取代。&lt;/p&gt;
+&lt;p&gt;之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：&lt;code&gt;__FILE__&lt;/code&gt;、&lt;code&gt;__DIR__&lt;/code&gt;，可以看到都是和文件路径相关的。我觉得可能会用到的有&lt;code&gt;__FUNCTION__&lt;/code&gt;和&lt;code&gt;__CLASS__&lt;/code&gt;,后者可以被系统函数&lt;code&gt;get_class&lt;/code&gt;一定程度上取代。在使用继承的时候，&lt;code&gt;get_class&lt;/code&gt;返回的是最终的子类的类名，而魔术常量&lt;code&gt;__class__&lt;/code&gt;的具体值和调用的位置有关，在哪个类中被调用就是那个类。&lt;/p&gt;
 
 &lt;h2 id=&#34;23-func-get-args-func-get-arg-func-num-args:960e085aadb29182f9448019a6b3c8f1&#34;&gt;23.func_get_args  func_get_arg  func_num_args&lt;/h2&gt;
 

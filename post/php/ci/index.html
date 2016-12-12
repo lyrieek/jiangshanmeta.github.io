@@ -246,6 +246,17 @@ elseif (is_array($model))
 
 <p>CI的helper大体看了几个自己感兴趣的，最大的收获是给CI发现了一个bug然后让作者修掉了。其实php提供的系统函数已经够多了，足以支持一般开发。</p>
 
+<p>library看了ua类，从代码的角度没有什么难以理解的，其中有一段值得学习一下：</p>
+
+<pre><code>foreach (array('_set_robot', '_set_browser', '_set_mobile') as $function)
+{
+    if ($this-&gt;$function() === TRUE)
+    {
+        break;
+    }
+}
+</code></pre>
+
 			</div>
 
 

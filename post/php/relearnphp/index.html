@@ -242,6 +242,10 @@ public function __construct()
 
 <p>那结果很显然，这个静态私有变量保存着对controller实例的引用。</p>
 
+<p>最近想优化点代码，遇到了这么一个需求：父类非静态方法中访问子类的静态属性。如果是父类非静态方法访问父类静态/非静态属性，或者子类非静态方法访问父类/子类的静态/非静态属性，或者父类非静态方法访问子类非静态属性，这些都好说，唯独父类非静态方法访问子类静态属性比较折腾。</p>
+
+<p>最终的解决方案是利用了下面提到的<code>get_class</code>方法，在父类的非静态方法中，使用<code>get_class($this)</code> (我想你应该明白为什么我会一直强调非静态方法了吧)，拿到子类的类名之后获取其静态属性就没什么难度了吧。</p>
+
 <h2 id="16-spl-autoload-register:960e085aadb29182f9448019a6b3c8f1">16.spl_autoload_register</h2>
 
 <p>这个函数其实不是CI中使用的，而是项目中对CI进行扩展的时候使用的，其作用相当于是对于<code>__autoload</code>的加强版。其实稍微大点的项目用得到，小项目用<code>__autoload</code>就行了。</p>
@@ -291,7 +295,7 @@ public function __construct()
 
 <h2 id="22-魔术常量:960e085aadb29182f9448019a6b3c8f1">22.魔术常量</h2>
 
-<p>之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：<code>__FILE__</code>、<code>__DIR__</code>，可以看到都是和文件路径相关的。我觉得可能会用到的有<code>__FUNCTION__</code>和<code>__CLASS__</code>,后者可以被系统函数<code>get_class</code>一定程度上取代。</p>
+<p>之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：<code>__FILE__</code>、<code>__DIR__</code>，可以看到都是和文件路径相关的。我觉得可能会用到的有<code>__FUNCTION__</code>和<code>__CLASS__</code>,后者可以被系统函数<code>get_class</code>一定程度上取代。在使用继承的时候，<code>get_class</code>返回的是最终的子类的类名，而魔术常量<code>__class__</code>的具体值和调用的位置有关，在哪个类中被调用就是那个类。</p>
 
 <h2 id="23-func-get-args-func-get-arg-func-num-args:960e085aadb29182f9448019a6b3c8f1">23.func_get_args  func_get_arg  func_num_args</h2>
 
