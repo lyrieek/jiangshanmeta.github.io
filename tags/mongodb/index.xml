@@ -218,6 +218,34 @@ $group = [
 ];
 $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bJingpinbook&#39;, [$match,$group]);
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;8-mapreduce:233b6dd901ca06898e3895bff0f956d4&#34;&gt;8. mapreduce&lt;/h2&gt;
+
+&lt;p&gt;一般的统计性工作使用&lt;code&gt;aggregate&lt;/code&gt;基本就够了，直到我遇到了这么一个需求：类似于知乎的给问题添加话题，一个问题对应多个话题，这些话题存成一个array作为问题的一个字段，然后需要拿到一段时间内话题热度排行榜。如果是一个问题只对应一个话题，这个直接对问题筛选然后对话题字段聚合最后再排个序就可以了，但是问题是话题是个array，在没想到如何用&lt;code&gt;aggregate&lt;/code&gt;实现的情况下我们使用了mapreduce。&lt;/p&gt;
+
+&lt;p&gt;虽然目前还理解的不深刻但是已经可以用来实现上面的需求了&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$map = &#39;function(){
+    var key = this.relateFeedbackTags;
+    for(k in key){
+        emit(key[k],1);
+    }
+}&#39;;
+$reduce = &#39;function(key,value){
+    return Array.sum(value);
+
+}&#39;;
+$rst = $this-&amp;gt;db-&amp;gt;command(array(
+    &#39;mapreduce&#39;=&amp;gt;&#39;uFeedback&#39;,
+    &#39;map&#39;=&amp;gt;$map,
+    &#39;reduce&#39;=&amp;gt;$reduce,
+    &#39;out&#39;=&amp;gt;[&#39;inline&#39;=&amp;gt;1],
+    &#39;sort&#39;=&amp;gt;[&#39;_id&#39;=&amp;gt;1],
+    &#39;query&#39;=&amp;gt;[&#39;orgId&#39;=&amp;gt;&#39;233333&#39;],
+));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;我们主要需要实现的是map和reduce两个函数，在map函数中我们把一个话题array映射成了多条记录，reduce函数实现的是对数量的统计，还需要解释的是代码中的&lt;code&gt;out&lt;/code&gt;，因为我不需要将结果写入数据库中而是需要将结果返回给php作进一步处理，所以out对应的值是&lt;code&gt;[&#39;inline&#39;=&amp;gt;1]&lt;/code&gt;。&lt;/p&gt;
 </description>
     </item>
     
