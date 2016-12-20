@@ -246,6 +246,64 @@ $rst = $this-&amp;gt;db-&amp;gt;command(array(
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;我们主要需要实现的是map和reduce两个函数，在map函数中我们把一个话题array映射成了多条记录，reduce函数实现的是对数量的统计，还需要解释的是代码中的&lt;code&gt;out&lt;/code&gt;，因为我不需要将结果写入数据库中而是需要将结果返回给php作进一步处理，所以out对应的值是&lt;code&gt;[&#39;inline&#39;=&amp;gt;1]&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;为了练习mapreduce，我给自己提了这么一个需求：有张订单表，我希望得到每周周几订单数量最多。代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$map = &#39;function(){
+    var date = new Date(this.createTS*1000);
+    var dayInWeek = date.getDay();
+    if(dayInWeek==0){
+        dayInWeek = 7;
+    }
+    emit(dayInWeek,1);
+}&#39;;
+$reduce = &#39;function(key,value){
+    return Array.sum(value);
+}&#39;;
+
+$startTS = strtotime(&#39;2016-10-01&#39;);
+$endTS = strtotime(&#39;2016-11-01&#39;);
+
+$query = [
+    &#39;createTS&#39;=&amp;gt;[&#39;$gt&#39;=&amp;gt;$startTS,&#39;$lt&#39;=&amp;gt;$endTS],
+    &#39;status&#39;=&amp;gt;[&#39;$gte&#39;=&amp;gt;60],
+    &#39;typ&#39;=&amp;gt;[&#39;$in&#39;=&amp;gt;[10,20,30,40]],
+];
+$opt = [
+    &#39;map&#39;=&amp;gt;$map,
+    &#39;reduce&#39;=&amp;gt;$reduce,
+    &#39;query&#39;=&amp;gt;$query,
+];
+$this-&amp;gt;load-&amp;gt;model(&#39;lists/Book_list&#39;,&amp;quot;listInfo&amp;quot;);
+$rst = $this-&amp;gt;listInfo-&amp;gt;mapReduce($opt);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在map函数中，根据时间戳拿到订单是周几创建的，在reduce函数中，统计出一周的每一天所对应订单数。&lt;/p&gt;
+
+&lt;p&gt;同样是订单表，我希望得到商品销售数量排行：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$map = &#39;function(){
+    var subbooks = this.jingpinsubbooks;
+    for(var i=0;i&amp;lt;subbooks.length;i++){
+        emit(subbooks[i].jingpinId,subbooks[i].jinpinNum);
+    }
+}&#39;;
+$reduce = &#39;function(key,value){
+    return Array.sum(value);
+}&#39;;
+$query = [
+    &#39;createTS&#39;=&amp;gt;[&#39;$gt&#39;=&amp;gt;$beginTS,&#39;$lt&#39;=&amp;gt;$endTS],
+    &#39;status&#39;=&amp;gt;[&#39;$gte&#39;=&amp;gt;20],
+];
+
+$opt = [
+    &#39;map&#39;=&amp;gt;$map,
+    &#39;reduce&#39;=&amp;gt;$reduce,
+    &#39;query&#39;=&amp;gt;$query,
+];
+
+$rst = $this-&amp;gt;listInfo-&amp;gt;mapReduce($opt);
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     

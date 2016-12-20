@@ -259,6 +259,64 @@ $rst = $this-&gt;db-&gt;command(array(
 
 <p>我们主要需要实现的是map和reduce两个函数，在map函数中我们把一个话题array映射成了多条记录，reduce函数实现的是对数量的统计，还需要解释的是代码中的<code>out</code>，因为我不需要将结果写入数据库中而是需要将结果返回给php作进一步处理，所以out对应的值是<code>['inline'=&gt;1]</code>。</p>
 
+<p>为了练习mapreduce，我给自己提了这么一个需求：有张订单表，我希望得到每周周几订单数量最多。代码如下：</p>
+
+<pre><code>$map = 'function(){
+    var date = new Date(this.createTS*1000);
+    var dayInWeek = date.getDay();
+    if(dayInWeek==0){
+        dayInWeek = 7;
+    }
+    emit(dayInWeek,1);
+}';
+$reduce = 'function(key,value){
+    return Array.sum(value);
+}';
+
+$startTS = strtotime('2016-10-01');
+$endTS = strtotime('2016-11-01');
+
+$query = [
+    'createTS'=&gt;['$gt'=&gt;$startTS,'$lt'=&gt;$endTS],
+    'status'=&gt;['$gte'=&gt;60],
+    'typ'=&gt;['$in'=&gt;[10,20,30,40]],
+];
+$opt = [
+    'map'=&gt;$map,
+    'reduce'=&gt;$reduce,
+    'query'=&gt;$query,
+];
+$this-&gt;load-&gt;model('lists/Book_list',&quot;listInfo&quot;);
+$rst = $this-&gt;listInfo-&gt;mapReduce($opt);
+</code></pre>
+
+<p>在map函数中，根据时间戳拿到订单是周几创建的，在reduce函数中，统计出一周的每一天所对应订单数。</p>
+
+<p>同样是订单表，我希望得到商品销售数量排行：</p>
+
+<pre><code>$map = 'function(){
+    var subbooks = this.jingpinsubbooks;
+    for(var i=0;i&lt;subbooks.length;i++){
+        emit(subbooks[i].jingpinId,subbooks[i].jinpinNum);
+    }
+}';
+$reduce = 'function(key,value){
+    return Array.sum(value);
+}';
+$query = [
+    'createTS'=&gt;['$gt'=&gt;$beginTS,'$lt'=&gt;$endTS],
+    'status'=&gt;['$gte'=&gt;20],
+];
+
+$opt = [
+    'map'=&gt;$map,
+    'reduce'=&gt;$reduce,
+    'query'=&gt;$query,
+];
+
+$rst = $this-&gt;listInfo-&gt;mapReduce($opt);
+</code></pre>
+
 			</div>
 
 
