@@ -26,8 +26,9 @@
 	    }
 	    if(!(instance instanceof Jumbotron)){
 	    	// 初始化设置
-	    	this.option = Object.assign({},defaults,option);
+	    	this.option = Object.assign({},defaults,option||{});
 	    	this.init();
+	    	instance = this;
 	    }
 	    return instance;
 	}
