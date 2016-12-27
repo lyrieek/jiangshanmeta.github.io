@@ -1,0 +1,94 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 浅谈我对静态使用场景的理解 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">浅谈我对静态使用场景的理解</h1>
+			  <p >Tue, Dec 27, 2016</p>
+			      
+
+<p>静态属性和静态方法这两个概念大家都不陌生，然而在日常的开发中用的却比较少，结合最近的开发工作我想谈一谈我对这两个使用场景的理解。</p>
+
+<h2 id="静态方法的使用场景:d0787c13b8a4561bb718106ef30e7fec">静态方法的使用场景</h2>
+
+<p>首先是项目中的一个工具类。这个类收集了一些常用的工具函数，比如一些字符串处理函数、数组处理函数，本身各个方法之间没有什么逻辑关系，这个类更像是一个命名空间。其实这些方法我更倾向于按照面向过程的写法，写成一堆注册到全局的小函数。从逻辑上讲这里的每一个方法都不会影响实例的状态，所以均应该是静态方法，不过写成实例方法也没什么问题。</p>
+
+<p>然后是model层的一个方法，这个方法是我封装来处理mongoId的，它本身也只是一个工具函数，不影响实例状态，而且最开始我还把这个方法直接final掉了，我不认为子类需要重载这个方法，这个方法最终声明成了静态方法。</p>
+
+<p>对于静态方法和实例方法，我找到的资料一般认为性能上有些许差异，静态方法性能上更好一点点，其实可以认为没有差异。一般而言静态方法能做的实例方法都能做，然而实例方法能做的事情静态方法不一定能做(因为静态方法无法访问<code>$this</code>，无法改变实例状态)。我一直在提及的一个词是<strong>改变实例状态</strong>，这是我认为方法是否要加<code>static</code>修饰词的一个分界线，如果这个方法可能会改变实例状态，那么一定是实例方法，否则可当做静态方法。静态方法的一个特征是不允许子类重载，一定程度上相当于加上了<code>final</code>关键词(还是有不少差异的)，我举的第二个例子就是把一个final的工具方法改成了静态方法。</p>
+
+<p>静态方法和实例方法的应用场景上面已经总结了，下面介绍静态属性的应用场景。</p>
+
+<h2 id="静态属性的应用场景:d0787c13b8a4561bb718106ef30e7fec">静态属性的应用场景</h2>
+
+<p>首先是CI框架的conroller基类的一段代码</p>
+
+<pre><code>class CI_Controller {
+	private static $instance;
+	public function __construct(){
+		self::$instance =&amp; $this;
+	}
+	public static function &amp;get_instance(){
+		return self::$instance;
+	}
+}
+</code></pre>
+
+<p>利用静态私有变量<code>$instance</code>存储对象实例，然后通过静态方法<code>get_instance</code>获取实例，用过CI的应该对这段代码比较熟悉。</p>
+
+<p>在这里静态变量存储了一个对象，基于类似的思路，我们可以<a href="http://jiangshanmeta.github.io/post/php/single/">实现单例模式</a>。</p>
+
+<p>进一步扩展，静态变量不仅可以存储一个对象实例，也可以存储一组对象，下面就要自夸一段我自己写的代码了</p>
+
+<pre><code>class H_Model extends CI_Model{
+	static private $_cache_models;
+	public function __construct(){
+		parent::__construct();
+	}
+	final protected function get_model($model){
+		$_cache_name = strtolower($model);
+		if(!isset(self::$_cache_models[$_cache_name]) || !(self::$_cache_models[$_cache_name] instanceof $model) ){
+			self::$_cache_models[$_cache_name] = new $model;
+		}
+		return self::$_cache_models[$_cache_name];
+	}
+}
+</code></pre>
+
+<p>静态变量<code>$_cache_models</code>是配合方法<code>get_model</code>使用的，这段代码之所以出现是因为将代码从controller封装到model层的过程中，不免会在model层内部实例化其他model，这里将实例化的model保存在静态变量中避免不必要的实例化。</p>
+
+<p>最后一段代码是用静态变量保存一组数组的，原理和上边保存一组对象差不多就不展示代码。最初是每个实例上都挂这么一个数组，当实例一多所占的内存就大了，后来我们改成用了一个global的变量存储这一组数组，然后每个对象对数组进行引用。但是从逻辑上不应该用global的元素保存，这些数组从属于类而不是全局，所以我改成了用静态存储。</p>
+
+<p>可以看到，静态属性在存储对象/数组上有着特别的优势，用得好可以实现性能的优化、实现一些特殊的功能。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>
