@@ -57,12 +57,18 @@
     </item>
     
     <item>
-      <title>javascript中的继承</title>
+      <title>javascript中的继承、私有、静态</title>
       <link>http://jiangshanmeta.github.io/post/js/extend/</link>
       <pubDate>Sun, 04 Sep 2016 20:29:27 +0800</pubDate>
       
       <guid>http://jiangshanmeta.github.io/post/js/extend/</guid>
-      <description>&lt;p&gt;发现自己空中楼阁折腾得太多，一些基础反而没打牢，这里重新学习一下js的面向对象。其实js的面向对象算是一种很奇特的实现，以前只会写js，觉得其他编程语言也差不多，接触了其他的语言才发现js才是那个特例啊。这里就对比着php和js说明。为了便于说明先上两段代码：&lt;/p&gt;
+      <description>
+
+&lt;p&gt;javascript是一门奇特的语言，想入门写点小东西很简单，但是一旦深入就觉得难度陡增。这里对比php，简单总结一下。&lt;/p&gt;
+
+&lt;h2 id=&#34;继承:8151693739dce8237269a30642b03e79&#34;&gt;继承&lt;/h2&gt;
+
+&lt;p&gt;先上两段代码&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;class Person{
 	public function __construct($name=&#39;&#39;){
@@ -89,7 +95,7 @@ Person.prototype.genName = function(){
 
 &lt;p&gt;js中的构造函数及prototype&lt;/p&gt;
 
-&lt;p&gt;在使用new关键字的时候，两端代码其实功能是一致的，都会生成一个实例，实例具有&lt;code&gt;name&lt;/code&gt;这一属性和&lt;code&gt;genName&lt;/code&gt;这一方法。在javascript中没有类的概念，所以用构造函数结合prototype模拟类。在第二段代码中，因为&lt;code&gt;genName&lt;/code&gt;这一方法是每个实例所共享的，不需要再每个实例上都实现一遍，所以放在了构造函数的prototype上。其实js的构造函数，确实是只起到了php中的构造函数&lt;code&gt;__construct(){}&lt;/code&gt;的作用，而php类中的其他方法，则对应js的prototype的方法。&lt;/p&gt;
+&lt;p&gt;在使用new关键字的时候，两端代码其实功能是一致的，都会生成一个实例，实例具有name这一属性和genName这一方法。在javascript中没有类的概念，所以&lt;strong&gt;用构造函数结合prototype模拟类&lt;/strong&gt;。在第二段代码中，因为genName这一方法是每个实例所共享的，不需要再每个实例上都实现一遍，所以放在了构造函数的prototype上。&lt;strong&gt;js的构造函数，基本上可以类比于php的构造函数&lt;code&gt;__construct()&lt;/code&gt;,而php的其他部分大致对应js的prototype&lt;/strong&gt;。换句话说想要在js中模拟一个类，需要构造函数和prototype两部分。这也是为什么下面js实现继承的时候，需要在构造函数和原型上都做处理。&lt;/p&gt;
 
 &lt;p&gt;在php中的继承是这样的：&lt;/p&gt;
 
@@ -110,7 +116,7 @@ Person.prototype.genName = function(){
 &lt;p&gt;首先我们要实现构造函数的模拟：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;function Kid(name,age){
-	Person.call(this,name);
+	Person.call(this,name); //相当于php代码的 parent::construct($name);
 	this.age = age;
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -128,11 +134,64 @@ Kid.prototype.constructor = Kid;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;这样对于js的&lt;code&gt;Kid&lt;/code&gt;，我们使用new操作得到的实例，含有&lt;code&gt;name&lt;/code&gt;和&lt;code&gt;age&lt;/code&gt;两个属性，含有&lt;code&gt;genName&lt;/code&gt;和&lt;code&gt;genAge&lt;/code&gt;两个方法，与php的Kid类通过new生成的实例一样。&lt;/p&gt;
+&lt;p&gt;这样对于js的Kid，我们使用new操作得到的实例，含有name和age两个属性，含有genName和genAge两个方法，与php的Kid类通过new生成的实例一样。&lt;/p&gt;
 
-&lt;p&gt;到现在，我们模拟了php的继承，在javascript中实现了继承。&lt;/p&gt;
+&lt;h2 id=&#34;私有:8151693739dce8237269a30642b03e79&#34;&gt;私有&lt;/h2&gt;
 
-&lt;p&gt;以前看&lt;strong&gt;javascript高级程序设计&lt;/strong&gt;对于继承的讲解，总觉得云里雾里，现在和其它编程语言的继承相比较，才逐渐明白js的继承为什么要这么折腾。&lt;/p&gt;
+&lt;p&gt;在php中，静态属性和静态方法都可以直接通过&lt;code&gt;$this&lt;/code&gt;来调用，然而在js中，一旦能够通过&lt;code&gt;this&lt;/code&gt;访问，那么一定是公有的了。&lt;/p&gt;
+
+&lt;p&gt;在js中实现静态属性和静态方法都必须在构造函数中：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Person(name){
+	this.name = name;
+	var privateName = name; //私有属性
+	this.getPrivateName = function(){
+		return privateName;
+	}
+	var sayPrivateName = function(){
+		console.log(&amp;quot;private name is &amp;quot; + privateName);
+	}  //私有方法
+	this.sayPrivateName = function(){
+		sayPrivateName();
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到想要调用私有属性，对应方法必须写在构造函数内，想要调用私有方法的方法也必须写在构造函数内，总的来说为了实现私有化太折腾了，所以行业里的一个做法是私有的加下划线前缀然后按照公有的实现，我们只是人工认为这是私有的。&lt;/p&gt;
+
+&lt;h2 id=&#34;静态:8151693739dce8237269a30642b03e79&#34;&gt;静态&lt;/h2&gt;
+
+&lt;p&gt;相比较于继承和私有，在js中模拟静态就简单多了。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function Person(name){
+	this.name = name;
+}
+Person.publicStaticMethod1 = function(){
+	console.log(&#39;this is a public static method&#39;);
+}
+Person.publicStaticProperty = &#39;naive&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上面的代码就实现了公有静态属性和公有静态方法。&lt;/p&gt;
+
+&lt;p&gt;虽然实现起来不复杂但我没怎么见人用过。&lt;/p&gt;
+
+&lt;p&gt;见得比较多的是静态私有属性的实现：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(function(window){
+	var totalPerson = 0;
+	function Person(name){
+		this.name = name;
+		totalPerson++;
+	}
+	window.Person = Person;
+})(window);
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/php/single/&#34;&gt;在js中实现单例模式也使用了静态私有变量&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;静态私有方法和静态私有属性的实现差不多(其实都是利用了js的作用域),而且之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/php/static/&#34;&gt;总结php的静态&lt;/a&gt;的时候我总结过静态方法基本可以被实例方法所替代，所以不多说了。&lt;/p&gt;
 </description>
     </item>
     
