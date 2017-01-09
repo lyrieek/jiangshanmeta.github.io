@@ -1939,9 +1939,11 @@ public function __construct()
         echo $CI-&amp;gt;template-&amp;gt;load(&#39;default_page&#39;, &#39;common/404&#39;,&#39;&#39;,TRUE);
         exit();
     }
-    return $this;       
+    return $this;  		
 }
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;距离最开始写这篇文章大约已经半年了，代码也经历了进一步封装，把大部分逻辑从model层转移到了controller层，因为model初始化数据失败是数据异常的一种特殊情况。之前提及过，像CI这样的MVC框架controller层可以分为四层，第一层是框架的controller，第二层是框架的扩展，本身只是技术代码，不涉及业务代码，第三层是业务逻辑代码公有部分，第四层是具体的业务逻辑。&lt;code&gt;exit&lt;/code&gt;其实在第三层可以有比较大的用途，目前用的比较多的一个是上面的错误数据过滤，一个是权限校验，这两个都是常规的需求。&lt;/p&gt;
 </description>
     </item>
     
