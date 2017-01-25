@@ -160,8 +160,6 @@
       fragment.appendChild(this.canvas1);
       fragment.appendChild(this.canvas2);
       fragment.appendChild(this.textArea);
-      fragment.appendChild(this.canvas3);
-      fragment.appendChild(this.canvas4);
       this.wrap.appendChild(fragment);
 
       return this;
