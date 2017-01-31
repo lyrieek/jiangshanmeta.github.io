@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>jumbotron</title>
     <script src="https://rawgithub.com/jiangshanmeta/utility/master/javascript/lib.js" ></script>
+    <script src="https://rawgithub.com/jiangshanmeta/utility/master/javascript/widget.js" ></script>
+
     <style> 
         *{
           margin:0;
@@ -33,11 +35,19 @@
         openDuration:1000,
         closeDuration:700,
         doSthAfterOpen:function(){
-          console.log('open')
+          console.log('afteropen')
           setTimeout(function(){
-            console.log('closing');
             jumbotronIns.close();
           },1000);
+        },
+        doSthBeforeOpen:function(){
+          console.log('beforeopen')
+        },
+        doSthBeforeClose:function(){
+          console.log('beforeClose')
+        },
+        doSthAfterClose:function(){
+          console.log('afterClose')
         }
       })
       window.onload = function(){
