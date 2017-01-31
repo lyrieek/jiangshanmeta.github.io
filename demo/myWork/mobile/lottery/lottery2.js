@@ -90,8 +90,7 @@
 
 
   }
-
-  Lottery.prototype = {
+  Lottery.prototype = Object.assign({},Widget.prototype,{
     constructor:Lottery,
     initDOM:function(){
       var options = this.options;
@@ -162,6 +161,9 @@
       fragment.appendChild(this.textArea);
       this.wrap.appendChild(fragment);
 
+      this._bindEvent('cannotLottery','doSthAfterCannotLottery');
+      this._bindEvent('afterLottery','doSthAfterLottery');
+      this._bindEvent('ajaxError','doSthAfterAjaxError');
       return this;
     },
     cache:function(){
@@ -448,7 +450,7 @@
 
         
        }else{
-          options.doSthAfterCannotLottery && options.doSthAfterCannotLottery();
+          this.fire('cannotLottery');
        }
     },
     showLotteryRes:function(json){
@@ -493,14 +495,14 @@
           }else{
             _this.status = 2;
             _this.textArea.innerText = options.msg.done;
-            options.doSthAfterLottery && options.doSthAfterLottery(json); 
+            _this.fire('afterLottery',json);
           }
         }
         requestAnimFrame(render);
       }else{
         this.reset();
         setTimeout(function(){
-          options.doSthAfterAjaxError && options.doSthAfterAjaxError(json);
+          _this.fire('ajaxError',json);
         },0); 
       }
 
@@ -525,7 +527,7 @@
       return this;
     }
 
-  }
+  });
   window.Lottery = Lottery;
 
 })(window);

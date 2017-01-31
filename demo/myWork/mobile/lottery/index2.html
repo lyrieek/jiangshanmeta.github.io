@@ -5,6 +5,8 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1, user-scalable=no">
 	<title>抽奖</title>
 	<script src="https://rawgithub.com/jiangshanmeta/utility/master/javascript/lib.js" ></script>
+    <script src="https://rawgithub.com/jiangshanmeta/utility/master/javascript/widget.js" ></script>
+
 	<script src="lottery2.js"></script>
 	<style>
 		*{
@@ -45,7 +47,7 @@
 					return true;
 				},
 				doSthAfterAjaxError:function(json){
-			      alert(json.data.err.msg);				
+			      alert(json.data.err.msg);			
 				},
 				doSthAfterCannotLottery:function(){
 					alert(lotteryIns.errMsg);
