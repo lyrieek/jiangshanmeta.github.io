@@ -26,7 +26,7 @@
 	    }
 	    if(!(instance instanceof Jumbotron)){
 	    	// 初始化设置
-	    	this.option = Object.assign({},defaults,option||{});
+	    	this.options = Object.assign({},defaults,option||{});
 	    	this.initDOM();
 	    	instance = this;
 	    }
@@ -35,7 +35,7 @@
 	Jumbotron.prototype = Object.assign({},Widget.prototype,{
 		constructor:Jumbotron,
 		initDOM:function(){
-			this.ele = document.querySelector(this.option.selector);
+			this.ele = document.querySelector(this.options.selector);
 			if(!this.ele){
 				console.error('missing parameter');
 				return;
@@ -55,19 +55,11 @@
 					_this.fire('afterClose');
 				}
 			});
-			if(gettype(this.option.doSthBeforeOpen)==='function'){
-				this.on('beforeOpen',this.option.doSthBeforeOpen);
-			}
-			if(gettype(this.option.doSthAfterOpen)==='function'){
-				this.on('afterOpen',this.option.doSthAfterOpen);
-			}
-
-			if(gettype(this.option.doSthBeforeClose)==='function'){
-				this.on('beforeClose',this.option.doSthBeforeClose);
-			}
-			if(gettype(this.option.doSthAfterClose)==='function'){
-				this.on('afterClose',this.option.doSthAfterClose);
-			}			
+			this._bindEvent('beforeOpen','doSthBeforeOpen');
+			this._bindEvent('afterOpen','doSthAfterOpen');
+			this._bindEvent('beforeClose','doSthBeforeClose');
+			this._bindEvent('afterClose','doSthAfterClose');
+		
 
 		},
 		open:function(){
@@ -75,7 +67,7 @@
 				return;
 			}
 			this.fire('beforeOpen');
-			this.ele.style[pfx('transition')] = "height " + this.option.openDuration + "ms "+ this.option.openFunc;
+			this.ele.style[pfx('transition')] = "height " + this.options.openDuration + "ms "+ this.options.openFunc;
 			this.ele.style.cssText += "display:"+ this.oriDisplay + ";height:0;overflow:hidden;"
 			this.ele.style.height = this.ele.scrollHeight + 'px';
 			this.status = 1;
@@ -86,7 +78,7 @@
 			}
 			this.fire('beforeClose');
 			this.ele.style.height = getComputedStyle(this.ele)['height'];
-			this.ele.style[pfx('transition')] = "height " + this.option.closeDuration + "ms "+ this.option.closeFunc;
+			this.ele.style[pfx('transition')] = "height " + this.options.closeDuration + "ms "+ this.options.closeFunc;
 			this.status = 3;
 			getComputedStyle(this.ele)['height'];
 			this.ele.style.height = 0;
