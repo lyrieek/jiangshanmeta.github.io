@@ -55,12 +55,12 @@
 					_this.fire('afterClose');
 				}
 			});
-			this._bindEvent('beforeOpen','doSthBeforeOpen');
-			this._bindEvent('afterOpen','doSthAfterOpen');
-			this._bindEvent('beforeClose','doSthBeforeClose');
-			this._bindEvent('afterClose','doSthAfterClose');
-		
-
+			this._bindEvent({
+				'beforeOpen':'doSthBeforeOpen',
+				'afterOpen':'doSthAfterOpen',
+				'beforeClose':'doSthBeforeClose',
+				'afterClose':'doSthAfterClose',
+			});
 		},
 		open:function(){
 			if(this.status!==0){
