@@ -48,11 +48,11 @@
 				if(_this.status==1){
 					_this.status = 2;
 					_this.ele.style.height = "auto";
-					_this.fire('afterOpen');
+					_this.$emit('afterOpen');
 				}else if(_this.status==3){
 					_this.status = 4;
 					_this.ele.style.display = "none";
-					_this.fire('afterClose');
+					_this.$emit('afterClose');
 				}
 			});
 			this._bindEvent({
@@ -66,7 +66,7 @@
 			if(this.status!==0){
 				return;
 			}
-			this.fire('beforeOpen');
+			this.$emit('beforeOpen');
 			this.ele.style[pfx('transition')] = "height " + this.options.openDuration + "ms "+ this.options.openFunc;
 			this.ele.style.cssText += "display:"+ this.oriDisplay + ";height:0;overflow:hidden;"
 			this.ele.style.height = this.ele.scrollHeight + 'px';
@@ -76,7 +76,7 @@
 			if(this.status!=2){
 				return;
 			}
-			this.fire('beforeClose');
+			this.$emit('beforeClose');
 			this.ele.style.height = getComputedStyle(this.ele)['height'];
 			this.ele.style[pfx('transition')] = "height " + this.options.closeDuration + "ms "+ this.options.closeFunc;
 			this.status = 3;

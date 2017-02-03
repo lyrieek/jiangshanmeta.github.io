@@ -450,7 +450,7 @@
 
         
        }else{
-          this.fire('cannotLottery');
+          this.$emit('cannotLottery');
        }
     },
     showLotteryRes:function(json){
@@ -495,14 +495,14 @@
           }else{
             _this.status = 2;
             _this.textArea.innerText = options.msg.done;
-            _this.fire('afterLottery',json);
+            _this.$emit('afterLottery',json);
           }
         }
         requestAnimFrame(render);
       }else{
         this.reset();
         setTimeout(function(){
-          _this.fire('ajaxError',json);
+          _this.$emit('ajaxError',json);
         },0); 
       }
 
