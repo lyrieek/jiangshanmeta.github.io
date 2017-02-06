@@ -434,6 +434,7 @@
           var xhr = new XMLHttpRequest();
           xhr.open("POST",options.ajaxUrl,true);
           xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+          xhr.setRequestHeader("X-Requested-With","XMLHttpRequest");
           xhr.onreadystatechange = function(){
             if(xhr.readyState == 4){
               if(xhr.status == 200){
