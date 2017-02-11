@@ -10,12 +10,41 @@
       return -p*p + 2*p;
     },
   }
+  var wrapIdPool = [];
 
+  function Lottery(option){
+    if(!option || !option.lotteris || !option.ajaxUrl ){
+      console.error('missing parameter');
+      return;
+    }
 
-  var defaults = {
+    //安全模式，保证是使用new关键字返回一个新的实例
+    if(!(this instanceof Lottery)){
+        return new Lottery(option);
+    }
+    this._mergeOpt(option);
+    // 对合并之后的数据进行处理
+    if(this.options.text.pos>=1 || this.options.text.pos<=0){
+      this.options.text.pos = defaults.text.pos;
+    }
+    this.options.DOM.startDeg = deg2rad(this.options.DOM.startDeg);
+
+    //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
+    this.status = 0;
+    this.imgs = [];
+
+    this.initDOM().cache().drawLottery().drawDecoration();
+
+    //我希望把这些实例属性隐藏掉，而原型方法可以暴露
+    var dummpConstructedFunc = function(){};
+    dummpConstructedFunc.prototype = Object.create(Lottery.prototype);
+    return new dummpConstructedFunc();
+  }
+
+  Lottery.defaults = {
     ajaxUrl:"http://jiangshanmeta.github.io",
+    selector:"#lotteryWrap",
     DOM:{
-      wrap:'lotteryWrap',
       w:Math.min(document.documentElement.clientWidth*0.9,500),
       rings:[{color:'#ff6900','width':4},{color:'#ffa642',width:10,shadowColor:'rgba(0,0,0,0.5)',shadowBlur:8}],
       pointerColor:"#ffa642",
@@ -56,53 +85,19 @@
 
     },
 
-  }
-  var wrapIdPool = [];
-
-  function Lottery(option){
-    if(!option || !option.lotteris || !option.ajaxUrl ){
-      console.error('missing parameter');
-      return;
-    }
-
-    //安全模式，保证是使用new关键字返回一个新的实例
-    if(!(this instanceof Lottery)){
-        return new Lottery(option);
-    }
-
-    this.options = deepAssign({},defaults,option);
-    // 对合并之后的数据进行处理
-    if(this.options.text.pos>=1 || this.options.text.pos<=0){
-      this.options.text.pos = defaults.text.pos;
-    }
-    this.options.DOM.startDeg = deg2rad(this.options.DOM.startDeg);
-
-    //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
-    this.status = 0;
-    this.imgs = [];
-
-    this.initDOM().cache().drawLottery().drawDecoration();
-
-    //我希望把这些实例属性隐藏掉，而原型方法可以暴露
-    var dummpConstructedFunc = function(){};
-    dummpConstructedFunc.prototype = Object.create(Lottery.prototype);
-    return new dummpConstructedFunc();
-
-
-  }
+  };
   Lottery.prototype = Object.assign({},Widget.prototype,{
     constructor:Lottery,
     initDOM:function(){
+      this._bindContainer();
       var options = this.options;
       var DOM = options.DOM;
-      var wrapId = DOM.wrapId;
+      var wrapId = options.selector;
       var w = DOM.w;
       //外层盒子初始样式设置
-      // 做一点安全，防止一个wrapId下面有多个抽奖区
-      this.wrap = document.querySelector("#"+wrapId);
-      if(!this.wrap){
-        this.wrap = document.createElement("div");
-        document.body.appendChild(this.wrap);
+      if(!this.container){
+        this.container = document.createElement("div");
+        document.body.appendChild(this.container);
       }else{
         if(wrapIdPool.indexOf(wrapId)>-1){
           console.error('Lottery wrapId repeated');
@@ -112,7 +107,7 @@
         }
       }
       var _this = this;
-      this.wrap.addEventListener("click",function(){
+      this.container.addEventListener("click",function(){
         //没开始抽奖的时候点击，说明要抽奖
         if(_this.status===0){
           _this.ajaxGetLotteryRes();
@@ -122,7 +117,7 @@
         }
         //剩下的情况是抽奖中，当然什么也不做默默等待后端返回结果
       },false);
-      this.wrap.style.cssText += "position:relative;overflow:hidden;margin-left:auto;margin-right:auto;display:table;"
+      this.container.style.cssText += "position:relative;overflow:hidden;margin-left:auto;margin-right:auto;display:table;"
 
       //canvas1负责绘制具体的奖项
       this.canvas1 = document.createElement("canvas");
@@ -159,7 +154,7 @@
       fragment.appendChild(this.canvas1);
       fragment.appendChild(this.canvas2);
       fragment.appendChild(this.textArea);
-      this.wrap.appendChild(fragment);
+      this.container.appendChild(fragment);
 
       this._bindEvent('cannotLottery','doSthAfterCannotLottery');
       this._bindEvent('afterLottery','doSthAfterLottery');
@@ -529,6 +524,12 @@
     }
 
   });
+  var _lottery = window.Lottery;
+  Lottery.noConflict = function(){
+    window.Lottery = _lottery;
+    return Lottery;
+  }
+
   window.Lottery = Lottery;
 
 })(window);
