@@ -87,7 +87,6 @@
 
   };
   Lottery.prototype = Object.assign({},Widget.prototype,{
-    constructor:Lottery,
     initDOM:function(){
       this._bindContainer();
       var options = this.options;
@@ -523,6 +522,12 @@
       return this;
     }
 
+  });
+  Object.defineProperty(Lottery.prototype,"constructor",{
+    value:Lottery,
+    writable:false,
+    configurable:false,
+    enumrable:false
   });
   var _lottery = window.Lottery;
   Lottery.noConflict = function(){

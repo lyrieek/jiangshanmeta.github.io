@@ -1,0 +1,574 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 21天并不能精通underscore.js &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">21天并不能精通underscore.js</h1>
+			  <p >Tue, Feb 21, 2017</p>
+			      
+
+<p>underscore.js是一个javascript库，它提供了一系列实用功能。在介绍具体的功能之前，需要重新学习几个基本概念。</p>
+
+<h2 id="基本概念:94bfca3b88507512aeb14566fa19a6d0">基本概念</h2>
+
+<p>首先要学习的是<strong>高阶函数</strong>，高阶函数本身是一个函数，它的参数中包含函数，或者返回一个函数。听起来比较抽象，我们举一个实际的例子吧：</p>
+
+<pre><code>var property = function(key) {
+	return function(obj) {
+	  return obj == null ? void 0 : obj[key];
+	};
+};
+</code></pre>
+
+<p>根据文档描述，这个函数返回一个新函数，新函数返回传入任何对象的key属性。上面的property函数就是一个高阶函数，除此之外，对这个函数还有一些可说的。比如说<strong>闭包</strong>。</p>
+
+<p>property函数每次被调用的时候都会创建一个新的执行上下文，其中key被赋值为我们传入的值，比如说underscore会内置一个方法<code>getLength</code>传入的就是length，当函数走到return的时候，返回新函数，但是这个key还不能被释放掉，因为我们会在新函数中用到这个key，闭包算是老生常谈的了，常常在一起提及的还有作用域链、内存泄漏，不多说了。</p>
+
+<p>第三个要了解的新概念是<strong>偏函数</strong>，偏函数是相对于原函数而言的，偏的意思是部分，原函数的部分参数或者变量被预置形成的新函数就是偏函数。underscore.js中提供了<code>_.partial</code>方法，它相当于一个偏函数工厂，原料是原函数，生成偏函数。看下代码：</p>
+
+<pre><code>var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+	if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
+	var self = baseCreate(sourceFunc.prototype);
+	var result = sourceFunc.apply(self, args);
+	if (_.isObject(result)) return result;
+	return self;
+};
+_.partial = function(func) {
+var boundArgs = slice.call(arguments, 1);
+var bound = function() {
+  var position = 0, length = boundArgs.length;
+  var args = Array(length);
+  for (var i = 0; i &lt; length; i++) {
+    args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
+  }
+  while (position &lt; arguments.length) args.push(arguments[position++]);
+  return executeBound(func, bound, this, this, args);
+};
+return bound;
+};
+</code></pre>
+
+<p>可以看到，我们在partial中可以预填一些参数，如果想跳过某些参数可以用<code>_</code>占位，在执行的的时候会用相应的参数替换的。</p>
+
+<p>需要先说明的基本概念就这些，然后我要从函数相关的函数讲起了。</p>
+
+<h2 id="函数相关的函数:94bfca3b88507512aeb14566fa19a6d0">函数相关的函数</h2>
+
+<p>你可能会奇怪为啥我要从函数相关的函数开始说，按照文档或者源码应该先说整体结构或者集合啊，因为看到作者写的关于函数的函数我怀疑我以前写的是假javascript。</p>
+
+<h4 id="bind:94bfca3b88507512aeb14566fa19a6d0">_.bind</h4>
+
+<p>函数执行的时候有一个执行上下文，通过作用域链我们可以一级一级向上访问变量，直到全局作用域，bind的作用就是改变执行上下文。在jQuery中绑定执行上下文的方法是<code>jQuery.proxy</code>，它那里用的是apply方法，在underscore中用的是bind方法。这两个其实差异挺大的，apply/call会立即执行函数，而bind方法仅仅是绑定执行上下文，不会立即执行，所以jQuery源码在外面又包了一层函数。其实我们可以这么看：apply和bind方法都能改变执行上下文，apply同时还做了调用函数，包了一层函数会推迟绑定的时间，直到外层包裹函数被调用的时候才执行绑定。</p>
+
+<pre><code>proxy: function( fn, context ) {
+	var tmp, args, proxy;
+	if ( typeof context === &quot;string&quot; ) {
+		tmp = fn[ context ];
+		context = fn;
+		fn = tmp;
+	}
+	// Quick check to determine if target is callable, in the spec
+	// this throws a TypeError, but we will just return undefined.
+	if ( !jQuery.isFunction( fn ) ) {
+		return undefined;
+	}
+	// Simulated bind
+	args = slice.call( arguments, 2 );
+	proxy = function() {
+		return fn.apply( context || this, args.concat( slice.call( arguments ) ) );
+	};
+	// Set the guid of unique handler to the same of original handler, so it can be removed
+	proxy.guid = fn.guid = fn.guid || jQuery.guid++;
+
+	return proxy;
+},
+</code></pre>
+
+<p>上面是jQuery的代码，函数内部的那个<code>proxy</code>就是我说的包的一层函数。而underscore的做法是直接使用原生的bind方法，如果没有原生的bind方法就用一个兼容函数，兼容函数的基本思路和jQuery的是一致的。我们去看<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/bind">MDN上bind方法的文档</a>，其中提到bind方法的一个作用是偏函数，想想也对，bind调用的时候不仅仅可以绑定作用域，而且可以传参，这样返回的新函数确实是偏函数，这里或许会加深你对偏函数的理解。</p>
+
+<h4 id="memoize:94bfca3b88507512aeb14566fa19a6d0">_.memoize</h4>
+
+<p>这个函数是个工厂函数，返回的新函数具有缓存结果的能力。</p>
+
+<pre><code>_.memoize = function(func, hasher) {
+	var memoize = function(key) {
+	  var cache = memoize.cache;
+	  var address = '' + (hasher ? hasher.apply(this, arguments) : key);
+	  if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
+	  return cache[address];
+	};
+	memoize.cache = {};
+	return memoize;
+};
+</code></pre>
+
+<p>代码并不难理解，以前我也写过具有缓存功能的函数，思路都是一致的，作者进一步抽象，做了一个缓存函数工厂，使得输出的函数每一个都具有缓存能力。这里同时提供了一个可选的hasher参数，用来生成缓存的键。</p>
+
+<p>用处很多了，文档中给的例子是递归，为了防止栈溢出。</p>
+
+<h4 id="throttle:94bfca3b88507512aeb14566fa19a6d0">_.throttle</h4>
+
+<p>这个函数能够控制函数的执行频率，保证至少间隔wait时间才能执行一次。</p>
+
+<pre><code>_.throttle = function(func, wait, options) {
+	var context, args, result;
+	var timeout = null;
+	var previous = 0;
+	if (!options) options = {};
+	var later = function() {
+	  previous = options.leading === false ? 0 : _.now();
+	  timeout = null;
+	  result = func.apply(context, args);
+	  if (!timeout) context = args = null;
+	};
+	return function() {
+	  var now = _.now();
+	  if (!previous &amp;&amp; options.leading === false) previous = now;
+	  var remaining = wait - (now - previous);
+	  context = this;
+	  args = arguments;
+	  if (remaining &lt;= 0 || remaining &gt; wait) {
+	    if (timeout) {
+	      clearTimeout(timeout);
+	      timeout = null;
+	    }
+	    previous = now;
+	    result = func.apply(context, args);
+	    if (!timeout) context = args = null;
+	  } else if (!timeout &amp;&amp; options.trailing !== false) {
+	    timeout = setTimeout(later, remaining);
+	  }
+	  return result;
+	};
+};
+</code></pre>
+
+<p>可以看到，基本原理是利用时间戳记录上次执行时间，这点其实好理解，比较复杂的是配置参数<code>leading</code>和<code>trailing</code>。
+在默认条件下两者均为undefined，在这一条件下触发函数，func被调用，在wait时间内触发都不会调用func，直到wait时间结束后才会被调用(对应的参数是最后一次触发时的参数)。leading为undefined，trailing为false，则在调用的时候func被调用，wait时间内多次触发没有效果。leading为false，trailing为undefined，则在wait时间结束func才会被调用，期间的触发会改变context和args。然后我们可以看到<code>if (!timeout) context = args = null;</code>，这句话其实是为了优化性能，减少闭包占用的内存。</p>
+
+<h4 id="debounce:94bfca3b88507512aeb14566fa19a6d0">_.debounce</h4>
+
+<pre><code>_.debounce = function(func, wait, immediate) {
+	var timeout, args, context, timestamp, result;
+
+	var later = function() {
+	  var last = _.now() - timestamp;
+
+	  if (last &lt; wait &amp;&amp; last &gt;= 0) {
+	    timeout = setTimeout(later, wait - last);
+	  } else {
+	    timeout = null;
+	    if (!immediate) {
+	      result = func.apply(context, args);
+	      if (!timeout) context = args = null;
+	    }
+	  }
+	};
+
+	return function() {
+	  context = this;
+	  args = arguments;
+	  timestamp = _.now();
+	  var callNow = immediate &amp;&amp; !timeout;
+	  if (!timeout) timeout = setTimeout(later, wait);
+	  if (callNow) {
+	    result = func.apply(context, args);
+	    context = args = null;
+	  }
+
+	  return result;
+	};
+};
+
+</code></pre>
+
+<p>按照文档的说法，返回 function 函数的防反跳版本, 将延迟函数的执行(真正的执行)在函数最后一次调用时刻的 wait 毫秒之后。基本思路是有一个标识上次触发的时间戳，然后比较时间看能否执行。这个请结合时间轴理解。我记得Vue1里面变淡那里有类似的概念，好像Vue2去掉了。</p>
+
+<h4 id="negate:94bfca3b88507512aeb14566fa19a6d0">_.negate</h4>
+
+<p>返回一个断言函数的相反版本，这个函数在内部经常被调用，思路上没什么难的，但是作者做了一步抽象成为了函数工厂。</p>
+
+<pre><code>_.negate = function(predicate) {
+	return function() {
+	  return !predicate.apply(this, arguments);
+	};
+};
+</code></pre>
+
+<h4 id="delay:94bfca3b88507512aeb14566fa19a6d0">_.delay</h4>
+
+<p>这个函数相比较之下可说的不多了，直接上源码吧：</p>
+
+<pre><code>_.delay = function(func, wait) {
+	var args = slice.call(arguments, 2);
+	return setTimeout(function(){
+	  return func.apply(null, args);
+	}, wait);
+};
+</code></pre>
+
+<h4 id="before-after-once:94bfca3b88507512aeb14566fa19a6d0">_.before _.after _.once</h4>
+
+<p>这三个函数是和函数调用次数有关的，after是被触发times次之后才调用func，before是最多只能调用times次(不含times，所以我觉得很奇怪)，once只是before的特殊情况，可以看到源码里once是利用partial将before加工生成的偏函数。</p>
+
+<p>关于函数的函数每一个都是高阶函数，都返回新的处理过的函数，每一个具体的功能其实或多或少都实现过，但是抽象能力没有作者这么高。</p>
+
+<h2 id="集合相关函数:94bfca3b88507512aeb14566fa19a6d0">集合相关函数</h2>
+
+<p>集合相关函数基本上都会用到迭代器，而用户传入的迭代器不仅仅可以是一个函数，对象、字符串、数字、甚至不传都可以，underscore在内部会做统一处理，使其变成一个函数的形式。</p>
+
+<pre><code>var optimizeCb = function(func, context, argCount) {
+	if (context === void 0) return func;
+	switch (argCount == null ? 3 : argCount) {
+	  case 1: return function(value) {
+	    return func.call(context, value);
+	  };
+	  case 2: return function(value, other) {
+	    return func.call(context, value, other);
+	  };
+	  case 3: return function(value, index, collection) {
+	    return func.call(context, value, index, collection);
+	  };
+	  case 4: return function(accumulator, value, index, collection) {
+	    return func.call(context, accumulator, value, index, collection);
+	  };
+	}
+	return function() {
+	  return func.apply(context, arguments);
+	};
+};
+
+var cb = function(value, context, argCount) {
+	if (value == null) return _.identity;
+	if (_.isFunction(value)) return optimizeCb(value, context, argCount);
+	if (_.isObject(value)) return _.matcher(value);
+	return _.property(value);
+};
+</code></pre>
+
+<p>上面的代码在源码的一开始，一开始读的时候会感觉莫名其妙，我来一一解读。cb函数是用来将各种用户传入的迭代器转换成内部能够使用的迭代器的。首先，如果用户不传迭代器，默认迭代器就是<code>_.identity</code>，这个函数返回与传入参数相等的值，真的很没用，而且听着描述就能顺手把这个函数实现掉。这个函数被_.compact调用过，虽然我觉得后者也没啥用。然后第二类参数是函数，这应该是最常见的情况了，在内部对函数做了优化(optimizeCb)，顺手说下这个奇怪的optimizeCb，初读的时候会发现switch里返回的函数和最后默认返回的函数干的事同一件事情，为啥还要写这么多相似的代码？查了一下我的结论是魔术变量arguments有性能上的问题，这里还一点是<code>void 0</code>，一般很少见人用这个啊，他这里考虑的是undefined可能会被篡改。下一种类型是Object(含array)，他这里返回的是matcher函数生成的偏函数，偏函数用于检测传入的新对象是否包含这里的对象value。最后一种情况是字符串、数字，property函数的具体实现已经在最开始说过了。</p>
+
+<p>到这里我们已经有工具预处理用户传入的迭代器，拿到内部可用的新迭代器了。剩下的就套路比较多了。</p>
+
+<h4 id="each:94bfca3b88507512aeb14566fa19a6d0">_.each</h4>
+
+<pre><code>_.each = _.forEach = function(obj, iteratee, context) {
+	iteratee = optimizeCb(iteratee, context);
+	var i, length;
+	if (isArrayLike(obj)) {
+	  for (i = 0, length = obj.length; i &lt; length; i++) {
+	    iteratee(obj[i], i, obj);
+	  }
+	} else {
+	  var keys = _.keys(obj);
+	  for (i = 0, length = keys.length; i &lt; length; i++) {
+	    iteratee(obj[keys[i]], keys[i], obj);
+	  }
+	}
+	return obj;
+};
+</code></pre>
+
+<p>原生js给array原型上加了一个forEach方法用来迭代数组，只能处理数组，jQuery也有一个each不仅仅能够处理数组，类数组、和对象也都能处理，underscore的each和jQuery的其实差不多，但是在jQuery中如果迭代返回false就停止迭代了。</p>
+
+<p>这里还有个内部函数<code>isArrayLike</code>，其实jQuery也有个同样功能的函数，看下代码吧：</p>
+
+<pre><code>var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+var getLength = property('length');
+var isArrayLike = function(collection) {
+	var length = getLength(collection);
+	return typeof length == 'number' &amp;&amp; length &gt;= 0 &amp;&amp; length &lt;= MAX_ARRAY_INDEX;
+};
+</code></pre>
+
+<p>里面的<code>getLength</code>函数我其实在最开始说<code>property</code>函数的时候已经提过了。</p>
+
+<h4 id="map:94bfca3b88507512aeb14566fa19a6d0">_.map</h4>
+
+<p>原生js的array上也有个map方法，但是只能用在array上，这里也是推广到了类数组和对象。其实有了上面<code>_.each</code>的代码，我们完全可以照着实现一个map，代码上也没有太多难以理解的。</p>
+
+<p>一个相类似的函数是<code>_.mapObject</code>，它只能对object进行迭代，并且mapObject的结果是一个object，而map的结果是一个array</p>
+
+<h4 id="reduce-reduceright:94bfca3b88507512aeb14566fa19a6d0">_.reduce  _.reduceRight</h4>
+
+<pre><code>function createReduce(dir) {
+	function iterator(obj, iteratee, memo, keys, index, length) {
+	  for (; index &gt;= 0 &amp;&amp; index &lt; length; index += dir) {
+	    var currentKey = keys ? keys[index] : index;
+	    memo = iteratee(memo, obj[currentKey], currentKey, obj);
+	  }
+	  return memo;
+	}
+
+	return function(obj, iteratee, memo, context) {
+	  iteratee = optimizeCb(iteratee, context, 4);
+	  var keys = !isArrayLike(obj) &amp;&amp; _.keys(obj),
+	      length = (keys || obj).length,
+	      index = dir &gt; 0 ? 0 : length - 1;
+	  // Determine the initial value if none is provided.
+	  if (arguments.length &lt; 3) {
+	    memo = obj[keys ? keys[index] : index];
+	    index += dir;
+	  }
+	  return iterator(obj, iteratee, memo, keys, index, length);
+	};
+}
+
+  _.reduce = _.foldl = _.inject = createReduce(1);
+  _.reduceRight = _.foldr = createReduce(-1);
+</code></pre>
+
+<p>如果先看了underscore中关于函数的函数，再看这一段就会觉得没那么难以理解了。<code>createReduce</code>是一个高阶函数，传入的是迭代的方向。类似的套路还有 <code>_.findIndex</code>、<code>findLastIndex</code>、<code>createPredicateIndexFinder</code>这一组，还有<code>_.indexOf</code> 、<code>_.lastIndexOf</code>、<code>createIndexFinder</code>这一组。</p>
+
+<h4 id="sortby:94bfca3b88507512aeb14566fa19a6d0">_.sortBy</h4>
+
+<p>这个函数其实是叫我们如何优雅的使用underscore</p>
+
+<pre><code>_.sortBy = function(obj, iteratee, context) {
+	iteratee = cb(iteratee, context);
+	return _.pluck(_.map(obj, function(value, index, list) {
+	  return {
+	    value: value,
+	    index: index,
+	    criteria: iteratee(value, index, list)
+	  };
+	}).sort(function(left, right) {
+	  var a = left.criteria;
+	  var b = right.criteria;
+	  if (a !== b) {
+	    if (a &gt; b || a === void 0) return 1;
+	    if (a &lt; b || b === void 0) return -1;
+	  }
+	  return left.index - right.index;
+	}), 'value');
+};
+
+</code></pre>
+
+<p>在underscore中有不少函数就是在其他函数的基础上搭起来的。这个sortBy函数中用到的pluck就是一个基于map搭出来的函数。</p>
+
+<h4 id="groupby-indexby-countby:94bfca3b88507512aeb14566fa19a6d0">_.groupBy _.indexBy _.countBy</h4>
+
+<pre><code>var group = function(behavior) {
+	return function(obj, iteratee, context) {
+	  var result = {};
+	  iteratee = cb(iteratee, context);
+	  _.each(obj, function(value, index) {
+	    var key = iteratee(value, index, obj);
+	    behavior(result, value, key);
+	  });
+	  return result;
+	};
+};
+
+_.groupBy = group(function(result, value, key) {
+	if (_.has(result, key)) result[key].push(value); else result[key] = [value];
+});
+
+_.indexBy = group(function(result, value, key) {
+	result[key] = value;
+});
+
+_.countBy = group(function(result, value, key) {
+	if (_.has(result, key)) result[key]++; else result[key] = 1;
+});
+
+</code></pre>
+
+<p>groupBy、indexBy、countBy这三个在实现上没有太多难以理解的东西，但是注意这个抽象能力。</p>
+
+<h2 id="数组相关函数:94bfca3b88507512aeb14566fa19a6d0">数组相关函数</h2>
+
+<h4 id="uniq:94bfca3b88507512aeb14566fa19a6d0">_.uniq</h4>
+
+<p>数组去重算是一个经典问题了，对于一些特殊的数据我会将数组转化成hash结构(用object实现)然后再转回数组来实现(然而碰到的绝大多数是这种情况，算法复杂度O(n) )，underscore提供的去重方法更加通用，考虑的也更多，它提供一个可选参数isSorted，用于已经排序的元素，这时候算法的时间复杂度是O(n)，传入迭代器或者不传入迭代器的算法时间复杂度是O(n^2),判断是否是重复元素用的是<code>_.contains</code>，它再调用<code>_.indexOf</code>，看名字array的原型上就有这么一个方法，underscore的进步之处是它还考虑了NaN的情况(ES6的includes方法考虑了NaN的情况，但是这个糟心的兼容性问题，还有MDN上的polyfill有bug没考虑NaN的情况)。</p>
+
+<p>underscore去重算法的源码就不在这里贴了，但是很推荐去读一下源码</p>
+
+<h4 id="intersection:94bfca3b88507512aeb14566fa19a6d0">_.intersection</h4>
+
+<p>这个函数是用来求交集的，原理也不复杂，交集的话一定是第一个集合的子集，只要遍历第一个集合的元素，看其他集合是否有这个元素即可。</p>
+
+<pre><code>_.intersection = function(array) {
+	var result = [];
+	var argsLength = arguments.length;
+	for (var i = 0, length = getLength(array); i &lt; length; i++) {
+	  var item = array[i];
+	  if (_.contains(result, item)) continue;
+	  for (var j = 1; j &lt; argsLength; j++) {
+	    if (!_.contains(arguments[j], item)) break;
+	  }
+	  if (j === argsLength) result.push(item);
+	}
+	return result;
+};
+</code></pre>
+
+<p>一提到交集，会联想到的另一个名词就是并集，并集的思路更简单了，把集合合并在一起，然后去重就好了。去重上面已经有代码了，现在需要的是合并，underscore内部的<code>flatten</code>能够进行合并，而且看一下参数配置，你会发现union方法实际上考虑了传递的参数类型，并且只允许集合(数组)被合并。</p>
+
+<h2 id="对象相关函数:94bfca3b88507512aeb14566fa19a6d0">对象相关函数</h2>
+
+<h4 id="类型判断全家桶:94bfca3b88507512aeb14566fa19a6d0">类型判断全家桶</h4>
+
+<p>又是个js的常见问题，其实jQuery里也有相关的方法</p>
+
+<pre><code>  _.isArray = nativeIsArray || function(obj) {
+    return toString.call(obj) === '[object Array]';
+  };
+
+  _.isObject = function(obj) {
+    var type = typeof obj;
+    return type === 'function' || type === 'object' &amp;&amp; !!obj;
+  };  
+
+  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
+    _['is' + name] = function(obj) {
+      return toString.call(obj) === '[object ' + name + ']';
+    };
+  });
+
+  _.isFinite = function(obj) {
+    return isFinite(obj) &amp;&amp; !isNaN(parseFloat(obj));
+  };
+
+  _.isNaN = function(obj) {
+    return _.isNumber(obj) &amp;&amp; obj !== +obj;
+  };
+
+  _.isBoolean = function(obj) {
+    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
+  };
+
+  _.isNull = function(obj) {
+    return obj === null;
+  };
+
+  _.isUndefined = function(obj) {
+    return obj === void 0;
+  };
+
+</code></pre>
+
+<p>判断是否是array的时候先尝试使用Array的静态方法<code>Array.isArray</code>，兼容版本大家其实都熟。</p>
+
+<p>对于Object的判断就有些奇怪了，他把function object array都算作object了（null这个异端没算），虽然我不太认同这个规则（反过来想想在js的世界谁不是对象呢）。</p>
+
+<p>而<code>_.isFinite</code>和<code>_.isNaN</code>这两个的意思就是故意黑js了，记得Number对象上有了相关的判断静态方法，不过实际项目中真的有必要判断这两个？我反正没判断过。</p>
+
+<p>其实我个人认为把isArrayLike暴露出来的其实更好。</p>
+
+<h4 id="keys-allkeys-values:94bfca3b88507512aeb14566fa19a6d0">_.keys  _.allKeys  _.values</h4>
+
+<p>看名字自行联想也能猜出来是干啥的，<code>Object.values</code>目前还处于实验阶段，然而我更好奇当时出<code>Object.keys</code>的时候为啥没把这货一起写上。实现起来没啥难的。</p>
+
+<h4 id="invert:94bfca3b88507512aeb14566fa19a6d0">_.invert</h4>
+
+<p>php有一个内置方法<code>array_flip</code>是用来交换键值的，underscore的这个方法就是模拟这个功能。自己可以试着实现一下。</p>
+
+<h4 id="functions:94bfca3b88507512aeb14566fa19a6d0">_.functions</h4>
+
+<p>这是个特异化的keys功能，只返回方法名。</p>
+
+<h4 id="extend-extendown-clone:94bfca3b88507512aeb14566fa19a6d0">_.extend _.extendOwn _.clone</h4>
+
+<p>让我想到了原生的<code>Object.assign</code>和jQuery的<code>jQuery.extend</code>，其实我觉得jQuery写的更好，功能强大多了，建议大家去读jQuery的extend</p>
+
+<h2 id="其他函数:94bfca3b88507512aeb14566fa19a6d0">其他函数</h2>
+
+<h4 id="shuffle:94bfca3b88507512aeb14566fa19a6d0">_.shuffle</h4>
+
+<p>在php中有一个系统方法shuffle用来将原数组打乱顺序，underscore也实现了这一功能。</p>
+
+<pre><code>  _.shuffle = function(obj) {
+    var set = isArrayLike(obj) ? obj : _.values(obj);
+    var length = set.length;
+    var shuffled = Array(length);
+    for (var index = 0, rand; index &lt; length; index++) {
+      rand = _.random(0, index);
+      if (rand !== index) shuffled[index] = shuffled[rand];
+      shuffled[rand] = set[index];
+    }
+    return shuffled;
+  };
+
+</code></pre>
+
+<p>这里重要的是重排算法的实现。</p>
+
+<h4 id="sortedindex:94bfca3b88507512aeb14566fa19a6d0">_.sortedIndex</h4>
+
+<pre><code>  _.sortedIndex = function(array, obj, iteratee, context) {
+    iteratee = cb(iteratee, context, 1);
+    var value = iteratee(obj);
+    var low = 0, high = getLength(array);
+    while (low &lt; high) {
+      var mid = Math.floor((low + high) / 2);
+      if (iteratee(array[mid]) &lt; value) low = mid + 1; else high = mid;
+    }
+    return low;
+  };
+
+</code></pre>
+
+<p>这个方法适用于已经从小到大排好序的数组，用的是二分法查找。</p>
+
+<h4 id="mixin:94bfca3b88507512aeb14566fa19a6d0">mixin</h4>
+
+<p>这个方法是用来让用户扩展underscore的。看下源码其实不难理解，但我到现在依然怀疑把函数挂到underscore的原型上的必要性。</p>
+
+<p>而且这个方法本身很危险，因为他允许用户修改underscore暴露出来的的方法。想起来之前看的CI的一个library，有这么一个方法：</p>
+
+<pre><code>function initialize($params = array())
+{
+	if (count($params) &gt; 0)
+	{
+		foreach ($params as $key =&gt; $val)
+		{
+			if (isset($this-&gt;$key))
+			{
+				$this-&gt;$key = $val;
+			}
+		}
+	}
+}
+</code></pre>
+
+<p>CI的做法是$this上挂载的才允许用户设置，多余的设置一律跳过，underscore可以使用类似的思路，underscore上没有挂载的才允许挂载，至少这样比较安全。</p>
+
+<h2 id="总结:94bfca3b88507512aeb14566fa19a6d0">总结</h2>
+
+<p>关于underscore我没有一个一个列出来解读，而是找了一些有代表性的重要的代码简单评价一下。有的功能其实看着上面的描述可以自行去尝试实现一下了，比如说<code>_.constant</code>和<code>_.propertyOf</code>。</p>
+
+<p>读underscore源码对我来说最大的影响作者的抽象能力，还有暴露了我对函数这个概念理解地太弱。</p>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>
