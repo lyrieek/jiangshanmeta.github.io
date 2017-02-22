@@ -425,3 +425,19 @@ pre code {
   -o-transition:all 0.3s ease-in-out;
   transition:all 0.3s ease-in-out;
 }
+
+/* 文章设置 */
+.article{
+  counter-reset:heading;
+}
+.article h2{
+  counter-reset:subheading;
+}
+.article h2::before{
+  counter-increment:heading;
+  content:counter(heading)". ";
+}
+.article h4::before{
+  counter-increment:subheading;
+  content:counter(heading)"."counter(subheading)" ";
+}

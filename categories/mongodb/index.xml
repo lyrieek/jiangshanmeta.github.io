@@ -19,7 +19,7 @@
 
 &lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/&#34;&gt;总结过mongodb常用的增删查改&lt;/a&gt;，随着使用的深入自己的工作不在局限在简单地增删查改上，还处理一部分的统计性工作。统计所需要的查询条件就比较复杂了，而mongodb的聚合又是mongodb的一个很大的话题了。这里算是对工作中遇到的一些情况进行总结吧。因为平时都是通过php操作数据库，所以下面的代码都是php，不过并不影响我想表达的。&lt;/p&gt;
 
-&lt;h2 id=&#34;1-限制数组长度查询:233b6dd901ca06898e3895bff0f956d4&#34;&gt;1.限制数组长度查询&lt;/h2&gt;
+&lt;h2 id=&#34;限制数组长度查询:233b6dd901ca06898e3895bff0f956d4&#34;&gt;限制数组长度查询&lt;/h2&gt;
 
 &lt;p&gt;mongodb可以存储数组，我遇到的一个需求是筛选出数组长度大于某个值的。首先想到的是使用&lt;code&gt;$size&lt;/code&gt;，但是&lt;code&gt;$size&lt;/code&gt;不支持&lt;code&gt;$gt&lt;/code&gt;这样的操作，仅支持等于某个长度。&lt;/p&gt;
 
@@ -28,7 +28,7 @@
 &lt;pre&gt;&lt;code&gt;[&#39;fiele.0&#39;=&amp;gt;[&#39;$exists&#39;=&amp;gt;true]]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;2-addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;2.$addToSet在聚合中的使用&lt;/h2&gt;
+&lt;h2 id=&#34;addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;$addToSet在聚合中的使用&lt;/h2&gt;
 
 &lt;p&gt;需求场景是这样的：在流水表里有一些数据是进货记录，每条这样的数据都包含店铺id和供应商id，现在需要拿出每家供应商所供货的店铺。暴力的做法是拿出数据来在php处理（写起来并不复杂），然而用聚合实现更简单。&lt;/p&gt;
 
@@ -49,7 +49,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bPeijianFlow&#39;,[$match,$group]
 
 &lt;p&gt;上面是实现代码，首先在&lt;code&gt;bPeijianFlow&lt;/code&gt;这张表中只有typ为1的才是进货记录，据此筛选，然后我们要根据供应商id进行聚合，所以聚合中的&lt;code&gt;_id&lt;/code&gt;是&lt;code&gt;$supplier&lt;/code&gt;，因为一个供应商对一家店可能多次供货，但我们仅需保留一次门店id，所以采用&lt;code&gt;$addToSet&lt;/code&gt;而不是&lt;code&gt;$push&lt;/code&gt;，把每家供应商供货的店铺id保存到&lt;code&gt;orgs&lt;/code&gt;这个数组中。&lt;/p&gt;
 
-&lt;h2 id=&#34;3-根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;3.根据多个字段进行聚合&lt;/h2&gt;
+&lt;h2 id=&#34;根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;根据多个字段进行聚合&lt;/h2&gt;
 
 &lt;p&gt;上面的聚合仅仅是根据供应商一个字段进行，我遇到的场景是这样的：有一张用户考试的表，存储着用户id，考试类型，需要根据用户和考试类型进行聚合，拿到每个用户每个考试类型通过（通过是在筛选处理的）的次数。&lt;/p&gt;
 
@@ -73,7 +73,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;aExam&#39;,[$match,$group]);
 
 &lt;p&gt;首先是筛选通过的考试，用status为2表示，然后是进行聚合，聚合是根据&lt;code&gt;adminuserId&lt;/code&gt;和&lt;code&gt;typ&lt;/code&gt;两个字段来的，所以&lt;code&gt;_id&lt;/code&gt;是一个array，而不是上面那个聚合的string，&lt;code&gt;&#39;count&#39;=&amp;gt;array(&#39;$sum&#39;=&amp;gt;1),&lt;/code&gt;是用来统计数量的，剩下的两行是用来做展示数据用的。&lt;/p&gt;
 
-&lt;h2 id=&#34;4-聚合中的管线化操作:233b6dd901ca06898e3895bff0f956d4&#34;&gt;4.聚合中的管线化操作&lt;/h2&gt;
+&lt;h2 id=&#34;聚合中的管线化操作:233b6dd901ca06898e3895bff0f956d4&#34;&gt;聚合中的管线化操作&lt;/h2&gt;
 
 &lt;p&gt;目前遇到的大部分业务场景下的聚合都是两步：先筛选，再聚合。上面两个例子都是这个模式。mongodb的聚合其实是有一个管线化操作，即上一步的输出作为下一步的输入，在上面例子中是match的输出作为group的输入。
 复杂场景所需要的管线化操作就比较多了，先举两个实际场景&lt;/p&gt;
@@ -139,7 +139,7 @@ $data[&#39;daodianTwiceUserCount&#39;] = count($rst[&#39;result&#39;]);
 
 &lt;p&gt;第一次聚合也是根据用户id(crmId)进行聚合，得到每个用户订单数量，到这里和第一个场景的操作一样，然后再向下操作不是聚合而是进行筛选，我们要筛选出订单数量大于等于2的。&lt;/p&gt;
 
-&lt;h2 id=&#34;5-project的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;5. $.project的使用&lt;/h2&gt;
+&lt;h2 id=&#34;project的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;$.project的使用&lt;/h2&gt;
 
 &lt;p&gt;在同事的聚合代码里发现了这么一段：&lt;/p&gt;
 
@@ -172,7 +172,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;sPeijianinstore&#39;,[$match,$pro
 
 &lt;p&gt;那个&lt;code&gt;$multiply&lt;/code&gt;就是相乘的意思，&lt;a href=&#34;https://docs.mongodb.com/manual/reference/operator/aggregation-arithmetic/&#34;&gt;mongodb支持多种常见的运算&lt;/a&gt;，四则运算、指数对数运算、幂运算、取整都支持。&lt;/p&gt;
 
-&lt;h2 id=&#34;6-比较两个字段:233b6dd901ca06898e3895bff0f956d4&#34;&gt;6.比较两个字段&lt;/h2&gt;
+&lt;h2 id=&#34;比较两个字段:233b6dd901ca06898e3895bff0f956d4&#34;&gt;比较两个字段&lt;/h2&gt;
 
 &lt;p&gt;需求场景是这样的：有x、y两个字段，需要x&amp;gt;y的数据。如果在mysql里这个需求实现起来其实很简单，但是mongodb&amp;hellip;&amp;hellip;&lt;/p&gt;
 
@@ -198,7 +198,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;sPeijianinstore&#39;,[$match,$pro
 
 &lt;p&gt;实际使用的时候为了性能优化可以先match一遍做个初筛，然后进行project判断字段间的关系进行筛选，然后执行聚合之类的操作。&lt;/p&gt;
 
-&lt;h2 id=&#34;7-没有-id的聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;7.没有_id的聚合&lt;/h2&gt;
+&lt;h2 id=&#34;没有-id的聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;没有_id的聚合&lt;/h2&gt;
 
 &lt;p&gt;group的时候通常会有&lt;code&gt;_id&lt;/code&gt;表示按照什么聚合，可以按照一个字段，也可以按照多个字段，上面都有例子，但是有的时候我们并不需要这个聚合的字段，比如如下场景：在订单表中快照出本月的营业额。显然我们只需要筛选出来本月的订单，然后把金额字段加起来就结束了，不需要根据哪个字段聚合。但是group的时候&lt;code&gt;_id&lt;/code&gt;不填还不行，还好mongodb支持填&lt;code&gt;null&lt;/code&gt;。一下是代码示例：&lt;/p&gt;
 
@@ -219,7 +219,7 @@ $group = [
 $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bJingpinbook&#39;, [$match,$group]);
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;8-mapreduce:233b6dd901ca06898e3895bff0f956d4&#34;&gt;8. mapreduce&lt;/h2&gt;
+&lt;h2 id=&#34;mapreduce:233b6dd901ca06898e3895bff0f956d4&#34;&gt;mapreduce&lt;/h2&gt;
 
 &lt;p&gt;一般的统计性工作使用&lt;code&gt;aggregate&lt;/code&gt;基本就够了，直到我遇到了这么一个需求：类似于知乎的给问题添加话题，一个问题对应多个话题，这些话题存成一个array作为问题的一个字段，然后需要拿到一段时间内话题热度排行榜。如果是一个问题只对应一个话题，这个直接对问题筛选然后对话题字段聚合最后再排个序就可以了，但是问题是话题是个array，在没想到如何用&lt;code&gt;aggregate&lt;/code&gt;实现的情况下我们使用了mapreduce。&lt;/p&gt;
 

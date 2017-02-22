@@ -292,7 +292,7 @@ padding-left: 15px;
 &amp;lt;/div&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;1-水平居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;1.水平居中&lt;/h2&gt;
+&lt;h2 id=&#34;水平居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;水平居中&lt;/h2&gt;
 
 &lt;p&gt;实现水平居中其实并不难，而且有多个可靠地方案可以使用。&lt;/p&gt;
 
@@ -337,7 +337,7 @@ padding-left: 15px;
 &lt;p&gt;父元素div &lt;code&gt;display:flex:justify-content:center;&lt;/code&gt;评价如小标题
 &lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/animation/animation_spin.html&#34;&gt;上个例子&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;2-垂直居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;2.垂直居中&lt;/h2&gt;
+&lt;h2 id=&#34;垂直居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;垂直居中&lt;/h2&gt;
 
 &lt;p&gt;相较于水平居中，垂直居中相比较而言就有点难度了&lt;/p&gt;
 
@@ -368,7 +368,7 @@ padding-left: 15px;
 
 &lt;p&gt;当然你也可以折腾flex的相关属性去，说的就是某些关于对其的属性。&lt;/p&gt;
 
-&lt;h2 id=&#34;3-水平垂直都居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;3.水平垂直都居中&lt;/h2&gt;
+&lt;h2 id=&#34;水平垂直都居中:903435e3d66e261bf87738ad6f965a5c&#34;&gt;水平垂直都居中&lt;/h2&gt;
 
 &lt;h4 id=&#34;绝对定位方案-2:903435e3d66e261bf87738ad6f965a5c&#34;&gt;绝对定位方案&lt;/h4&gt;
 

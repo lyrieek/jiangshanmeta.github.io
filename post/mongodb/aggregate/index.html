@@ -31,7 +31,7 @@
 
 <p>之前<a href="http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/">总结过mongodb常用的增删查改</a>，随着使用的深入自己的工作不在局限在简单地增删查改上，还处理一部分的统计性工作。统计所需要的查询条件就比较复杂了，而mongodb的聚合又是mongodb的一个很大的话题了。这里算是对工作中遇到的一些情况进行总结吧。因为平时都是通过php操作数据库，所以下面的代码都是php，不过并不影响我想表达的。</p>
 
-<h2 id="1-限制数组长度查询:233b6dd901ca06898e3895bff0f956d4">1.限制数组长度查询</h2>
+<h2 id="限制数组长度查询:233b6dd901ca06898e3895bff0f956d4">限制数组长度查询</h2>
 
 <p>mongodb可以存储数组，我遇到的一个需求是筛选出数组长度大于某个值的。首先想到的是使用<code>$size</code>，但是<code>$size</code>不支持<code>$gt</code>这样的操作，仅支持等于某个长度。</p>
 
@@ -40,7 +40,7 @@
 <pre><code>['fiele.0'=&gt;['$exists'=&gt;true]]
 </code></pre>
 
-<h2 id="2-addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4">2.$addToSet在聚合中的使用</h2>
+<h2 id="addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4">$addToSet在聚合中的使用</h2>
 
 <p>需求场景是这样的：在流水表里有一些数据是进货记录，每条这样的数据都包含店铺id和供应商id，现在需要拿出每家供应商所供货的店铺。暴力的做法是拿出数据来在php处理（写起来并不复杂），然而用聚合实现更简单。</p>
 
@@ -61,7 +61,7 @@ $rst = $this-&gt;db-&gt;aggregate('bPeijianFlow',[$match,$group]);
 
 <p>上面是实现代码，首先在<code>bPeijianFlow</code>这张表中只有typ为1的才是进货记录，据此筛选，然后我们要根据供应商id进行聚合，所以聚合中的<code>_id</code>是<code>$supplier</code>，因为一个供应商对一家店可能多次供货，但我们仅需保留一次门店id，所以采用<code>$addToSet</code>而不是<code>$push</code>，把每家供应商供货的店铺id保存到<code>orgs</code>这个数组中。</p>
 
-<h2 id="3-根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4">3.根据多个字段进行聚合</h2>
+<h2 id="根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4">根据多个字段进行聚合</h2>
 
 <p>上面的聚合仅仅是根据供应商一个字段进行，我遇到的场景是这样的：有一张用户考试的表，存储着用户id，考试类型，需要根据用户和考试类型进行聚合，拿到每个用户每个考试类型通过（通过是在筛选处理的）的次数。</p>
 
@@ -85,7 +85,7 @@ $rst = $this-&gt;db-&gt;aggregate('aExam',[$match,$group]);
 
 <p>首先是筛选通过的考试，用status为2表示，然后是进行聚合，聚合是根据<code>adminuserId</code>和<code>typ</code>两个字段来的，所以<code>_id</code>是一个array，而不是上面那个聚合的string，<code>'count'=&gt;array('$sum'=&gt;1),</code>是用来统计数量的，剩下的两行是用来做展示数据用的。</p>
 
-<h2 id="4-聚合中的管线化操作:233b6dd901ca06898e3895bff0f956d4">4.聚合中的管线化操作</h2>
+<h2 id="聚合中的管线化操作:233b6dd901ca06898e3895bff0f956d4">聚合中的管线化操作</h2>
 
 <p>目前遇到的大部分业务场景下的聚合都是两步：先筛选，再聚合。上面两个例子都是这个模式。mongodb的聚合其实是有一个管线化操作，即上一步的输出作为下一步的输入，在上面例子中是match的输出作为group的输入。
 复杂场景所需要的管线化操作就比较多了，先举两个实际场景</p>
@@ -151,7 +151,7 @@ $data['daodianTwiceUserCount'] = count($rst['result']);
 
 <p>第一次聚合也是根据用户id(crmId)进行聚合，得到每个用户订单数量，到这里和第一个场景的操作一样，然后再向下操作不是聚合而是进行筛选，我们要筛选出订单数量大于等于2的。</p>
 
-<h2 id="5-project的使用:233b6dd901ca06898e3895bff0f956d4">5. $.project的使用</h2>
+<h2 id="project的使用:233b6dd901ca06898e3895bff0f956d4">$.project的使用</h2>
 
 <p>在同事的聚合代码里发现了这么一段：</p>
 
@@ -184,7 +184,7 @@ $rst = $this-&gt;db-&gt;aggregate('sPeijianinstore',[$match,$project,$group,$sor
 
 <p>那个<code>$multiply</code>就是相乘的意思，<a href="https://docs.mongodb.com/manual/reference/operator/aggregation-arithmetic/">mongodb支持多种常见的运算</a>，四则运算、指数对数运算、幂运算、取整都支持。</p>
 
-<h2 id="6-比较两个字段:233b6dd901ca06898e3895bff0f956d4">6.比较两个字段</h2>
+<h2 id="比较两个字段:233b6dd901ca06898e3895bff0f956d4">比较两个字段</h2>
 
 <p>需求场景是这样的：有x、y两个字段，需要x&gt;y的数据。如果在mysql里这个需求实现起来其实很简单，但是mongodb&hellip;&hellip;</p>
 
@@ -210,7 +210,7 @@ $rst = $this-&gt;db-&gt;aggregate('sPeijianinstore',[$match,$project,$group,$sor
 
 <p>实际使用的时候为了性能优化可以先match一遍做个初筛，然后进行project判断字段间的关系进行筛选，然后执行聚合之类的操作。</p>
 
-<h2 id="7-没有-id的聚合:233b6dd901ca06898e3895bff0f956d4">7.没有_id的聚合</h2>
+<h2 id="没有-id的聚合:233b6dd901ca06898e3895bff0f956d4">没有_id的聚合</h2>
 
 <p>group的时候通常会有<code>_id</code>表示按照什么聚合，可以按照一个字段，也可以按照多个字段，上面都有例子，但是有的时候我们并不需要这个聚合的字段，比如如下场景：在订单表中快照出本月的营业额。显然我们只需要筛选出来本月的订单，然后把金额字段加起来就结束了，不需要根据哪个字段聚合。但是group的时候<code>_id</code>不填还不行，还好mongodb支持填<code>null</code>。一下是代码示例：</p>
 
@@ -231,7 +231,7 @@ $group = [
 $rst = $this-&gt;db-&gt;aggregate('bJingpinbook', [$match,$group]);
 </code></pre>
 
-<h2 id="8-mapreduce:233b6dd901ca06898e3895bff0f956d4">8. mapreduce</h2>
+<h2 id="mapreduce:233b6dd901ca06898e3895bff0f956d4">mapreduce</h2>
 
 <p>一般的统计性工作使用<code>aggregate</code>基本就够了，直到我遇到了这么一个需求：类似于知乎的给问题添加话题，一个问题对应多个话题，这些话题存成一个array作为问题的一个字段，然后需要拿到一段时间内话题热度排行榜。如果是一个问题只对应一个话题，这个直接对问题筛选然后对话题字段聚合最后再排个序就可以了，但是问题是话题是个array，在没想到如何用<code>aggregate</code>实现的情况下我们使用了mapreduce。</p>
 

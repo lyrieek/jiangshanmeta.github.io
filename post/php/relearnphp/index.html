@@ -31,7 +31,7 @@
 
 <p>从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI（3.1.0）开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。</p>
 
-<h2 id="1-构造函数:960e085aadb29182f9448019a6b3c8f1">1.构造函数</h2>
+<h2 id="构造函数:960e085aadb29182f9448019a6b3c8f1">构造函数</h2>
 
 <p>CI框架默认的<code>controller</code>是welcome，不过业界习惯还是index，我就照着welcome这个<code>controller</code>写了一个index的<code>controller</code>,然后就报错了。我说我这种动不动就建个<code>controller</code>写个几百行的咋建个<code>controller</code>就报错啊。然后百度了一下有人在博客里说是因为这是CI的保留名称所以会报错，可是项目中明明就有controller名为index的啊。后来我发现根本不是这么回事。</p>
 
@@ -44,7 +44,7 @@
 
 <p>因为继承的基类<code>CI_Controller</code>里有构造函数，显然不作死的方案是调用基类的构造函数。看了一眼项目里的代码，我们是一个类继承了<code>CI_Controller</code>，调用了<code>CI_Controller</code>的构造函数，然后做了一些其他的操作。</p>
 
-<h2 id="2-view-template:960e085aadb29182f9448019a6b3c8f1">2.view &amp;&amp; template</h2>
+<h2 id="view-template:960e085aadb29182f9448019a6b3c8f1">view &amp;&amp; template</h2>
 
 <p>CI是一个MVC框架，最开始我只会画画页面写写js，所以最一开始做的是view层。关于CI的view层<a href="http://codeigniter.org.cn/user_guide/general/views.html">官方文档里已经给出了很好的说明</a>，仅仅从用的角度来说已经足够了。然而如果不对其进行封装很容易做一些重复性的操作，比如说声明对header的加载，声明对footer的加载，而真正业务逻辑对应的页面加载只需要一行，对此我们引入了一个新的类<code>template</code>，把那些header、footer之类的全都放在模板里，在模板里输出真的业务逻辑界面。</p>
 
@@ -72,7 +72,7 @@
 <pre><code>$this-&gt;template-&gt;load(&quot;default_page&quot;,&quot;index/index&quot;);
 </code></pre>
 
-<h2 id="3-my-controller:960e085aadb29182f9448019a6b3c8f1">3.MY_Controller</h2>
+<h2 id="my-controller:960e085aadb29182f9448019a6b3c8f1">MY_Controller</h2>
 
 <p>面向对象一大特征是继承，对于controller里的类也适用。CI官方文档里所讲的controller所继承的都是<code>CI_Controller</code>，如果需求简单确实足够了，想要封装一层的话可以让这个子类继承自<code>CI_Controller</code>，在这个类里面进行所需要的封装，controller里的类再继承自这个子类。</p>
 
@@ -80,7 +80,7 @@
 
 <p><a href="http://codeigniter.org.cn/user_guide/general/core_classes.html">扩展核心系统类</a></p>
 
-<h2 id="4-uri类:960e085aadb29182f9448019a6b3c8f1">4.URI类</h2>
+<h2 id="uri类:960e085aadb29182f9448019a6b3c8f1">URI类</h2>
 
 <p><a href="http://codeigniter.org.cn/user_guide/libraries/uri.html">URI类</a>可以帮助从URI字符串中获得一些基本的信息，结合项目中所用到的说一下。</p>
 
@@ -92,7 +92,7 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>除此之外还用到比较多的是<code>$this-&gt;uri-&gt;uri_string()</code>，这个主要是用在重定向上（因为样式问题以及兼容性、推广等问题对于手机和PC做了两个子站）。</p>
 
-<h2 id="5-mongodb-cimongo:960e085aadb29182f9448019a6b3c8f1">5.mongoDB &amp;&amp; cimongo</h2>
+<h2 id="mongodb-cimongo:960e085aadb29182f9448019a6b3c8f1">mongoDB &amp;&amp; cimongo</h2>
 
 <p>WEB开发离不开数据库，没记错的话新手是首推mysql，然后我就点错科技树学了mongoDB。开始连接数据库吧。</p>
 
@@ -105,7 +105,7 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>这样的话我们就可以进行数据库操作了，现在可以随手插入两条数据看看了，然而这样操作数据库是比较危险的操作，随后我们需要进行的是在model层对数据操作进行封装。</p>
 
-<h2 id="6-创建类库:960e085aadb29182f9448019a6b3c8f1">6.创建类库</h2>
+<h2 id="创建类库:960e085aadb29182f9448019a6b3c8f1">创建类库</h2>
 
 <p>今天遇到一个需求是根据权重产生随机结果，实现起来其实并不复杂，我只是想借着这个引出话题 <a href="http://codeigniter.org.cn/user_guide/general/creating_libraries.html">在CI中创建类库</a>。之前的template类就是这个主题的一个体现，不过那个类我是配置成了自动加载，那现在我有一个<code>Utility</code>类，我想在需要的时候加载，我应该怎么办</p>
 
@@ -114,7 +114,7 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>然后这个类就挂在了$CI上面。稍微有点开发经验的人应该对utility这个词不陌生，从此可以收集各种小函数啦（我不生产代码，我只是代码的搬运工）。</p>
 
-<h2 id="7-field:960e085aadb29182f9448019a6b3c8f1">7.field</h2>
+<h2 id="field:960e085aadb29182f9448019a6b3c8f1">field</h2>
 
 <p>对于从数据库里拿出来的数据，CI并没有做什么别的操作，我们项目中采用了一系列field类，用于对字段进行处理。</p>
 
@@ -122,7 +122,7 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>然后我们需要做的是根据我们对不同字段类型的设定，加载不同的field，进行初始化操作，然后我们就可以在各种field上封装各种方法对数据进行处理啦。</p>
 
-<h2 id="8-链式调用:960e085aadb29182f9448019a6b3c8f1">8.链式调用</h2>
+<h2 id="链式调用:960e085aadb29182f9448019a6b3c8f1">链式调用</h2>
 
 <p>最早接触链式调用是在使用jQuery的时候，其实我觉得使用链式调用能使代码看起来更紧凑一点，除此之外看不出来有什么好处。</p>
 
@@ -134,7 +134,7 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>因为有的代码从controller层迁移到了model层，一些controller里的return在model层就要转化为exit，这个<a href="http://jiangshanmeta.github.io/post/php/exit/">已经有了一些经验</a>。</p>
 
-<h2 id="9-protected:960e085aadb29182f9448019a6b3c8f1">9.protected</h2>
+<h2 id="protected:960e085aadb29182f9448019a6b3c8f1">protected</h2>
 
 <p>javascript没有类的概念，因而也没有private、protected、public的概念，但是在php中有啊，在平时的开发中public和private用的比较多，但是真的没找到<code>protected</code>的使用痕迹（第三封库的不算），但其实我觉得这个概念很好用啊。</p>
 
@@ -142,7 +142,7 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 
 <p>在model层，本身就有一些变量只应该内部使用，比如表名之类的，开发工作中的model层这些变量基本没有被限制过，都是暴露出去的，只有一些私有方法。sign</p>
 
-<h2 id="10-get:960e085aadb29182f9448019a6b3c8f1">10.__get()</h2>
+<h2 id="get:960e085aadb29182f9448019a6b3c8f1">__get()</h2>
 
 <p>为啥我会提到这个，这是个悲伤的故事。</p>
 
@@ -173,17 +173,17 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 }
 </code></pre>
 
-<h2 id="11-final:960e085aadb29182f9448019a6b3c8f1">11.final</h2>
+<h2 id="final:960e085aadb29182f9448019a6b3c8f1">final</h2>
 
 <p>之所以会提及这个关键词也是很偶然的，今天老板吐槽一个同事经常重载诸如<code>insert_db</code>之类的基础函数，然后就谈到了稍微大型的项目就不会让每个人都接触整个项目代码了，很有可能一个人只负责几个controller或者model，基类整体就是只暴露可以调用的方法，内部实现根本看不到，那问题就是如何防止重载基础函数，老板说跑脚本检测之类的，但是最简单的实现就是在想要防止重载的方法加上<code>final</code>修饰词，能用语言本身解决的问题还需要跑脚本之类的折腾吗。</p>
 
 <p>之所以要重载是因为想做些额外的事情，那在使用final关键词的情况下解决如何做这些额外的事情？答案是使用<strong>钩子函数</strong>。</p>
 
-<h2 id="12-model:960e085aadb29182f9448019a6b3c8f1">12.model</h2>
+<h2 id="model:960e085aadb29182f9448019a6b3c8f1">model</h2>
 
 <p>根据CI的文档，model层是用来负责和数据库打交道的，在我们的项目中，把model分成了两类，一类是record_model,负责处理一条数据，另一类是list_model，负责处理多条数据，record_model是list_model的基础。这两个类都是继承自CI_model，作为对CI的进一步封装，这两个类上封装了一系列方法，用于对数据进行加载和处理，同时作为业务类的基础。由于一些历史原因，里面有许多方法封装的并不是很合适以至于，所以我要各种修修补补。</p>
 
-<h2 id="13-改变应用路径:960e085aadb29182f9448019a6b3c8f1">13.改变应用路径</h2>
+<h2 id="改变应用路径:960e085aadb29182f9448019a6b3c8f1">改变应用路径</h2>
 
 <p>在CI中原始的项目代码是放在<code>application</code>目录下，而<code>index.php</code>和该目录同级，出于安全及复杂应用的考虑，我们可以考虑改变入口文件<code>index.php</code>的位置及项目代码目录的名称。
 比如说我们把原来的application目录修改为app_user，在和该目录同级建立一个www_user目录，把入口文件放到该目录下，
@@ -193,7 +193,7 @@ $this-&gt;method_name = $this-&gt;uri-&gt;segment(2)==null?'index':$this-&gt;uri
 $system_path = '../system';
 </code></pre>
 
-<h2 id="14-辅助函数:960e085aadb29182f9448019a6b3c8f1">14.辅助函数</h2>
+<h2 id="辅助函数:960e085aadb29182f9448019a6b3c8f1">辅助函数</h2>
 
 <p>CI提供了一些使用面向过程写的辅助函数，我扩展的是url_helper，毕竟web开发离不开url的处理。首先是对这个文件的自动加载，在autoload文件中的<code>autoload['helper']</code>数组中添加一项<code>url</code>这样就能自动加载了。</p>
 
@@ -213,7 +213,7 @@ $system_path = '../system';
 
 <p>具体实现是在<strong>system/core/config.php</strong>中。</p>
 
-<h2 id="15-static:960e085aadb29182f9448019a6b3c8f1">15.static</h2>
+<h2 id="static:960e085aadb29182f9448019a6b3c8f1">static</h2>
 
 <p>在使用CI的时候，经常会调用<code>get_instance</code>这个函数，看一下具体实现：</p>
 
@@ -246,25 +246,25 @@ public function __construct()
 
 <p>最终的解决方案是利用了下面提到的<code>get_class</code>方法，在父类的非静态方法中，使用<code>get_class($this)</code> (我想你应该明白为什么我会一直强调非静态方法了吧)，拿到子类的类名之后获取其静态属性就没什么难度了吧。</p>
 
-<h2 id="16-spl-autoload-register:960e085aadb29182f9448019a6b3c8f1">16.spl_autoload_register</h2>
+<h2 id="spl-autoload-register:960e085aadb29182f9448019a6b3c8f1">spl_autoload_register</h2>
 
 <p>这个函数其实不是CI中使用的，而是项目中对CI进行扩展的时候使用的，其作用相当于是对于<code>__autoload</code>的加强版。其实稍微大点的项目用得到，小项目用<code>__autoload</code>就行了。</p>
 
 <p>我们用它做了什么？在CI中，如果要加载并实例化某个类并挂到CI上，我们需要使用load方法，但是有的时候我们只想使用这个类的实例，并不想挂到CI指针上，比如说在一个model中加载另一个model，我们该怎么办？一个方法是需要的时候手动include或者require，当然这样比较累，另一种方法就是__autoload啦。最终的结果是我们可以使用new关键字实例化一个model而不需要手动加载文件。</p>
 
-<h2 id="17-date:960e085aadb29182f9448019a6b3c8f1">17.date</h2>
+<h2 id="date:960e085aadb29182f9448019a6b3c8f1">date</h2>
 
 <p>之所以说它是因为出了一个小bug，我想要处理时间戳显示时间，然后第一个参数填了<code>'Y-m-d h:i'</code>,然后就出bug了，因为这里的h是指12小时制。这个函数常用的其实就那么几个参数。<a href="http://php.net/manual/zh/function.date.php">手册</a></p>
 
-<h2 id="18-json-decode:960e085aadb29182f9448019a6b3c8f1">18.json_decode</h2>
+<h2 id="json-decode:960e085aadb29182f9448019a6b3c8f1">json_decode</h2>
 
 <p>一般来说<code>json_decode</code>用到的很少，主要用到的是<code>json_encode</code>。以前不知道前端如何向后端传递复杂数据类型，然后就前端转成json然后给后端，后端decode，然后当时也不知道还有第二个参数所以后端以对象的语法访问。后来看其他人的代码，知道在jquery中可以传递数组和对象然后jquery格式化。    今天在看jquery如何实现序列化，突然想到了这个话题。</p>
 
-<h2 id="19-json-encode-转义:960e085aadb29182f9448019a6b3c8f1">19.json_encode 转义</h2>
+<h2 id="json-encode-转义:960e085aadb29182f9448019a6b3c8f1">json_encode 转义</h2>
 
 <p>在写<a href="http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html">抽奖效果</a>的时候遇到一个需求，对于奖项进行换行显示，因为canvas本身不支持文字换行，所以我们最开始约定使用\n作为分隔符，人工进行换行处理。然而最开始并不能正常进行分割，一开始以为是中文的问题，然后查了查<a href="http://php.net/manual/zh/function.json-encode.php">发现<code>json_encode</code>有第二个参数（通过json_encode传递奖项array）</a>，对中文不转义之后发现依然无法正常显示，然后就猜是转义的问题。确实有转义的问题但不仅仅是转义的问题，因为在单引号下，json_encode的结果无法正常分割但是直接php输出这一子项的结果可以正常分割，双引号下json_encode的结果可以分割但是直接输出的结果直接报错。总之，为啥当初用\n这种符号分割呢。</p>
 
-<h2 id="20-变量作用域:960e085aadb29182f9448019a6b3c8f1">20.变量作用域</h2>
+<h2 id="变量作用域:960e085aadb29182f9448019a6b3c8f1">变量作用域</h2>
 
 <p>之所以会提及这个问题是因为看CI源码时遇到了这么一段：</p>
 
@@ -289,15 +289,15 @@ public function __construct()
 
 <p>说起作用域，js和php还是有点差异的，比如js局部变量没有会沿着作用域链向上查找，而在php中在局部想要访问全局变量需要手动添加<code>global</code>关键字。php中的静态变量和js中闭包中的变量很类似。写php面向对象惯了反而对作用域关注的少了。</p>
 
-<h2 id="21-server:960e085aadb29182f9448019a6b3c8f1">21.$_SERVER</h2>
+<h2 id="server:960e085aadb29182f9448019a6b3c8f1">$_SERVER</h2>
 
 <p>以前一直不明白CI是如何根据url确定需要初始化的controller是哪个、调用的方法是哪个、以及参数。看CI源码就明白了，在超全局变量<code>$_SERVER</code>保存着请求的url，通过<code>CI_Router</code>和<code>CI_URI</code>两个类进行字符串处理就可以得到controller、method以及参数。</p>
 
-<h2 id="22-魔术常量:960e085aadb29182f9448019a6b3c8f1">22.魔术常量</h2>
+<h2 id="魔术常量:960e085aadb29182f9448019a6b3c8f1">魔术常量</h2>
 
 <p>之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：<code>__FILE__</code>、<code>__DIR__</code>，可以看到都是和文件路径相关的。我觉得可能会用到的有<code>__FUNCTION__</code>和<code>__CLASS__</code>,后者可以被系统函数<code>get_class</code>一定程度上取代。在使用继承的时候，<code>get_class</code>返回的是最终的子类的类名，而魔术常量<code>__class__</code>的具体值和调用的位置有关，在哪个类中被调用就是那个类。</p>
 
-<h2 id="23-func-get-args-func-get-arg-func-num-args:960e085aadb29182f9448019a6b3c8f1">23.func_get_args  func_get_arg  func_num_args</h2>
+<h2 id="func-get-args-func-get-arg-func-num-args:960e085aadb29182f9448019a6b3c8f1">func_get_args  func_get_arg  func_num_args</h2>
 
 <p>在js中有个arguments,通过这个类数组可以找到函数的参数，题目中的三个函数所起到的作用和js的arguments差不多。</p>
 

@@ -865,7 +865,7 @@ elseif (is_array($model))
 
 &lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/&#34;&gt;总结过mongodb常用的增删查改&lt;/a&gt;，随着使用的深入自己的工作不在局限在简单地增删查改上，还处理一部分的统计性工作。统计所需要的查询条件就比较复杂了，而mongodb的聚合又是mongodb的一个很大的话题了。这里算是对工作中遇到的一些情况进行总结吧。因为平时都是通过php操作数据库，所以下面的代码都是php，不过并不影响我想表达的。&lt;/p&gt;
 
-&lt;h2 id=&#34;1-限制数组长度查询:233b6dd901ca06898e3895bff0f956d4&#34;&gt;1.限制数组长度查询&lt;/h2&gt;
+&lt;h2 id=&#34;限制数组长度查询:233b6dd901ca06898e3895bff0f956d4&#34;&gt;限制数组长度查询&lt;/h2&gt;
 
 &lt;p&gt;mongodb可以存储数组，我遇到的一个需求是筛选出数组长度大于某个值的。首先想到的是使用&lt;code&gt;$size&lt;/code&gt;，但是&lt;code&gt;$size&lt;/code&gt;不支持&lt;code&gt;$gt&lt;/code&gt;这样的操作，仅支持等于某个长度。&lt;/p&gt;
 
@@ -874,7 +874,7 @@ elseif (is_array($model))
 &lt;pre&gt;&lt;code&gt;[&#39;fiele.0&#39;=&amp;gt;[&#39;$exists&#39;=&amp;gt;true]]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;2-addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;2.$addToSet在聚合中的使用&lt;/h2&gt;
+&lt;h2 id=&#34;addtoset在聚合中的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;$addToSet在聚合中的使用&lt;/h2&gt;
 
 &lt;p&gt;需求场景是这样的：在流水表里有一些数据是进货记录，每条这样的数据都包含店铺id和供应商id，现在需要拿出每家供应商所供货的店铺。暴力的做法是拿出数据来在php处理（写起来并不复杂），然而用聚合实现更简单。&lt;/p&gt;
 
@@ -895,7 +895,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bPeijianFlow&#39;,[$match,$group]
 
 &lt;p&gt;上面是实现代码，首先在&lt;code&gt;bPeijianFlow&lt;/code&gt;这张表中只有typ为1的才是进货记录，据此筛选，然后我们要根据供应商id进行聚合，所以聚合中的&lt;code&gt;_id&lt;/code&gt;是&lt;code&gt;$supplier&lt;/code&gt;，因为一个供应商对一家店可能多次供货，但我们仅需保留一次门店id，所以采用&lt;code&gt;$addToSet&lt;/code&gt;而不是&lt;code&gt;$push&lt;/code&gt;，把每家供应商供货的店铺id保存到&lt;code&gt;orgs&lt;/code&gt;这个数组中。&lt;/p&gt;
 
-&lt;h2 id=&#34;3-根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;3.根据多个字段进行聚合&lt;/h2&gt;
+&lt;h2 id=&#34;根据多个字段进行聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;根据多个字段进行聚合&lt;/h2&gt;
 
 &lt;p&gt;上面的聚合仅仅是根据供应商一个字段进行，我遇到的场景是这样的：有一张用户考试的表，存储着用户id，考试类型，需要根据用户和考试类型进行聚合，拿到每个用户每个考试类型通过（通过是在筛选处理的）的次数。&lt;/p&gt;
 
@@ -919,7 +919,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;aExam&#39;,[$match,$group]);
 
 &lt;p&gt;首先是筛选通过的考试，用status为2表示，然后是进行聚合，聚合是根据&lt;code&gt;adminuserId&lt;/code&gt;和&lt;code&gt;typ&lt;/code&gt;两个字段来的，所以&lt;code&gt;_id&lt;/code&gt;是一个array，而不是上面那个聚合的string，&lt;code&gt;&#39;count&#39;=&amp;gt;array(&#39;$sum&#39;=&amp;gt;1),&lt;/code&gt;是用来统计数量的，剩下的两行是用来做展示数据用的。&lt;/p&gt;
 
-&lt;h2 id=&#34;4-聚合中的管线化操作:233b6dd901ca06898e3895bff0f956d4&#34;&gt;4.聚合中的管线化操作&lt;/h2&gt;
+&lt;h2 id=&#34;聚合中的管线化操作:233b6dd901ca06898e3895bff0f956d4&#34;&gt;聚合中的管线化操作&lt;/h2&gt;
 
 &lt;p&gt;目前遇到的大部分业务场景下的聚合都是两步：先筛选，再聚合。上面两个例子都是这个模式。mongodb的聚合其实是有一个管线化操作，即上一步的输出作为下一步的输入，在上面例子中是match的输出作为group的输入。
 复杂场景所需要的管线化操作就比较多了，先举两个实际场景&lt;/p&gt;
@@ -985,7 +985,7 @@ $data[&#39;daodianTwiceUserCount&#39;] = count($rst[&#39;result&#39;]);
 
 &lt;p&gt;第一次聚合也是根据用户id(crmId)进行聚合，得到每个用户订单数量，到这里和第一个场景的操作一样，然后再向下操作不是聚合而是进行筛选，我们要筛选出订单数量大于等于2的。&lt;/p&gt;
 
-&lt;h2 id=&#34;5-project的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;5. $.project的使用&lt;/h2&gt;
+&lt;h2 id=&#34;project的使用:233b6dd901ca06898e3895bff0f956d4&#34;&gt;$.project的使用&lt;/h2&gt;
 
 &lt;p&gt;在同事的聚合代码里发现了这么一段：&lt;/p&gt;
 
@@ -1018,7 +1018,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;sPeijianinstore&#39;,[$match,$pro
 
 &lt;p&gt;那个&lt;code&gt;$multiply&lt;/code&gt;就是相乘的意思，&lt;a href=&#34;https://docs.mongodb.com/manual/reference/operator/aggregation-arithmetic/&#34;&gt;mongodb支持多种常见的运算&lt;/a&gt;，四则运算、指数对数运算、幂运算、取整都支持。&lt;/p&gt;
 
-&lt;h2 id=&#34;6-比较两个字段:233b6dd901ca06898e3895bff0f956d4&#34;&gt;6.比较两个字段&lt;/h2&gt;
+&lt;h2 id=&#34;比较两个字段:233b6dd901ca06898e3895bff0f956d4&#34;&gt;比较两个字段&lt;/h2&gt;
 
 &lt;p&gt;需求场景是这样的：有x、y两个字段，需要x&amp;gt;y的数据。如果在mysql里这个需求实现起来其实很简单，但是mongodb&amp;hellip;&amp;hellip;&lt;/p&gt;
 
@@ -1044,7 +1044,7 @@ $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;sPeijianinstore&#39;,[$match,$pro
 
 &lt;p&gt;实际使用的时候为了性能优化可以先match一遍做个初筛，然后进行project判断字段间的关系进行筛选，然后执行聚合之类的操作。&lt;/p&gt;
 
-&lt;h2 id=&#34;7-没有-id的聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;7.没有_id的聚合&lt;/h2&gt;
+&lt;h2 id=&#34;没有-id的聚合:233b6dd901ca06898e3895bff0f956d4&#34;&gt;没有_id的聚合&lt;/h2&gt;
 
 &lt;p&gt;group的时候通常会有&lt;code&gt;_id&lt;/code&gt;表示按照什么聚合，可以按照一个字段，也可以按照多个字段，上面都有例子，但是有的时候我们并不需要这个聚合的字段，比如如下场景：在订单表中快照出本月的营业额。显然我们只需要筛选出来本月的订单，然后把金额字段加起来就结束了，不需要根据哪个字段聚合。但是group的时候&lt;code&gt;_id&lt;/code&gt;不填还不行，还好mongodb支持填&lt;code&gt;null&lt;/code&gt;。一下是代码示例：&lt;/p&gt;
 
@@ -1065,7 +1065,7 @@ $group = [
 $rst = $this-&amp;gt;db-&amp;gt;aggregate(&#39;bJingpinbook&#39;, [$match,$group]);
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;8-mapreduce:233b6dd901ca06898e3895bff0f956d4&#34;&gt;8. mapreduce&lt;/h2&gt;
+&lt;h2 id=&#34;mapreduce:233b6dd901ca06898e3895bff0f956d4&#34;&gt;mapreduce&lt;/h2&gt;
 
 &lt;p&gt;一般的统计性工作使用&lt;code&gt;aggregate&lt;/code&gt;基本就够了，直到我遇到了这么一个需求：类似于知乎的给问题添加话题，一个问题对应多个话题，这些话题存成一个array作为问题的一个字段，然后需要拿到一段时间内话题热度排行榜。如果是一个问题只对应一个话题，这个直接对问题筛选然后对话题字段聚合最后再排个序就可以了，但是问题是话题是个array，在没想到如何用&lt;code&gt;aggregate&lt;/code&gt;实现的情况下我们使用了mapreduce。&lt;/p&gt;
 
@@ -1470,7 +1470,7 @@ Person.publicStaticProperty = &#39;naive&#39;;
 
 &lt;p&gt;从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI（3.1.0）开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。&lt;/p&gt;
 
-&lt;h2 id=&#34;1-构造函数:960e085aadb29182f9448019a6b3c8f1&#34;&gt;1.构造函数&lt;/h2&gt;
+&lt;h2 id=&#34;构造函数:960e085aadb29182f9448019a6b3c8f1&#34;&gt;构造函数&lt;/h2&gt;
 
 &lt;p&gt;CI框架默认的&lt;code&gt;controller&lt;/code&gt;是welcome，不过业界习惯还是index，我就照着welcome这个&lt;code&gt;controller&lt;/code&gt;写了一个index的&lt;code&gt;controller&lt;/code&gt;,然后就报错了。我说我这种动不动就建个&lt;code&gt;controller&lt;/code&gt;写个几百行的咋建个&lt;code&gt;controller&lt;/code&gt;就报错啊。然后百度了一下有人在博客里说是因为这是CI的保留名称所以会报错，可是项目中明明就有controller名为index的啊。后来我发现根本不是这么回事。&lt;/p&gt;
 
@@ -1483,7 +1483,7 @@ Person.publicStaticProperty = &#39;naive&#39;;
 
 &lt;p&gt;因为继承的基类&lt;code&gt;CI_Controller&lt;/code&gt;里有构造函数，显然不作死的方案是调用基类的构造函数。看了一眼项目里的代码，我们是一个类继承了&lt;code&gt;CI_Controller&lt;/code&gt;，调用了&lt;code&gt;CI_Controller&lt;/code&gt;的构造函数，然后做了一些其他的操作。&lt;/p&gt;
 
-&lt;h2 id=&#34;2-view-template:960e085aadb29182f9448019a6b3c8f1&#34;&gt;2.view &amp;amp;&amp;amp; template&lt;/h2&gt;
+&lt;h2 id=&#34;view-template:960e085aadb29182f9448019a6b3c8f1&#34;&gt;view &amp;amp;&amp;amp; template&lt;/h2&gt;
 
 &lt;p&gt;CI是一个MVC框架，最开始我只会画画页面写写js，所以最一开始做的是view层。关于CI的view层&lt;a href=&#34;http://codeigniter.org.cn/user_guide/general/views.html&#34;&gt;官方文档里已经给出了很好的说明&lt;/a&gt;，仅仅从用的角度来说已经足够了。然而如果不对其进行封装很容易做一些重复性的操作，比如说声明对header的加载，声明对footer的加载，而真正业务逻辑对应的页面加载只需要一行，对此我们引入了一个新的类&lt;code&gt;template&lt;/code&gt;，把那些header、footer之类的全都放在模板里，在模板里输出真的业务逻辑界面。&lt;/p&gt;
 
@@ -1511,7 +1511,7 @@ Person.publicStaticProperty = &#39;naive&#39;;
 &lt;pre&gt;&lt;code&gt;$this-&amp;gt;template-&amp;gt;load(&amp;quot;default_page&amp;quot;,&amp;quot;index/index&amp;quot;);
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;3-my-controller:960e085aadb29182f9448019a6b3c8f1&#34;&gt;3.MY_Controller&lt;/h2&gt;
+&lt;h2 id=&#34;my-controller:960e085aadb29182f9448019a6b3c8f1&#34;&gt;MY_Controller&lt;/h2&gt;
 
 &lt;p&gt;面向对象一大特征是继承，对于controller里的类也适用。CI官方文档里所讲的controller所继承的都是&lt;code&gt;CI_Controller&lt;/code&gt;，如果需求简单确实足够了，想要封装一层的话可以让这个子类继承自&lt;code&gt;CI_Controller&lt;/code&gt;，在这个类里面进行所需要的封装，controller里的类再继承自这个子类。&lt;/p&gt;
 
@@ -1519,7 +1519,7 @@ Person.publicStaticProperty = &#39;naive&#39;;
 
 &lt;p&gt;&lt;a href=&#34;http://codeigniter.org.cn/user_guide/general/core_classes.html&#34;&gt;扩展核心系统类&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;4-uri类:960e085aadb29182f9448019a6b3c8f1&#34;&gt;4.URI类&lt;/h2&gt;
+&lt;h2 id=&#34;uri类:960e085aadb29182f9448019a6b3c8f1&#34;&gt;URI类&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://codeigniter.org.cn/user_guide/libraries/uri.html&#34;&gt;URI类&lt;/a&gt;可以帮助从URI字符串中获得一些基本的信息，结合项目中所用到的说一下。&lt;/p&gt;
 
@@ -1531,7 +1531,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;除此之外还用到比较多的是&lt;code&gt;$this-&amp;gt;uri-&amp;gt;uri_string()&lt;/code&gt;，这个主要是用在重定向上（因为样式问题以及兼容性、推广等问题对于手机和PC做了两个子站）。&lt;/p&gt;
 
-&lt;h2 id=&#34;5-mongodb-cimongo:960e085aadb29182f9448019a6b3c8f1&#34;&gt;5.mongoDB &amp;amp;&amp;amp; cimongo&lt;/h2&gt;
+&lt;h2 id=&#34;mongodb-cimongo:960e085aadb29182f9448019a6b3c8f1&#34;&gt;mongoDB &amp;amp;&amp;amp; cimongo&lt;/h2&gt;
 
 &lt;p&gt;WEB开发离不开数据库，没记错的话新手是首推mysql，然后我就点错科技树学了mongoDB。开始连接数据库吧。&lt;/p&gt;
 
@@ -1544,7 +1544,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;这样的话我们就可以进行数据库操作了，现在可以随手插入两条数据看看了，然而这样操作数据库是比较危险的操作，随后我们需要进行的是在model层对数据操作进行封装。&lt;/p&gt;
 
-&lt;h2 id=&#34;6-创建类库:960e085aadb29182f9448019a6b3c8f1&#34;&gt;6.创建类库&lt;/h2&gt;
+&lt;h2 id=&#34;创建类库:960e085aadb29182f9448019a6b3c8f1&#34;&gt;创建类库&lt;/h2&gt;
 
 &lt;p&gt;今天遇到一个需求是根据权重产生随机结果，实现起来其实并不复杂，我只是想借着这个引出话题 &lt;a href=&#34;http://codeigniter.org.cn/user_guide/general/creating_libraries.html&#34;&gt;在CI中创建类库&lt;/a&gt;。之前的template类就是这个主题的一个体现，不过那个类我是配置成了自动加载，那现在我有一个&lt;code&gt;Utility&lt;/code&gt;类，我想在需要的时候加载，我应该怎么办&lt;/p&gt;
 
@@ -1553,7 +1553,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;然后这个类就挂在了$CI上面。稍微有点开发经验的人应该对utility这个词不陌生，从此可以收集各种小函数啦（我不生产代码，我只是代码的搬运工）。&lt;/p&gt;
 
-&lt;h2 id=&#34;7-field:960e085aadb29182f9448019a6b3c8f1&#34;&gt;7.field&lt;/h2&gt;
+&lt;h2 id=&#34;field:960e085aadb29182f9448019a6b3c8f1&#34;&gt;field&lt;/h2&gt;
 
 &lt;p&gt;对于从数据库里拿出来的数据，CI并没有做什么别的操作，我们项目中采用了一系列field类，用于对字段进行处理。&lt;/p&gt;
 
@@ -1561,7 +1561,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;然后我们需要做的是根据我们对不同字段类型的设定，加载不同的field，进行初始化操作，然后我们就可以在各种field上封装各种方法对数据进行处理啦。&lt;/p&gt;
 
-&lt;h2 id=&#34;8-链式调用:960e085aadb29182f9448019a6b3c8f1&#34;&gt;8.链式调用&lt;/h2&gt;
+&lt;h2 id=&#34;链式调用:960e085aadb29182f9448019a6b3c8f1&#34;&gt;链式调用&lt;/h2&gt;
 
 &lt;p&gt;最早接触链式调用是在使用jQuery的时候，其实我觉得使用链式调用能使代码看起来更紧凑一点，除此之外看不出来有什么好处。&lt;/p&gt;
 
@@ -1573,7 +1573,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;因为有的代码从controller层迁移到了model层，一些controller里的return在model层就要转化为exit，这个&lt;a href=&#34;http://jiangshanmeta.github.io/post/php/exit/&#34;&gt;已经有了一些经验&lt;/a&gt;。&lt;/p&gt;
 
-&lt;h2 id=&#34;9-protected:960e085aadb29182f9448019a6b3c8f1&#34;&gt;9.protected&lt;/h2&gt;
+&lt;h2 id=&#34;protected:960e085aadb29182f9448019a6b3c8f1&#34;&gt;protected&lt;/h2&gt;
 
 &lt;p&gt;javascript没有类的概念，因而也没有private、protected、public的概念，但是在php中有啊，在平时的开发中public和private用的比较多，但是真的没找到&lt;code&gt;protected&lt;/code&gt;的使用痕迹（第三封库的不算），但其实我觉得这个概念很好用啊。&lt;/p&gt;
 
@@ -1581,7 +1581,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 
 &lt;p&gt;在model层，本身就有一些变量只应该内部使用，比如表名之类的，开发工作中的model层这些变量基本没有被限制过，都是暴露出去的，只有一些私有方法。sign&lt;/p&gt;
 
-&lt;h2 id=&#34;10-get:960e085aadb29182f9448019a6b3c8f1&#34;&gt;10.__get()&lt;/h2&gt;
+&lt;h2 id=&#34;get:960e085aadb29182f9448019a6b3c8f1&#34;&gt;__get()&lt;/h2&gt;
 
 &lt;p&gt;为啥我会提到这个，这是个悲伤的故事。&lt;/p&gt;
 
@@ -1612,17 +1612,17 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;11-final:960e085aadb29182f9448019a6b3c8f1&#34;&gt;11.final&lt;/h2&gt;
+&lt;h2 id=&#34;final:960e085aadb29182f9448019a6b3c8f1&#34;&gt;final&lt;/h2&gt;
 
 &lt;p&gt;之所以会提及这个关键词也是很偶然的，今天老板吐槽一个同事经常重载诸如&lt;code&gt;insert_db&lt;/code&gt;之类的基础函数，然后就谈到了稍微大型的项目就不会让每个人都接触整个项目代码了，很有可能一个人只负责几个controller或者model，基类整体就是只暴露可以调用的方法，内部实现根本看不到，那问题就是如何防止重载基础函数，老板说跑脚本检测之类的，但是最简单的实现就是在想要防止重载的方法加上&lt;code&gt;final&lt;/code&gt;修饰词，能用语言本身解决的问题还需要跑脚本之类的折腾吗。&lt;/p&gt;
 
 &lt;p&gt;之所以要重载是因为想做些额外的事情，那在使用final关键词的情况下解决如何做这些额外的事情？答案是使用&lt;strong&gt;钩子函数&lt;/strong&gt;。&lt;/p&gt;
 
-&lt;h2 id=&#34;12-model:960e085aadb29182f9448019a6b3c8f1&#34;&gt;12.model&lt;/h2&gt;
+&lt;h2 id=&#34;model:960e085aadb29182f9448019a6b3c8f1&#34;&gt;model&lt;/h2&gt;
 
 &lt;p&gt;根据CI的文档，model层是用来负责和数据库打交道的，在我们的项目中，把model分成了两类，一类是record_model,负责处理一条数据，另一类是list_model，负责处理多条数据，record_model是list_model的基础。这两个类都是继承自CI_model，作为对CI的进一步封装，这两个类上封装了一系列方法，用于对数据进行加载和处理，同时作为业务类的基础。由于一些历史原因，里面有许多方法封装的并不是很合适以至于，所以我要各种修修补补。&lt;/p&gt;
 
-&lt;h2 id=&#34;13-改变应用路径:960e085aadb29182f9448019a6b3c8f1&#34;&gt;13.改变应用路径&lt;/h2&gt;
+&lt;h2 id=&#34;改变应用路径:960e085aadb29182f9448019a6b3c8f1&#34;&gt;改变应用路径&lt;/h2&gt;
 
 &lt;p&gt;在CI中原始的项目代码是放在&lt;code&gt;application&lt;/code&gt;目录下，而&lt;code&gt;index.php&lt;/code&gt;和该目录同级，出于安全及复杂应用的考虑，我们可以考虑改变入口文件&lt;code&gt;index.php&lt;/code&gt;的位置及项目代码目录的名称。
 比如说我们把原来的application目录修改为app_user，在和该目录同级建立一个www_user目录，把入口文件放到该目录下，
@@ -1632,7 +1632,7 @@ $this-&amp;gt;method_name = $this-&amp;gt;uri-&amp;gt;segment(2)==null?&#39;inde
 $system_path = &#39;../system&#39;;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;14-辅助函数:960e085aadb29182f9448019a6b3c8f1&#34;&gt;14.辅助函数&lt;/h2&gt;
+&lt;h2 id=&#34;辅助函数:960e085aadb29182f9448019a6b3c8f1&#34;&gt;辅助函数&lt;/h2&gt;
 
 &lt;p&gt;CI提供了一些使用面向过程写的辅助函数，我扩展的是url_helper，毕竟web开发离不开url的处理。首先是对这个文件的自动加载，在autoload文件中的&lt;code&gt;autoload[&#39;helper&#39;]&lt;/code&gt;数组中添加一项&lt;code&gt;url&lt;/code&gt;这样就能自动加载了。&lt;/p&gt;
 
@@ -1652,7 +1652,7 @@ $system_path = &#39;../system&#39;;
 
 &lt;p&gt;具体实现是在&lt;strong&gt;system/core/config.php&lt;/strong&gt;中。&lt;/p&gt;
 
-&lt;h2 id=&#34;15-static:960e085aadb29182f9448019a6b3c8f1&#34;&gt;15.static&lt;/h2&gt;
+&lt;h2 id=&#34;static:960e085aadb29182f9448019a6b3c8f1&#34;&gt;static&lt;/h2&gt;
 
 &lt;p&gt;在使用CI的时候，经常会调用&lt;code&gt;get_instance&lt;/code&gt;这个函数，看一下具体实现：&lt;/p&gt;
 
@@ -1685,25 +1685,25 @@ public function __construct()
 
 &lt;p&gt;最终的解决方案是利用了下面提到的&lt;code&gt;get_class&lt;/code&gt;方法，在父类的非静态方法中，使用&lt;code&gt;get_class($this)&lt;/code&gt; (我想你应该明白为什么我会一直强调非静态方法了吧)，拿到子类的类名之后获取其静态属性就没什么难度了吧。&lt;/p&gt;
 
-&lt;h2 id=&#34;16-spl-autoload-register:960e085aadb29182f9448019a6b3c8f1&#34;&gt;16.spl_autoload_register&lt;/h2&gt;
+&lt;h2 id=&#34;spl-autoload-register:960e085aadb29182f9448019a6b3c8f1&#34;&gt;spl_autoload_register&lt;/h2&gt;
 
 &lt;p&gt;这个函数其实不是CI中使用的，而是项目中对CI进行扩展的时候使用的，其作用相当于是对于&lt;code&gt;__autoload&lt;/code&gt;的加强版。其实稍微大点的项目用得到，小项目用&lt;code&gt;__autoload&lt;/code&gt;就行了。&lt;/p&gt;
 
 &lt;p&gt;我们用它做了什么？在CI中，如果要加载并实例化某个类并挂到CI上，我们需要使用load方法，但是有的时候我们只想使用这个类的实例，并不想挂到CI指针上，比如说在一个model中加载另一个model，我们该怎么办？一个方法是需要的时候手动include或者require，当然这样比较累，另一种方法就是__autoload啦。最终的结果是我们可以使用new关键字实例化一个model而不需要手动加载文件。&lt;/p&gt;
 
-&lt;h2 id=&#34;17-date:960e085aadb29182f9448019a6b3c8f1&#34;&gt;17.date&lt;/h2&gt;
+&lt;h2 id=&#34;date:960e085aadb29182f9448019a6b3c8f1&#34;&gt;date&lt;/h2&gt;
 
 &lt;p&gt;之所以说它是因为出了一个小bug，我想要处理时间戳显示时间，然后第一个参数填了&lt;code&gt;&#39;Y-m-d h:i&#39;&lt;/code&gt;,然后就出bug了，因为这里的h是指12小时制。这个函数常用的其实就那么几个参数。&lt;a href=&#34;http://php.net/manual/zh/function.date.php&#34;&gt;手册&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;18-json-decode:960e085aadb29182f9448019a6b3c8f1&#34;&gt;18.json_decode&lt;/h2&gt;
+&lt;h2 id=&#34;json-decode:960e085aadb29182f9448019a6b3c8f1&#34;&gt;json_decode&lt;/h2&gt;
 
 &lt;p&gt;一般来说&lt;code&gt;json_decode&lt;/code&gt;用到的很少，主要用到的是&lt;code&gt;json_encode&lt;/code&gt;。以前不知道前端如何向后端传递复杂数据类型，然后就前端转成json然后给后端，后端decode，然后当时也不知道还有第二个参数所以后端以对象的语法访问。后来看其他人的代码，知道在jquery中可以传递数组和对象然后jquery格式化。    今天在看jquery如何实现序列化，突然想到了这个话题。&lt;/p&gt;
 
-&lt;h2 id=&#34;19-json-encode-转义:960e085aadb29182f9448019a6b3c8f1&#34;&gt;19.json_encode 转义&lt;/h2&gt;
+&lt;h2 id=&#34;json-encode-转义:960e085aadb29182f9448019a6b3c8f1&#34;&gt;json_encode 转义&lt;/h2&gt;
 
 &lt;p&gt;在写&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/mobile/lottery/index.html&#34;&gt;抽奖效果&lt;/a&gt;的时候遇到一个需求，对于奖项进行换行显示，因为canvas本身不支持文字换行，所以我们最开始约定使用\n作为分隔符，人工进行换行处理。然而最开始并不能正常进行分割，一开始以为是中文的问题，然后查了查&lt;a href=&#34;http://php.net/manual/zh/function.json-encode.php&#34;&gt;发现&lt;code&gt;json_encode&lt;/code&gt;有第二个参数（通过json_encode传递奖项array）&lt;/a&gt;，对中文不转义之后发现依然无法正常显示，然后就猜是转义的问题。确实有转义的问题但不仅仅是转义的问题，因为在单引号下，json_encode的结果无法正常分割但是直接php输出这一子项的结果可以正常分割，双引号下json_encode的结果可以分割但是直接输出的结果直接报错。总之，为啥当初用\n这种符号分割呢。&lt;/p&gt;
 
-&lt;h2 id=&#34;20-变量作用域:960e085aadb29182f9448019a6b3c8f1&#34;&gt;20.变量作用域&lt;/h2&gt;
+&lt;h2 id=&#34;变量作用域:960e085aadb29182f9448019a6b3c8f1&#34;&gt;变量作用域&lt;/h2&gt;
 
 &lt;p&gt;之所以会提及这个问题是因为看CI源码时遇到了这么一段：&lt;/p&gt;
 
@@ -1728,15 +1728,15 @@ public function __construct()
 
 &lt;p&gt;说起作用域，js和php还是有点差异的，比如js局部变量没有会沿着作用域链向上查找，而在php中在局部想要访问全局变量需要手动添加&lt;code&gt;global&lt;/code&gt;关键字。php中的静态变量和js中闭包中的变量很类似。写php面向对象惯了反而对作用域关注的少了。&lt;/p&gt;
 
-&lt;h2 id=&#34;21-server:960e085aadb29182f9448019a6b3c8f1&#34;&gt;21.$_SERVER&lt;/h2&gt;
+&lt;h2 id=&#34;server:960e085aadb29182f9448019a6b3c8f1&#34;&gt;$_SERVER&lt;/h2&gt;
 
 &lt;p&gt;以前一直不明白CI是如何根据url确定需要初始化的controller是哪个、调用的方法是哪个、以及参数。看CI源码就明白了，在超全局变量&lt;code&gt;$_SERVER&lt;/code&gt;保存着请求的url，通过&lt;code&gt;CI_Router&lt;/code&gt;和&lt;code&gt;CI_URI&lt;/code&gt;两个类进行字符串处理就可以得到controller、method以及参数。&lt;/p&gt;
 
-&lt;h2 id=&#34;22-魔术常量:960e085aadb29182f9448019a6b3c8f1&#34;&gt;22.魔术常量&lt;/h2&gt;
+&lt;h2 id=&#34;魔术常量:960e085aadb29182f9448019a6b3c8f1&#34;&gt;魔术常量&lt;/h2&gt;
 
 &lt;p&gt;之前提到了魔术方法，这里说一下魔术常量。对于一般的开发工作来说基本上用不到魔术常量，但是对于框架确实需要，在CI框架中见过这么几个魔术常量的使用：&lt;code&gt;__FILE__&lt;/code&gt;、&lt;code&gt;__DIR__&lt;/code&gt;，可以看到都是和文件路径相关的。我觉得可能会用到的有&lt;code&gt;__FUNCTION__&lt;/code&gt;和&lt;code&gt;__CLASS__&lt;/code&gt;,后者可以被系统函数&lt;code&gt;get_class&lt;/code&gt;一定程度上取代。在使用继承的时候，&lt;code&gt;get_class&lt;/code&gt;返回的是最终的子类的类名，而魔术常量&lt;code&gt;__class__&lt;/code&gt;的具体值和调用的位置有关，在哪个类中被调用就是那个类。&lt;/p&gt;
 
-&lt;h2 id=&#34;23-func-get-args-func-get-arg-func-num-args:960e085aadb29182f9448019a6b3c8f1&#34;&gt;23.func_get_args  func_get_arg  func_num_args&lt;/h2&gt;
+&lt;h2 id=&#34;func-get-args-func-get-arg-func-num-args:960e085aadb29182f9448019a6b3c8f1&#34;&gt;func_get_args  func_get_arg  func_num_args&lt;/h2&gt;
 
 &lt;p&gt;在js中有个arguments,通过这个类数组可以找到函数的参数，题目中的三个函数所起到的作用和js的arguments差不多。&lt;/p&gt;
 </description>
@@ -2364,39 +2364,39 @@ public function __construct()
 
 &lt;p&gt;声明一下，这里的奇技淫巧是指自己用得少觉得新奇而且有实际应用场景的CSS属性，而不是诸如用CSS画个IE8不支持的IE8图标之类的纯粹为了炫技然而实际没什么用途的黑魔法。&lt;/p&gt;
 
-&lt;h4 id=&#34;1-currentcolor:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;1.currentColor&lt;/h4&gt;
+&lt;h2 id=&#34;currentcolor:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;currentColor&lt;/h2&gt;
 
 &lt;p&gt;这是一个颜色的关键字值，浏览器将对应的值解析为color的值，可以用在border 、box-shadow、background上面。有点像less、sass中的变量。用途的话&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2014/10/currentcolor-css3-powerful-css-keyword/&#34;&gt;张鑫旭大神已经给了几个&lt;/a&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;2-user-select:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;2.user-select&lt;/h4&gt;
+&lt;h2 id=&#34;user-select:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;user-select&lt;/h2&gt;
 
 &lt;p&gt;知乎上有一个作者保留权利，对于这种情况如果用户复制的话会复制一些版权信息。其实现上我猜是监听了copy事件之类的。我觉得知乎可以对这些作者保留权利的内容使用&lt;code&gt;user-select:none;&lt;/code&gt;，这样对于普通用户连选择都做不到。&lt;/p&gt;
 
 &lt;p&gt;不过这个属性兼容性有点差，在&lt;a href=&#34;http://caniuse.com/#search=user-select%3A&#34;&gt;can I use&lt;/a&gt;上查到的信息是目前还是乖乖加上私有前缀吧。&lt;/p&gt;
 
-&lt;h4 id=&#34;3-selection:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;3.::selection&lt;/h4&gt;
+&lt;h2 id=&#34;selection:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;::selection&lt;/h2&gt;
 
 &lt;p&gt;在CSS中伪元素常用的只有&lt;code&gt;::before&lt;/code&gt;和&lt;code&gt;::after&lt;/code&gt;,&lt;code&gt;::selection&lt;/code&gt;就显得比较小众了。浏览器默认的文字选中样式是白字蓝底，说实话真的不好看。这个伪元素就给了我们控制选中状态文字样式的可能性。&lt;/p&gt;
 
 &lt;p&gt;本来以为萌娘百科的黑幕样式会使用这一个选择器，然而他们使用了浏览器的默认选择状态。&lt;/p&gt;
 
-&lt;h4 id=&#34;4-pointer-events-none:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;4.pointer-events:none&lt;/h4&gt;
+&lt;h2 id=&#34;pointer-events-none:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;pointer-events:none&lt;/h2&gt;
 
 &lt;p&gt;这个CSS让js和CSS的边界越来越模糊。想象这么一个场景：要做一个活动页，需要全屏的canvas绘制一些东西，这个canvas相当于一个遮罩层，但是我又想遮罩层下面的元素响应各种事件，尤其是点击事件。想通过js完成这件事目测要写一堆，但是对这个遮罩层使用&lt;code&gt;pointer-events:none&lt;/code&gt;即可让这个遮罩层不响应点击事件。&lt;/p&gt;
 
-&lt;h4 id=&#34;5-content的attr:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;5.content的attr&lt;/h4&gt;
+&lt;h2 id=&#34;content的attr:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;content的attr&lt;/h2&gt;
 
 &lt;p&gt;伪元素大家应该不陌生了，但是伪元素的content属性我一般用的不多，后来发现一篇文章&lt;a href=&#34;http://web.jobbole.com/86079/&#34;&gt;美化加载失败的图片&lt;/a&gt;发现了content属性的一些玩法。我们可以通过attr属性引入一些属性的内容，比如&lt;code&gt;img::after{content:&#39;[&#39;attr(src)&#39;]&#39;}&lt;/code&gt;，这样就能在图片加载不出来的时候把原始图片地址显示出来（虽然我怀疑用户能否理解）。类似的思路，我们可以显示a标签的href属性&lt;code&gt;a::after{content:attr(href)}&lt;/code&gt;。&lt;/p&gt;
 
 &lt;p&gt;今天发现了一个&lt;a href=&#34;http://codepen.io/airen/pen/jrNBKp&#34;&gt;attr结合data的一个demo&lt;/a&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;6-direction:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;6.direction&lt;/h4&gt;
+&lt;h2 id=&#34;direction:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;direction&lt;/h2&gt;
 
 &lt;p&gt;这个属性有用的只有两个值：&lt;code&gt;ltr&lt;/code&gt;、&lt;code&gt;rtl&lt;/code&gt;，含义分别是从左向右和从右向左。猜也能猜出来默认值是&lt;code&gt;ltr&lt;/code&gt;。或许你会认为应用&lt;code&gt;rtl&lt;/code&gt;后会改变文字排版变成从右向左排布，然而那是&lt;code&gt;writing-mode&lt;/code&gt;的工作（顺便说一句，目前文字排版的常规模式是从左到右从上到下，除了搞两句古诗词的文艺小清新我觉得没人会闲的改变这种模式）。那么这个&lt;code&gt;direction&lt;/code&gt;改变的是什么的方向？ 改变的是&lt;strong&gt;内联元素块&lt;/strong&gt;的左右顺序，而内联元素块内部的元素是当做一个整体看待。换句话说，&lt;code&gt;direction&lt;/code&gt;属性可以在不改变DOM前后顺序的前提下改变内联元素块的前后顺序，听着好像低配版的flex布局的&lt;code&gt;order&lt;/code&gt;属性。&lt;/p&gt;
 
 &lt;p&gt;干什么用呢？&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2016/03/css-direction-introduction-apply/&#34;&gt;张鑫旭大神提供了例子&lt;/a&gt;，在不改变DOM的情况下添加类名改变弹框组件的按钮顺序。&lt;/p&gt;
 
-&lt;h4 id=&#34;7-padding:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;7.padding&lt;/h4&gt;
+&lt;h2 id=&#34;padding:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;padding&lt;/h2&gt;
 
 &lt;p&gt;关于padding作为前端应该都不陌生，但是padding本身也是具有奇技淫巧的。&lt;/p&gt;
 
@@ -2407,6 +2407,23 @@ public function __construct()
 &lt;p&gt;在bootstrap导航条组件中，有一个三道杠的图标，他们的实现是使用三个span元素做的，根据张鑫旭大神的思路，这里使用一个div就完成了。对于这个需求，其实也可以通过伪元素来实现。&lt;/p&gt;
 
 &lt;p&gt;另外还有一些视频进度条的圆环，我结合伪元素、圆角、padding、background-clip也实现了。对于这一需求，也可以通过&lt;code&gt;box-shadow&lt;/code&gt;来实现。&lt;/p&gt;
+
+&lt;h2 id=&#34;counter-reset-和-counter-increment:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;counter-reset 和 counter-increment&lt;/h2&gt;
+
+&lt;p&gt;这两个属性属于兼容性非常好但是却被大家遗忘的属性，具体用途请看页面的标题序号是如何生成的。&lt;/p&gt;
+
+&lt;h2 id=&#34;supports:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;@supports&lt;/h2&gt;
+
+&lt;p&gt;关于这个的语法&lt;a href=&#34;http://www.w3cplus.com/css3/css3-supports.html&#34;&gt;这篇文章已经提供了很好的介绍&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;这个属性类似于@media，用来进行CSS支持性判断的。然而最大的问题的这个属性本身就有兼容性问题，为了说明正确使用这个属性的姿势，先来一段bootstrap的代码(在carousel的样式里)：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@media all and (transform-3d), (-webkit-transform-3d) {
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个其实相当于@supports的hack版本(虽然是bootstrap的，但不建议使用)，先写一套低版本兼容低版本浏览器的CSS，然后查询难兼容的属性是否支持，如果支持就覆盖掉旧的CSS用新的特性替代。&lt;/p&gt;
 </description>
     </item>
     
