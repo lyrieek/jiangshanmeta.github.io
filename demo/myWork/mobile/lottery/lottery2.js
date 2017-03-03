@@ -23,17 +23,12 @@
         return new Lottery(option);
     }
     this._mergeOpt(option);
-    // 对合并之后的数据进行处理
-    if(this.options.text.pos>=1 || this.options.text.pos<=0){
-      this.options.text.pos = defaults.text.pos;
-    }
-    this.options.DOM.startDeg = deg2rad(this.options.DOM.startDeg);
+    this._treatOptions();
 
     //状态 0表示没开始抽奖，1表示正在抽奖中，2表示抽奖完成
-    this.status = 0;
-    this.imgs = [];
 
-    this.initDOM().cache().drawLottery().drawDecoration();
+
+    this._init().cache().drawLottery().drawDecoration();
 
     //我希望把这些实例属性隐藏掉，而原型方法可以暴露
     var dummpConstructedFunc = function(){};
@@ -87,7 +82,29 @@
 
   };
   Lottery.prototype = Object.assign({},Widget.prototype,{
-    initDOM:function(){
+    _treatOptions:function(){
+      // 对合并之后的数据进行处理
+      if(this.options.text.pos>=1 || this.options.text.pos<=0){
+        this.options.text.pos = this.constructor.defaults.text.pos;
+      }
+      this.options.DOM.startDeg = deg2rad(this.options.DOM.startDeg);
+    },
+    _eventHandler:function(){
+      if(this.status===0){
+        this.ajaxGetLotteryRes();
+      }else if(this.status===2){
+        //此时抽奖结束,点击应该是重置
+        this.reset();
+      }
+      //剩下的情况是抽奖中，当然什么也不做默默等待后端返回结果
+    },
+    _init:function(){
+      this.status = 0;
+      this.imgs = [];
+      this._initDOM();
+      return this;
+    },
+    _initDOM:function(){
       this._bindContainer();
       var options = this.options;
       var DOM = options.DOM;
@@ -105,17 +122,8 @@
           wrapIdPool.push(wrapId);
         }
       }
-      var _this = this;
-      this.container.addEventListener("click",function(){
-        //没开始抽奖的时候点击，说明要抽奖
-        if(_this.status===0){
-          _this.ajaxGetLotteryRes();
-        }else if(_this.status===2){
-          //此时抽奖结束,点击应该是重置
-          _this.reset();
-        }
-        //剩下的情况是抽奖中，当然什么也不做默默等待后端返回结果
-      },false);
+
+      this.container.addEventListener("click",this._eventHandler.bind(this),false);
       this.container.style.cssText += "position:relative;overflow:hidden;margin-left:auto;margin-right:auto;display:table;"
 
       //canvas1负责绘制具体的奖项
@@ -365,7 +373,6 @@
     ajaxGetLotteryRes:function(){
        var options = this.options;
        var canLottery = options.checkCanLottery();
-       var _this = this;
 
        if(canLottery){
         // 这里应该发起ajax请求然后后端返回结果根据结果展示，但是github pages只能放静态页面。这里就简单模拟一下吧
@@ -394,12 +401,12 @@
           context.clearRect(0,0,w,w);
 
           if(animateArea=='decoration'){
-            _this.drawDecoration(curRotate);
+            this.drawDecoration(curRotate);
           }else{
-            _this.drawLottery(curRotate);
+            this.drawLottery(curRotate);
           }
           if(hasAjaxRest && progress>=1){
-            _this.showLotteryRes(ajaxRest);
+            this.showLotteryRes(ajaxRest);
           }else{
             if(progress>=1){
               startTS = Date.now();
@@ -407,13 +414,13 @@
             requestAnimFrame(render)
           }
 
-        }
+        }.bind(this);
         requestAnimFrame(render);
 
         if(options.ajaxUrl=='http://jiangshanmeta.github.io'){
           // 模拟ajax返回值
           setTimeout(function(){
-              var rst = Math.floor(Math.random()*_this.options.lotteris.length);
+              var rst = Math.floor(Math.random()*this.options.lotteris.length);
               hasAjaxRest = true;
               //因为可能后端校验禁止参与抽奖
               if(Math.random()>0.5){
@@ -422,7 +429,7 @@
                 ajaxRest = {data:{err:{msg:'苟利国家生死以'}},rstno:2};
               }
               
-          },1800)   
+          }.bind(this),1800)   
         }else{
           //真ajax
           var xhr = new XMLHttpRequest();
@@ -435,10 +442,10 @@
                 hasAjaxRest = true;
                 ajaxRest = JSON.parse(xhr.responseText);
               }else{
-                _this.reset();
+                this.reset();
               }
             }
-          }
+          }.bind(this);
           xhr.send(null);
 
         }
@@ -450,7 +457,6 @@
     },
     showLotteryRes:function(json){
       console.log(json);
-      var _this = this;
       var options = this.options;
       var animateArea = options.animation.area;
       if(animateArea=='decoration'){
@@ -481,24 +487,24 @@
           if(progress<1){
             context.clearRect(0,0,w,w);
             if(animateArea=='decoration'){
-                _this.drawDecoration(curRotate);
+                this.drawDecoration(curRotate);
             }else{
-                _this.drawLottery(curRotate);
+                this.drawLottery(curRotate);
             }
             
             requestAnimFrame(render);
           }else{
-            _this.status = 2;
-            _this.textArea.innerText = options.msg.done;
-            _this.$emit('afterLottery',json);
+            this.status = 2;
+            this.textArea.innerText = options.msg.done;
+            this.$emit('afterLottery',json);
           }
-        }
+        }.bind(this);
         requestAnimFrame(render);
       }else{
         this.reset();
         setTimeout(function(){
-          _this.$emit('ajaxError',json);
-        },0); 
+          this.$emit('ajaxError',json);
+        }.bind(this),0); 
       }
 
 

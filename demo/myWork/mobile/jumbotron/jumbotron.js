@@ -8,7 +8,7 @@
 	    if(!(instance instanceof Jumbotron)){
 	    	// 初始化设置
 	    	this._mergeOpt(option);
-	    	this.initDOM();
+	    	this._init();
 	    	instance = this;
 	    }
 	    return instance;
@@ -34,7 +34,27 @@
 	};
 	Jumbotron.prototype = Object.assign({},Widget.prototype,{
 		constructor:Jumbotron,
-		initDOM:function(){
+		_transitionHandler:function(e){
+			if(e.target !== this.container){
+				return;
+			}
+			if(this.status===1){
+				this.status = 2;
+				this.container.style.height = "auto";
+				this.$emit('afterOpen');
+			}else if(this.status===3){
+				this.status = 4;
+				this.container.style.display = "none";
+				this.$emit('afterClose');
+			}
+		},
+		_init:function(){
+			this.status = 0;
+			this.counter = 0;
+			this._initDOM();
+			return this;
+		},
+		_initDOM:function(){
 			this._bindContainer();
 			if(!this.container){
 				console.error('missing parameter');
@@ -42,38 +62,31 @@
 			}
 			this.oriDisplay = window.getComputedStyle(this.container)['display'];
 			this.container.style.display = "none";
-			this.status = 0;
-			var _this = this;
-			this.container.addEventListener(whichTransitionEvent(),function(){
-				if(_this.status==1){
-					_this.status = 2;
-					_this.container.style.height = "auto";
-					_this.$emit('afterOpen');
-				}else if(_this.status==3){
-					_this.status = 4;
-					_this.container.style.display = "none";
-					_this.$emit('afterClose');
-				}
-			});
+			
+			this.container.addEventListener(whichTransitionEvent(),this._transitionHandler.bind(this));
 			this._bindEvent({
 				'beforeOpen':'doSthBeforeOpen',
 				'afterOpen':'doSthAfterOpen',
 				'beforeClose':'doSthBeforeClose',
 				'afterClose':'doSthAfterClose',
 			});
+			return this;
 		},
 		open:function(){
-			if(this.status!==0){
-				return;
+			if(this.status!==0 && this.status!==4){
+				return this;
 			}
 			this.$emit('beforeOpen');
+			this.counter++;
 			this.container.style[pfx('transition')] = "height " + this.options.openDuration + "ms "+ this.options.openFunc;
 			this.container.style.cssText += "display:"+ this.oriDisplay + ";height:0;overflow:hidden;"
 			this.container.style.height = this.container.scrollHeight + 'px';
 			this.status = 1;
+
+			return this;
 		},
 		close:function(){
-			if(this.status!=2){
+			if(this.status!==2){
 				return;
 			}
 			this.$emit('beforeClose');
@@ -82,6 +95,7 @@
 			this.status = 3;
 			getComputedStyle(this.container)['height'];
 			this.container.style.height = 0;
+			return this;
 		}
 	});
 	var _jumbotron = window.Jumbotron;
