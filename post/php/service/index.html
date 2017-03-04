@@ -1,0 +1,55 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 为CI添加Service层——记一次失败的脑洞 &middot; jsmeta </title>
+  
+  <link rel="stylesheet" href="http://jiangshanmeta.github.io/css/index.css">
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+</head>
+
+	<body class=" article-body">
+		<nav class="article-nav">
+			<a href="http://jiangshanmeta.github.io/">Home</a>
+			<a href="http://jiangshanmeta.github.io/demo/index.html">前端作品</a>
+			<a href="http://jiangshanmeta.github.io/categories/index.html">日志分类</a>
+		</nav>
+		<div class="article ">
+			<div >
+			  <h1 class="text-center">为CI添加Service层——记一次失败的脑洞</h1>
+			  <p >Sat, Mar 4, 2017</p>
+			      <p>CI是一个MVC框架，业务逻辑在controller和model层上。随着业务复杂度的提升，一些本来在controller层的代码被逐渐移到了model层，以实现复用，到这里一切都很美好，然而model层越来越臃肿了，更为严重的是在model层调用其他model越来越多。
+于是就想着在controller层和model层之间再插一个Service层，在Service层实现多个model的逻辑交互。这样一些在controller层的逻辑下放到service层，一些model层的逻辑，尤其是调用其他model的上调至service层。</p>
+
+<p>CI本身不提供service层，但是拓展起来并不困难，主要要做的是在加载器上添加一个加载service的方法，这个本身没什么难度，就不放代码了，顺手要写的一个是service的基类，虽然并没有什么特殊的方法(说不定以后能扩展呢)，但是可以把model基类的那个<code>__get</code>方法抄过来，service层就这么出来了。按照上边的说法，把controller的逻辑下放，把model的逻辑上调，这些本身都没什么特殊的。</p>
+
+<p>对于业务逻辑，可以现在controller里把model层实例化出来，有需要初始化的需要连数据库加载数据顺便校验，然后把model传入到service层，在service层做具体的业务逻辑(据说这叫桥接模式)，controller主要负责数据的校验和与前端的数据交互，这么写确实可以。</p>
+
+<p>但是又觉得没什么用处，对于没那么复杂的业务逻辑加一个service层属于食之无味弃之可惜，而且对于小团队来说这个增加了工作量。</p>
+
+<p>不过，写代码最重要的是开心。</p>
+
+<p>另外，关于service层，我觉得 <a href="https://segmentfault.com/q/1010000003849810/a-1020000003851204">这个答案说的很好</a>，引用两句</p>
+
+<blockquote>
+<p>如果你的某个业务逻辑，需要用到多个model，就放到service层里面去，如果只是这个model自己的事，跟其它的model没有任何关系，就放到model里面就好。如果你的系统本来就很小，业务逻辑也超级简单，也不存在长期演进迭代的需求，随你怎么高兴怎么写都行。</p>
+</blockquote>
+
+			</div>
+
+
+		</div>
+		<script>
+console.log("联系我吧   540118044@qq.com");
+</script>   
+  </body>
+</html>

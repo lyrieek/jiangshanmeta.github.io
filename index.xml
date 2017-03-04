@@ -6,8 +6,33 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Feb 2017 19:27:11 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 04 Mar 2017 19:08:31 +0800</lastBuildDate>
     <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>为CI添加Service层——记一次失败的脑洞</title>
+      <link>http://jiangshanmeta.github.io/post/php/service/</link>
+      <pubDate>Sat, 04 Mar 2017 19:08:31 +0800</pubDate>
+      
+      <guid>http://jiangshanmeta.github.io/post/php/service/</guid>
+      <description>&lt;p&gt;CI是一个MVC框架，业务逻辑在controller和model层上。随着业务复杂度的提升，一些本来在controller层的代码被逐渐移到了model层，以实现复用，到这里一切都很美好，然而model层越来越臃肿了，更为严重的是在model层调用其他model越来越多。
+于是就想着在controller层和model层之间再插一个Service层，在Service层实现多个model的逻辑交互。这样一些在controller层的逻辑下放到service层，一些model层的逻辑，尤其是调用其他model的上调至service层。&lt;/p&gt;
+
+&lt;p&gt;CI本身不提供service层，但是拓展起来并不困难，主要要做的是在加载器上添加一个加载service的方法，这个本身没什么难度，就不放代码了，顺手要写的一个是service的基类，虽然并没有什么特殊的方法(说不定以后能扩展呢)，但是可以把model基类的那个&lt;code&gt;__get&lt;/code&gt;方法抄过来，service层就这么出来了。按照上边的说法，把controller的逻辑下放，把model的逻辑上调，这些本身都没什么特殊的。&lt;/p&gt;
+
+&lt;p&gt;对于业务逻辑，可以现在controller里把model层实例化出来，有需要初始化的需要连数据库加载数据顺便校验，然后把model传入到service层，在service层做具体的业务逻辑(据说这叫桥接模式)，controller主要负责数据的校验和与前端的数据交互，这么写确实可以。&lt;/p&gt;
+
+&lt;p&gt;但是又觉得没什么用处，对于没那么复杂的业务逻辑加一个service层属于食之无味弃之可惜，而且对于小团队来说这个增加了工作量。&lt;/p&gt;
+
+&lt;p&gt;不过，写代码最重要的是开心。&lt;/p&gt;
+
+&lt;p&gt;另外，关于service层，我觉得 &lt;a href=&#34;https://segmentfault.com/q/1010000003849810/a-1020000003851204&#34;&gt;这个答案说的很好&lt;/a&gt;，引用两句&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;如果你的某个业务逻辑，需要用到多个model，就放到service层里面去，如果只是这个model自己的事，跟其它的model没有任何关系，就放到model里面就好。如果你的系统本来就很小，业务逻辑也超级简单，也不存在长期演进迭代的需求，随你怎么高兴怎么写都行。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
     
     <item>
       <title>21天并不能精通underscore.js</title>
@@ -2424,87 +2449,6 @@ public function __construct()
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;这个其实相当于@supports的hack版本(虽然是bootstrap的，但不建议使用)，先写一套低版本兼容低版本浏览器的CSS，然后查询难兼容的属性是否支持，如果支持就覆盖掉旧的CSS用新的特性替代。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>php中exit()的一个用法——记一次无聊的封装</title>
-      <link>http://jiangshanmeta.github.io/post/php/exit/</link>
-      <pubDate>Thu, 28 Jul 2016 19:00:23 +0800</pubDate>
-      
-      <guid>http://jiangshanmeta.github.io/post/php/exit/</guid>
-      <description>&lt;p&gt;熟悉最好的编程语言php（手动滑稽）的人应该对于&lt;code&gt;exit()&lt;/code&gt;或者&lt;code&gt;die()&lt;/code&gt;函数不陌生，根据&lt;a href=&#34;http://php.net/manual/zh/function.die.php&#34;&gt;手册的说法&lt;/a&gt;这两个函数其实是别名关系，功能上是一样的。一般这两个函数是在调试的时候用的比较多，我的一个同事就比较习惯用&lt;code&gt;die()&lt;/code&gt;，然而作为前端入行的我显然是更习惯使用&lt;code&gt;return&lt;/code&gt;的方式进行调试。其实我对php的最主要调试方法是写两行然后用&lt;code&gt;var_dump()&lt;/code&gt;调试，一小步一小步往前推进。对于&lt;code&gt;die()&lt;/code&gt;和&lt;code&gt;exit()&lt;/code&gt;两个函数，有的人认为出错了用前者，提前退出用后者，我觉得没有太大的必要去区分这一点。&lt;/p&gt;
-
-&lt;p&gt;关于&lt;code&gt;die()&lt;/code&gt;和&lt;code&gt;exit()&lt;/code&gt;两个函数的用法，我觉得这一句话说得很好&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;在设计工具类和工具函数时，die()/exit() 应该严令禁止，因为它们无权决定整个程序的生死。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;上面这句话其实也反映了这两个函数与&lt;code&gt;return&lt;/code&gt;的区别，前者是程序级别的，后者仅仅是函数级别的。&lt;/p&gt;
-
-&lt;p&gt;在我们的项目中后端是一个MVC框架(就是CI)，model层会根据前端传过来的各种信息进行初始化，为了容错，controller里经常会有这样的代码&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;if (!$this-&amp;gt;dataInfo-&amp;gt;is_inited){
-	$jsonRst = -1;
-	$jsonData = array();
-	$jsonData[&#39;err&#39;][&#39;msg&#39;] =&#39;数据有误&#39;;
-	echo $this-&amp;gt;exportData($jsonData,$jsonRst);
-	return false;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;上面的代码是ajax请求时常用的代码，然而，一个controller里的action里面可能会加载多个model，这样上面的代码就会重复N遍，以至于可能真正的业务部分真的没有几行大部分都是在容错，虽说每次都是复制粘贴，但复制粘贴多了就想着封装这个功能。&lt;/p&gt;
-
-&lt;p&gt;需求就有了，我希望能在model层里面封装一个小方法，专门用来检查初始化是否成功，如果初始化失败返回数据错误，controller里的其他代码就不运行了。为什么要单独写一个函数而不是封装在初始化函数中呢？一是因为初始化是初始化、查错是查错，二是因为上面的的代码只适用于ajax返回错误。那&lt;code&gt;return false;&lt;/code&gt;能不能满足我的需求？答案是不能，这只是终止这个小方法的运行，controller还会继续，除非手动写ifelse判断，然而这样和没封装似乎也差不了几行。我的解决方案是使用&lt;code&gt;exit()&lt;/code&gt;,这样如果初始化失败controller里的代码也不会往下走了。最终封装在model基类里的代码如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public function check_inited_for_ajax{
-	$CI =&amp;amp; get_instance();
-	if(!$this-&amp;gt;is_inited){
-		$jsonRst = -1;
-		$jsonData = array();
-		$jsonData[&#39;err&#39;][&#39;msg&#39;] =&#39;数据有误&#39;;
-		echo $CI-&amp;gt;exportData($jsonData,$jsonRst);
-		exit();
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;类似的，对于非ajax请求，可以封装一个类似的函数，导入到404页面&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;function check_inited_for_href(){
-    $CI =&amp;amp; get_instance();
-    if(!$this-&amp;gt;is_inited){
-        $CI-&amp;gt;topTyp = &amp;quot;gobacktop&amp;quot;;
-        $CI-&amp;gt;top_title = &amp;quot;出错啦&amp;quot;;
-        echo $CI-&amp;gt;load-&amp;gt;view(&#39;default_page&#39; ,[&#39;contents&#39;=&amp;gt;$CI-&amp;gt;load-&amp;gt;view(&#39;common/notFound&#39;,[],true)], true);
-        exit();
-    }  
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;在我们的项目中有一个Template类，是对CI的load-&amp;gt;view进行的封装，通常想要加载一个页面是这样写的：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$this-&amp;gt;template-&amp;gt;load(&#39;default_page&#39;, &#39;activity/showLottery&#39;);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;最开始想在加载404页面的时候使用这个类，但一直无法输出页面，当时对于CI的理解还很浅，所以上面的&lt;code&gt;check_inited_for_href&lt;/code&gt;方法输出页面那一行写的很难读，现在明白默认条件下是在output类进行输出页面的，输出页面这个动作在controller执行完成后，但是如果初始化失败就在controller里退出脚本了，显然不会输出页面。&lt;/p&gt;
-
-&lt;p&gt;修改后的代码如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public function check_inited_for_href(){
-    $CI =&amp;amp; get_instance();
-    if(!$this-&amp;gt;is_inited){
-        $CI-&amp;gt;topTyp = &amp;quot;gobacktop&amp;quot;;
-        $CI-&amp;gt;top_title = &amp;quot;出错啦&amp;quot;;
-        echo $CI-&amp;gt;template-&amp;gt;load(&#39;default_page&#39;, &#39;common/404&#39;,&#39;&#39;,TRUE);
-        exit();
-    }
-    return $this;  		
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;距离最开始写这篇文章大约已经半年了，代码也经历了进一步封装，把大部分逻辑从model层转移到了controller层，因为model初始化数据失败是数据异常的一种特殊情况。之前提及过，像CI这样的MVC框架controller层可以分为四层，第一层是框架的controller，第二层是框架的扩展，本身只是技术代码，不涉及业务代码，第三层是业务逻辑代码公有部分，第四层是具体的业务逻辑。&lt;code&gt;exit&lt;/code&gt;其实在第三层可以有比较大的用途，目前用的比较多的一个是上面的错误数据过滤，一个是权限校验，这两个都是常规的需求。&lt;/p&gt;
 </description>
     </item>
     
