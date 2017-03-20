@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Php on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/categories/php/</link>
+    <link>https://jiangshanmeta.github.io/categories/php/</link>
     <description>Recent content in Php on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 04 Mar 2017 19:08:31 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/categories/php/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/categories/php/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>为CI添加Service层——记一次失败的脑洞</title>
-      <link>http://jiangshanmeta.github.io/post/php/service/</link>
+      <link>https://jiangshanmeta.github.io/post/php/service/</link>
       <pubDate>Sat, 04 Mar 2017 19:08:31 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/service/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/service/</guid>
       <description>&lt;p&gt;CI是一个MVC框架，业务逻辑在controller和model层上。随着业务复杂度的提升，一些本来在controller层的代码被逐渐移到了model层，以实现复用，到这里一切都很美好，然而model层越来越臃肿了，更为严重的是在model层调用其他model越来越多。
 于是就想着在controller层和model层之间再插一个Service层，在Service层实现多个model的逻辑交互。这样一些在controller层的逻辑下放到service层，一些model层的逻辑，尤其是调用其他model的上调至service层。&lt;/p&gt;
 
@@ -36,10 +36,10 @@
     
     <item>
       <title>浅谈我对静态使用场景的理解</title>
-      <link>http://jiangshanmeta.github.io/post/php/static/</link>
+      <link>https://jiangshanmeta.github.io/post/php/static/</link>
       <pubDate>Tue, 27 Dec 2016 20:54:19 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/static/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/static/</guid>
       <description>
 
 &lt;p&gt;静态属性和静态方法这两个概念大家都不陌生，然而在日常的开发中用的却比较少，结合最近的开发工作我想谈一谈我对这两个使用场景的理解。&lt;/p&gt;
@@ -100,10 +100,10 @@
     
     <item>
       <title>21天并不能精通CI</title>
-      <link>http://jiangshanmeta.github.io/post/php/ci/</link>
+      <link>https://jiangshanmeta.github.io/post/php/ci/</link>
       <pubDate>Sat, 05 Nov 2016 19:39:38 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/ci/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/ci/</guid>
       <description>
 
 &lt;p&gt;CI是一个MVC的php框架，平时使用的多了所以开始阅读其源码，在这里做个记录。&lt;/p&gt;
@@ -338,10 +338,10 @@ elseif (is_array($model))
     
     <item>
       <title>单例模式</title>
-      <link>http://jiangshanmeta.github.io/post/php/single/</link>
+      <link>https://jiangshanmeta.github.io/post/php/single/</link>
       <pubDate>Sun, 18 Sep 2016 15:42:17 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/single/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/single/</guid>
       <description>&lt;p&gt;重新学习最好的编程语言的时候看到了&lt;code&gt;static&lt;/code&gt;关键字，于是就想到了可以用这个做单例模式。单例模式的作用是保证一个类最多只有一个实例对象。这里不仅讲php中如何实现单例模式，还顺便说一下在js中如何实现单例模式。&lt;/p&gt;
 
 &lt;p&gt;首先讲一下在php中如何实现单例模式&lt;/p&gt;
@@ -459,10 +459,10 @@ console.log(a===b);  // true
     
     <item>
       <title>重新学习最好的编程语言</title>
-      <link>http://jiangshanmeta.github.io/post/php/relearnphp/</link>
+      <link>https://jiangshanmeta.github.io/post/php/relearnphp/</link>
       <pubDate>Thu, 25 Aug 2016 21:07:38 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/relearnphp/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/relearnphp/</guid>
       <description>
 
 &lt;p&gt;从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI（3.1.0）开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。&lt;/p&gt;
@@ -741,10 +741,10 @@ public function __construct()
     
     <item>
       <title>php中exit()的一个用法——记一次无聊的封装</title>
-      <link>http://jiangshanmeta.github.io/post/php/exit/</link>
+      <link>https://jiangshanmeta.github.io/post/php/exit/</link>
       <pubDate>Thu, 28 Jul 2016 19:00:23 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/exit/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/exit/</guid>
       <description>&lt;p&gt;熟悉最好的编程语言php（手动滑稽）的人应该对于&lt;code&gt;exit()&lt;/code&gt;或者&lt;code&gt;die()&lt;/code&gt;函数不陌生，根据&lt;a href=&#34;http://php.net/manual/zh/function.die.php&#34;&gt;手册的说法&lt;/a&gt;这两个函数其实是别名关系，功能上是一样的。一般这两个函数是在调试的时候用的比较多，我的一个同事就比较习惯用&lt;code&gt;die()&lt;/code&gt;，然而作为前端入行的我显然是更习惯使用&lt;code&gt;return&lt;/code&gt;的方式进行调试。其实我对php的最主要调试方法是写两行然后用&lt;code&gt;var_dump()&lt;/code&gt;调试，一小步一小步往前推进。对于&lt;code&gt;die()&lt;/code&gt;和&lt;code&gt;exit()&lt;/code&gt;两个函数，有的人认为出错了用前者，提前退出用后者，我觉得没有太大的必要去区分这一点。&lt;/p&gt;
 
 &lt;p&gt;关于&lt;code&gt;die()&lt;/code&gt;和&lt;code&gt;exit()&lt;/code&gt;两个函数的用法，我觉得这一句话说得很好&lt;/p&gt;

@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Computer Networking on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/tags/computer-networking/</link>
+    <link>https://jiangshanmeta.github.io/tags/computer-networking/</link>
     <description>Recent content in Computer Networking on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 15 Aug 2016 20:48:45 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/tags/computer-networking/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/tags/computer-networking/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>初识链路层</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/mac/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/mac/</link>
       <pubDate>Mon, 15 Aug 2016 20:48:45 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/mac/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/mac/</guid>
       <description>
 
 &lt;p&gt;数据链路层是五层协议栈的第二层，其实对于一般的web开发已经离得有点远了（至少在目前的我看来是这样的），而且个人学习起来这一层感觉东西略杂，尽可能抽出一点主线来吧，并且尽可能对比其它层的协议，这样能加深理解。首先要介绍的是MAC地址的概念。&lt;/p&gt;
@@ -55,10 +55,10 @@
     
     <item>
       <title>网际协议</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/ip/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/ip/</link>
       <pubDate>Tue, 02 Aug 2016 23:26:56 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/ip/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/ip/</guid>
       <description>
 
 &lt;p&gt;IPv4协议&lt;/p&gt;
@@ -197,10 +197,10 @@
     
     <item>
       <title>DHCP</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/dhcp/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/dhcp/</link>
       <pubDate>Mon, 01 Aug 2016 19:40:53 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/dhcp/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/dhcp/</guid>
       <description>&lt;p&gt;在学习传输层的基本知识的时候，知道了传输层实现不同主机应用进程之间的逻辑通信，当时还与网络层比较，网络层实现的是不同主机间的逻辑通信，标记应用进程用端口号，标记主机用IP。严格来说IP标记的接口（主机与物理链路的边界），而不是主机与路由器（换句话说一台主机或者路由器可能有多个接口，对应多个IP），我这里并不严格区分。&lt;/p&gt;
 
 &lt;p&gt;IP地址其实是IP（网际协议）的一部分，对于IP地址，即使是不搞计算机相关领域的人也应该听说过，我们一般写作形如 233.233.233.233 的形式，但这本质上是一个32位的二进制数，只是我们每8位看成一个整体，转换成十进制数字，才有了上面的形式。那一台主机刚接入计算机网络的时候，是如何获得IP地址的呢？&lt;/p&gt;
@@ -223,10 +223,10 @@
     
     <item>
       <title>http连接控制</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/</link>
       <pubDate>Tue, 26 Jul 2016 20:57:58 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/httptransportcontrol/</guid>
       <description>
 
 &lt;p&gt;http是一个应用层协议，http所依赖的传输层协议是TCP，对于http，只需要把需要传递的信息通过套接字socket传递给传输层的TCP，然后就可以坐等TCP可靠的把数据传到目标主机的目标进程了，至于TCP是如何处理数据如何传输的，从应用层角度并不需要关心，&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/transportlayer/&#34;&gt;我之前也对TCP如何实现功能给出了最简单的描述&lt;/a&gt;。然而http事务的性能很大程度上依赖TCP的性能，毕竟现在这个年代在端系统上处理数据一般很快，慢的是传输数据。那我们先看一下TCP哪些动作会引起时延，然后看提高http连接性能的技术。&lt;/p&gt;
@@ -276,10 +276,10 @@
     
     <item>
       <title>初识传输层</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/transportlayer/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/transportlayer/</link>
       <pubDate>Sun, 24 Jul 2016 20:36:07 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/transportlayer/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/transportlayer/</guid>
       <description>
 
 &lt;p&gt;传输层位于应用层和网络层之间，是分层的网络体系结构的重要部分。作为WEB开发者虽然并不直接接触传输层，但是了解一下基本原理对于理解应用层还是有帮助的。&lt;/p&gt;
@@ -371,10 +371,10 @@
     
     <item>
       <title>http方法和状态码</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</link>
       <pubDate>Sun, 17 Jul 2016 20:44:32 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/httpmethodandstatuscode/</guid>
       <description>
 
 &lt;p&gt;http协议是web开发的基础，然而内容太多，即使是入门级的内容也不是一两篇文章能总结好的。这里就先总结一下http方法和状态码。&lt;/p&gt;
@@ -538,10 +538,10 @@
     
     <item>
       <title>DNS原理入门</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/dns/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/dns/</link>
       <pubDate>Sun, 17 Jul 2016 00:43:18 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/dns/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/dns/</guid>
       <description>&lt;p&gt;作为半路出发搞web开发的，计算机网络的知识很薄弱，我可不想一辈子写写页面做做增删查改就完了，要提高一下自己的知识水平。光看书也不行，把自己学到的讲出来，这样能够加深理解。&lt;/p&gt;
 
 &lt;p&gt;一般的介绍计算机网络会从OSI模型或者TCP/IP模型开始介绍，虽然目前有个整体的概念但是理解还是不深，所以我想放到最后说。首先要说的应用层的DNS。DNS基本不会被用户手动使用，但是会被其他应用层程序调用，因为DNS的主要作用是将主机名映射到IP地址。为什么需要这么做？因为不同端系统之间的通信需要IP地址来帮助寻找目标主机。&lt;/p&gt;

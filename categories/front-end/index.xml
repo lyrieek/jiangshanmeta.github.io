@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Front End on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/categories/front-end/</link>
+    <link>https://jiangshanmeta.github.io/categories/front-end/</link>
     <description>Recent content in Front End on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 23 May 2016 21:49:52 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/categories/front-end/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/categories/front-end/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>前端需要知道的WEB知识（1）</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/browser1/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/browser1/</link>
       <pubDate>Mon, 23 May 2016 21:49:52 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser1/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/browser1/</guid>
       <description>&lt;p&gt;之前无意间触发了一个bug，让我开始接触浏览器相关的知识。搞web开发的如果不了解浏览器的基本知识，不了解一个网页是如何形成的，以及如何展示的，基本上也就到天花板了。&lt;/p&gt;
 
 &lt;p&gt;今天并不想从发起一个http请求开始讲起，战线会拉的太长。就从web服务器返回页面开始讲起吧。&lt;/p&gt;
@@ -95,10 +95,10 @@
     
     <item>
       <title>一个bug引发的血案—浏览器基本渲染</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/browser/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/browser/</link>
       <pubDate>Sun, 22 May 2016 17:05:41 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/browser/</guid>
       <description>&lt;p&gt;作为全知乎写bug水平第0的人，最近我又写了一个bug。&lt;/p&gt;
 
 &lt;p&gt;当时的需求是这样的：用js和CSS3画一个时钟，能动的那种。很早很早之前，我用&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/canvas/canvasWatch.html&#34;&gt;canvas实现过这个需求&lt;/a&gt;,然而canvas毕竟需要各种写js，而且实现上也需要大量的计算，于是我就想能不能用尽可能少的js结合CSS实现。&lt;/p&gt;

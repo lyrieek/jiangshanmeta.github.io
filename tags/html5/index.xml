@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Html5 on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/tags/html5/</link>
+    <link>https://jiangshanmeta.github.io/tags/html5/</link>
     <description>Recent content in Html5 on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 09 Jul 2016 23:45:02 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/tags/html5/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/tags/html5/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>本地存储的一些比较</title>
-      <link>http://jiangshanmeta.github.io/post/blog/storage/</link>
+      <link>https://jiangshanmeta.github.io/post/blog/storage/</link>
       <pubDate>Sat, 09 Jul 2016 23:45:02 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/blog/storage/</guid>
+      <guid>https://jiangshanmeta.github.io/post/blog/storage/</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/blog/ebussiness/&#34;&gt;最近的项目中使用了localStorage实现了本地购物车&lt;/a&gt;，借着这个机会总结一下各种本地存储。还有，发现以往过于关注API层面的东西了，反而对API是为了解决什么忽视了。&lt;/p&gt;

@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Css on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/tags/css/</link>
+    <link>https://jiangshanmeta.github.io/tags/css/</link>
     <description>Recent content in Css on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 16 Aug 2016 20:03:58 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/tags/css/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/tags/css/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>上网的不科学指南</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
       <pubDate>Tue, 16 Aug 2016 20:03:58 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
       <description>&lt;p&gt;看计算机网络已经有一段时间了，对于应用层、传输层、网络层、链路层也有了基本的了解。但是感觉自己学的比较零碎，缺乏一个整体的概念，所以想写一篇总结，把这些东西串起来。&lt;/p&gt;
 
 &lt;p&gt;想要上网的话，首先要通过&lt;strong&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;&lt;/strong&gt;获得一个IP地址。&lt;/p&gt;
@@ -39,10 +39,10 @@
     
     <item>
       <title>终于bootstrap满足不了我了——用flex实现一个栅格系统</title>
-      <link>http://jiangshanmeta.github.io/post/css/flex/</link>
+      <link>https://jiangshanmeta.github.io/post/css/flex/</link>
       <pubDate>Sat, 13 Aug 2016 14:16:46 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/flex/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/flex/</guid>
       <description>&lt;p&gt;bootstrap样式方面我觉得最重要的就是栅格系统了，然而在实际项目中觉得有些情况它所能提供的满足不了我的需求了。最近感受比较深的就是列表展示页面，每一个列表项对应的图片文字大小所需空间不一致，我的一个解决方案是利用CSS文字强制只显示一行或多行（不知道如何实现的自行百度），然后图片&lt;a href=&#34;http://jiangshanmeta.github.io/post/autosquare/&#34;&gt;放在一个正方形的盒子里展示&lt;/a&gt;，确实是一个解决问题的方法但我觉得不够优雅。其实根本问题出现在bootstrap的栅格系统是基于浮动的，每一个列高度不一致导致布局错乱显然是不可避免的。bootstrap也考虑到了这个问题，他们的解决方案是这样的：&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -411,10 +411,10 @@
     
     <item>
       <title>CSS中一些“奇技淫巧”</title>
-      <link>http://jiangshanmeta.github.io/post/css/csstricks/</link>
+      <link>https://jiangshanmeta.github.io/post/css/csstricks/</link>
       <pubDate>Sun, 31 Jul 2016 20:28:36 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/csstricks/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/csstricks/</guid>
       <description>
 
 &lt;p&gt;声明一下，这里的奇技淫巧是指自己用得少觉得新奇而且有实际应用场景的CSS属性，而不是诸如用CSS画个IE8不支持的IE8图标之类的纯粹为了炫技然而实际没什么用途的黑魔法。&lt;/p&gt;
@@ -484,10 +484,10 @@
     
     <item>
       <title>图文混排布局的一个小tip</title>
-      <link>http://jiangshanmeta.github.io/post/css/tabletip/</link>
+      <link>https://jiangshanmeta.github.io/post/css/tabletip/</link>
       <pubDate>Tue, 28 Jun 2016 23:14:10 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/tabletip/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/tabletip/</guid>
       <description>&lt;p&gt;如果想实现一个左图右文布局，可以使用浮动，这是很普遍的一点。但是如果如果右侧文字很少，会显得右侧很空，这时候我们会希望一些文字能够拿到下面来，差不多和图片齐平，显然浮动无法实现，一个很直接的想法是需要等高布局。等高布局比较靠谱的解决方案是利用&lt;a href=&#34;http://jiangshanmeta.github.io/post/table/&#34;&gt;css table&lt;/a&gt;，利用同一行中单元格等高这一特性来实现。但是说实话table真的很难驯服，再加上图文混排出幺蛾子的概率很高。如果按照默认样式的可能是这样的：&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://jiangshanmeta.github.io/blogimg/table/tabletip.png&#34; alt=&#34;乱的布局&#34; /&gt;&lt;/p&gt;
@@ -516,10 +516,10 @@
     
     <item>
       <title>table那些事</title>
-      <link>http://jiangshanmeta.github.io/post/css/table/</link>
+      <link>https://jiangshanmeta.github.io/post/css/table/</link>
       <pubDate>Mon, 27 Jun 2016 21:09:14 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/table/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/table/</guid>
       <description>
 
 &lt;p&gt;最近我的知乎时间线上出现了这么一个问题:&lt;a href=&#34;https://www.zhihu.com/question/20003535&#34;&gt;网页的 Table 布局和 DIV+CSS 布局从哪里可以看出来？Table 布局已经过时了吗？&lt;/a&gt;，于是便想着总结一下关于table的一些知识点。先声明一下，这里table是指css table，而不是html table，以下所说的可能用html的形式来写，但都是指的css table。&lt;/p&gt;
@@ -650,10 +650,10 @@
     
     <item>
       <title>bootstrap源码解读——栅格系统</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/grid/</link>
+      <link>https://jiangshanmeta.github.io/post/bootstrap/grid/</link>
       <pubDate>Sat, 25 Jun 2016 19:23:09 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/grid/</guid>
+      <guid>https://jiangshanmeta.github.io/post/bootstrap/grid/</guid>
       <description>
 
 &lt;p&gt;bootstrap的CSS部分中最出名的应该就是栅格系统了，它解决了网页中常见的多列布局问题。对应的实现其实并不是特别复杂，主要包括以下知识点：&lt;/p&gt;
@@ -799,10 +799,10 @@ padding-left: 15px;
     
     <item>
       <title>如何将页脚固定在页面底部</title>
-      <link>http://jiangshanmeta.github.io/post/css/stickyfooter/</link>
+      <link>https://jiangshanmeta.github.io/post/css/stickyfooter/</link>
       <pubDate>Fri, 24 Jun 2016 20:05:51 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/stickyfooter/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/stickyfooter/</guid>
       <description>
 
 &lt;p&gt;在一个网页中通常会有页脚的设置。如果页面内容较少，看起来页脚就像是浮了起来，在浏览器的下面还有一块白色，显得非常难看。我不会告诉你我最近看到的新鲜的页面里还有这种问题，都是同行，给人个面子，不给链接了。那么如何解决这一问题呢？&lt;/p&gt;
@@ -881,10 +881,10 @@ padding-left: 15px;
     
     <item>
       <title>关于CSS3 transition 的几个小tip</title>
-      <link>http://jiangshanmeta.github.io/post/css/transitiontip/</link>
+      <link>https://jiangshanmeta.github.io/post/css/transitiontip/</link>
       <pubDate>Tue, 21 Jun 2016 20:19:53 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/transitiontip/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/transitiontip/</guid>
       <description>
 
 &lt;p&gt;关于CSS3的transition一般写过一阵的基本玩法也都会了，这里收集一些transition的小细节&lt;/p&gt;
@@ -950,10 +950,10 @@ padding-left: 15px;
     
     <item>
       <title>深入理解贝塞尔曲线之如何实现匀加/减速动画</title>
-      <link>http://jiangshanmeta.github.io/post/css/cubicbezier/</link>
+      <link>https://jiangshanmeta.github.io/post/css/cubicbezier/</link>
       <pubDate>Tue, 14 Jun 2016 19:24:18 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/cubicbezier/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/cubicbezier/</guid>
       <description>
 
 &lt;p&gt;如果要实现web动画，通常有三个方式，第一是使用gif图，第二是使用CSS3中的transition和animation，第三是使用javascript。gif图一般交给美术去制作，不需要coding，js实现web动画是一个比较成熟的方案了，它的特点是兼容性好，能控制的动画效果多，适合制作复杂的动画效果。随着CSS3的浏览器支持程度越来越高，使用CSS3写web动画也成为一个流行的方式。&lt;/p&gt;
@@ -1022,10 +1022,10 @@ padding-left: 15px;
     
     <item>
       <title>理解CSS3中width新的几个关键字成员</title>
-      <link>http://jiangshanmeta.github.io/post/css/css3width/</link>
+      <link>https://jiangshanmeta.github.io/post/css/css3width/</link>
       <pubDate>Mon, 30 May 2016 21:39:46 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/css3width/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/css3width/</guid>
       <description>
 
 &lt;p&gt;最近看了&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2016/05/css3-width-max-contnet-min-content-fit-content/&#34;&gt;张鑫旭大神的一片文章&lt;/a&gt;,介绍了&lt;code&gt;width&lt;/code&gt;属性的几个关键字成员：&lt;code&gt;fill-available&lt;/code&gt;、&lt;code&gt;max-content&lt;/code&gt;、&lt;code&gt;min-content&lt;/code&gt;、&lt;code&gt;fit-content&lt;/code&gt;。如果有不熟悉基本概念的链接都有了自己点过去看。他的那篇文章偏重于概念介绍，我想介绍一些细节以及应用&lt;/p&gt;
@@ -1085,10 +1085,10 @@ padding-left: 15px;
     
     <item>
       <title>结构与样式相分离之CSS图形</title>
-      <link>http://jiangshanmeta.github.io/post/css/cssshape/</link>
+      <link>https://jiangshanmeta.github.io/post/css/cssshape/</link>
       <pubDate>Sun, 29 May 2016 18:19:27 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/cssshape/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/cssshape/</guid>
       <description>&lt;p&gt;做前端的应该都听说过“结构与样式相分离”这一句话。最简单的理解是HTML负责结构，CSS负责样式。然而，自己在实际项目中并没有很好地应用这句话，经常为了实现某个特殊样式加上一堆div。&lt;/p&gt;
 
 &lt;p&gt;比如说之前实现的一个效果&lt;/p&gt;
@@ -1176,10 +1176,10 @@ padding-left: 15px;
     
     <item>
       <title>前端需要知道的WEB知识（1）</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/browser1/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/browser1/</link>
       <pubDate>Mon, 23 May 2016 21:49:52 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser1/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/browser1/</guid>
       <description>&lt;p&gt;之前无意间触发了一个bug，让我开始接触浏览器相关的知识。搞web开发的如果不了解浏览器的基本知识，不了解一个网页是如何形成的，以及如何展示的，基本上也就到天花板了。&lt;/p&gt;
 
 &lt;p&gt;今天并不想从发起一个http请求开始讲起，战线会拉的太长。就从web服务器返回页面开始讲起吧。&lt;/p&gt;
@@ -1260,10 +1260,10 @@ padding-left: 15px;
     
     <item>
       <title>一个bug引发的血案—浏览器基本渲染</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/browser/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/browser/</link>
       <pubDate>Sun, 22 May 2016 17:05:41 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/browser/</guid>
       <description>&lt;p&gt;作为全知乎写bug水平第0的人，最近我又写了一个bug。&lt;/p&gt;
 
 &lt;p&gt;当时的需求是这样的：用js和CSS3画一个时钟，能动的那种。很早很早之前，我用&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/canvas/canvasWatch.html&#34;&gt;canvas实现过这个需求&lt;/a&gt;,然而canvas毕竟需要各种写js，而且实现上也需要大量的计算，于是我就想能不能用尽可能少的js结合CSS实现。&lt;/p&gt;
@@ -1361,10 +1361,10 @@ cssclock(&amp;quot;clockwrap&amp;quot;)
     
     <item>
       <title>居中的常见实现</title>
-      <link>http://jiangshanmeta.github.io/post/css/center/</link>
+      <link>https://jiangshanmeta.github.io/post/css/center/</link>
       <pubDate>Mon, 16 May 2016 21:26:45 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/center/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/center/</guid>
       <description>
 
 &lt;p&gt;约定HTML结构&lt;/p&gt;
@@ -1500,10 +1500,10 @@ transform:translate(-50%,-50%);
     
     <item>
       <title>伪元素的应用总结</title>
-      <link>http://jiangshanmeta.github.io/post/css/pseudo/</link>
+      <link>https://jiangshanmeta.github.io/post/css/pseudo/</link>
       <pubDate>Mon, 16 May 2016 20:00:31 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/pseudo/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/pseudo/</guid>
       <description>
 
 &lt;dl&gt;

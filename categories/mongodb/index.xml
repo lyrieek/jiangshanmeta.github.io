@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Mongodb on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/categories/mongodb/</link>
+    <link>https://jiangshanmeta.github.io/categories/mongodb/</link>
     <description>Recent content in Mongodb on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 23 Oct 2016 20:20:18 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/categories/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/categories/mongodb/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>mongodb的复杂查询和聚合</title>
-      <link>http://jiangshanmeta.github.io/post/mongodb/aggregate/</link>
+      <link>https://jiangshanmeta.github.io/post/mongodb/aggregate/</link>
       <pubDate>Sun, 23 Oct 2016 20:20:18 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/mongodb/aggregate/</guid>
+      <guid>https://jiangshanmeta.github.io/post/mongodb/aggregate/</guid>
       <description>
 
 &lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/&#34;&gt;总结过mongodb常用的增删查改&lt;/a&gt;，随着使用的深入自己的工作不在局限在简单地增删查改上，还处理一部分的统计性工作。统计所需要的查询条件就比较复杂了，而mongodb的聚合又是mongodb的一个很大的话题了。这里算是对工作中遇到的一些情况进行总结吧。因为平时都是通过php操作数据库，所以下面的代码都是php，不过并不影响我想表达的。&lt;/p&gt;
@@ -309,10 +309,10 @@ $rst = $this-&amp;gt;listInfo-&amp;gt;mapReduce($opt);
     
     <item>
       <title>mongoDB的增删查改</title>
-      <link>http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/</link>
+      <link>https://jiangshanmeta.github.io/post/mongodb/mongodbcrud/</link>
       <pubDate>Fri, 27 May 2016 20:42:40 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/</guid>
+      <guid>https://jiangshanmeta.github.io/post/mongodb/mongodbcrud/</guid>
       <description>
 
 &lt;p&gt;mongoDB的增删查改&lt;/p&gt;

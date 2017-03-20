@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>jsmeta</title>
-    <link>http://jiangshanmeta.github.io/</link>
+    <link>https://jiangshanmeta.github.io/</link>
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 04 Mar 2017 19:08:31 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>为CI添加Service层——记一次失败的脑洞</title>
-      <link>http://jiangshanmeta.github.io/post/php/service/</link>
+      <link>https://jiangshanmeta.github.io/post/php/service/</link>
       <pubDate>Sat, 04 Mar 2017 19:08:31 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/service/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/service/</guid>
       <description>&lt;p&gt;CI是一个MVC框架，业务逻辑在controller和model层上。随着业务复杂度的提升，一些本来在controller层的代码被逐渐移到了model层，以实现复用，到这里一切都很美好，然而model层越来越臃肿了，更为严重的是在model层调用其他model越来越多。
 于是就想着在controller层和model层之间再插一个Service层，在Service层实现多个model的逻辑交互。这样一些在controller层的逻辑下放到service层，一些model层的逻辑，尤其是调用其他model的上调至service层。&lt;/p&gt;
 
@@ -36,10 +36,10 @@
     
     <item>
       <title>21天并不能精通underscore.js</title>
-      <link>http://jiangshanmeta.github.io/post/js/underscore/</link>
+      <link>https://jiangshanmeta.github.io/post/js/underscore/</link>
       <pubDate>Tue, 21 Feb 2017 19:27:11 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/underscore/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/underscore/</guid>
       <description>
 
 &lt;p&gt;underscore.js是一个javascript库，它提供了一系列实用功能。在介绍具体的功能之前，需要重新学习几个基本概念。&lt;/p&gt;
@@ -580,10 +580,10 @@ _.countBy = group(function(result, value, key) {
     
     <item>
       <title>浅谈我对静态使用场景的理解</title>
-      <link>http://jiangshanmeta.github.io/post/php/static/</link>
+      <link>https://jiangshanmeta.github.io/post/php/static/</link>
       <pubDate>Tue, 27 Dec 2016 20:54:19 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/static/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/static/</guid>
       <description>
 
 &lt;p&gt;静态属性和静态方法这两个概念大家都不陌生，然而在日常的开发中用的却比较少，结合最近的开发工作我想谈一谈我对这两个使用场景的理解。&lt;/p&gt;
@@ -644,10 +644,10 @@ _.countBy = group(function(result, value, key) {
     
     <item>
       <title>21天并不能精通CI</title>
-      <link>http://jiangshanmeta.github.io/post/php/ci/</link>
+      <link>https://jiangshanmeta.github.io/post/php/ci/</link>
       <pubDate>Sat, 05 Nov 2016 19:39:38 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/ci/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/ci/</guid>
       <description>
 
 &lt;p&gt;CI是一个MVC的php框架，平时使用的多了所以开始阅读其源码，在这里做个记录。&lt;/p&gt;
@@ -882,10 +882,10 @@ elseif (is_array($model))
     
     <item>
       <title>mongodb的复杂查询和聚合</title>
-      <link>http://jiangshanmeta.github.io/post/mongodb/aggregate/</link>
+      <link>https://jiangshanmeta.github.io/post/mongodb/aggregate/</link>
       <pubDate>Sun, 23 Oct 2016 20:20:18 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/mongodb/aggregate/</guid>
+      <guid>https://jiangshanmeta.github.io/post/mongodb/aggregate/</guid>
       <description>
 
 &lt;p&gt;之前&lt;a href=&#34;http://jiangshanmeta.github.io/post/mongodb/mongodbcrud/&#34;&gt;总结过mongodb常用的增删查改&lt;/a&gt;，随着使用的深入自己的工作不在局限在简单地增删查改上，还处理一部分的统计性工作。统计所需要的查询条件就比较复杂了，而mongodb的聚合又是mongodb的一个很大的话题了。这里算是对工作中遇到的一些情况进行总结吧。因为平时都是通过php操作数据库，所以下面的代码都是php，不过并不影响我想表达的。&lt;/p&gt;
@@ -1180,10 +1180,10 @@ $rst = $this-&amp;gt;listInfo-&amp;gt;mapReduce($opt);
     
     <item>
       <title>观察者模式的一次实践</title>
-      <link>http://jiangshanmeta.github.io/post/js/observer/</link>
+      <link>https://jiangshanmeta.github.io/post/js/observer/</link>
       <pubDate>Mon, 10 Oct 2016 20:05:11 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/observer/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/observer/</guid>
       <description>&lt;p&gt;观察者模式是用来解除对象间的耦合同时保证对象间数据通信的一种设计模式，要实现对象间通信数据首先要订阅某个主题，然后监听某个主题发布信息。听起来云里雾里但是前端都见过其中的一个典型例子，就是事件，首先通过&lt;code&gt;addEventListener&lt;/code&gt;订阅事件，然后等待用户触发事件或者脚本触发事件，这时就发布了主题，此时各个对象执行相应的回调。&lt;/p&gt;
 
 &lt;p&gt;我也实现了一个简单的观察者模式( &lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/jsdesignpattern/observer.js&#34;&gt;点击下载源码&lt;/a&gt; )：&lt;/p&gt;
@@ -1227,10 +1227,10 @@ $rst = $this-&amp;gt;listInfo-&amp;gt;mapReduce($opt);
     
     <item>
       <title>单例模式</title>
-      <link>http://jiangshanmeta.github.io/post/php/single/</link>
+      <link>https://jiangshanmeta.github.io/post/php/single/</link>
       <pubDate>Sun, 18 Sep 2016 15:42:17 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/single/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/single/</guid>
       <description>&lt;p&gt;重新学习最好的编程语言的时候看到了&lt;code&gt;static&lt;/code&gt;关键字，于是就想到了可以用这个做单例模式。单例模式的作用是保证一个类最多只有一个实例对象。这里不仅讲php中如何实现单例模式，还顺便说一下在js中如何实现单例模式。&lt;/p&gt;
 
 &lt;p&gt;首先讲一下在php中如何实现单例模式&lt;/p&gt;
@@ -1348,10 +1348,10 @@ console.log(a===b);  // true
     
     <item>
       <title>javascript中的继承、私有、静态</title>
-      <link>http://jiangshanmeta.github.io/post/js/extend/</link>
+      <link>https://jiangshanmeta.github.io/post/js/extend/</link>
       <pubDate>Sun, 04 Sep 2016 20:29:27 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/extend/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/extend/</guid>
       <description>
 
 &lt;p&gt;javascript是一门奇特的语言，想入门写点小东西很简单，但是一旦深入就觉得难度陡增。这里对比php，简单总结一下。&lt;/p&gt;
@@ -1487,10 +1487,10 @@ Person.publicStaticProperty = &#39;naive&#39;;
     
     <item>
       <title>重新学习最好的编程语言</title>
-      <link>http://jiangshanmeta.github.io/post/php/relearnphp/</link>
+      <link>https://jiangshanmeta.github.io/post/php/relearnphp/</link>
       <pubDate>Thu, 25 Aug 2016 21:07:38 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/php/relearnphp/</guid>
+      <guid>https://jiangshanmeta.github.io/post/php/relearnphp/</guid>
       <description>
 
 &lt;p&gt;从前端入的行，现在前端和后端php一起写，虽然日常的业务逻辑对我来说很轻松，但是感觉自己被框架宠坏了。业务中用的框架是封装过的CI，想着从一个空的CI（3.1.0）开始做起，至少要脱离现在高度封装过的框架。跟着教程看起，发现了自己对于php很多地方理解不足，这里一条条记录下来。&lt;/p&gt;
@@ -1769,10 +1769,10 @@ public function __construct()
     
     <item>
       <title>上网的不科学指南</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
       <pubDate>Tue, 16 Aug 2016 20:03:58 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
       <description>&lt;p&gt;看计算机网络已经有一段时间了，对于应用层、传输层、网络层、链路层也有了基本的了解。但是感觉自己学的比较零碎，缺乏一个整体的概念，所以想写一篇总结，把这些东西串起来。&lt;/p&gt;
 
 &lt;p&gt;想要上网的话，首先要通过&lt;strong&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;&lt;/strong&gt;获得一个IP地址。&lt;/p&gt;
@@ -1797,10 +1797,10 @@ public function __construct()
     
     <item>
       <title>初识链路层</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/mac/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/mac/</link>
       <pubDate>Mon, 15 Aug 2016 20:48:45 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/mac/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/mac/</guid>
       <description>
 
 &lt;p&gt;数据链路层是五层协议栈的第二层，其实对于一般的web开发已经离得有点远了（至少在目前的我看来是这样的），而且个人学习起来这一层感觉东西略杂，尽可能抽出一点主线来吧，并且尽可能对比其它层的协议，这样能加深理解。首先要介绍的是MAC地址的概念。&lt;/p&gt;
@@ -1841,10 +1841,10 @@ public function __construct()
     
     <item>
       <title>终于bootstrap满足不了我了——用flex实现一个栅格系统</title>
-      <link>http://jiangshanmeta.github.io/post/css/flex/</link>
+      <link>https://jiangshanmeta.github.io/post/css/flex/</link>
       <pubDate>Sat, 13 Aug 2016 14:16:46 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/flex/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/flex/</guid>
       <description>&lt;p&gt;bootstrap样式方面我觉得最重要的就是栅格系统了，然而在实际项目中觉得有些情况它所能提供的满足不了我的需求了。最近感受比较深的就是列表展示页面，每一个列表项对应的图片文字大小所需空间不一致，我的一个解决方案是利用CSS文字强制只显示一行或多行（不知道如何实现的自行百度），然后图片&lt;a href=&#34;http://jiangshanmeta.github.io/post/autosquare/&#34;&gt;放在一个正方形的盒子里展示&lt;/a&gt;，确实是一个解决问题的方法但我觉得不够优雅。其实根本问题出现在bootstrap的栅格系统是基于浮动的，每一个列高度不一致导致布局错乱显然是不可避免的。bootstrap也考虑到了这个问题，他们的解决方案是这样的：&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -2213,10 +2213,10 @@ public function __construct()
     
     <item>
       <title>网际协议</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/ip/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/ip/</link>
       <pubDate>Tue, 02 Aug 2016 23:26:56 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/ip/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/ip/</guid>
       <description>
 
 &lt;p&gt;IPv4协议&lt;/p&gt;
@@ -2355,10 +2355,10 @@ public function __construct()
     
     <item>
       <title>DHCP</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/dhcp/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/dhcp/</link>
       <pubDate>Mon, 01 Aug 2016 19:40:53 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/dhcp/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/dhcp/</guid>
       <description>&lt;p&gt;在学习传输层的基本知识的时候，知道了传输层实现不同主机应用进程之间的逻辑通信，当时还与网络层比较，网络层实现的是不同主机间的逻辑通信，标记应用进程用端口号，标记主机用IP。严格来说IP标记的接口（主机与物理链路的边界），而不是主机与路由器（换句话说一台主机或者路由器可能有多个接口，对应多个IP），我这里并不严格区分。&lt;/p&gt;
 
 &lt;p&gt;IP地址其实是IP（网际协议）的一部分，对于IP地址，即使是不搞计算机相关领域的人也应该听说过，我们一般写作形如 233.233.233.233 的形式，但这本质上是一个32位的二进制数，只是我们每8位看成一个整体，转换成十进制数字，才有了上面的形式。那一台主机刚接入计算机网络的时候，是如何获得IP地址的呢？&lt;/p&gt;
@@ -2381,10 +2381,10 @@ public function __construct()
     
     <item>
       <title>CSS中一些“奇技淫巧”</title>
-      <link>http://jiangshanmeta.github.io/post/css/csstricks/</link>
+      <link>https://jiangshanmeta.github.io/post/css/csstricks/</link>
       <pubDate>Sun, 31 Jul 2016 20:28:36 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/css/csstricks/</guid>
+      <guid>https://jiangshanmeta.github.io/post/css/csstricks/</guid>
       <description>
 
 &lt;p&gt;声明一下，这里的奇技淫巧是指自己用得少觉得新奇而且有实际应用场景的CSS属性，而不是诸如用CSS画个IE8不支持的IE8图标之类的纯粹为了炫技然而实际没什么用途的黑魔法。&lt;/p&gt;

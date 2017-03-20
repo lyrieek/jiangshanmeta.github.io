@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Javascript on jsmeta</title>
-    <link>http://jiangshanmeta.github.io/tags/javascript/</link>
+    <link>https://jiangshanmeta.github.io/tags/javascript/</link>
     <description>Recent content in Javascript on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 21 Feb 2017 19:27:11 +0800</lastBuildDate>
-    <atom:link href="http://jiangshanmeta.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://jiangshanmeta.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>21天并不能精通underscore.js</title>
-      <link>http://jiangshanmeta.github.io/post/js/underscore/</link>
+      <link>https://jiangshanmeta.github.io/post/js/underscore/</link>
       <pubDate>Tue, 21 Feb 2017 19:27:11 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/underscore/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/underscore/</guid>
       <description>
 
 &lt;p&gt;underscore.js是一个javascript库，它提供了一系列实用功能。在介绍具体的功能之前，需要重新学习几个基本概念。&lt;/p&gt;
@@ -555,10 +555,10 @@ _.countBy = group(function(result, value, key) {
     
     <item>
       <title>观察者模式的一次实践</title>
-      <link>http://jiangshanmeta.github.io/post/js/observer/</link>
+      <link>https://jiangshanmeta.github.io/post/js/observer/</link>
       <pubDate>Mon, 10 Oct 2016 20:05:11 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/observer/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/observer/</guid>
       <description>&lt;p&gt;观察者模式是用来解除对象间的耦合同时保证对象间数据通信的一种设计模式，要实现对象间通信数据首先要订阅某个主题，然后监听某个主题发布信息。听起来云里雾里但是前端都见过其中的一个典型例子，就是事件，首先通过&lt;code&gt;addEventListener&lt;/code&gt;订阅事件，然后等待用户触发事件或者脚本触发事件，这时就发布了主题，此时各个对象执行相应的回调。&lt;/p&gt;
 
 &lt;p&gt;我也实现了一个简单的观察者模式( &lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/jsdesignpattern/observer.js&#34;&gt;点击下载源码&lt;/a&gt; )：&lt;/p&gt;
@@ -602,10 +602,10 @@ _.countBy = group(function(result, value, key) {
     
     <item>
       <title>javascript中的继承、私有、静态</title>
-      <link>http://jiangshanmeta.github.io/post/js/extend/</link>
+      <link>https://jiangshanmeta.github.io/post/js/extend/</link>
       <pubDate>Sun, 04 Sep 2016 20:29:27 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/extend/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/extend/</guid>
       <description>
 
 &lt;p&gt;javascript是一门奇特的语言，想入门写点小东西很简单，但是一旦深入就觉得难度陡增。这里对比php，简单总结一下。&lt;/p&gt;
@@ -741,10 +741,10 @@ Person.publicStaticProperty = &#39;naive&#39;;
     
     <item>
       <title>上网的不科学指南</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/summarize/</link>
       <pubDate>Tue, 16 Aug 2016 20:03:58 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/summarize/</guid>
       <description>&lt;p&gt;看计算机网络已经有一段时间了，对于应用层、传输层、网络层、链路层也有了基本的了解。但是感觉自己学的比较零碎，缺乏一个整体的概念，所以想写一篇总结，把这些东西串起来。&lt;/p&gt;
 
 &lt;p&gt;想要上网的话，首先要通过&lt;strong&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/post/computernetwork/dhcp/&#34;&gt;DHCP&lt;/a&gt;&lt;/strong&gt;获得一个IP地址。&lt;/p&gt;
@@ -769,10 +769,10 @@ Person.publicStaticProperty = &#39;naive&#39;;
     
     <item>
       <title>bootstrap源码解读——tab.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/tab/</link>
+      <link>https://jiangshanmeta.github.io/post/bootstrap/tab/</link>
       <pubDate>Thu, 14 Jul 2016 22:56:40 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/tab/</guid>
+      <guid>https://jiangshanmeta.github.io/post/bootstrap/tab/</guid>
       <description>&lt;p&gt;tab切换是网页中的常见设计，从实现上讲也并不复杂，基本思路是导航监听事件，然后把之前显示的tab窗口隐藏掉，然后把导航对应的窗口展示出来，并且更新导航条的状态。bootstrap也对此提供了相应的插件支持，基本思路上都差不太多。先说一下依赖的html结构和css代码&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;div&amp;gt;
@@ -882,10 +882,10 @@ Person.publicStaticProperty = &#39;naive&#39;;
     
     <item>
       <title>bootstrap源码解读——collapse.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/collapse/</link>
+      <link>https://jiangshanmeta.github.io/post/bootstrap/collapse/</link>
       <pubDate>Fri, 08 Jul 2016 20:33:24 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/collapse/</guid>
+      <guid>https://jiangshanmeta.github.io/post/bootstrap/collapse/</guid>
       <description>&lt;p&gt;最近工作忙，好不容易闲下来身体又出bug了，好久没更新了。接着读bootstrap的代码，今天要说的是collapse.js。这个插件实现的展开与收缩效果。&lt;/p&gt;
 
 &lt;p&gt;先看一下data-api&lt;/p&gt;
@@ -1008,10 +1008,10 @@ Person.publicStaticProperty = &#39;naive&#39;;
     
     <item>
       <title>bootstrap源码解读——button.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/button/</link>
+      <link>https://jiangshanmeta.github.io/post/bootstrap/button/</link>
       <pubDate>Sun, 26 Jun 2016 20:22:23 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/button/</guid>
+      <guid>https://jiangshanmeta.github.io/post/bootstrap/button/</guid>
       <description>&lt;p&gt;button.js我个人觉得是属于从一开始就没想明白要做什么。和其他的bootstrap的插件一样，button也能用data的形式调用插件，但是我真心没想明白使用data调用的有什么实际用途。反而我觉得手动调用的对我来说更有实际意义，所以这里只说&lt;a href=&#34;http://v3.bootcss.com/javascript/#buttons-stateful&#34;&gt;button.js改变状态的部分&lt;/a&gt;。&lt;/p&gt;
 
 &lt;p&gt;在web应用中免不了用户触发ajax请求，比如提交表单（实际项目中没有用表单的直接提交，而是使用了ajax提交表单），点击加载更多。在ajax过程中我们需要告诉用户正在进行中，需要等待。在实际项目中为了实现这一个需求我们使用了一个插件blockUI,可以自行百度一下，我觉得挺好用的。另一种方案是改变button的状态，把他标记为不可点击。&lt;/p&gt;
@@ -1084,10 +1084,10 @@ Person.publicStaticProperty = &#39;naive&#39;;
     
     <item>
       <title>bootstrap源码解读——alert.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/alert/</link>
+      <link>https://jiangshanmeta.github.io/post/bootstrap/alert/</link>
       <pubDate>Thu, 23 Jun 2016 21:59:53 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/alert/</guid>
+      <guid>https://jiangshanmeta.github.io/post/bootstrap/alert/</guid>
       <description>&lt;p&gt;之前已经&lt;a href=&#34;http://jiangshanmeta.github.io/post/bootstrap/transition/&#34;&gt;解读过bootstrap的transition.js&lt;/a&gt;，今天继续解读alert插件。&lt;/p&gt;
 
 &lt;p&gt;bootstrap的alert插件从功能上看并不复杂，就是让一个警告框消失，所以重要的不是这个功能。重要的是bootstrap如何通过data属性使用插件的，以及bootstrap的插件是如何暴露方法和事件的。&lt;/p&gt;
@@ -1168,10 +1168,10 @@ $(el).on(&#39;click&#39;, dismiss, this.close)
     
     <item>
       <title>bootstrap源码解读——transition.js</title>
-      <link>http://jiangshanmeta.github.io/post/bootstrap/transition/</link>
+      <link>https://jiangshanmeta.github.io/post/bootstrap/transition/</link>
       <pubDate>Wed, 22 Jun 2016 19:07:30 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/bootstrap/transition/</guid>
+      <guid>https://jiangshanmeta.github.io/post/bootstrap/transition/</guid>
       <description>&lt;p&gt;bootstrap是一个出名的前端框架，它预制了一些常见的js插件。从头开始解读吧。&lt;/p&gt;
 
 &lt;p&gt;这里要介绍的是transition.js，它的作用是对css3的过渡的兼容处理。&lt;/p&gt;
@@ -1277,10 +1277,10 @@ $.event.special.bsTransitionEnd = {
     
     <item>
       <title>百度Touch.js代码解读</title>
-      <link>http://jiangshanmeta.github.io/post/js/touchjs/</link>
+      <link>https://jiangshanmeta.github.io/post/js/touchjs/</link>
       <pubDate>Mon, 06 Jun 2016 20:46:09 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/touchjs/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/touchjs/</guid>
       <description>
 
 &lt;p&gt;在移动端各种手势事件很常见，然而不幸的是原生的js只提供了touchstart、touchmove、touchend、touchcancel这么几个事件的。所以我们需要手势库帮助我们判断手势。&lt;a href=&#34;https://github.com/Clouda-team/touch.code.baidu.com&#34;&gt;百度的touch&lt;/a&gt;是其中一个例子。之所以选择它是因为在之前的hammer我连文档都读不下去，中文文档实在是太有诱惑力了。然而hammer推荐的比例挺高的，还是抽空去看看吧。&lt;/p&gt;
@@ -1592,10 +1592,10 @@ utils.getPCevts = function(evt) {
     
     <item>
       <title>JavaScript的this坑</title>
-      <link>http://jiangshanmeta.github.io/post/js/jsthis/</link>
+      <link>https://jiangshanmeta.github.io/post/js/jsthis/</link>
       <pubDate>Thu, 02 Jun 2016 21:36:26 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/js/jsthis/</guid>
+      <guid>https://jiangshanmeta.github.io/post/js/jsthis/</guid>
       <description>&lt;p&gt;JavaScript有许多坑，一个典型的代表就是this，动不动this的指向就变了。&lt;/p&gt;
 
 &lt;p&gt;我也不想扯太多理论性的东西，那些是属于看着明白看完就忘的。我想干脆找个例子去说一下吧。今天在某个前端群里看到有人问相关问题。干脆就借用别人遇到的问题说一下吧。&lt;/p&gt;
@@ -1664,10 +1664,10 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
     
     <item>
       <title>前端需要知道的WEB知识（1）</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/browser1/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/browser1/</link>
       <pubDate>Mon, 23 May 2016 21:49:52 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser1/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/browser1/</guid>
       <description>&lt;p&gt;之前无意间触发了一个bug，让我开始接触浏览器相关的知识。搞web开发的如果不了解浏览器的基本知识，不了解一个网页是如何形成的，以及如何展示的，基本上也就到天花板了。&lt;/p&gt;
 
 &lt;p&gt;今天并不想从发起一个http请求开始讲起，战线会拉的太长。就从web服务器返回页面开始讲起吧。&lt;/p&gt;
@@ -1748,10 +1748,10 @@ this.ul_wrap.addEventListener(&amp;quot;touchend&amp;quot;,function(e){
     
     <item>
       <title>一个bug引发的血案—浏览器基本渲染</title>
-      <link>http://jiangshanmeta.github.io/post/computernetwork/browser/</link>
+      <link>https://jiangshanmeta.github.io/post/computernetwork/browser/</link>
       <pubDate>Sun, 22 May 2016 17:05:41 +0800</pubDate>
       
-      <guid>http://jiangshanmeta.github.io/post/computernetwork/browser/</guid>
+      <guid>https://jiangshanmeta.github.io/post/computernetwork/browser/</guid>
       <description>&lt;p&gt;作为全知乎写bug水平第0的人，最近我又写了一个bug。&lt;/p&gt;
 
 &lt;p&gt;当时的需求是这样的：用js和CSS3画一个时钟，能动的那种。很早很早之前，我用&lt;a href=&#34;http://jiangshanmeta.github.io/demo/myWork/canvas/canvasWatch.html&#34;&gt;canvas实现过这个需求&lt;/a&gt;,然而canvas毕竟需要各种写js，而且实现上也需要大量的计算，于是我就想能不能用尽可能少的js结合CSS实现。&lt;/p&gt;
