@@ -6,8 +6,82 @@
     <description>Recent content on jsmeta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 04 Mar 2017 19:08:31 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 17 Apr 2017 19:19:25 +0800</lastBuildDate>
     <atom:link href="https://jiangshanmeta.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>如何优雅地上网？</title>
+      <link>https://jiangshanmeta.github.io/post/cs/computernetwork/</link>
+      <pubDate>Mon, 17 Apr 2017 19:19:25 +0800</pubDate>
+      
+      <guid>https://jiangshanmeta.github.io/post/cs/computernetwork/</guid>
+      <description>
+
+&lt;p&gt;这算是我对计算机网络的学习总结吧。我准备以一个网页请求为例，串起来相关的计算机网络协议。&lt;/p&gt;
+
+&lt;h2 id=&#34;计算机网络层级结构:35224f1d25546748f0558e134bd8e19d&#34;&gt;计算机网络层级结构&lt;/h2&gt;
+
+&lt;p&gt;一般计算机网络的相关书籍上来就会讲网络的层次结构，一般而言自顶向下可以分为：应用层、传输层、网络层、数据链路层、物理层。对我而言主要关心的是前三个层次，对于数据链路层我会捎带一提。&lt;/p&gt;
+
+&lt;p&gt;应用层通过数据交互完成特定的任务，如超文本传输(HTTP)、文件传输(FTP)、邮件传输(SMTP)等。&lt;/p&gt;
+
+&lt;p&gt;传输层提供了应用进程逻辑通信，这一层主要包括TCP和UDP两个协议。UDP在网络层的基础上只做了必要的复用/分用和校验，不提供可靠传输、不提供面向连接的服务。TCP提供了更多的服务，它是面向连接的，提供可靠传输，顺便还提供了流量控制和拥塞控制。为了实现可靠传输，TCP有许多相关的机制，包括校验和、字节流编号、确认反馈、重传、定时器。&lt;/p&gt;
+
+&lt;p&gt;网络层提供了主机间的逻辑通信。这一层包含了网际协议IP、一堆路由选择协议、一个辅助控制协议ICMP。&lt;/p&gt;
+
+&lt;p&gt;数据链路层将网络层提供的数据封装成帧，实现节点之间的通信。&lt;/p&gt;
+
+&lt;h2 id=&#34;分用:35224f1d25546748f0558e134bd8e19d&#34;&gt;分用&lt;/h2&gt;
+
+&lt;p&gt;上面提到的每一层都包含多个协议，对于应用层一个协议可能被多个应用进程使用，那下层是如何知道把数据交给那个上层服务呢，即分用问题。&lt;/p&gt;
+
+&lt;p&gt;对于数据链路层，链路层帧有一个类型字段，通过这个字段决定交付给哪个网络层协议。&lt;/p&gt;
+
+&lt;p&gt;对于网络层，也有一个类似的协议字段，用于指出交付给哪个传输层协议。&lt;/p&gt;
+
+&lt;p&gt;对于传输层协议，情况就不一样了，因为多个应用进程可以使用同一个协议，这时我们需要的是对应用进程进行编号，于是就有了端口号。通过端口号，传输层找到应用进程。&lt;/p&gt;
+
+&lt;h2 id=&#34;寻址:35224f1d25546748f0558e134bd8e19d&#34;&gt;寻址&lt;/h2&gt;
+
+&lt;p&gt;上面的分用的前提是报文已经到了这个端系统，那报文是如何找到这个端系统的呢？这里需要IP地址和MAC地址。MAC地址是对网卡接口的标识(数据链路层)，这是一个硬件地址。IP地址是网络层接口的编址(网络层)，一般是由DHCP协议自动分配获得，IP地址在某种程度上可以理解为对一个端系统的编址。其实MAC地址也可以理解为对端系统的编址，毕竟找到网卡接口了，就相当于找到这台主机了。那为啥需要两个地址？一个原因是MAC地址相对来说是完全无序的，路由功能实现起来过于复杂，IP地址一定程度上解决了这个问题。&lt;/p&gt;
+
+&lt;p&gt;到这里关于计算机网络最基础的概念已经介绍完了，然而离我们获得一个页面还有一些准备工作。首先要做的是连上网，获得IP地址，完成这项工作的是DHCP协议。&lt;/p&gt;
+
+&lt;h2 id=&#34;dhcp:35224f1d25546748f0558e134bd8e19d&#34;&gt;DHCP&lt;/h2&gt;
+
+&lt;p&gt;DHCP是一个应用层协议，它的主要作用是用来获取IP地址、获取子网掩码、获取默认路由器地址、获取默认DNS服务器地址。DHCP所应用的传输层协议是UDP，毕竟UDP可以提供广播服务，TCP只能进行端到端的连接。&lt;/p&gt;
+
+&lt;p&gt;当我们想要连接到网上时，本机没有IP地址，也不知道DHCP服务器(或者说DHCP服务器代理，但是对于端系统而言它起到了DHCP服务器的作用)地址，更不知道DHCP服务器的MAC地址，我们只知道源端口号和目的端口号，这两个是DHCP协议所规定的，还有源MAC地址，这是网卡出厂就决定好的。源IP地址全0表示本机、目的IP地址全1表示本网广播地址、目的MAC地址全1表示广播，这是DHCP查询报文的部分信息。&lt;/p&gt;
+
+&lt;p&gt;DHCP服务器通过广播发送了DHCP响应报文，这样本机就可以获得一个IP地址了，同时获得的还有子网掩码、默认路由器地址和DNS服务器地址。但是一个网络中可能含有多个DHCP服务器，而且UDP不提供可靠传输，所以本机还要广播一个DHCP请求报文，表明自己决定使用了哪个IP地址。最后DHCP服务器还要有个DHCP确认报文。&lt;/p&gt;
+
+&lt;h2 id=&#34;dns:35224f1d25546748f0558e134bd8e19d&#34;&gt;DNS&lt;/h2&gt;
+
+&lt;p&gt;现在上网的准备工作已经完成，我们可以打开浏览器输入某个域名了。输入完之后，我们需要获得域名到IP地址的映射关系(不考虑缓存)才能发起HTTP请求，这就需要DNS了。DNS也是一个工作在应用层的协议，它所应用的传输层协议是UDP。&lt;/p&gt;
+
+&lt;p&gt;DNS请求报文源端口号好说，毕竟是自身的应用进程表示，目的端口号是协议规定好的。向下走我们需要填写源IP地址和DNS服务器IP地址，这两个字段我们已经通过DHCP获得了。然后是目的MAC地址，上面的DHCP服务因为是广播，所以MAC地址全1，这里我们的MAC地址怎么填？这要看DNS服务器和本机的关系了，如果是在一个子网内，那我们直接填DNS服务器的MAC地址，如果不在一个子网内，我们需要填默认路由器的MAC地址。怎么判断是否在一个子网呢？还记得子网掩码吗？解决了获取谁的MAC地址，我们要回答的是怎么获取MAC地址。获取MAC地址所需要的是ARP。&lt;/p&gt;
+
+&lt;p&gt;ARP这个协议有人认为应该分到网络层，也有人认为应该分到数据链路层，还有人认为是在网络层和数据链路层之间属于跨层的协议。这些学院派的争执我们没必要关心，我们只需注意到这个协议实现的是IP地址到MAC地址的映射。&lt;/p&gt;
+
+&lt;p&gt;现在请求报文的目的MAC地址字段我们已经知道怎么填了，剩下的就是发出报文，交给DNS服务器，然后默默等待响应报文。这里DNS服务器所要做的就不说了，从端系统角度看这就是个黑盒。&lt;/p&gt;
+
+&lt;h2 id=&#34;http:35224f1d25546748f0558e134bd8e19d&#34;&gt;HTTP&lt;/h2&gt;
+
+&lt;p&gt;HTTP请求所依赖的传输层协议是TCP，我们需要建立连接，但这个连接是只保留在端系统上的逻辑连接，并不存在于中间的链路上。&lt;/p&gt;
+
+&lt;p&gt;源端口号是系统提供的，目的端口号是协议规定好的。源IP地址是通过DHCP获取的，目的IP地址是通过DNS获取的。源MAC地址是网卡出厂自带的，目的MAC地址是通过ARP获得的默认路由器MAC地址(一般情况下本机和服务器不在一个子网内)。然后报文被交付到了路由器。&lt;/p&gt;
+
+&lt;p&gt;在路由器数据包会部分拆开，然后路由器实现路由和转发(超复杂的路由转发功能就这么被我一笔带过了)。每穿过一个路由器，目的MAC地址就会被修改，但是目标IP地址不会被修改(不考虑NAT)，这就是需要MAC地址和IP地址的第二个原因：IP地址是为主机到主机的逻辑通信服务的，MAC地址是为节点间的通信服务的。&lt;/p&gt;
+
+&lt;p&gt;最终我们的这个请求到达了服务器，然后服务器作出相应，我们获得HTTP响应报文。&lt;/p&gt;
+
+&lt;h2 id=&#34;结语:35224f1d25546748f0558e134bd8e19d&#34;&gt;结语&lt;/h2&gt;
+
+&lt;p&gt;到这里浏览网页所需要的最基本的计算机网络协议已经串起来了。一些辅助的协议，如ICMP、NAT我没有提及，但并不代表这些协议不重要。&lt;/p&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>为CI添加Service层——记一次失败的脑洞</title>
@@ -2376,79 +2450,6 @@ public function __construct()
 &lt;p&gt;随后，DHCP请求。由于一个子网可能会有多个&lt;strong&gt;DHCP服务器&lt;/strong&gt;，所以一条&lt;strong&gt;DHCP发现报文&lt;/strong&gt;可能会对应多条&lt;strong&gt;DHCP提供报文&lt;/strong&gt;，也就可能对应多个推荐ip地址。客户端需要选择一个最终的ip，发送&lt;strong&gt;DHCP请求报文&lt;/strong&gt;，因为可能有多个&lt;strong&gt;DHCP服务器&lt;/strong&gt;，所以采用的目的ip仍然是&lt;code&gt;255.255.255.255&lt;/code&gt;，通知最终结果，便于其他&lt;strong&gt;DHCP服务器&lt;/strong&gt;及时回收发出去的冗余ip地址。&lt;/p&gt;
 
 &lt;p&gt;最后，DHCP服务器用 &lt;strong&gt;DHCP ACK报文&lt;/strong&gt;响应，进行最终确认。这样这台新接入的主机就获得了一个ip地址，同时获得的还有本地DNS服务器地址、网关地址。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>CSS中一些“奇技淫巧”</title>
-      <link>https://jiangshanmeta.github.io/post/css/csstricks/</link>
-      <pubDate>Sun, 31 Jul 2016 20:28:36 +0800</pubDate>
-      
-      <guid>https://jiangshanmeta.github.io/post/css/csstricks/</guid>
-      <description>
-
-&lt;p&gt;声明一下，这里的奇技淫巧是指自己用得少觉得新奇而且有实际应用场景的CSS属性，而不是诸如用CSS画个IE8不支持的IE8图标之类的纯粹为了炫技然而实际没什么用途的黑魔法。&lt;/p&gt;
-
-&lt;h2 id=&#34;currentcolor:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;currentColor&lt;/h2&gt;
-
-&lt;p&gt;这是一个颜色的关键字值，浏览器将对应的值解析为color的值，可以用在border 、box-shadow、background上面。有点像less、sass中的变量。用途的话&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2014/10/currentcolor-css3-powerful-css-keyword/&#34;&gt;张鑫旭大神已经给了几个&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;user-select:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;user-select&lt;/h2&gt;
-
-&lt;p&gt;知乎上有一个作者保留权利，对于这种情况如果用户复制的话会复制一些版权信息。其实现上我猜是监听了copy事件之类的。我觉得知乎可以对这些作者保留权利的内容使用&lt;code&gt;user-select:none;&lt;/code&gt;，这样对于普通用户连选择都做不到。&lt;/p&gt;
-
-&lt;p&gt;不过这个属性兼容性有点差，在&lt;a href=&#34;http://caniuse.com/#search=user-select%3A&#34;&gt;can I use&lt;/a&gt;上查到的信息是目前还是乖乖加上私有前缀吧。&lt;/p&gt;
-
-&lt;h2 id=&#34;selection:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;::selection&lt;/h2&gt;
-
-&lt;p&gt;在CSS中伪元素常用的只有&lt;code&gt;::before&lt;/code&gt;和&lt;code&gt;::after&lt;/code&gt;,&lt;code&gt;::selection&lt;/code&gt;就显得比较小众了。浏览器默认的文字选中样式是白字蓝底，说实话真的不好看。这个伪元素就给了我们控制选中状态文字样式的可能性。&lt;/p&gt;
-
-&lt;p&gt;本来以为萌娘百科的黑幕样式会使用这一个选择器，然而他们使用了浏览器的默认选择状态。&lt;/p&gt;
-
-&lt;h2 id=&#34;pointer-events-none:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;pointer-events:none&lt;/h2&gt;
-
-&lt;p&gt;这个CSS让js和CSS的边界越来越模糊。想象这么一个场景：要做一个活动页，需要全屏的canvas绘制一些东西，这个canvas相当于一个遮罩层，但是我又想遮罩层下面的元素响应各种事件，尤其是点击事件。想通过js完成这件事目测要写一堆，但是对这个遮罩层使用&lt;code&gt;pointer-events:none&lt;/code&gt;即可让这个遮罩层不响应点击事件。&lt;/p&gt;
-
-&lt;h2 id=&#34;content的attr:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;content的attr&lt;/h2&gt;
-
-&lt;p&gt;伪元素大家应该不陌生了，但是伪元素的content属性我一般用的不多，后来发现一篇文章&lt;a href=&#34;http://web.jobbole.com/86079/&#34;&gt;美化加载失败的图片&lt;/a&gt;发现了content属性的一些玩法。我们可以通过attr属性引入一些属性的内容，比如&lt;code&gt;img::after{content:&#39;[&#39;attr(src)&#39;]&#39;}&lt;/code&gt;，这样就能在图片加载不出来的时候把原始图片地址显示出来（虽然我怀疑用户能否理解）。类似的思路，我们可以显示a标签的href属性&lt;code&gt;a::after{content:attr(href)}&lt;/code&gt;。&lt;/p&gt;
-
-&lt;p&gt;今天发现了一个&lt;a href=&#34;http://codepen.io/airen/pen/jrNBKp&#34;&gt;attr结合data的一个demo&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;direction:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;direction&lt;/h2&gt;
-
-&lt;p&gt;这个属性有用的只有两个值：&lt;code&gt;ltr&lt;/code&gt;、&lt;code&gt;rtl&lt;/code&gt;，含义分别是从左向右和从右向左。猜也能猜出来默认值是&lt;code&gt;ltr&lt;/code&gt;。或许你会认为应用&lt;code&gt;rtl&lt;/code&gt;后会改变文字排版变成从右向左排布，然而那是&lt;code&gt;writing-mode&lt;/code&gt;的工作（顺便说一句，目前文字排版的常规模式是从左到右从上到下，除了搞两句古诗词的文艺小清新我觉得没人会闲的改变这种模式）。那么这个&lt;code&gt;direction&lt;/code&gt;改变的是什么的方向？ 改变的是&lt;strong&gt;内联元素块&lt;/strong&gt;的左右顺序，而内联元素块内部的元素是当做一个整体看待。换句话说，&lt;code&gt;direction&lt;/code&gt;属性可以在不改变DOM前后顺序的前提下改变内联元素块的前后顺序，听着好像低配版的flex布局的&lt;code&gt;order&lt;/code&gt;属性。&lt;/p&gt;
-
-&lt;p&gt;干什么用呢？&lt;a href=&#34;http://www.zhangxinxu.com/wordpress/2016/03/css-direction-introduction-apply/&#34;&gt;张鑫旭大神提供了例子&lt;/a&gt;，在不改变DOM的情况下添加类名改变弹框组件的按钮顺序。&lt;/p&gt;
-
-&lt;h2 id=&#34;padding:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;padding&lt;/h2&gt;
-
-&lt;p&gt;关于padding作为前端应该都不陌生，但是padding本身也是具有奇技淫巧的。&lt;/p&gt;
-
-&lt;p&gt;之前我利用padding实现了&lt;a href=&#34;http://jiangshanmeta.github.io/post/autosquare/&#34;&gt;自适应的正方形和长宽比一定的长方形&lt;/a&gt;，今天学了一手新的，结合&lt;code&gt;padding&lt;/code&gt;以及&lt;code&gt;background-clip&lt;/code&gt;绘制图形。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://jiangshanmeta.github.io/blogdemo/csstricks/padding.html&#34;&gt;在线demo&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;在bootstrap导航条组件中，有一个三道杠的图标，他们的实现是使用三个span元素做的，根据张鑫旭大神的思路，这里使用一个div就完成了。对于这个需求，其实也可以通过伪元素来实现。&lt;/p&gt;
-
-&lt;p&gt;另外还有一些视频进度条的圆环，我结合伪元素、圆角、padding、background-clip也实现了。对于这一需求，也可以通过&lt;code&gt;box-shadow&lt;/code&gt;来实现。&lt;/p&gt;
-
-&lt;h2 id=&#34;counter-reset-和-counter-increment:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;counter-reset 和 counter-increment&lt;/h2&gt;
-
-&lt;p&gt;这两个属性属于兼容性非常好但是却被大家遗忘的属性，具体用途请看页面的标题序号是如何生成的。&lt;/p&gt;
-
-&lt;h2 id=&#34;supports:153eaa3ceec693de6b0bebfe9dc213fa&#34;&gt;@supports&lt;/h2&gt;
-
-&lt;p&gt;关于这个的语法&lt;a href=&#34;http://www.w3cplus.com/css3/css3-supports.html&#34;&gt;这篇文章已经提供了很好的介绍&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;这个属性类似于@media，用来进行CSS支持性判断的。然而最大的问题的这个属性本身就有兼容性问题，为了说明正确使用这个属性的姿势，先来一段bootstrap的代码(在carousel的样式里)：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;@media all and (transform-3d), (-webkit-transform-3d) {
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这个其实相当于@supports的hack版本(虽然是bootstrap的，但不建议使用)，先写一套低版本兼容低版本浏览器的CSS，然后查询难兼容的属性是否支持，如果支持就覆盖掉旧的CSS用新的特性替代。&lt;/p&gt;
 </description>
     </item>
     
