@@ -25,7 +25,7 @@
 
 [vue-admin](https://github.com/jiangshanmeta/vue-admin)
 
-
+[如何通过package.json向前端注入全局变量](https://github.com/jiangshanmeta/jiangshanmeta.github.io/issues/20)
 
 #### PHP
 
