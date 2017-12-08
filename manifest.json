@@ -1,0 +1,13 @@
+{
+    "name":"jiangshanmeta github page",
+    "short_name":"jsmeta",
+    "start_url":"/index.html",
+    "display":"standalone",
+    "icons":[
+        {
+            "src":"/favicon.png",
+            "type":"image/png",
+            "sizes":"192x192"
+        }
+    ]
+}
