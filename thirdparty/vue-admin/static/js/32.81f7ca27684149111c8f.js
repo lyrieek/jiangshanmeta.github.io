@@ -1,0 +1,2 @@
+webpackJsonp([32],{872:function(e,n,t){var r=t(51)(t(943),t(959),null,null,null);e.exports=r.exports},943:function(e,n,t){"use strict";Object.defineProperty(n,"__esModule",{value:!0}),n.default={name:"enum_view",props:{data:{type:[Number,String],required:!0},enums:{type:Object,required:!0}}}},959:function(e,n){e.exports={render:function(){var e=this,n=e.$createElement;return(e._self._c||n)("span",[e._v(e._s(e.enums[e.data]))])},staticRenderFns:[]}}});
+//# sourceMappingURL=32.81f7ca27684149111c8f.js.map

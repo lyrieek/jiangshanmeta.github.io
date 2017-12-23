@@ -1,0 +1,2 @@
+webpackJsonp([30],{875:function(e,n,r){var t=r(51)(r(946),r(958),null,null,null);e.exports=t.exports},946:function(e,n,r){"use strict";Object.defineProperty(n,"__esModule",{value:!0}),n.default={name:"showgender",props:{data:{type:Number,required:!0},genderCfg:{type:Object,required:!0}}}},958:function(e,n){e.exports={render:function(){var e=this,n=e.$createElement;return(e._self._c||n)("span",[e._v(e._s(e.genderCfg[e.data]))])},staticRenderFns:[]}}});
+//# sourceMappingURL=30.5c85ae3701222e45b2de.js.map
