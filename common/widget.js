@@ -10,9 +10,7 @@ Object.defineProperty(Widget,'prototype',{
 		constructor:Widget,
 		// 观察者模式
 		$on:function(type,handler){
-			if(!this._handlers){
-				this._handlers = Object.create(null);
-			}
+			this._handlers = this._handlers || Object.create(null);
 			if(typeof type === 'object'){
 				var keys = Object.keys(type);
 				for(var i=0,len=keys.length;i<len;i++){
@@ -27,8 +25,7 @@ Object.defineProperty(Widget,'prototype',{
 			// once只是对on的一层包装，保证回调只用一次
 			var _this = this;
 			var fn2 = function(){
-				_this.$off(type,fn2);
-				fn.apply(_this,arguments);
+				fn.apply(_this.$off(type,fn2) && _this,arguments);
 			}
 			fn2.fn = fn;
 			return this.$on(type,fn2);
@@ -57,6 +54,8 @@ Object.defineProperty(Widget,'prototype',{
 			}
 			// 如果只有类型没有具体的函数，干掉这个事件
 			if(l===1){
+				//TODO: 也许是: this._handlers[type] = Object.create(null);
+				//TODO: 或者是: this._handlers = [];
 				this._handlers[type] = [];
 				return this;
 			}
@@ -90,24 +89,20 @@ Object.defineProperty(Widget,'prototype',{
 			this.options = deepAssign({},this.self().defaults,opt||{});
 		},
 		_bindContainer:function(){
-			var selector = this.options.selector;
-			var isId = /^#[\w-]+$/.test(selector);
-			var context = isId?document:(this.options.context&&(this.options.context.nodeType===1 ||this.options.context.nodeType===9)?this.options.context:document);
-			this.container = context.querySelector(this.options.selector);
+			this.container = (/^#[\w-]+$/.test(this.options.selector)?document:(this.options.context&&(this.options.context.nodeType===1 ||this.options.context.nodeType===9)?this.options.context:document)).querySelector(this.options.selector);
 		},
 		$watch:function(name,fn){
 			if(typeof fn !== 'function'){
 				return this;
 			}
 			var context = this;
-			var proxy = function(id,oldVal,newVal){
+			this.watch(name,function(id,oldVal,newVal){
 				return fn.call(context,oldVal,newVal);
-			}
-			this.watch(name,proxy);
+			});
 			return this;
 		},
 		__get:function(fn,ctx){
-			return new Proxy(ctx?ctx:this,{
+			return new Proxy(ctx || this,{
 				get:function(target,name){
 					return name in target? target[name]:fn.call(target,name);
 				}
